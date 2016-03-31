@@ -1,0 +1,18 @@
+Source: otrobopt
+Section: science
+Priority: extra
+Maintainer: Debian Science Maintainers <debian-science-maintainers@lists.alioth.debian.org>
+Uploaders: Christophe Prud'homme <prudhomm@debian.org>, Denis Barbier <barbier@debian.org>
+Build-Depends: debhelper (>= 8), quilt, cmake, gfortran, libopenturns-dev, python-openturns, python-dev, python3-openturns, python3-dev, swig (>= 2.0.9), docbook-to-man, texlive, texlive-latex-extra, poppler-utils
+Standards-Version: 3.9.6
+Homepage: http://trac.openturns.org/
+X-Python-Version: current
+X-Python3-Version: current
+
+Package: otrobopt
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, python-openturns, python3-openturns, python
+Description: openturns module otrobopt
+ Template module for OpenTURNS
+ It provides useful features

@@ -1,0 +1,5 @@
+// MeasureFunction docstrings are defined in MeasureFunctionImplementation_doc.i.in
+
+%feature("docstring") OTROBOPT::MeasureFunction
+OTROBOPT_MeasureFunction_doc
+

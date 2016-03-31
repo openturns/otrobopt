@@ -1,0 +1,11 @@
+%define OTROBOPT_MeasureFunction_doc
+"MeasureFunction class.
+
+Notes
+-----
+Template module class."
+%enddef
+%feature("docstring") OTROBOPT::MeasureFunctionImplementation
+OTROBOPT_MeasureFunction_doc
+
+// ---------------------------------------------------------------------

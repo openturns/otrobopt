@@ -1,0 +1,88 @@
+#!/usr/bin/make -f
+
+$(info DEB_BUILD_OPTIONS:$(origin DEB_BUILD_OPTIONS)=$(DEB_BUILD_OPTIONS))
+
+ifneq (,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
+	NUMJOBS = $(patsubst parallel=%,%,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
+	test_makeflags = -j$(NUMJOBS)
+endif
+
+cppflags := $(shell dpkg-buildflags --get CPPFLAGS)
+cflags := $(shell dpkg-buildflags --get CFLAGS) $(cppflags)
+cxxflags := $(shell dpkg-buildflags --get CXXFLAGS) $(cppflags)
+fflags := $(shell dpkg-buildflags --get FFLAGS)
+ldflags := $(shell dpkg-buildflags --get LDFLAGS)
+ldflags += -Wl,--as-needed
+
+# Explicitly set builddir directory
+builddir := obj-$(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
+
+PYVER = $(shell pyversions -d)
+PY3VER = $(shell py3versions -d)
+PYALL = $(PYVER) $(PY3VER)
+
+%:
+	dh $@ --buildsystem=cmake --with python2,python3 --with quilt --parallel
+
+override_dh_auto_configure: $(PYALL:python%=cmake-configure-%) \
+
+cmake-configure-%:
+	dh_auto_configure -Bbuild-python$* -- \
+            -DUSE_SPHINX=OFF \
+            -DCMAKE_CXX_COMPILER:FILEPATH=/usr/bin/g++ \
+            -DCMAKE_C_COMPILER:FILEPATH=/usr/bin/gcc \
+            -DCMAKE_BUILD_TYPE:STRING=RelWithDebInfo \
+            -DCMAKE_C_FLAGS_RELWITHDEBINFO:STRING='$(cflags)' \
+            -DCMAKE_CXX_FLAGS_RELWITHDEBINFO:STRING='$(cxxflags)' \
+            -DCMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO:STRING='$(ldflags)' \
+            -DCMAKE_SKIP_INSTALL_RPATH:BOOL=ON \
+            -DCMAKE_INSTALL_PREFIX:PATH=/usr \
+            -DINSTALL_DESTDIR:PATH=$(CURDIR)/debian/otrobopt \
+            -DLINK_PYTHON_LIBRARY:BOOL=OFF \
+            -DPYTHON_EXECUTABLE:FILEPATH=/usr/bin/python$* \
+            -DPYTHON_INCLUDE_DIR:PATH=$$(python$*-config --includes | sed -e 's/ .*//' -e 's/^-I//') \
+            -DPYTHON_INCLUDE_DIR2:PATH=$$(python$*-config --includes | sed -e 's/ .*//' -e 's/^-I//') \
+            -DPYTHON_LIBRARY:PATH=$$(python$*-config --ldflags | sed -e 's/ .*//' -e 's/^-L//')/libpython$*.so
+
+override_dh_auto_build: $(PYALL:python%=cmake-build-%)
+
+cmake-build-%:
+	$(MAKE) $(test_makeflags) -C build-python$*
+
+override_dh_auto_install: $(PYALL:python%=cmake-install-%)
+
+cmake-install-%:
+	dh_auto_install -Bbuild-python$*
+ifeq (,$(findstring nocheck,$(DEB_BUILD_OPTIONS)))
+	LD_LIBRARY_PATH=$${LD_LIBRARY_PATH:+$${LD_LIBRARY_PATH}:}$(CURDIR)/debian/otrobopt/usr/lib \
+	  CTEST_OUTPUT_ON_FAILURE=1 \
+	  $(MAKE) $(test_makeflags) -C build-python$* test ARGS="$(test_makeflags) -R pyinstallcheck"
+	find $(CURDIR)/debian/otrobopt -name "*.pyc" -o -name "__pycache__" | xargs rm -rf
+endif
+
+override_dh_makeshlibs:
+	dh_makeshlibs -Xpyshared
+
+override_dh_python2:
+	dh_python2 debian/otrobopt$(shell $(PYVER) -c "from distutils import sysconfig; print(sysconfig.get_python_lib())")
+
+override_dh_python3:
+	dh_python3 debian/otrobopt$(shell $(PY3VER) -c "from distutils import sysconfig; print(sysconfig.get_python_lib())")
+
+override_dh_compress:
+	dh_compress -X.pdf -X.svn -X.py
+
+override_dh_auto_test: $(PYALL:python%=cmake-test-%)
+
+cmake-test-%:
+	# 'make test' does not build binary tests
+ifeq (,$(findstring nocheck,$(DEB_BUILD_OPTIONS)))
+	$(MAKE) $(test_makeflags) -C build-python$* tests
+	LD_LIBRARY_PATH=$${LD_LIBRARY_PATH:+$${LD_LIBRARY_PATH}:}$(CURDIR)/debian/otrobopt/usr/lib \
+	  CTEST_OUTPUT_ON_FAILURE=1 \
+	  $(MAKE) -C build-python$* test ARGS="$(test_makeflags) -R cppcheck"
+endif
+
+get-orig-source:
+	uscan --force-download --verbose
+	mv ../openturn*.tar.[gzbz2]* ../tarballs
