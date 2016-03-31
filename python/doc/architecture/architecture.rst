@@ -4,9 +4,9 @@ Architecture considerations
 Dependencies
 ------------
 
-Several dependecies are needed in order to build the GUI:
+Several dependencies are needed in order to build:
 
- - OpenTURNS >= 1.5
+ - OpenTURNS
  - Sphinx-doc (optional for this doc)
 
 Compilation
@@ -18,7 +18,7 @@ Compilation
     mkdir -p build && cd build
     cmake \
       -DCMAKE_INSTALL_PREFIX=$PWD/install \
-      -DOpenTURNS_DIR=$PWD/../../openturns-1.5/build/install/lib/cmake/openturns \
+      -DOpenTURNS_DIR=$PWD/../../openturns/build/install/lib/cmake/openturns \
       ..
 
 Source code structure
