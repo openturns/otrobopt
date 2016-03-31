@@ -29,3 +29,4 @@ Classes
     :toctree: _generated/
 
     MeasureFunction
+    MeanMeasure

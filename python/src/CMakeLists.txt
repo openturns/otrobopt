@@ -51,6 +51,7 @@ endmacro ( ot_add_python_module )
 ot_add_python_module( ${PACKAGE_NAME} ${PACKAGE_NAME}_module.i 
                       MeasureFunction.i MeasureFunction_doc.i.in
                       MeasureFunctionImplementation.i MeasureFunctionImplementation_doc.i.in
+                      MeanMeasure.i MeanMeasure_doc.i.in
                     )
 
 

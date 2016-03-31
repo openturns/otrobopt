@@ -2,7 +2,7 @@
 /**
  *  @brief MeasureFunction
  *
- *  Copyright 2005-2015 Airbus-EDF-IMACS-Phimeca
+ *  Copyright 2005-2016 Airbus-EDF-IMACS-Phimeca
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -20,7 +20,7 @@
  *
  */
 #include "otrobopt/MeasureFunction.hxx"
-#include "otrobopt/MeasureFunctionImplementation.hxx"
+#include "otrobopt/MeanMeasure.hxx"
 #include <openturns/PersistentObjectFactory.hxx>
 
 using namespace OT;
@@ -32,14 +32,15 @@ CLASSNAMEINIT(MeasureFunction);
 
 /* Default constructor */
 MeasureFunction::MeasureFunction()
-  : TypedInterfaceObject<MeasureFunctionImplementation>(new MeasureFunctionImplementation)
+  : TypedInterfaceObject<MeasureFunctionImplementation>(new MeanMeasure)
 {
   // Nothing to do
 }
 
-NumericalPoint MeasureFunction::square(NumericalPoint& p) const
+/* Evaluation */
+NumericalPoint MeasureFunction::operator()(const NumericalPoint & inP) const
 {
-  return getImplementation()->square(p);
+  return getImplementation()->operator()(inP);
 }
 
 /* String converter */

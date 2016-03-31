@@ -21,5 +21,5 @@
 %include otrobopt/OTRobOptprivate.hxx
 %include MeasureFunctionImplementation.i
 %include MeasureFunction.i
-
+%include MeanMeasure.i
 

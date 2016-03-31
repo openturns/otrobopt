@@ -1,6 +1,6 @@
 //                                               -*- C++ -*-
 /**
- *  @brief MeasureFunction
+ *  @brief MeanMeasure
  *
  *  Copyright 2005-2016 Airbus-EDF-IMACS-Phimeca
  *
@@ -19,34 +19,34 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  *
  */
-#ifndef OTROBOPT_MEASUREFUNCTION_HXX
-#define OTROBOPT_MEASUREFUNCTION_HXX
+#ifndef OTROBOPT_MEANMEASURE_HXX
+#define OTROBOPT_MEANMEASURE_HXX
 
-#include <openturns/TypedInterfaceObject.hxx>
-#include <openturns/StorageManager.hxx>
-#include <openturns/NumericalPoint.hxx>
-#include "otrobopt/OTRobOptprivate.hxx"
+#include "otrobopt/MeasureFunctionImplementation.hxx"
 
 namespace OTROBOPT
 {
 
-/* forward declaration */
-class MeasureFunctionImplementation;
-
 /**
- * @class MeasureFunction
+ * @class MeanMeasure
  *
- * MeasureFunction is some measurefunction type to illustrate how to add some classes in Open TURNS
+ * Mean measure
  */
-class OTROBOPT_API MeasureFunction
-  : public OT::TypedInterfaceObject<MeasureFunctionImplementation>
+class OTROBOPT_API MeanMeasure
+  : public MeasureFunctionImplementation
 {
   CLASSNAME;
 
 public:
-
   /** Default constructor */
-  MeasureFunction();
+  MeanMeasure();
+
+  /** Parameter constructor */
+  MeanMeasure(const OT::Distribution & distribution,
+              const OT::NumericalMathFunction & function);
+
+  /** Virtual constructor method */
+  MeanMeasure * clone() const;
 
   /** Evaluation */
   OT::NumericalPoint operator()(const OT::NumericalPoint & inP) const;
@@ -54,10 +54,17 @@ public:
   /** String converter */
   OT::String __repr__() const;
 
+  /** Method save() stores the object through the StorageManager */
+  virtual void save(OT::Advocate & adv) const;
+
+  /** Method load() reloads the object from the StorageManager */
+  virtual void load(OT::Advocate & adv);
+
 private:
 
-}; /* class MeasureFunction */
+
+}; /* class MeanMeasure */
 
 } /* namespace OTROBOPT */
 
-#endif /* OTROBOPT_MEASUREFUNCTION_HXX */
+#endif /* OTROBOPT_MEANMEASURE_HXX */

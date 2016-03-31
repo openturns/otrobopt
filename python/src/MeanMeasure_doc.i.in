@@ -1,0 +1,24 @@
+%feature("docstring") OTROBOPT::MeanMeasure
+"Mean measure function.
+
+.. math::
+
+    M_{f, \theta}(x) = \int_{\Omega \theta} f(x, \theta) p(\theta) d \theta
+
+Parameters
+----------
+distribution : :class:`~openturns.Distribution`
+    Distribution of parameters
+function : :class:`~openturns.NumericalMathFunction`
+    Parametric function
+
+Examples
+--------
+>>> import openturns as ot
+>>> import otrobopt
+>>> thetaDist = ot.Normal(2.0, 0.1)
+>>> f = ot.NumericalMathFunction(['x1', 'p1'], ['y1'], ['x1*p1'])
+>>> parametric = ot.NumericalMathFunction(f, [1], [0., 1.])
+>>> measure = otrobopt.MeanMeasure(thetaDist, parametric)"
+
+// ---------------------------------------------------------------------

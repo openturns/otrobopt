@@ -2,7 +2,7 @@
 /**
  *  @brief MeasureFunctionImplementation
  *
- *  Copyright 2005-2015 Airbus-EDF-IMACS-Phimeca
+ *  Copyright 2005-2016 Airbus-EDF-IMACS-Phimeca
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -34,10 +34,22 @@ static Factory<MeasureFunctionImplementation> RegisteredFactory;
 
 /* Default constructor */
 MeasureFunctionImplementation::MeasureFunctionImplementation()
-  : PersistentObject()
+  : NumericalMathFunctionImplementation()
 {
   // Nothing to do
 }
+
+MeasureFunctionImplementation::MeasureFunctionImplementation (const Distribution & distribution,
+                                                              const NumericalMathFunction & function)
+  : NumericalMathFunctionImplementation()
+  , distribution_(distribution)
+  , function_(function)
+{
+  if (distribution.getDimension() != function.getParameter().getDimension())
+    throw InvalidDimensionException(HERE) << "Function parameter dimension (" << function.getParameter().getDimension()
+      << ") must match the distribution dimension (" << distribution.getDimension()<<")";
+}
+
 
 /* Virtual constructor method */
 MeasureFunctionImplementation * MeasureFunctionImplementation::clone() const
@@ -45,36 +57,75 @@ MeasureFunctionImplementation * MeasureFunctionImplementation::clone() const
   return new MeasureFunctionImplementation(*this);
 }
 
-/* example of a func that return a point squared. */
-NumericalPoint MeasureFunctionImplementation::square(NumericalPoint& p) const
-{
 
-  NumericalPoint p_out(p.getSize());
-  for(UnsignedInteger i = 0; i < p.getSize(); ++ i)
-  {
-    p_out[i] = p[i] * p[i];
-  }
-  return p_out;
+/* Evaluation */
+NumericalPoint MeasureFunctionImplementation::operator()(const NumericalPoint & inP) const
+{
+  throw NotYetImplementedException(HERE) << "MeasureFunctionImplementation::operator()(const NumericalPoint & inP)";
 }
+
 
 /* String converter */
 String MeasureFunctionImplementation::__repr__() const
 {
   OSS oss;
-  oss << "class=" << MeasureFunctionImplementation::GetClassName();
+  oss << "class=" << MeasureFunctionImplementation::GetClassName()
+      << " distribution="<< distribution_
+      << " function=" << function_;
   return oss;
+}
+
+String MeasureFunctionImplementation::__str__(const String & offset) const
+{
+  OSS oss;
+  oss << offset << __repr__();
+  return oss;
+}
+
+
+/* Distribution accessor */
+void MeasureFunctionImplementation::setDistribution(const Distribution & distribution)
+{
+  distribution_ = distribution;
+}
+
+
+Distribution MeasureFunctionImplementation::getDistribution() const
+{
+  return distribution_;
+}
+
+
+/* Function accessor */
+NumericalMathFunction MeasureFunctionImplementation::getFunction() const
+{
+  return function_;
+}
+
+UnsignedInteger MeasureFunctionImplementation::getInputDimension() const
+{
+  return function_.getInputDimension();
+}
+
+UnsignedInteger MeasureFunctionImplementation::getOutputDimension() const
+{
+  return function_.getOutputDimension();
 }
 
 /* Method save() stores the object through the StorageManager */
 void MeasureFunctionImplementation::save(Advocate & adv) const
 {
-  PersistentObject::save( adv );
+  NumericalMathFunctionImplementation::save(adv);
+  adv.saveAttribute("distribution_", distribution_);
+  adv.saveAttribute("function_", function_);
 }
 
 /* Method load() reloads the object from the StorageManager */
 void MeasureFunctionImplementation::load(Advocate & adv)
 {
-  PersistentObject::load( adv );
+  NumericalMathFunctionImplementation::load(adv);
+  adv.loadAttribute("distribution_", distribution_);
+  adv.loadAttribute("function_", function_);
 }
 
 

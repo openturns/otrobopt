@@ -2,7 +2,7 @@
 /**
  *  @brief MeasureFunctionImplementation
  *
- *  Copyright 2005-2015 Airbus-EDF-IMACS-Phimeca
+ *  Copyright 2005-2016 Airbus-EDF-IMACS-Phimeca
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -22,9 +22,7 @@
 #ifndef OTROBOPT_MEASUREFUNCTIONIMPLEMENTATION_HXX
 #define OTROBOPT_MEASUREFUNCTIONIMPLEMENTATION_HXX
 
-#include <openturns/PersistentObject.hxx>
-#include <openturns/StorageManager.hxx>
-#include <openturns/NumericalPoint.hxx>
+#include <openturns/Distribution.hxx>
 #include "otrobopt/OTRobOptprivate.hxx"
 
 namespace OTROBOPT
@@ -36,7 +34,7 @@ namespace OTROBOPT
  * MeasureFunctionImplementation is some measurefunction type to illustrate how to add some classes in OpenTURNS
  */
 class OTROBOPT_API MeasureFunctionImplementation
-  : public OT::PersistentObject
+  : public OT::NumericalMathFunctionImplementation
 {
   CLASSNAME;
 
@@ -44,14 +42,29 @@ public:
   /** Default constructor */
   MeasureFunctionImplementation();
 
+  /** Parameter constructor */
+  MeasureFunctionImplementation(const OT::Distribution & distribution,
+                                const OT::NumericalMathFunction & function);
+
   /** Virtual constructor method */
   MeasureFunctionImplementation * clone() const;
 
-  /** example of a func that return a point squared. **/
-  OT::NumericalPoint square(OT::NumericalPoint& p) const;
+  /** Evaluation */
+  virtual OT::NumericalPoint operator()(const OT::NumericalPoint & inP) const;
+
+  /** Distribution accessor */
+  void setDistribution(const OT::Distribution & distribution);
+  OT::Distribution getDistribution() const;
+
+  /** Function accessor */
+  OT::NumericalMathFunction getFunction() const;
+
+  virtual OT::UnsignedInteger getInputDimension() const;
+  virtual OT::UnsignedInteger getOutputDimension() const;
 
   /** String converter */
-  OT::String __repr__() const;
+  virtual OT::String __repr__() const;
+  virtual OT::String __str__(const OT::String & offset = "") const;
 
   /** Method save() stores the object through the StorageManager */
   virtual void save(OT::Advocate & adv) const;
@@ -60,6 +73,8 @@ public:
   virtual void load(OT::Advocate & adv);
 
 private:
+  OT::Distribution distribution_;
+  OT::NumericalMathFunction function_;
 
 }; /* class MeasureFunctionImplementation */
 

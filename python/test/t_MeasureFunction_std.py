@@ -7,8 +7,12 @@ import otrobopt
 a = otrobopt.MeasureFunction()
 print(a)
 
-p = ot.NumericalPoint([2, 3])
-print(p)
+thetaDist = ot.Normal(2, 0.1)
+f = ot.NumericalMathFunction(['x1', 'p1'], ['y1'], ['x1*p1'])
+parametric = ot.NumericalMathFunction(f, [1], [0., 1.])
 
-squared_p = a.square(p)
-print(squared_p)
+x = [1.0]
+
+meanMeasure = otrobopt.MeanMeasure(thetaDist, parametric)
+print(meanMeasure(x))
+
