@@ -1,7 +1,6 @@
 // SWIG file
 
 %module(docstring="otrobopt module") otrobopt
-%feature("autodoc","1");
 
 %{
 #include <openturns/OT.hxx>
@@ -27,4 +26,4 @@
 %include QuantileMeasure.i
 %include WorstCaseMeasure.i
 %include MeasureFactory.i
-
+%include RobustOptimizationProblem.i

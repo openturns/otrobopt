@@ -10,6 +10,7 @@ ot_add_source_file (MeanStandardDeviationTradeoffMeasure.cxx)
 ot_add_source_file (QuantileMeasure.cxx)
 ot_add_source_file (WorstCaseMeasure.cxx)
 ot_add_source_file (MeasureFactory.cxx)
+ot_add_source_file (RobustOptimizationProblem.cxx)
 
 ot_install_header_file (MeasureFunction.hxx)
 ot_install_header_file (MeasureFunctionImplementation.hxx)

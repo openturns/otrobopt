@@ -35,3 +35,4 @@ Classes
     QuantileMeasure
     WorstCaseMeasure
     MeasureFactory
+    RobustOptimizationProblem

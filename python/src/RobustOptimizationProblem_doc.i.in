@@ -1,0 +1,85 @@
+%feature("docstring") OTROBOPT::RobustOptimizationProblem
+"Robust optimization problem.
+
+Parameters
+----------
+robustnessMeasure : :class:`~otrobopt.MeasureFunction`
+    Measure function on the objective.
+reliabilityMeasure : :class:`~otrobopt.MeasureFunction`
+    Mesure function on the constraints"
+
+// ---------------------------------------------------------------------
+
+%feature("docstring") OTROBOPT::RobustOptimizationProblem::setRobustnessMeasure
+"Robustness measure accessor.
+
+The measure on associated to the objective function
+
+Parameters
+----------
+robustnessMeasure : :class:`~otrobopt.MeasureFunction`
+    Measure function on the objective."
+
+// ---------------------------------------------------------------------
+
+%feature("docstring") OTROBOPT::RobustOptimizationProblem::getRobustnessMeasure
+"Robustness measure accessor.
+
+The measure on associated to the objective function
+
+Returns
+-------
+robustnessMeasure : :class:`~otrobopt.MeasureFunction`
+    Measure function on the objective."
+
+// ---------------------------------------------------------------------
+
+%feature("docstring") OTROBOPT::RobustOptimizationProblem::hasRobustnessMeasure
+"Robustness measure flag accessor.
+
+If no robustness measure was set, the problem should have a
+reliability measure.
+The objective is deduced from the robustness measure.
+
+Returns
+-------
+hasReliabilityMeasure : bool
+    Whether a robustness measure was set"
+
+// ---------------------------------------------------------------------
+
+%feature("docstring") OTROBOPT::RobustOptimizationProblem::setReliabilityMeasure
+"Reliability measure accessor.
+
+The measure on associated to the constraint
+
+Parameters
+----------
+reliabilityMeasure : :class:`~otrobopt.MeasureFunction`
+    Mesure function on the constraints"
+
+// ---------------------------------------------------------------------
+
+%feature("docstring") OTROBOPT::RobustOptimizationProblem::getReliabilityMeasure
+"Reliability measure accessor.
+
+The measure on associated to the constraint
+
+Returns
+-------
+reliabilityMeasure : :class:`~otrobopt.MeasureFunction`
+    Mesure function on the constraints"
+
+// ---------------------------------------------------------------------
+
+%feature("docstring") OTROBOPT::RobustOptimizationProblem::hasReliabilityMeasure
+"Reliability measure flag accessor.
+
+If no reliability measure was set, the problem should have a
+robustness measure.
+The constraints are deduced from the reliability measure.
+
+Returns
+-------
+hasReliabilityMeasure : bool
+    Whether a reliability measure was set"
