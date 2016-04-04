@@ -1,6 +1,6 @@
 //                                               -*- C++ -*-
 /**
- *  @brief VarianceMeasure
+ *  @brief QuantileMeasure
  *
  *  Copyright 2005-2016 Airbus-EDF-IMACS-Phimeca
  *
@@ -19,8 +19,8 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  *
  */
-#ifndef OTROBOPT_VARIANCEMEASURE_HXX
-#define OTROBOPT_VARIANCEMEASURE_HXX
+#ifndef OTROBOPT_QUANTILEMEASURE_HXX
+#define OTROBOPT_QUANTILEMEASURE_HXX
 
 #include "otrobopt/MeasureFunctionImplementation.hxx"
 
@@ -28,28 +28,33 @@ namespace OTROBOPT
 {
 
 /**
- * @class VarianceMeasure
+ * @class QuantileMeasure
  *
  * Mean measure
  */
-class OTROBOPT_API VarianceMeasure
+class OTROBOPT_API QuantileMeasure
   : public MeasureFunctionImplementation
 {
   CLASSNAME;
 
 public:
   /** Default constructor */
-  VarianceMeasure();
+  QuantileMeasure();
 
   /** Parameter constructor */
-  VarianceMeasure(const OT::Distribution & distribution,
-                  const OT::NumericalMathFunction & function);
+  QuantileMeasure(const OT::Distribution & distribution,
+                  const OT::NumericalMathFunction & function,
+                  const OT::NumericalScalar alpha);
 
   /** Virtual constructor method */
-  VarianceMeasure * clone() const;
+  QuantileMeasure * clone() const;
 
   /** Evaluation */
   OT::NumericalPoint operator()(const OT::NumericalPoint & inP) const;
+
+  /** Alpha coefficient accessor */
+  void setAlpha(const OT::NumericalScalar alpha);
+  OT::NumericalScalar getAlpha() const;
 
   /** String converter */
   OT::String __repr__() const;
@@ -61,10 +66,10 @@ public:
   virtual void load(OT::Advocate & adv);
 
 private:
+  OT::NumericalScalar alpha_;
 
-
-}; /* class VarianceMeasure */
+}; /* class QuantileMeasure */
 
 } /* namespace OTROBOPT */
 
-#endif /* OTROBOPT_VARIANCEMEASURE_HXX */
+#endif /* OTROBOPT_QUANTILEMEASURE_HXX */

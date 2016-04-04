@@ -1,0 +1,35 @@
+%feature("docstring") OTROBOPT::QuantileMeasure
+"Quantile measure function.
+
+.. math::
+
+    M_{f, \theta}(x) = s \text{~with~} \mathbb{P}(f(x, \theta) <= s) = \alpha
+
+Parameters
+----------
+distribution : :class:`~openturns.Distribution`
+    Distribution of parameters
+function : :class:`~openturns.NumericalMathFunction`
+    Parametric function
+alpha : float, in :math:`(0,1)`
+    Quantile level"
+
+// ---------------------------------------------------------------------
+
+%feature("docstring") OTROBOPT::QuantileMeasure::setAlpha
+"Quantile level accessor.
+
+Parameters
+----------
+alpha : float
+    Quantile level"
+
+// ---------------------------------------------------------------------
+
+%feature("docstring") OTROBOPT::QuantileMeasure::getAlpha
+"Quantile level accessor.
+
+Returns
+-------
+alpha : float
+    Quantile level"

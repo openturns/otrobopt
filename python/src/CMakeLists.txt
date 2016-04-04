@@ -53,6 +53,7 @@ ot_add_python_module( ${PACKAGE_NAME} ${PACKAGE_NAME}_module.i
                       MeasureFunctionImplementation.i MeasureFunctionImplementation_doc.i.in
                       MeanMeasure.i MeanMeasure_doc.i.in
                       VarianceMeasure.i VarianceMeasure_doc.i.in
+                      QuantileMeasure.i QuantileMeasure_doc.i.in
                       MeasureFactory.i MeasureFactory_doc.i.in
                     )
 

@@ -23,5 +23,6 @@
 %include MeasureFunction.i
 %include MeanMeasure.i
 %include VarianceMeasure.i
+%include QuantileMeasure.i
 %include MeasureFactory.i
 

@@ -42,8 +42,8 @@ VarianceMeasure::VarianceMeasure()
 }
 
 /* Parameter constructor */
-VarianceMeasure::VarianceMeasure (const OT::Distribution & distribution,
-                                  const OT::NumericalMathFunction & function)
+VarianceMeasure::VarianceMeasure (const Distribution & distribution,
+                                  const NumericalMathFunction & function)
   : MeasureFunctionImplementation(distribution, function)
 
 {
