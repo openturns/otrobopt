@@ -37,10 +37,41 @@ MeasureFunction::MeasureFunction()
   // Nothing to do
 }
 
+/* Default constructor */
+MeasureFunction::MeasureFunction(const MeasureFunctionImplementation & implementation)
+: TypedInterfaceObject<MeasureFunctionImplementation>(implementation.clone())
+{
+  // Nothing to do
+}
+
 /* Evaluation */
 NumericalPoint MeasureFunction::operator()(const NumericalPoint & inP) const
 {
   return getImplementation()->operator()(inP);
+}
+
+/* Distribution accessor */
+void MeasureFunction::setDistribution(const Distribution & distribution)
+{
+  copyOnWrite();
+  getImplementation()->setDistribution(distribution);
+}
+
+Distribution MeasureFunction::getDistribution() const
+{
+  return getImplementation()->getDistribution();
+}
+
+/* Function accessor */
+void MeasureFunction::setFunction(const NumericalMathFunction & function)
+{
+  copyOnWrite();
+  getImplementation()->setFunction(function);
+}
+
+NumericalMathFunction MeasureFunction::getFunction() const
+{
+  return getImplementation()->getFunction();
 }
 
 /* String converter */

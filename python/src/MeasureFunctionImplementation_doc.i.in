@@ -1,5 +1,5 @@
 %define OTROBOPT_MeasureFunction_doc
-"MeasureFunction class.
+"MeasureFunction base class.
 
 Base class for measure functions."
 %enddef
@@ -7,3 +7,53 @@ Base class for measure functions."
 OTROBOPT_MeasureFunction_doc
 
 // ---------------------------------------------------------------------
+
+%define OTROBOPT_MeasureFunction_setDistribution_doc
+"Distribution accessor.
+
+Parameters
+----------
+distribution : :class:`~openturns.Distribution`
+    Parameters distribution."
+%enddef
+%feature("docstring") OTROBOPT::MeasureFunctionImplementation::setDistribution
+OTROBOPT_MeasureFunction_setDistribution_doc
+
+// ---------------------------------------------------------------------
+
+%define OTROBOPT_MeasureFunction_getDistribution_doc
+"Distribution accessor.
+
+Returns
+-------
+distribution : :class:`~openturns.Distribution`
+    Parameters distribution."
+%enddef
+%feature("docstring") OTROBOPT::MeasureFunctionImplementation::getDistribution
+OTROBOPT_MeasureFunction_getDistribution_doc
+
+// ---------------------------------------------------------------------
+
+%define OTROBOPT_MeasureFunction_setFunction_doc
+"Function accessor.
+
+Parameters
+----------
+distribution : :class:`~openturns.NumericalMathFunction`
+    Parameters distribution."
+%enddef
+%feature("docstring") OTROBOPT::MeasureFunctionImplementation::setFunction
+OTROBOPT_MeasureFunction_setFunction_doc
+
+// ---------------------------------------------------------------------
+
+%define OTROBOPT_MeasureFunction_getFunction_doc
+"Function accessor.
+
+Returns
+-------
+distribution : :class:`~openturns.NumericalMathFunction`
+    Parameters distribution."
+%enddef
+%feature("docstring") OTROBOPT::MeasureFunctionImplementation::getFunction
+OTROBOPT_MeasureFunction_getFunction_doc

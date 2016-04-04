@@ -31,3 +31,4 @@ Classes
     MeasureFunction
     MeanMeasure
     VarianceMeasure
+    MeasureFactory

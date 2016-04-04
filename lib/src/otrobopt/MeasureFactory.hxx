@@ -1,6 +1,6 @@
 //                                               -*- C++ -*-
 /**
- *  @brief MeasureFunction
+ *  @brief MeasureFactory
  *
  *  Copyright 2005-2016 Airbus-EDF-IMACS-Phimeca
  *
@@ -19,57 +19,56 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  *
  */
-#ifndef OTROBOPT_MEASUREFUNCTION_HXX
-#define OTROBOPT_MEASUREFUNCTION_HXX
+#ifndef OTROBOPT_MEASUREFACTORY_HXX
+#define OTROBOPT_MEASUREFACTORY_HXX
 
-#include <openturns/TypedInterfaceObject.hxx>
-#include <openturns/StorageManager.hxx>
-#include <openturns/NumericalPoint.hxx>
 #include <openturns/Distribution.hxx>
+#include <openturns/Experiment.hxx>
 
-#include "otrobopt/OTRobOptprivate.hxx"
+#include "otrobopt/MeasureFunction.hxx"
 
 namespace OTROBOPT
 {
 
-/* forward declaration */
-class MeasureFunctionImplementation;
-
 /**
- * @class MeasureFunction
+ * @class MeasureFactory
  *
- * MeasureFunction is some measurefunction type to illustrate how to add some classes in Open TURNS
+ * Mean measure
  */
-class OTROBOPT_API MeasureFunction
-  : public OT::TypedInterfaceObject<MeasureFunctionImplementation>
+class OTROBOPT_API MeasureFactory
+  : public OT::PersistentObject
 {
   CLASSNAME;
 
 public:
-
   /** Default constructor */
-  MeasureFunction();
+  MeasureFactory();
 
-  MeasureFunction(const MeasureFunctionImplementation & implementation);
+  /** Parameter constructor */
+  MeasureFactory (const MeasureFunction & measure,
+                  const OT::Experiment & experiment);
 
-  /** Distribution accessor */
-  void setDistribution(const OT::Distribution & distribution);
-  OT::Distribution getDistribution() const;
-
-  /** Function accessor */
-  void setFunction(const OT::NumericalMathFunction & function);
-  OT::NumericalMathFunction getFunction() const;
+  /** Virtual constructor method */
+  MeasureFactory * clone() const;
 
   /** Evaluation */
-  OT::NumericalPoint operator()(const OT::NumericalPoint & inP) const;
+  MeasureFunction build() const;
 
   /** String converter */
   OT::String __repr__() const;
 
-private:
+  /** Method save() stores the object through the StorageManager */
+  virtual void save(OT::Advocate & adv) const;
 
-}; /* class MeasureFunction */
+  /** Method load() reloads the object from the StorageManager */
+  virtual void load(OT::Advocate & adv);
+
+private:
+  MeasureFunction measure_;
+  OT::Experiment experiment_;
+
+}; /* class MeasureFactory */
 
 } /* namespace OTROBOPT */
 
-#endif /* OTROBOPT_MEASUREFUNCTION_HXX */
+#endif /* OTROBOPT_MEASUREFACTORY_HXX */

@@ -22,8 +22,9 @@
 #ifndef OTROBOPT_MEASUREFUNCTIONIMPLEMENTATION_HXX
 #define OTROBOPT_MEASUREFUNCTIONIMPLEMENTATION_HXX
 
-#include <openturns/Distribution.hxx>
 #include "otrobopt/OTRobOptprivate.hxx"
+
+#include <openturns/Distribution.hxx>
 
 namespace OTROBOPT
 {
@@ -52,13 +53,18 @@ public:
   /** Evaluation */
   virtual OT::NumericalPoint operator()(const OT::NumericalPoint & inP) const;
 
+  /** Method gradient() returns the Jacobian transposed matrix of the function at point */
+  virtual OT::Matrix gradient(const OT::NumericalPoint & inP) const;
+
   /** Distribution accessor */
   void setDistribution(const OT::Distribution & distribution);
   OT::Distribution getDistribution() const;
 
   /** Function accessor */
+  void setFunction(const OT::NumericalMathFunction & function);
   OT::NumericalMathFunction getFunction() const;
 
+  /** Dimension accessor */
   virtual OT::UnsignedInteger getInputDimension() const;
   virtual OT::UnsignedInteger getOutputDimension() const;
 

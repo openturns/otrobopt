@@ -7,15 +7,20 @@ import otrobopt
 a = otrobopt.MeasureFunction()
 print(a)
 
-thetaDist = ot.Normal(2, 0.1)
+thetaDist = ot.Normal(2.0, 0.1)
 f = ot.NumericalMathFunction(['x1', 'p1'], ['y1'], ['x1*p1'])
 parametric = ot.NumericalMathFunction(f, [1], [0., 1.])
 
 x = [1.0]
 
-meanMeasure = otrobopt.MeanMeasure(thetaDist, parametric)
-print(meanMeasure, meanMeasure(x))
+measures = [otrobopt.MeanMeasure(thetaDist, parametric),
+            otrobopt.VarianceMeasure(thetaDist, parametric)]
 
-varianceMeasure = otrobopt.VarianceMeasure(thetaDist, parametric)
-print(varianceMeasure, varianceMeasure(x))
+for measure in measures:
+    print(measure, '(continuous)', measure(x))
+    N = 1000
+    experiment = ot.LHSExperiment(thetaDist, N)
+    factory = otrobopt.MeasureFactory(measure, experiment)
+    discretizedMeasure = factory.build()
+    print(discretizedMeasure, '(discretized)', discretizedMeasure(x))
 

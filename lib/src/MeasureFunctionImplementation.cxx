@@ -65,6 +65,31 @@ NumericalPoint MeasureFunctionImplementation::operator()(const NumericalPoint & 
 }
 
 
+/* Method gradient() returns the Jacobian transposed matrix of the function at point */
+Matrix MeasureFunctionImplementation::gradient(const NumericalPoint & inP) const
+{
+  const UnsignedInteger dimension = getInputDimension();
+  const UnsignedInteger outputDimension = getOutputDimension();
+  const NumericalScalar h = ResourceMap::GetAsNumericalScalar("NonCenteredFiniteDifferenceGradient-DefaultEpsilon");
+
+  NumericalSample inS(dimension + 1, inP);
+  for (UnsignedInteger j = 0; j < dimension; ++ j)
+    inS[1 + j][j] += h;
+
+  NumericalSample outS(dimension + 1, outputDimension);
+  for (UnsignedInteger i = 0; i < dimension + 1; ++ i)
+    outS[i] = operator()(inS[i]);
+
+  Matrix gradient(dimension, outputDimension);
+  for (UnsignedInteger i = 0; i < dimension; ++ i)
+    for (UnsignedInteger j = 0; j < outputDimension; ++ j)
+      gradient(i, j) = (outS[i + 1][j] - outS[0][j]) / h;
+
+  return gradient;
+}
+
+
+
 /* String converter */
 String MeasureFunctionImplementation::__repr__() const
 {
@@ -97,10 +122,16 @@ Distribution MeasureFunctionImplementation::getDistribution() const
 
 
 /* Function accessor */
+void MeasureFunctionImplementation::setFunction(const NumericalMathFunction & function)
+{
+  function_ = function;
+}
+
 NumericalMathFunction MeasureFunctionImplementation::getFunction() const
 {
   return function_;
 }
+
 
 UnsignedInteger MeasureFunctionImplementation::getInputDimension() const
 {

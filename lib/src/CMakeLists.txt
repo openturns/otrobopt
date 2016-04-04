@@ -6,11 +6,18 @@ ot_add_source_file (MeasureFunction.cxx)
 ot_add_source_file (MeasureFunctionImplementation.cxx)
 ot_add_source_file (MeanMeasure.cxx)
 ot_add_source_file (VarianceMeasure.cxx)
+ot_add_source_file (MeasureFactory.cxx)
 
 ot_install_header_file (MeasureFunction.hxx)
 ot_install_header_file (MeasureFunctionImplementation.hxx)
 ot_install_header_file (MeanMeasure.hxx)
 ot_install_header_file (VarianceMeasure.hxx)
+ot_install_header_file (MeanStandardDeviationTradeoffMeasure.hxx)
+ot_install_header_file (QuantileMeasure.hxx)
+ot_install_header_file (WorstCaseMeasure.hxx)
+ot_install_header_file (AggregatedMeasure.hxx)
+ot_install_header_file (MeasureFactory.hxx)
+ot_install_header_file (RobustOptimizationProblem.hxx)
 
 
 include_directories ( ${INTERNAL_INCLUDE_DIRS} )

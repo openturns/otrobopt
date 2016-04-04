@@ -1,0 +1,53 @@
+%feature("docstring") OTROBOPT::MeasureFactory
+"Discretize a measure function.
+
+It consists in sampling the distribution of the parameter :math:`\theta`.
+
+For example to discretize the mean measure:
+
+.. math::
+
+    M_{f, \theta}(x) = \int_{\Omega \theta} f(x, \theta) p(\theta) d \theta
+
+
+we sample :math:`\hat{\theta} = (\theta_1, \dots, \theta_N)` then the measure writes
+
+.. math::
+
+    \hat{M}_{f, \hat{\theta}}(x) = \frac{1}{N} \sum_{i=1}^N f(x, \theta_i)
+
+Parameters
+----------
+measure : :class:`~otrobopt.MeasureFunction`
+    Measure function
+experiment : :class:`~openturns.Experiment`
+    Parameters design of experiment
+
+Examples
+--------
+First define a measure:
+
+>>> import openturns as ot
+>>> import otrobopt
+>>> thetaDist = ot.Normal(2.0, 0.1)
+>>> f = ot.NumericalMathFunction(['x1', 'p1'], ['y1'], ['x1*p1'])
+>>> parametric = ot.NumericalMathFunction(f, [1], [0., 1.])
+>>> measure = otrobopt.MeanMeasure(thetaDist, parametric)
+
+
+Then discretize it:
+
+>>> N = 10
+>>> experiment = ot.LHSExperiment(thetaDist, N)
+>>> factory = otrobopt.MeasureFactory(measure, experiment)
+>>> discretizedMeasure = factory.build()"
+
+// ---------------------------------------------------------------------
+
+%feature("docstring") OTROBOPT::MeasureFactory::build
+"Discretize a measure.
+
+Returns
+-------
+measure : :class:`~otrobopt.MeasureFunction`
+    Discretized measure function"

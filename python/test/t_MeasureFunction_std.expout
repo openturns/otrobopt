@@ -1,3 +1,5 @@
 class=MeanMeasure
-class=MeanMeasure [2]
-class=VarianceMeasure [0.195107]
+class=MeanMeasure (continuous) [2]
+class=MeanMeasure (discretized) [2]
+class=VarianceMeasure (continuous) [0.195107]
+class=VarianceMeasure (discretized) [0.0100143]
