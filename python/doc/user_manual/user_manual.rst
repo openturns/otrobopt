@@ -33,4 +33,5 @@ Classes
     VarianceMeasure
     MeanStandardDeviationTradeoffMeasure
     QuantileMeasure
+    WorstCaseMeasure
     MeasureFactory

@@ -8,6 +8,7 @@ ot_add_source_file (MeanMeasure.cxx)
 ot_add_source_file (VarianceMeasure.cxx)
 ot_add_source_file (MeanStandardDeviationTradeoffMeasure.cxx)
 ot_add_source_file (QuantileMeasure.cxx)
+ot_add_source_file (WorstCaseMeasure.cxx)
 ot_add_source_file (MeasureFactory.cxx)
 
 ot_install_header_file (MeasureFunction.hxx)

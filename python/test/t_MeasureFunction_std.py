@@ -14,7 +14,10 @@ parametric = ot.NumericalMathFunction(f, [1], [0., 1.])
 x = [1.0]
 
 measures = [otrobopt.MeanMeasure(thetaDist, parametric),
-            otrobopt.VarianceMeasure(thetaDist, parametric)]
+            otrobopt.VarianceMeasure(thetaDist, parametric),
+            otrobopt.WorstCaseMeasure(thetaDist, parametric),
+            otrobopt.WorstCaseMeasure(thetaDist, parametric, False)
+            ]
 
 for measure in measures:
     print(measure, '(continuous)', measure(x))

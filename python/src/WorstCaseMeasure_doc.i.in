@@ -1,0 +1,55 @@
+%feature("docstring") OTROBOPT::WorstCaseMeasure
+"Worst case measure function.
+
+.. math::
+
+    M_{f, \theta}(x) = Inf_{\Omega \theta} f(x, \theta)
+
+Parameters
+----------
+distribution : :class:`~openturns.Distribution`
+    Distribution of parameters
+function : :class:`~openturns.NumericalMathFunction`
+    Parametric function
+isMinimization : bool (optional, defaults to `True`)
+    Whether the worst case is the minimization of the criteria"
+
+// ---------------------------------------------------------------------
+
+%feature("docstring") OTROBOPT::WorstCaseMeasure::setMinimization
+"Minimization flag accessor.
+
+Parameters
+----------
+minimization : bool
+    Whether the problem is a minimization."
+
+// ---------------------------------------------------------------------
+
+%feature("docstring") OTROBOPT::WorstCaseMeasure::isMinimization
+"Minimization flag accessor.
+
+Returns
+-------
+minimization : bool
+    Whether the problem is a minimization."
+
+// ---------------------------------------------------------------------
+
+%feature("docstring") OTROBOPT::WorstCaseMeasure::setOptimizationSolver
+"Optimization solver accessor.
+
+Parameters
+----------
+solver : :class:`~openturns.OptimizationSolver`
+    Optimization solver"
+
+// ---------------------------------------------------------------------
+
+%feature("docstring") OTROBOPT::WorstCaseMeasure::getOptimizationSolver
+"Optimization solver accessor.
+
+Returns
+-------
+solver : :class:`~openturns.OptimizationSolver`
+    Optimization solver"

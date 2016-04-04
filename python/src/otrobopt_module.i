@@ -25,5 +25,6 @@
 %include VarianceMeasure.i
 %include MeanStandardDeviationTradeoffMeasure.i
 %include QuantileMeasure.i
+%include WorstCaseMeasure.i
 %include MeasureFactory.i
 
