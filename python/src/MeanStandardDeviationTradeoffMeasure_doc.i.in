@@ -1,0 +1,49 @@
+%feature("docstring") OTROBOPT::MeanStandardDeviationTradeoffMeasure
+"Mean/variance tradeoff measure function.
+
+.. math::
+
+    \mu = \int_{\Omega \theta} f(x, \theta) p(\theta) d \theta
+
+    Var = \int_{\Omega \theta} f(x, \theta)^2 p(\theta) d \theta - \mu^2
+
+    M_{f, \theta}(x) = (1-\alpha) \mu + \alpha \sqrt{var}
+
+
+Parameters
+----------
+distribution : :class:`~openturns.Distribution`
+    Distribution of parameters
+function : :class:`~openturns.NumericalMathFunction`
+    Parametric function
+alpha : float in :math:`(0,1)`
+    Tradeoff coefficient
+
+Examples
+--------
+>>> import openturns as ot
+>>> import otrobopt
+>>> thetaDist = ot.Normal(2.0, 0.1)
+>>> f = ot.NumericalMathFunction(['x1', 'p1'], ['y1'], ['x1*p1'])
+>>> parametric = ot.NumericalMathFunction(f, [1], [0., 1.])
+>>> measure = otrobopt.MeanStandardDeviationTradeoffMeasure(thetaDist, parametric, 0.4)"
+
+// ---------------------------------------------------------------------
+
+%feature("docstring") OTROBOPT::MeanStandardDeviationTradeoffMeasure::setAlpha
+"Tradeoff coefficient accessor.
+
+Parameters
+----------
+alpha : float in :math:`(0,1)`
+    Tradeoff coefficient"
+
+// ---------------------------------------------------------------------
+
+%feature("docstring") OTROBOPT::MeanStandardDeviationTradeoffMeasure::getAlpha
+"Tradeoff coefficient accessor.
+
+Returns
+-------
+alpha : float in :math:`(0,1)`
+    Tradeoff coefficient"

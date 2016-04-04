@@ -31,5 +31,6 @@ Classes
     MeasureFunction
     MeanMeasure
     VarianceMeasure
+    MeanStandardDeviationTradeoffMeasure
     QuantileMeasure
     MeasureFactory

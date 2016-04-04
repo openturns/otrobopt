@@ -6,6 +6,7 @@ ot_add_source_file (MeasureFunction.cxx)
 ot_add_source_file (MeasureFunctionImplementation.cxx)
 ot_add_source_file (MeanMeasure.cxx)
 ot_add_source_file (VarianceMeasure.cxx)
+ot_add_source_file (MeanStandardDeviationTradeoffMeasure.cxx)
 ot_add_source_file (QuantileMeasure.cxx)
 ot_add_source_file (MeasureFactory.cxx)
 
