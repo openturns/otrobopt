@@ -1,6 +1,6 @@
 //                                               -*- C++ -*-
 /**
- *  @brief MeanMeasure
+ *  @brief VarianceMeasure
  *
  *  Copyright 2005-2016 Airbus-EDF-IMACS-Phimeca
  *
@@ -19,7 +19,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  *
  */
-#include "otrobopt/MeanMeasure.hxx"
+#include "otrobopt/VarianceMeasure.hxx"
 #include <openturns/PersistentObjectFactory.hxx>
 #include <openturns/GaussKronrod.hxx>
 #include <openturns/IteratedQuadrature.hxx>
@@ -29,21 +29,21 @@ using namespace OT;
 namespace OTROBOPT
 {
 
-CLASSNAMEINIT(MeanMeasure);
+CLASSNAMEINIT(VarianceMeasure);
 
-static Factory<MeanMeasure> RegisteredFactory;
+static Factory<VarianceMeasure> RegisteredFactory;
 
 
 /* Default constructor */
-MeanMeasure::MeanMeasure()
+VarianceMeasure::VarianceMeasure()
   : MeasureFunctionImplementation()
 {
   // Nothing to do
 }
 
 /* Parameter constructor */
-MeanMeasure::MeanMeasure (const Distribution & distribution,
-                          const NumericalMathFunction & function)
+VarianceMeasure::VarianceMeasure (const OT::Distribution & distribution,
+                                  const OT::NumericalMathFunction & function)
   : MeasureFunctionImplementation(distribution, function)
 
 {
@@ -51,39 +51,46 @@ MeanMeasure::MeanMeasure (const Distribution & distribution,
 }
 
 /* Virtual constructor method */
-MeanMeasure * MeanMeasure::clone() const
+VarianceMeasure * VarianceMeasure::clone() const
 {
-  return new MeanMeasure(*this);
+  return new VarianceMeasure(*this);
 }
 
 
-class MeanMeasureParametricFunctionWrapper : public NumericalMathFunctionImplementation
+class VarianceMeasureParametricFunctionWrapper : public NumericalMathFunctionImplementation
 {
 public:
-  MeanMeasureParametricFunctionWrapper (const NumericalPoint & x,
-                                        const NumericalMathFunction & function,
-                                        const Distribution & distribution)
+  VarianceMeasureParametricFunctionWrapper (const NumericalPoint & x,
+                                            const NumericalMathFunction & function,
+                                            const Distribution & distribution)
   : NumericalMathFunctionImplementation()
   , x_(x)
   , function_(function)
   , distribution_(distribution)
   {}
 
-  virtual MeanMeasureParametricFunctionWrapper * clone() const
+  virtual VarianceMeasureParametricFunctionWrapper * clone() const
   {
-    return new MeanMeasureParametricFunctionWrapper(*this);
+    return new VarianceMeasureParametricFunctionWrapper(*this);
   }
 
   NumericalPoint operator()(const NumericalPoint & theta) const
   {
     NumericalMathFunction function(function_);
-    return function(x_, theta) * distribution_.computePDF(theta);
+    // (f(x), f(x)^2)
+    NumericalPoint outP(function(x_, theta));
+    outP.add(outP);
+    for (UnsignedInteger j = 0; j < function.getOutputDimension(); ++ j)
+    {
+      outP[2 * j + 1] *= outP[2 * j + 1];
+    }
+    return outP * distribution_.computePDF(theta);
   }
 
   NumericalSample operator()(const NumericalSample & theta) const
   {
     const UnsignedInteger size = theta.getSize();
-    NumericalSample outS(size, function_.getOutputDimension());
+    NumericalSample outS(size, getOutputDimension());
     for (UnsignedInteger i = 0; i < size; ++ i)
     {
       outS[i] = operator()(theta[i]);
@@ -98,7 +105,7 @@ public:
 
   UnsignedInteger getOutputDimension() const
   {
-    return function_.getOutputDimension();
+    return 2 * function_.getOutputDimension();
   }
 
 protected:
@@ -109,7 +116,7 @@ protected:
 
 
 /* Evaluation */
-NumericalPoint MeanMeasure::operator()(const NumericalPoint & inP) const
+NumericalPoint VarianceMeasure::operator()(const NumericalPoint & inP) const
 {
   NumericalMathFunction function(getFunction());
   NumericalPoint parameter(function.getParameter());
@@ -120,39 +127,43 @@ NumericalPoint MeanMeasure::operator()(const NumericalPoint & inP) const
     GaussKronrod gkr;
     gkr.setRule(GaussKronrodRule::G1K3);
     IteratedQuadrature algo(gkr);
-    Pointer<NumericalMathFunctionImplementation> p_wrapper(new MeanMeasureParametricFunctionWrapper(inP, function, getDistribution()));
+    Pointer<NumericalMathFunctionImplementation> p_wrapper(new VarianceMeasureParametricFunctionWrapper(inP, function, getDistribution()));
     NumericalMathFunction G(p_wrapper);
-    outP = algo.integrate(G, getDistribution().getRange()) * 1.0 / getDistribution().getRange().getVolume();
+    NumericalPoint integral(algo.integrate(G, getDistribution().getRange()));
+    // Var(f(x))=\mathbb{E}(f^2(x))-\mathbb{E}(f(x))^2
+    outP[0] = integral[1] - integral[0] * integral[0];
   }
   else
   {
     NumericalSample support(getDistribution().getSupport());
     const UnsignedInteger size = support.getSize();
+    NumericalSample y(size, outputDimension);
     for (UnsignedInteger i = 0; i < size; ++ i)
     {
-      outP += 1.0 / size * function(inP, support[i]);
+      y[i] = function(inP, support[i]);
     }
+    outP = y.computeVariance();
   }
   function.setParameter(parameter);
   return outP;
 }
 
 /* String converter */
-String MeanMeasure::__repr__() const
+String VarianceMeasure::__repr__() const
 {
   OSS oss;
-  oss << "class=" << MeanMeasure::GetClassName();
+  oss << "class=" << VarianceMeasure::GetClassName();
   return oss;
 }
 
 /* Method save() stores the object through the StorageManager */
-void MeanMeasure::save(Advocate & adv) const
+void VarianceMeasure::save(Advocate & adv) const
 {
   MeasureFunctionImplementation::save(adv);
 }
 
 /* Method load() reloads the object from the StorageManager */
-void MeanMeasure::load(Advocate & adv)
+void VarianceMeasure::load(Advocate & adv)
 {
   MeasureFunctionImplementation::load(adv);
 }

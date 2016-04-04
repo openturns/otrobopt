@@ -1,9 +1,7 @@
 %define OTROBOPT_MeasureFunction_doc
 "MeasureFunction class.
 
-Notes
------
-Template module class."
+Base class for measure functions."
 %enddef
 %feature("docstring") OTROBOPT::MeasureFunctionImplementation
 OTROBOPT_MeasureFunction_doc

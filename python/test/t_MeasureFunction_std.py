@@ -14,5 +14,8 @@ parametric = ot.NumericalMathFunction(f, [1], [0., 1.])
 x = [1.0]
 
 meanMeasure = otrobopt.MeanMeasure(thetaDist, parametric)
-print(meanMeasure(x))
+print(meanMeasure, meanMeasure(x))
+
+varianceMeasure = otrobopt.VarianceMeasure(thetaDist, parametric)
+print(varianceMeasure, varianceMeasure(x))
 

@@ -30,3 +30,4 @@ Classes
 
     MeasureFunction
     MeanMeasure
+    VarianceMeasure

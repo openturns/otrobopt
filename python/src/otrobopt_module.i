@@ -22,4 +22,4 @@
 %include MeasureFunctionImplementation.i
 %include MeasureFunction.i
 %include MeanMeasure.i
-
+%include VarianceMeasure.i

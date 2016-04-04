@@ -1,2 +1,3 @@
 class=MeanMeasure
-[3.06025]
+class=MeanMeasure [2]
+class=VarianceMeasure [0.195107]

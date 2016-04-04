@@ -2,13 +2,15 @@
 
 ot_add_current_dir_to_include_dirs ()
 
-ot_add_source_file ( MeasureFunction.cxx )
-ot_add_source_file ( MeasureFunctionImplementation.cxx )
-ot_add_source_file ( MeanMeasure.cxx )
+ot_add_source_file (MeasureFunction.cxx)
+ot_add_source_file (MeasureFunctionImplementation.cxx)
+ot_add_source_file (MeanMeasure.cxx)
+ot_add_source_file (VarianceMeasure.cxx)
 
-ot_install_header_file ( MeasureFunction.hxx )
-ot_install_header_file ( MeasureFunctionImplementation.hxx )
-ot_install_header_file ( MeanMeasure.hxx )
+ot_install_header_file (MeasureFunction.hxx)
+ot_install_header_file (MeasureFunctionImplementation.hxx)
+ot_install_header_file (MeanMeasure.hxx)
+ot_install_header_file (VarianceMeasure.hxx)
 
 
 include_directories ( ${INTERNAL_INCLUDE_DIRS} )
