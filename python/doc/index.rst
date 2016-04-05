@@ -19,10 +19,9 @@ Developer documentation
 -----------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
-   architecture/architecture
-   validation/validation
+   developer_guide/developer_guide 
 
 Indices and tables
 ==================
