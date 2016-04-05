@@ -21,6 +21,9 @@ oldversion=`cat VERSION`
 echo "Changing version from $oldversion to $version"
 
 sed -i "s/__version__ = '$oldversion'/__version__ = '$version'/g" python/src/__init__.py
+sed -i "s/version = '$oldversion'/version = '$version'/g" python/doc/conf.py.in
+sed -i "s/release = '$oldversion'/release = '$version'/g" python/doc/conf.py.in
+
 sed -i "s/Version:        $oldversion/Version:        $version/g" distro/rpm/*.spec
 sed -i "s/ ($oldversion-/ ($version-/g" distro/debian/changelog
 
