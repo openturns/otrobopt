@@ -27,3 +27,4 @@ for measure in measures:
     discretizedMeasure = factory.build()
     print(discretizedMeasure, '(discretized)', discretizedMeasure(x))
 
+otrobopt.AggregatedMeasure(measures)

@@ -25,5 +25,6 @@
 %include MeanStandardDeviationTradeoffMeasure.i
 %include QuantileMeasure.i
 %include WorstCaseMeasure.i
+%include AggregatedMeasure.i
 %include MeasureFactory.i
 %include RobustOptimizationProblem.i

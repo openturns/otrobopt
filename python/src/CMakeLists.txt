@@ -56,6 +56,7 @@ ot_add_python_module( ${PACKAGE_NAME} ${PACKAGE_NAME}_module.i
                       MeanStandardDeviationTradeoffMeasure.i MeanStandardDeviationTradeoffMeasure_doc.i.in
                       QuantileMeasure.i QuantileMeasure_doc.i.in
                       WorstCaseMeasure.i WorstCaseMeasure_doc.i.in
+                      AggregatedMeasure.i AggregatedMeasure_doc.i.in
                       MeasureFactory.i MeasureFactory_doc.i.in
                       RobustOptimizationProblem.i RobustOptimizationProblem_doc.i.in
                     )
