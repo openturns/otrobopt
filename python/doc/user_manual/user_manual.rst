@@ -1,11 +1,10 @@
 User manual
 ===========
 
-
-Reference
----------
-
 .. currentmodule:: otrobopt
+
+Measure functions
+-----------------
 
 .. autosummary::
     :toctree: _generated/
@@ -17,7 +16,31 @@ Reference
     MeanStandardDeviationTradeoffMeasure
     QuantileMeasure
     WorstCaseMeasure
+
+Discretize a measure function
+-----------------------------
+
+.. autosummary::
+    :toctree: _generated/
+    :template: class.rst_t
+
     MeasureFactory
+
+Define a robust optimization problem
+------------------------------------
+
+.. autosummary::
+    :toctree: _generated/
+    :template: class.rst_t
+
     RobustOptimizationProblem
+
+Solve a robust optimization problem
+------------------------------------
+
+.. autosummary::
+    :toctree: _generated/
+    :template: class.rst_t
+
     RobustOptimizationAlgorithm
     SequentialMonteCarloRobustAlgorithm

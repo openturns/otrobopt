@@ -1,40 +1,37 @@
 Examples
 ========
 
-Example 1: Axial stressed beam
-------------------------------
+Example 1
+---------
 
-This example is a simple beam, restrained at one side and stressed by a traction load F at the other side.
+This example is a simple analytic function.
 
 1- Problem statement
 ````````````````````
+.. math::
 
-a- Inputs
-'''''''''
+    
 
-- Stochastics variables:
+a- Objective
+''''''''''''
 
-====== ======================== ==================
- Name  Description              Distribution
-====== ======================== ==================
-F      Traction load            Normal(75e3, 5e3)
-sigma  Axial stress             LogNormal(300, 30)
-====== ======================== ==================
-
-- Deterministic independent variables:
-
-======== ================================ =================
-Variable Description                      Value
-======== ================================ =================
-D        diameter                         20.0
-======== ================================ =================
-
-b- Output
-'''''''''
-
-Primary energy savings :math:`G`
+The parametric function :math:`J(x, \theta)` is subject to minimization
 
 .. math::
 
-    G = \sigma_e -\frac{F}{\pi \frac{D^2}{4} }
+    J(x, \theta) = 15.0 * ((x1+\theta_1)^2 + (x2+\theta_2)^2) - 100.0 * \exp(-5. * ((x1 + \theta_1 + 1.6)^2+(x2 + \theta_2 + 1.6)^2))
+
+    \theta_1, \theta_2 \sim N(0, 0.1)
+
+    -3 \leq x_1, x2 \leq 3
+
+b- Constraints
+''''''''''''''
+
+.. math::
+
+    g_1(x, \theta) = (x1+\theta_1 - 0.5)^2 + (x2+\theta_2)^2 - 4.0 \leq 0
+
+    g_2(x, \theta) = (x1+\theta_1 + 0.5)^2 + (x2+\theta_2)^2 - 4.0 \leq 0
+
 
