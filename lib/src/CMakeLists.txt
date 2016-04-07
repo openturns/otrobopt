@@ -12,6 +12,7 @@ ot_add_source_file (WorstCaseMeasure.cxx)
 ot_add_source_file (AggregatedMeasure.cxx)
 ot_add_source_file (MeasureFactory.cxx)
 ot_add_source_file (RobustOptimizationProblem.cxx)
+ot_add_source_file (RobustOptimizationAlgorithm.cxx)
 
 ot_install_header_file (MeasureFunction.hxx)
 ot_install_header_file (MeasureFunctionImplementation.hxx)
@@ -23,6 +24,7 @@ ot_install_header_file (WorstCaseMeasure.hxx)
 ot_install_header_file (AggregatedMeasure.hxx)
 ot_install_header_file (MeasureFactory.hxx)
 ot_install_header_file (RobustOptimizationProblem.hxx)
+ot_install_header_file (RobustOptimizationAlgorithm.hxx)
 
 
 include_directories ( ${INTERNAL_INCLUDE_DIRS} )

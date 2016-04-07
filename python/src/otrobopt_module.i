@@ -28,3 +28,5 @@
 %include AggregatedMeasure.i
 %include MeasureFactory.i
 %include RobustOptimizationProblem.i
+%include RobustOptimizationAlgorithm.i
+
