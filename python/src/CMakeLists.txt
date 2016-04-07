@@ -60,6 +60,7 @@ ot_add_python_module( ${PACKAGE_NAME} ${PACKAGE_NAME}_module.i
                       MeasureFactory.i MeasureFactory_doc.i.in
                       RobustOptimizationProblem.i RobustOptimizationProblem_doc.i.in
                       RobustOptimizationAlgorithm.i RobustOptimizationAlgorithm_doc.i.in
+                      SequentialMonteCarloRobustAlgorithm.i SequentialMonteCarloRobustAlgorithm_doc.i.in
                     )
 
 

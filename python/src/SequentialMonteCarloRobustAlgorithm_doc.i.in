@@ -1,0 +1,21 @@
+%feature("docstring") OTROBOPT::SequentialMonteCarloRobustAlgorithm
+"Sequential Monte Carlo robust optimization algorithm.
+
+Parameters
+----------
+problem : :class:`~otrobopt.RobustOptimizationProblem`
+    Robust optmimization problem
+solver : :class:`~openturns.OptimizationSolver`
+    Optimization solver"
+
+// ---------------------------------------------------------------------
+
+%feature("docstring") OTROBOPT::SequentialMonteCarloRobustAlgorithm::setInitialSamplingSize
+"Initial sampling size accessor.
+
+Initial size of the discretization of :math:`\theta`.
+
+Parameters
+----------
+N0 : int
+    Initial sampling size"

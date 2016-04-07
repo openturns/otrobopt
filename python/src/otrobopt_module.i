@@ -29,4 +29,5 @@
 %include MeasureFactory.i
 %include RobustOptimizationProblem.i
 %include RobustOptimizationAlgorithm.i
+%include SequentialMonteCarloRobustAlgorithm.i
 

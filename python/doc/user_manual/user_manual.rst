@@ -19,3 +19,5 @@ Reference
     WorstCaseMeasure
     MeasureFactory
     RobustOptimizationProblem
+    RobustOptimizationAlgorithm
+    SequentialMonteCarloRobustAlgorithm
