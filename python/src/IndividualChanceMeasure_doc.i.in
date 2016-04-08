@@ -1,0 +1,35 @@
+%feature("docstring") OTROBOPT::IndividualChanceMeasure
+"Individual chance measure function.
+
+.. math::
+
+    M_{f, \theta}(x) = \mathbb{P}(f_k(x, \theta) > 0, k \in K) \leq \alpha
+
+Parameters
+----------
+distribution : :class:`~openturns.Distribution`
+    Distribution of parameters
+function : :class:`~openturns.NumericalMathFunction`
+    Parametric function
+alpha : float
+    Probability level"
+
+// ---------------------------------------------------------------------
+
+%feature("docstring") OTROBOPT::IndividualChanceMeasure::setAlpha
+"Probability level accessor.
+
+Parameters
+----------
+alpha : float in :math:`(0,1)`
+    Probability level"
+
+// ---------------------------------------------------------------------
+
+%feature("docstring") OTROBOPT::IndividualChanceMeasure::getAlpha
+"Probability level accessor.
+
+Returns
+-------
+alpha : float in :math:`(0,1)`
+    Probability level"

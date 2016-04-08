@@ -17,6 +17,7 @@ Measure functions
     QuantileMeasure
     WorstCaseMeasure
     JointChanceMeasure
+    IndividualChanceMeasure
 
 Discretize a measure function
 -----------------------------
