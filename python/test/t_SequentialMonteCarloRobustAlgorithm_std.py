@@ -33,7 +33,7 @@ for sigma_xi in [0.1, 0.2, 0.3, 0.4, 0.5]:
 
     distributionXi = ot.Normal([0.0] * 2, [sigma_xi] * 2, ot.IdentityMatrix(2))
     robustnessMeasure = otrobopt.MeanMeasure(distributionXi, J)
-    reliabilityMeasure = otrobopt.MeanMeasure(distributionXi, g)
+    reliabilityMeasure = otrobopt.JointChanceMeasure(distributionXi, g, 0.9)
     problem = otrobopt.RobustOptimizationProblem(robustnessMeasure, reliabilityMeasure)
     problem.setBounds(bounds)
 

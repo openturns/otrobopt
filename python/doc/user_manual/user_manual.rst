@@ -16,6 +16,7 @@ Measure functions
     MeanStandardDeviationTradeoffMeasure
     QuantileMeasure
     WorstCaseMeasure
+    JointChanceMeasure
 
 Discretize a measure function
 -----------------------------

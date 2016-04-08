@@ -57,6 +57,7 @@ ot_add_python_module( ${PACKAGE_NAME} ${PACKAGE_NAME}_module.i
                       QuantileMeasure.i QuantileMeasure_doc.i.in
                       WorstCaseMeasure.i WorstCaseMeasure_doc.i.in
                       AggregatedMeasure.i AggregatedMeasure_doc.i.in
+                      JointChanceMeasure.i JointChanceMeasure_doc.i.in
                       MeasureFactory.i MeasureFactory_doc.i.in
                       RobustOptimizationProblem.i RobustOptimizationProblem_doc.i.in
                       RobustOptimizationAlgorithm.i RobustOptimizationAlgorithm_doc.i.in

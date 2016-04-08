@@ -26,6 +26,7 @@
 %include QuantileMeasure.i
 %include WorstCaseMeasure.i
 %include AggregatedMeasure.i
+%include JointChanceMeasure.i
 %include MeasureFactory.i
 %include RobustOptimizationProblem.i
 %include RobustOptimizationAlgorithm.i
