@@ -1,7 +1,8 @@
 %define OTROBOPT_MeasureFunction_doc
-"MeasureFunction base class.
+"Measure function base class.
 
-Base class for measure functions."
+Base class for measure functions, allows to evaluate probabilistic objective
+functions or probabilistic constraint functions."
 %enddef
 %feature("docstring") OTROBOPT::MeasureFunctionImplementation
 OTROBOPT_MeasureFunction_doc

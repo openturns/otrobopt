@@ -1,10 +1,13 @@
 %feature("docstring") OTROBOPT::SequentialMonteCarloRobustAlgorithm
 "Sequential Monte Carlo robust optimization algorithm.
 
+Solves a robust optimization problem by alternating measure discretizing
+measures and solving deterministic problems.
+
 Parameters
 ----------
 problem : :class:`~otrobopt.RobustOptimizationProblem`
-    Robust optmimization problem
+    Robust optimization problem
 solver : :class:`~openturns.OptimizationSolver`
     Optimization solver"
 

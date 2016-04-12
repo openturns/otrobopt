@@ -1,32 +1,34 @@
 %feature("docstring") OTROBOPT::RobustOptimizationAlgorithm
 "Robust optimization algorithm base class.
 
+Operates on a robust optimization problem.
+
 Parameters
 ----------
 problem : :class:`~otrobopt.RobustOptimizationProblem`
-    Robust optmimization problem
+    Robust optimization problem
 solver : :class:`~openturns.OptimizationSolver`
     Optimization solver"
 
 // ---------------------------------------------------------------------
 
 %feature("docstring") OTROBOPT::RobustOptimizationAlgorithm::setRobustProblem
-"Robust optmimization problem accessor.
+"Robust optimization problem accessor.
 
 Parameters
 ----------
 problem : :class:`~otrobopt.RobustOptimizationProblem`
-    Robust optmimization problem"
+    Robust optimization problem"
 
 // ---------------------------------------------------------------------
 
 %feature("docstring") OTROBOPT::RobustOptimizationAlgorithm::getRobustProblem
-"Robust optmimization problem accessor.
+"Robust optimization problem accessor.
 
 Returns
 -------
 problem : :class:`~otrobopt.RobustOptimizationProblem`
-    Robust optmimization problem"
+    Robust optimization problem"
 
 // ---------------------------------------------------------------------
 

@@ -1,12 +1,54 @@
 %feature("docstring") OTROBOPT::RobustOptimizationProblem
 "Robust optimization problem.
 
+Must consist at least of one :class:`~otrobopt.MeasureFunction`, either on
+the objective or the constraint, else a regular
+:class:`openturns.OptimizationProblem` can be used.
+
 Parameters
 ----------
 robustnessMeasure : :class:`~otrobopt.MeasureFunction`
     Measure function on the objective.
 reliabilityMeasure : :class:`~otrobopt.MeasureFunction`
-    Mesure function on the constraints"
+    Mesure function on the constraints
+
+Examples
+--------
+
+Pure robustness problem:
+
+>>> import openturns as ot
+>>> import otrobopt
+>>> thetaDist = ot.Normal(2.0, 0.1)
+>>> f = ot.NumericalMathFunction(['x1', 'p1'], ['y1'], ['x1*p1'])
+>>> parametric = ot.NumericalMathFunction(f, [1], [0., 1.])
+>>> robustnessMeasure = otrobopt.MeanMeasure(thetaDist, parametric)
+>>> problem = RobustOptimizationProblem()
+>>> problem.setRobustnessMeasure(robustnessMeasure)
+
+
+Pure reliability problem:
+
+>>> import openturns as ot
+>>> import otrobopt
+>>> thetaDist = ot.Normal(2.0, 0.1)
+>>> f = ot.NumericalMathFunction(['x1', 'p1'], ['y1'], ['x1*p1'])
+>>> parametric = ot.NumericalMathFunction(f, [1], [0., 1.])
+>>> reliabilityMeasure = otrobopt.VarianceMeasure(thetaDist, parametric)
+>>> problem = RobustOptimizationProblem()
+>>> problem.setReliabilityMeasure(reliabilityMeasure)
+
+
+Robustness & reliability problem:
+
+>>> import openturns as ot
+>>> import otrobopt
+>>> thetaDist = ot.Normal(2.0, 0.1)
+>>> f = ot.NumericalMathFunction(['x1', 'p1'], ['y1'], ['x1*p1'])
+>>> parametric = ot.NumericalMathFunction(f, [1], [0., 1.])
+>>> robustnessMeasure = otrobopt.MeanMeasure(thetaDist, parametric)
+>>> reliabilityMeasure = otrobopt.VarianceMeasure(thetaDist, parametric)
+>>> problem = RobustOptimizationProblem(robustnessMeasure, reliabilityMeasure)"
 
 // ---------------------------------------------------------------------
 

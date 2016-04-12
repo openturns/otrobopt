@@ -3,7 +3,7 @@
 
 .. math::
 
-    M_{f, \theta}(x) = \mathbb{P}(f_k(x, \theta) > 0, k \in K) \leq \alpha
+    M_{f, \theta}(x) = \mathbb{P}(f_k(x, \theta) > 0, \forall k \in K) \leq \alpha
 
 
 Parameters
@@ -12,7 +12,7 @@ distribution : :class:`~openturns.Distribution`
     Distribution of parameters
 function : :class:`~openturns.NumericalMathFunction`
     Parametric function
-alpha : float
+alpha : float in :math:`(0,1)`
     Probability level"
 
 // ---------------------------------------------------------------------
