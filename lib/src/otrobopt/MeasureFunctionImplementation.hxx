@@ -57,12 +57,12 @@ public:
   virtual OT::Matrix gradient(const OT::NumericalPoint & inP) const;
 
   /** Distribution accessor */
-  void setDistribution(const OT::Distribution & distribution);
-  OT::Distribution getDistribution() const;
+  virtual void setDistribution(const OT::Distribution & distribution);
+  virtual OT::Distribution getDistribution() const;
 
   /** Function accessor */
-  void setFunction(const OT::NumericalMathFunction & function);
-  OT::NumericalMathFunction getFunction() const;
+  virtual void setFunction(const OT::NumericalMathFunction & function);
+  virtual OT::NumericalMathFunction getFunction() const;
 
   /** Dimension accessor */
   virtual OT::UnsignedInteger getInputDimension() const;
