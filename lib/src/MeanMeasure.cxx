@@ -122,7 +122,7 @@ NumericalPoint MeanMeasure::operator()(const NumericalPoint & inP) const
     IteratedQuadrature algo(gkr);
     Pointer<NumericalMathFunctionImplementation> p_wrapper(new MeanMeasureParametricFunctionWrapper(inP, function, getDistribution()));
     NumericalMathFunction G(p_wrapper);
-    outP = algo.integrate(G, getDistribution().getRange()) * 1.0 / getDistribution().getRange().getVolume();
+    outP = algo.integrate(G, getDistribution().getRange());
   }
   else
   {
