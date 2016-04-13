@@ -7,7 +7,7 @@ Parameters
 ----------
 problem : :class:`~otrobopt.RobustOptimizationProblem`
     Robust optimization problem
-solver : :class:`~openturns.OptimizationSolver`
+solver : :py:class:`openturns.OptimizationSolver`
     Optimization solver"
 
 // ---------------------------------------------------------------------
@@ -37,7 +37,7 @@ problem : :class:`~otrobopt.RobustOptimizationProblem`
 
 Parameters
 ----------
-solver : :class:`~openturns.OptimizationSolver`
+solver : :py:class:`openturns.OptimizationSolver`
     Optimization solver"
 
 // ---------------------------------------------------------------------
@@ -47,5 +47,5 @@ solver : :class:`~openturns.OptimizationSolver`
 
 Returns
 -------
-solver : :class:`~openturns.OptimizationSolver`
+solver : :py:class:`openturns.OptimizationSolver`
     Optimization solver"

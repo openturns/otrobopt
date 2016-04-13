@@ -7,9 +7,9 @@
 
 Parameters
 ----------
-distribution : :class:`~openturns.Distribution`
+distribution : :py:class:`openturns.Distribution`
     Distribution of parameters
-function : :class:`~openturns.NumericalMathFunction`
+function : :py:class:`openturns.NumericalMathFunction`
     Parametric function
 isMinimization : bool (optional, defaults to `True`)
     Whether the worst case is the minimization of the criteria"
@@ -41,7 +41,7 @@ minimization : bool
 
 Parameters
 ----------
-solver : :class:`~openturns.OptimizationSolver`
+solver : :py:class:`openturns.OptimizationSolver`
     Optimization solver"
 
 // ---------------------------------------------------------------------
@@ -51,5 +51,5 @@ solver : :class:`~openturns.OptimizationSolver`
 
 Returns
 -------
-solver : :class:`~openturns.OptimizationSolver`
+solver : :py:class:`openturns.OptimizationSolver`
     Optimization solver"

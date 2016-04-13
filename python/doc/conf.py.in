@@ -48,6 +48,9 @@ todo_include_todos = True
 
 extensions.append('sphinx.ext.coverage')
 
+extensions.append('sphinx.ext.intersphinx')
+intersphinx_mapping = {'python': ('http://openturns.github.io/', None)}
+
 try:
     import sphinx.ext.imgmath
     extensions.append('sphinx.ext.imgmath')

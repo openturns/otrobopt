@@ -12,9 +12,9 @@
 
 Parameters
 ----------
-distribution : :class:`~openturns.Distribution`
+distribution : :py:class:`openturns.Distribution`
     Distribution of parameters
-function : :class:`~openturns.NumericalMathFunction`
+function : :py:class:`openturns.NumericalMathFunction`
     Parametric function
 alpha : float in :math:`(0,1)`
     Tradeoff coefficient

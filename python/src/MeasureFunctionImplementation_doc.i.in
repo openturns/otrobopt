@@ -14,7 +14,7 @@ OTROBOPT_MeasureFunction_doc
 
 Parameters
 ----------
-distribution : :class:`~openturns.Distribution`
+distribution : :py:class:`openturns.Distribution`
     Parameters distribution."
 %enddef
 %feature("docstring") OTROBOPT::MeasureFunctionImplementation::setDistribution
@@ -27,7 +27,7 @@ OTROBOPT_MeasureFunction_setDistribution_doc
 
 Returns
 -------
-distribution : :class:`~openturns.Distribution`
+distribution : :py:class:`openturns.Distribution`
     Parameters distribution."
 %enddef
 %feature("docstring") OTROBOPT::MeasureFunctionImplementation::getDistribution
@@ -40,7 +40,7 @@ OTROBOPT_MeasureFunction_getDistribution_doc
 
 Parameters
 ----------
-distribution : :class:`~openturns.NumericalMathFunction`
+distribution : :py:class:`openturns.NumericalMathFunction`
     Parameters distribution."
 %enddef
 %feature("docstring") OTROBOPT::MeasureFunctionImplementation::setFunction
@@ -53,7 +53,7 @@ OTROBOPT_MeasureFunction_setFunction_doc
 
 Returns
 -------
-distribution : :class:`~openturns.NumericalMathFunction`
+distribution : :py:class:`openturns.NumericalMathFunction`
     Parameters distribution."
 %enddef
 %feature("docstring") OTROBOPT::MeasureFunctionImplementation::getFunction
