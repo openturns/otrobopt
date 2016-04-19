@@ -36,7 +36,7 @@ static Factory<VarianceMeasure> RegisteredFactory;
 
 /* Default constructor */
 VarianceMeasure::VarianceMeasure()
-  : MeasureFunctionImplementation()
+  : MeasureEvaluationImplementation()
 {
   // Nothing to do
 }
@@ -44,7 +44,7 @@ VarianceMeasure::VarianceMeasure()
 /* Parameter constructor */
 VarianceMeasure::VarianceMeasure (const Distribution & distribution,
                                   const NumericalMathFunction & function)
-  : MeasureFunctionImplementation(distribution, function)
+  : MeasureEvaluationImplementation(distribution, function)
 
 {
   // Nothing to do
@@ -159,13 +159,13 @@ String VarianceMeasure::__repr__() const
 /* Method save() stores the object through the StorageManager */
 void VarianceMeasure::save(Advocate & adv) const
 {
-  MeasureFunctionImplementation::save(adv);
+  MeasureEvaluationImplementation::save(adv);
 }
 
 /* Method load() reloads the object from the StorageManager */
 void VarianceMeasure::load(Advocate & adv)
 {
-  MeasureFunctionImplementation::load(adv);
+  MeasureEvaluationImplementation::load(adv);
 }
 
 

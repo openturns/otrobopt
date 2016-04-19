@@ -36,7 +36,7 @@ static Factory<IndividualChanceMeasure> RegisteredFactory;
 
 /* Default constructor */
 IndividualChanceMeasure::IndividualChanceMeasure()
-  : MeasureFunctionImplementation()
+  : MeasureEvaluationImplementation()
 {
   // Nothing to do
 }
@@ -45,7 +45,7 @@ IndividualChanceMeasure::IndividualChanceMeasure()
 IndividualChanceMeasure::IndividualChanceMeasure (const Distribution & distribution,
                                                   const NumericalMathFunction & function,
                                                   const NumericalPoint & alpha)
-  : MeasureFunctionImplementation(distribution, function)
+  : MeasureEvaluationImplementation(distribution, function)
 {
   setAlpha(alpha);
 }
@@ -163,14 +163,14 @@ String IndividualChanceMeasure::__repr__() const
 /* Method save() stores the object through the StorageManager */
 void IndividualChanceMeasure::save(Advocate & adv) const
 {
-  MeasureFunctionImplementation::save(adv);
+  MeasureEvaluationImplementation::save(adv);
   adv.saveAttribute("alpha_", alpha_);
 }
 
 /* Method load() reloads the object from the StorageManager */
 void IndividualChanceMeasure::load(Advocate & adv)
 {
-  MeasureFunctionImplementation::load(adv);
+  MeasureEvaluationImplementation::load(adv);
   adv.loadAttribute("alpha_", alpha_);
 }
 

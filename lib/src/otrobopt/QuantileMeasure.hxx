@@ -22,7 +22,7 @@
 #ifndef OTROBOPT_QUANTILEMEASURE_HXX
 #define OTROBOPT_QUANTILEMEASURE_HXX
 
-#include "otrobopt/MeasureFunctionImplementation.hxx"
+#include "otrobopt/MeasureEvaluationImplementation.hxx"
 
 namespace OTROBOPT
 {
@@ -33,7 +33,7 @@ namespace OTROBOPT
  * Measure that evaluates as a quantile
  */
 class OTROBOPT_API QuantileMeasure
-  : public MeasureFunctionImplementation
+  : public MeasureEvaluationImplementation
 {
   CLASSNAME;
 

@@ -36,7 +36,7 @@ static Factory<JointChanceMeasure> RegisteredFactory;
 
 /* Default constructor */
 JointChanceMeasure::JointChanceMeasure()
-  : MeasureFunctionImplementation()
+  : MeasureEvaluationImplementation()
   , alpha_(0.0)
 {
   // Nothing to do
@@ -46,7 +46,7 @@ JointChanceMeasure::JointChanceMeasure()
 JointChanceMeasure::JointChanceMeasure (const Distribution & distribution,
                                         const NumericalMathFunction & function,
                                         const NumericalScalar alpha)
-  : MeasureFunctionImplementation(distribution, function)
+  : MeasureEvaluationImplementation(distribution, function)
   , alpha_(0.0)
 {
   setAlpha(alpha);
@@ -178,14 +178,14 @@ String JointChanceMeasure::__repr__() const
 /* Method save() stores the object through the StorageManager */
 void JointChanceMeasure::save(Advocate & adv) const
 {
-  MeasureFunctionImplementation::save(adv);
+  MeasureEvaluationImplementation::save(adv);
   adv.saveAttribute("alpha_", alpha_);
 }
 
 /* Method load() reloads the object from the StorageManager */
 void JointChanceMeasure::load(Advocate & adv)
 {
-  MeasureFunctionImplementation::load(adv);
+  MeasureEvaluationImplementation::load(adv);
   adv.loadAttribute("alpha_", alpha_);
 }
 

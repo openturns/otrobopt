@@ -22,7 +22,7 @@
 #ifndef OTROBOPT_MEANSTANDARDDEVIATIONTRADEOFFMEASURE_HXX
 #define OTROBOPT_MEANSTANDARDDEVIATIONTRADEOFFMEASURE_HXX
 
-#include "otrobopt/MeasureFunctionImplementation.hxx"
+#include "otrobopt/MeasureEvaluationImplementation.hxx"
 
 namespace OTROBOPT
 {
@@ -33,7 +33,7 @@ namespace OTROBOPT
  * Tradeoff between mean and standard deviation
  */
 class OTROBOPT_API MeanStandardDeviationTradeoffMeasure
-  : public MeasureFunctionImplementation
+  : public MeasureEvaluationImplementation
 {
   CLASSNAME;
 

@@ -6,7 +6,7 @@
 
 %include AggregatedMeasure_doc.i
 
-TypedCollectionInterfaceObjectMisnamedHelper(OTROBOPT, MeasureFunction, MeasureFunctionCollection)
+TypedCollectionInterfaceObjectMisnamedHelper(OTROBOPT, MeasureEvaluation, MeasureEvaluationCollection)
 
 %include otrobopt/AggregatedMeasure.hxx
 namespace OTROBOPT { %extend AggregatedMeasure { AggregatedMeasure(const AggregatedMeasure & other) { return new OTROBOPT::AggregatedMeasure(other); } } }

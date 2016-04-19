@@ -1,15 +1,15 @@
 %feature("docstring") OTROBOPT::RobustOptimizationProblem
 "Robust optimization problem.
 
-Must consist at least of one :class:`~otrobopt.MeasureFunction`, either on
+Must consist at least of one :class:`~otrobopt.MeasureEvaluation`, either on
 the objective or the constraint, else a regular
 :class:`openturns.OptimizationProblem` can be used.
 
 Parameters
 ----------
-robustnessMeasure : :class:`~otrobopt.MeasureFunction`
+robustnessMeasure : :class:`~otrobopt.MeasureEvaluation`
     Measure function on the objective.
-reliabilityMeasure : :class:`~otrobopt.MeasureFunction`
+reliabilityMeasure : :class:`~otrobopt.MeasureEvaluation`
     Mesure function on the constraints
 
 Examples
@@ -59,7 +59,7 @@ The measure on associated to the objective function
 
 Parameters
 ----------
-robustnessMeasure : :class:`~otrobopt.MeasureFunction`
+robustnessMeasure : :class:`~otrobopt.MeasureEvaluation`
     Measure function on the objective."
 
 // ---------------------------------------------------------------------
@@ -71,7 +71,7 @@ The measure on associated to the objective function
 
 Returns
 -------
-robustnessMeasure : :class:`~otrobopt.MeasureFunction`
+robustnessMeasure : :class:`~otrobopt.MeasureEvaluation`
     Measure function on the objective."
 
 // ---------------------------------------------------------------------
@@ -97,7 +97,7 @@ The measure on associated to the constraint
 
 Parameters
 ----------
-reliabilityMeasure : :class:`~otrobopt.MeasureFunction`
+reliabilityMeasure : :class:`~otrobopt.MeasureEvaluation`
     Mesure function on the constraints"
 
 // ---------------------------------------------------------------------
@@ -109,7 +109,7 @@ The measure on associated to the constraint
 
 Returns
 -------
-reliabilityMeasure : :class:`~otrobopt.MeasureFunction`
+reliabilityMeasure : :class:`~otrobopt.MeasureEvaluation`
     Mesure function on the constraints"
 
 // ---------------------------------------------------------------------

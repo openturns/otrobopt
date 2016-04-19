@@ -49,8 +49,8 @@ endmacro ( ot_add_python_module )
 
 
 ot_add_python_module( ${PACKAGE_NAME} ${PACKAGE_NAME}_module.i 
-                      MeasureFunction.i MeasureFunction_doc.i.in
-                      MeasureFunctionImplementation.i MeasureFunctionImplementation_doc.i.in
+                      MeasureEvaluation.i MeasureEvaluation_doc.i.in
+                      MeasureEvaluationImplementation.i MeasureEvaluationImplementation_doc.i.in
                       MeanMeasure.i MeanMeasure_doc.i.in
                       VarianceMeasure.i VarianceMeasure_doc.i.in
                       MeanStandardDeviationTradeoffMeasure.i MeanStandardDeviationTradeoffMeasure_doc.i.in

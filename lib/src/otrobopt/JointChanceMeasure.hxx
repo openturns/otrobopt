@@ -22,7 +22,7 @@
 #ifndef OTROBOPT_JOINTCHANCEMEASURE_HXX
 #define OTROBOPT_JOINTCHANCEMEASURE_HXX
 
-#include "otrobopt/MeasureFunctionImplementation.hxx"
+#include "otrobopt/MeasureEvaluationImplementation.hxx"
 
 namespace OTROBOPT
 {
@@ -33,7 +33,7 @@ namespace OTROBOPT
  * Joint probability measure
  */
 class OTROBOPT_API JointChanceMeasure
-  : public MeasureFunctionImplementation
+  : public MeasureEvaluationImplementation
 {
   CLASSNAME;
 

@@ -36,7 +36,7 @@ static Factory<WorstCaseMeasure> RegisteredFactory;
 
 /* Default constructor */
 WorstCaseMeasure::WorstCaseMeasure()
-  : MeasureFunctionImplementation()
+  : MeasureEvaluationImplementation()
   , isMinimization_(true)
 {
   // Nothing to do
@@ -46,7 +46,7 @@ WorstCaseMeasure::WorstCaseMeasure()
 WorstCaseMeasure::WorstCaseMeasure (const Distribution & distribution,
                                     const NumericalMathFunction & function,
                                     const Bool minimization)
-  : MeasureFunctionImplementation(distribution, function)
+  : MeasureEvaluationImplementation(distribution, function)
   , isMinimization_(minimization)
   , solver_(new TNC())
 {
@@ -189,14 +189,14 @@ String WorstCaseMeasure::__repr__() const
 /* Method save() stores the object through the StorageManager */
 void WorstCaseMeasure::save(Advocate & adv) const
 {
-  MeasureFunctionImplementation::save(adv);
+  MeasureEvaluationImplementation::save(adv);
   adv.saveAttribute("isMinimization_", isMinimization_);
 }
 
 /* Method load() reloads the object from the StorageManager */
 void WorstCaseMeasure::load(Advocate & adv)
 {
-  MeasureFunctionImplementation::load(adv);
+  MeasureEvaluationImplementation::load(adv);
   adv.loadAttribute("isMinimization_", isMinimization_);
 }
 

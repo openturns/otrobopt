@@ -36,14 +36,14 @@ static Factory<AggregatedMeasure> RegisteredFactory;
 
 /* Default constructor */
 AggregatedMeasure::AggregatedMeasure()
-  : MeasureFunctionImplementation()
+  : MeasureEvaluationImplementation()
 {
   // Nothing to do
 }
 
 /* Parameter constructor */
-AggregatedMeasure::AggregatedMeasure(const MeasureFunctionCollection & collection)
-  : MeasureFunctionImplementation()
+AggregatedMeasure::AggregatedMeasure(const MeasureEvaluationCollection & collection)
+  : MeasureEvaluationImplementation()
   , collection_(collection)
 {
   const UnsignedInteger size = collection_.getSize();
@@ -112,13 +112,13 @@ String AggregatedMeasure::__repr__() const
 /* Method save() stores the object through the StorageManager */
 void AggregatedMeasure::save(Advocate & adv) const
 {
-  MeasureFunctionImplementation::save(adv);
+  MeasureEvaluationImplementation::save(adv);
 }
 
 /* Method load() reloads the object from the StorageManager */
 void AggregatedMeasure::load(Advocate & adv)
 {
-  MeasureFunctionImplementation::load(adv);
+  MeasureEvaluationImplementation::load(adv);
 }
 
 

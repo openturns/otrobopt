@@ -1,6 +1,6 @@
 //                                               -*- C++ -*-
 /**
- *  @brief MeasureFunction
+ *  @brief Measure function evaluation
  *
  *  Copyright 2005-2016 Airbus-EDF-IMACS-Phimeca
  *
@@ -19,8 +19,8 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  *
  */
-#ifndef OTROBOPT_MEASUREFUNCTION_HXX
-#define OTROBOPT_MEASUREFUNCTION_HXX
+#ifndef OTROBOPT_MEASUREEVALUATION_HXX
+#define OTROBOPT_MEASUREEVALUATION_HXX
 
 #include <openturns/TypedInterfaceObject.hxx>
 #include <openturns/StorageManager.hxx>
@@ -33,24 +33,24 @@ namespace OTROBOPT
 {
 
 /* forward declaration */
-class MeasureFunctionImplementation;
+class MeasureEvaluationImplementation;
 
 /**
- * @class MeasureFunction
+ * @class MeasureEvaluation
  *
- * MeasureFunction is some measurefunction type to illustrate how to add some classes in Open TURNS
+ * Measure function evaluation
  */
-class OTROBOPT_API MeasureFunction
-  : public OT::TypedInterfaceObject<MeasureFunctionImplementation>
+class OTROBOPT_API MeasureEvaluation
+  : public OT::TypedInterfaceObject<MeasureEvaluationImplementation>
 {
   CLASSNAME;
 
 public:
 
   /** Default constructor */
-  MeasureFunction();
+  MeasureEvaluation();
 
-  MeasureFunction(const MeasureFunctionImplementation & implementation);
+  MeasureEvaluation(const MeasureEvaluationImplementation & implementation);
 
   /** Distribution accessor */
   void setDistribution(const OT::Distribution & distribution);
@@ -68,8 +68,8 @@ public:
 
 private:
 
-}; /* class MeasureFunction */
+}; /* class MeasureEvaluation */
 
 } /* namespace OTROBOPT */
 
-#endif /* OTROBOPT_MEASUREFUNCTION_HXX */
+#endif /* OTROBOPT_MEASUREEVALUATION_HXX */

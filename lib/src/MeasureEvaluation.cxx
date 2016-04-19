@@ -1,6 +1,6 @@
 //                                               -*- C++ -*-
 /**
- *  @brief MeasureFunction
+ *  @brief Measure function evaluation
  *
  *  Copyright 2005-2016 Airbus-EDF-IMACS-Phimeca
  *
@@ -19,7 +19,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  *
  */
-#include "otrobopt/MeasureFunction.hxx"
+#include "otrobopt/MeasureEvaluation.hxx"
 #include "otrobopt/MeanMeasure.hxx"
 #include <openturns/PersistentObjectFactory.hxx>
 
@@ -28,57 +28,57 @@ using namespace OT;
 namespace OTROBOPT
 {
 
-CLASSNAMEINIT(MeasureFunction);
+CLASSNAMEINIT(MeasureEvaluation);
 
 /* Default constructor */
-MeasureFunction::MeasureFunction()
-  : TypedInterfaceObject<MeasureFunctionImplementation>(new MeanMeasure)
+MeasureEvaluation::MeasureEvaluation()
+  : TypedInterfaceObject<MeasureEvaluationImplementation>(new MeanMeasure)
 {
   // Nothing to do
 }
 
 /* Default constructor */
-MeasureFunction::MeasureFunction(const MeasureFunctionImplementation & implementation)
-: TypedInterfaceObject<MeasureFunctionImplementation>(implementation.clone())
+MeasureEvaluation::MeasureEvaluation(const MeasureEvaluationImplementation & implementation)
+: TypedInterfaceObject<MeasureEvaluationImplementation>(implementation.clone())
 {
   // Nothing to do
 }
 
 /* Evaluation */
-NumericalPoint MeasureFunction::operator()(const NumericalPoint & inP) const
+NumericalPoint MeasureEvaluation::operator()(const NumericalPoint & inP) const
 {
   return getImplementation()->operator()(inP);
 }
 
 /* Distribution accessor */
-void MeasureFunction::setDistribution(const Distribution & distribution)
+void MeasureEvaluation::setDistribution(const Distribution & distribution)
 {
   copyOnWrite();
   getImplementation()->setDistribution(distribution);
 }
 
-Distribution MeasureFunction::getDistribution() const
+Distribution MeasureEvaluation::getDistribution() const
 {
   return getImplementation()->getDistribution();
 }
 
 /* Function accessor */
-void MeasureFunction::setFunction(const NumericalMathFunction & function)
+void MeasureEvaluation::setFunction(const NumericalMathFunction & function)
 {
   copyOnWrite();
   getImplementation()->setFunction(function);
 }
 
-NumericalMathFunction MeasureFunction::getFunction() const
+NumericalMathFunction MeasureEvaluation::getFunction() const
 {
   return getImplementation()->getFunction();
 }
 
 /* String converter */
-String MeasureFunction::__repr__() const
+String MeasureEvaluation::__repr__() const
 {
   OSS oss;
-  oss << "class=" << MeasureFunction::GetClassName()
+  oss << "class=" << MeasureEvaluation::GetClassName()
       << " implementation=" << getImplementation()->__repr__();
   return oss;
 }

@@ -22,7 +22,7 @@
 #ifndef OTROBOPT_VARIANCEMEASURE_HXX
 #define OTROBOPT_VARIANCEMEASURE_HXX
 
-#include "otrobopt/MeasureFunctionImplementation.hxx"
+#include "otrobopt/MeasureEvaluationImplementation.hxx"
 
 namespace OTROBOPT
 {
@@ -33,7 +33,7 @@ namespace OTROBOPT
  * Variance measure
  */
 class OTROBOPT_API VarianceMeasure
-  : public MeasureFunctionImplementation
+  : public MeasureEvaluationImplementation
 {
   CLASSNAME;
 

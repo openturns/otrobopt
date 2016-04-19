@@ -18,8 +18,8 @@
 
 // The new classes
 %include otrobopt/OTRobOptprivate.hxx
-%include MeasureFunctionImplementation.i
-%include MeasureFunction.i
+%include MeasureEvaluationImplementation.i
+%include MeasureEvaluation.i
 %include MeanMeasure.i
 %include VarianceMeasure.i
 %include MeanStandardDeviationTradeoffMeasure.i

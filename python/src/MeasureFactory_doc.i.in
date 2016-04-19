@@ -18,7 +18,7 @@ we sample :math:`\hat{\theta} = (\theta_1, \dots, \theta_N)` then the measure wr
 
 Parameters
 ----------
-measure : :class:`~otrobopt.MeasureFunction`
+measure : :class:`~otrobopt.MeasureEvaluation`
     Measure function
 experiment : :py:class:`openturns.Experiment`
     Parameters design of experiment
@@ -49,5 +49,5 @@ Then discretize it:
 
 Returns
 -------
-measure : :class:`~otrobopt.MeasureFunction`
+measure : :class:`~otrobopt.MeasureEvaluation`
     Discretized measure function"

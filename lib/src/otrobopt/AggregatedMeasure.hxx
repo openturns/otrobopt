@@ -22,8 +22,8 @@
 #ifndef OTROBOPT_AGGREGATEDMEASURE_HXX
 #define OTROBOPT_AGGREGATEDMEASURE_HXX
 
-#include "otrobopt/MeasureFunctionImplementation.hxx"
-#include "otrobopt/MeasureFunction.hxx"
+#include "otrobopt/MeasureEvaluationImplementation.hxx"
+#include "otrobopt/MeasureEvaluation.hxx"
 
 namespace OTROBOPT
 {
@@ -34,19 +34,19 @@ namespace OTROBOPT
  * Aggregation of measure functions
  */
 class OTROBOPT_API AggregatedMeasure
-  : public MeasureFunctionImplementation
+  : public MeasureEvaluationImplementation
 {
   CLASSNAME;
 
-  typedef OT::Collection<MeasureFunction> MeasureFunctionCollection;
-  typedef OT::PersistentCollection<MeasureFunction> MeasureFunctionPersistentCollection;
+  typedef OT::Collection<MeasureEvaluation> MeasureEvaluationCollection;
+  typedef OT::PersistentCollection<MeasureEvaluation> MeasureEvaluationPersistentCollection;
 
 public:
   /** Default constructor */
   AggregatedMeasure();
 
   /** Parameter constructor */
-  AggregatedMeasure(const MeasureFunctionCollection & collection);
+  AggregatedMeasure(const MeasureEvaluationCollection & collection);
 
   /** Virtual constructor method */
   AggregatedMeasure * clone() const;
@@ -68,7 +68,7 @@ public:
   virtual void load(OT::Advocate & adv);
 
 private:
-  MeasureFunctionPersistentCollection collection_;
+  MeasureEvaluationPersistentCollection collection_;
 
 }; /* class AggregatedMeasure */
 

@@ -20,7 +20,7 @@
  *
  */
 #include "otrobopt/RobustOptimizationProblem.hxx"
-#include <otrobopt/MeasureFunctionImplementation.hxx>
+#include <otrobopt/MeasureEvaluationImplementation.hxx>
 #include <openturns/PersistentObjectFactory.hxx>
 #include <openturns/UserDefined.hxx>
 #include <openturns/LHSExperiment.hxx>
@@ -43,8 +43,8 @@ RobustOptimizationProblem::RobustOptimizationProblem()
 }
 
 /* Parameter constructor */
-RobustOptimizationProblem::RobustOptimizationProblem (const MeasureFunction & robustnessMeasure,
-                                                      const MeasureFunction & reliabilityMeasure)
+RobustOptimizationProblem::RobustOptimizationProblem (const MeasureEvaluation & robustnessMeasure,
+                                                      const MeasureEvaluation & reliabilityMeasure)
   : OptimizationProblemImplementation()
 {
   setRobustnessMeasure(robustnessMeasure);
@@ -66,13 +66,13 @@ String RobustOptimizationProblem::__repr__() const
 }
 
 /* Measure accessors */
-void RobustOptimizationProblem::setRobustnessMeasure(const MeasureFunction & robustnessMeasure)
+void RobustOptimizationProblem::setRobustnessMeasure(const MeasureEvaluation & robustnessMeasure)
 {
   robustnessMeasure_ = robustnessMeasure;
   setObjective(robustnessMeasure.getFunction());
 }
 
-MeasureFunction RobustOptimizationProblem::getRobustnessMeasure() const
+MeasureEvaluation RobustOptimizationProblem::getRobustnessMeasure() const
 {
   return robustnessMeasure_;
 }
@@ -82,13 +82,13 @@ Bool RobustOptimizationProblem::hasRobustnessMeasure() const
   return robustnessMeasure_.getFunction().getInputDimension() > 0;
 }
 
-void RobustOptimizationProblem::setReliabilityMeasure(const MeasureFunction & reliabilityMeasure)
+void RobustOptimizationProblem::setReliabilityMeasure(const MeasureEvaluation & reliabilityMeasure)
 {
   reliabilityMeasure_ = reliabilityMeasure;
   setInequalityConstraint(reliabilityMeasure.getFunction());
 }
 
-MeasureFunction RobustOptimizationProblem::getReliabilityMeasure() const
+MeasureEvaluation RobustOptimizationProblem::getReliabilityMeasure() const
 {
   return reliabilityMeasure_;
 }

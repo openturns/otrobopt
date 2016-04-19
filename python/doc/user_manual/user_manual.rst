@@ -10,7 +10,7 @@ Measure functions
     :toctree: _generated/
     :template: class.rst_t
 
-    MeasureFunction
+    MeasureEvaluation
     MeanMeasure
     VarianceMeasure
     MeanStandardDeviationTradeoffMeasure

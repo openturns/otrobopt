@@ -18,7 +18,7 @@ int main(int argc, char **argv)
 
   NumericalPoint x(1, 1.0);
 
-  Collection <MeasureFunction> measures;
+  Collection <MeasureEvaluation> measures;
   measures.add(MeanMeasure(thetaDist, parametric));
   measures.add(VarianceMeasure(thetaDist, parametric));
   measures.add(WorstCaseMeasure(thetaDist, parametric));
@@ -34,12 +34,12 @@ int main(int argc, char **argv)
   const UnsignedInteger size = measures.getSize();
   for(UnsignedInteger i = 0; i < size; ++ i)
   {
-    MeasureFunction measure(measures[i]);
+    MeasureEvaluation measure(measures[i]);
     std::cout << measure << "(continuous)"<<measure(x)<< std::endl;
     const UnsignedInteger N = 1000;
     LHSExperiment experiment(thetaDist, N);
     MeasureFactory factory(measure, experiment);
-    MeasureFunction discretizedMeasure(factory.build());
+    MeasureEvaluation discretizedMeasure(factory.build());
     std::cout << discretizedMeasure << "(discretized)"<<discretizedMeasure(x)<< std::endl;
   }
 }

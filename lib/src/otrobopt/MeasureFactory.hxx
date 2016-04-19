@@ -25,7 +25,7 @@
 #include <openturns/Distribution.hxx>
 #include <openturns/Experiment.hxx>
 
-#include "otrobopt/MeasureFunction.hxx"
+#include "otrobopt/MeasureEvaluation.hxx"
 
 namespace OTROBOPT
 {
@@ -45,14 +45,14 @@ public:
   MeasureFactory();
 
   /** Parameter constructor */
-  MeasureFactory (const MeasureFunction & measure,
+  MeasureFactory (const MeasureEvaluation & measure,
                   const OT::Experiment & experiment);
 
   /** Virtual constructor method */
   MeasureFactory * clone() const;
 
   /** Evaluation */
-  MeasureFunction build() const;
+  MeasureEvaluation build() const;
 
   /** String converter */
   OT::String __repr__() const;
@@ -64,7 +64,7 @@ public:
   virtual void load(OT::Advocate & adv);
 
 private:
-  MeasureFunction measure_;
+  MeasureEvaluation measure_;
   OT::Experiment experiment_;
 
 }; /* class MeasureFactory */

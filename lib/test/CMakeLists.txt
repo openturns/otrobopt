@@ -96,7 +96,7 @@ include_directories ( ${INTERNAL_INCLUDE_DIRS} )
 
 
 
-ot_check_test (MeasureFunction_std)
+ot_check_test (MeasureEvaluation_std)
 ot_check_test (SequentialMonteCarloRobustAlgorithm_std)
 
 

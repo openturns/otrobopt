@@ -20,7 +20,7 @@
  *
  */
 #include "otrobopt/MeasureFactory.hxx"
-#include <otrobopt/MeasureFunctionImplementation.hxx>
+#include <otrobopt/MeasureEvaluationImplementation.hxx>
 #include <openturns/PersistentObjectFactory.hxx>
 #include <openturns/UserDefined.hxx>
 #include <openturns/LHSExperiment.hxx>
@@ -43,7 +43,7 @@ MeasureFactory::MeasureFactory()
 }
 
 /* Parameter constructor */
-MeasureFactory::MeasureFactory (const MeasureFunction & measure,
+MeasureFactory::MeasureFactory (const MeasureEvaluation & measure,
                                 const OT::Experiment & experiment)
   : PersistentObject()
   , measure_(measure)
@@ -61,11 +61,11 @@ MeasureFactory * MeasureFactory::clone() const
 
 
 /* Evaluation */
-MeasureFunction MeasureFactory::build() const
+MeasureEvaluation MeasureFactory::build() const
 {
   Experiment experiment(experiment_);
   NumericalSample sample(experiment.generate());
-  MeasureFunction measure(measure_);
+  MeasureEvaluation measure(measure_);
   measure.setDistribution(UserDefined(sample));
   return measure;
 }

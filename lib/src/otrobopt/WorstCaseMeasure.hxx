@@ -23,7 +23,7 @@
 #define OTROBOPT_WORSTCASEMEASURE_HXX
 
 #include <openturns/OptimizationSolver.hxx>
-#include "otrobopt/MeasureFunctionImplementation.hxx"
+#include "otrobopt/MeasureEvaluationImplementation.hxx"
 
 namespace OTROBOPT
 {
@@ -34,7 +34,7 @@ namespace OTROBOPT
  * Mean measure
  */
 class OTROBOPT_API WorstCaseMeasure
-  : public MeasureFunctionImplementation
+  : public MeasureEvaluationImplementation
 {
   CLASSNAME;
 

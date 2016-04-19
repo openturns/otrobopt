@@ -20,7 +20,7 @@
  *
  */
 #include "otrobopt/RobustOptimizationAlgorithm.hxx"
-#include <otrobopt/MeasureFunctionImplementation.hxx>
+#include <otrobopt/MeasureEvaluationImplementation.hxx>
 #include <openturns/PersistentObjectFactory.hxx>
 #include <openturns/UserDefined.hxx>
 #include <openturns/LHSExperiment.hxx>

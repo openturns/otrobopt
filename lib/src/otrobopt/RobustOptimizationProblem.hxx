@@ -24,8 +24,8 @@
 
 #include <openturns/OptimizationProblemImplementation.hxx>
 
-#include "otrobopt/MeasureFunction.hxx"
-#include "otrobopt/MeasureFunctionImplementation.hxx"
+#include "otrobopt/MeasureEvaluation.hxx"
+#include "otrobopt/MeasureEvaluationImplementation.hxx"
 
 namespace OTROBOPT
 {
@@ -45,19 +45,19 @@ public:
   RobustOptimizationProblem();
 
   /** Parameter constructor */
-  RobustOptimizationProblem(const MeasureFunction & robustnessMeasure,
-                            const MeasureFunction & reliabilityMeasure);
+  RobustOptimizationProblem(const MeasureEvaluation & robustnessMeasure,
+                            const MeasureEvaluation & reliabilityMeasure);
 
   /** Virtual constructor method */
   RobustOptimizationProblem * clone() const;
 
   /** Measure accessors */
-  void setRobustnessMeasure(const MeasureFunction & robustnessMeasure);
-  MeasureFunction getRobustnessMeasure() const;
+  void setRobustnessMeasure(const MeasureEvaluation & robustnessMeasure);
+  MeasureEvaluation getRobustnessMeasure() const;
   OT::Bool hasRobustnessMeasure() const;
 
-  void setReliabilityMeasure(const MeasureFunction & reliabilityMeasure);
-  MeasureFunction getReliabilityMeasure() const;
+  void setReliabilityMeasure(const MeasureEvaluation & reliabilityMeasure);
+  MeasureEvaluation getReliabilityMeasure() const;
   OT::Bool hasReliabilityMeasure() const;
 
   /** String converter */
@@ -70,8 +70,8 @@ public:
   virtual void load(OT::Advocate & adv);
 
 private:
-  MeasureFunction robustnessMeasure_;
-  MeasureFunction reliabilityMeasure_;
+  MeasureEvaluation robustnessMeasure_;
+  MeasureEvaluation reliabilityMeasure_;
 
 
 }; /* class RobustOptimizationProblem */

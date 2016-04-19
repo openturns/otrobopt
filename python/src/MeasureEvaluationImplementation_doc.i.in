@@ -1,0 +1,60 @@
+%define OTROBOPT_MeasureEvaluation_doc
+"Measure function evaluation base class.
+
+Base class for measure function evaluations, allows to evaluate probabilistic
+objective functions or probabilistic constraint functions."
+%enddef
+%feature("docstring") OTROBOPT::MeasureEvaluationImplementation
+OTROBOPT_MeasureEvaluation_doc
+
+// ---------------------------------------------------------------------
+
+%define OTROBOPT_MeasureEvaluation_setDistribution_doc
+"Distribution accessor.
+
+Parameters
+----------
+distribution : :py:class:`openturns.Distribution`
+    Parameters distribution."
+%enddef
+%feature("docstring") OTROBOPT::MeasureEvaluationImplementation::setDistribution
+OTROBOPT_MeasureEvaluation_setDistribution_doc
+
+// ---------------------------------------------------------------------
+
+%define OTROBOPT_MeasureEvaluation_getDistribution_doc
+"Distribution accessor.
+
+Returns
+-------
+distribution : :py:class:`openturns.Distribution`
+    Parameters distribution."
+%enddef
+%feature("docstring") OTROBOPT::MeasureEvaluationImplementation::getDistribution
+OTROBOPT_MeasureEvaluation_getDistribution_doc
+
+// ---------------------------------------------------------------------
+
+%define OTROBOPT_MeasureEvaluation_setFunction_doc
+"Function accessor.
+
+Parameters
+----------
+function : :py:class:`openturns.NumericalMathFunction`
+    Parametric function."
+%enddef
+%feature("docstring") OTROBOPT::MeasureEvaluationImplementation::setFunction
+OTROBOPT_MeasureEvaluation_setFunction_doc
+
+// ---------------------------------------------------------------------
+
+%define OTROBOPT_MeasureEvaluation_getFunction_doc
+"Function accessor.
+
+Returns
+-------
+function : :py:class:`openturns.NumericalMathFunction`
+    Parametric function."
+%enddef
+%feature("docstring") OTROBOPT::MeasureEvaluationImplementation::getFunction
+OTROBOPT_MeasureEvaluation_getFunction_doc

@@ -36,7 +36,7 @@ static Factory<MeanStandardDeviationTradeoffMeasure> RegisteredFactory;
 
 /* Default constructor */
 MeanStandardDeviationTradeoffMeasure::MeanStandardDeviationTradeoffMeasure()
-  : MeasureFunctionImplementation()
+  : MeasureEvaluationImplementation()
 {
   // Nothing to do
 }
@@ -45,7 +45,7 @@ MeanStandardDeviationTradeoffMeasure::MeanStandardDeviationTradeoffMeasure()
 MeanStandardDeviationTradeoffMeasure::MeanStandardDeviationTradeoffMeasure (const Distribution & distribution,
                                                                             const NumericalMathFunction & function,
                                                                             const NumericalPoint & alpha)
-  : MeasureFunctionImplementation(distribution, function)
+  : MeasureEvaluationImplementation(distribution, function)
 {
   setAlpha(alpha);
 }
@@ -182,14 +182,14 @@ String MeanStandardDeviationTradeoffMeasure::__repr__() const
 /* Method save() stores the object through the StorageManager */
 void MeanStandardDeviationTradeoffMeasure::save(Advocate & adv) const
 {
-  MeasureFunctionImplementation::save(adv);
+  MeasureEvaluationImplementation::save(adv);
   adv.saveAttribute("alpha_", alpha_);
 }
 
 /* Method load() reloads the object from the StorageManager */
 void MeanStandardDeviationTradeoffMeasure::load(Advocate & adv)
 {
-  MeasureFunctionImplementation::load(adv);
+  MeasureEvaluationImplementation::load(adv);
   adv.loadAttribute("alpha_", alpha_);
 }
 

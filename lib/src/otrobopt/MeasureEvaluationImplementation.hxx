@@ -1,6 +1,6 @@
 //                                               -*- C++ -*-
 /**
- *  @brief Tradeoff between mean and standard deviation
+ *  @brief Measure function evaluation implementation
  *
  *  Copyright 2005-2016 Airbus-EDF-IMACS-Phimeca
  *
@@ -19,8 +19,8 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  *
  */
-#ifndef OTROBOPT_MEASUREFUNCTIONIMPLEMENTATION_HXX
-#define OTROBOPT_MEASUREFUNCTIONIMPLEMENTATION_HXX
+#ifndef OTROBOPT_MEASUREEVALUATIONIMPLEMENTATION_HXX
+#define OTROBOPT_MEASUREEVALUATIONIMPLEMENTATION_HXX
 
 #include "otrobopt/OTRobOptprivate.hxx"
 
@@ -30,31 +30,28 @@ namespace OTROBOPT
 {
 
 /**
- * @class MeasureFunctionImplementation
+ * @class MeasureEvaluationImplementation
  *
- * Tradeoff between mean and standard deviation
+ * Measure function evaluation implementation
  */
-class OTROBOPT_API MeasureFunctionImplementation
-  : public OT::NumericalMathFunctionImplementation
+class OTROBOPT_API MeasureEvaluationImplementation
+  : public OT::NumericalMathEvaluationImplementation
 {
   CLASSNAME;
 
 public:
   /** Default constructor */
-  MeasureFunctionImplementation();
+  MeasureEvaluationImplementation();
 
   /** Parameter constructor */
-  MeasureFunctionImplementation(const OT::Distribution & distribution,
+  MeasureEvaluationImplementation(const OT::Distribution & distribution,
                                 const OT::NumericalMathFunction & function);
 
   /** Virtual constructor method */
-  MeasureFunctionImplementation * clone() const;
+  MeasureEvaluationImplementation * clone() const;
 
   /** Evaluation */
   virtual OT::NumericalPoint operator()(const OT::NumericalPoint & inP) const;
-
-  /** Method gradient() returns the Jacobian transposed matrix of the function at point */
-  virtual OT::Matrix gradient(const OT::NumericalPoint & inP) const;
 
   /** Distribution accessor */
   virtual void setDistribution(const OT::Distribution & distribution);
@@ -82,8 +79,8 @@ private:
   OT::Distribution distribution_;
   OT::NumericalMathFunction function_;
 
-}; /* class MeasureFunctionImplementation */
+}; /* class MeasureEvaluationImplementation */
 
 } /* namespace OTROBOPT */
 
-#endif /* OTROBOPT_MEASUREFUNCTIONIMPLEMENTATION_HXX */
+#endif /* OTROBOPT_MEASUREEVALUATIONIMPLEMENTATION_HXX */

@@ -22,7 +22,7 @@
 #ifndef OTROBOPT_MEANMEASURE_HXX
 #define OTROBOPT_MEANMEASURE_HXX
 
-#include "otrobopt/MeasureFunctionImplementation.hxx"
+#include "otrobopt/MeasureEvaluationImplementation.hxx"
 
 namespace OTROBOPT
 {
@@ -33,7 +33,7 @@ namespace OTROBOPT
  * Mean measure
  */
 class OTROBOPT_API MeanMeasure
-  : public MeasureFunctionImplementation
+  : public MeasureEvaluationImplementation
 {
   CLASSNAME;
 

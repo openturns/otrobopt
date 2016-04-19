@@ -22,7 +22,7 @@
 #ifndef OTROBOPT_INDIVIDUALCHANCEMEASURE_HXX
 #define OTROBOPT_INDIVIDUALCHANCEMEASURE_HXX
 
-#include "otrobopt/MeasureFunctionImplementation.hxx"
+#include "otrobopt/MeasureEvaluationImplementation.hxx"
 
 namespace OTROBOPT
 {
@@ -33,7 +33,7 @@ namespace OTROBOPT
  * Individual probability measure
  */
 class OTROBOPT_API IndividualChanceMeasure
-  : public MeasureFunctionImplementation
+  : public MeasureEvaluationImplementation
 {
   CLASSNAME;
 

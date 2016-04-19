@@ -5,7 +5,7 @@ Assembles the output of several measure functions.
 
 Parameters
 ----------
-collection : sequence of :class:`~otrobopt.MeasureFunction`
+collection : sequence of :class:`~otrobopt.MeasureEvaluation`
     The measures to aggregate.
 
 Examples

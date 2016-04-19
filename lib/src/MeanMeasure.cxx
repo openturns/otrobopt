@@ -36,7 +36,7 @@ static Factory<MeanMeasure> RegisteredFactory;
 
 /* Default constructor */
 MeanMeasure::MeanMeasure()
-  : MeasureFunctionImplementation()
+  : MeasureEvaluationImplementation()
 {
   // Nothing to do
 }
@@ -44,7 +44,7 @@ MeanMeasure::MeanMeasure()
 /* Parameter constructor */
 MeanMeasure::MeanMeasure (const Distribution & distribution,
                           const NumericalMathFunction & function)
-  : MeasureFunctionImplementation(distribution, function)
+  : MeasureEvaluationImplementation(distribution, function)
 
 {
   // Nothing to do
@@ -148,13 +148,13 @@ String MeanMeasure::__repr__() const
 /* Method save() stores the object through the StorageManager */
 void MeanMeasure::save(Advocate & adv) const
 {
-  MeasureFunctionImplementation::save(adv);
+  MeasureEvaluationImplementation::save(adv);
 }
 
 /* Method load() reloads the object from the StorageManager */
 void MeanMeasure::load(Advocate & adv)
 {
-  MeasureFunctionImplementation::load(adv);
+  MeasureEvaluationImplementation::load(adv);
 }
 
 

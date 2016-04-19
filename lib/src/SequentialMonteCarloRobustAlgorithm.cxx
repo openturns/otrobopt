@@ -105,7 +105,7 @@ void SequentialMonteCarloRobustAlgorithm::run()
     if (robustProblem.hasRobustnessMeasure())
     {
       MeasureFactory robustnessFactory(robustProblem.getRobustnessMeasure(), FixedExperiment(currentSampleXi));
-      MeasureFunction rhoJ(robustnessFactory.build());
+      MeasureEvaluation rhoJ(robustnessFactory.build());
       problem.setObjective(*rhoJ.getImplementation());
     }
 
@@ -113,7 +113,7 @@ void SequentialMonteCarloRobustAlgorithm::run()
     if (robustProblem.hasReliabilityMeasure())
     {
       MeasureFactory reliabilityFactory(robustProblem.getReliabilityMeasure(), FixedExperiment(currentSampleXi));
-      MeasureFunction pG(reliabilityFactory.build());
+      MeasureEvaluation pG(reliabilityFactory.build());
       problem.setInequalityConstraint(*pG.getImplementation());
     }
 
