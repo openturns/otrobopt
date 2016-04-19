@@ -16,7 +16,7 @@ distribution : :py:class:`openturns.Distribution`
     Distribution of parameters
 function : :py:class:`openturns.NumericalMathFunction`
     Parametric function
-alpha : float in :math:`(0,1)`
+alpha : sequence of float in :math:`(0,1)`
     Tradeoff coefficient
 
 Examples
@@ -26,7 +26,7 @@ Examples
 >>> thetaDist = ot.Normal(2.0, 0.1)
 >>> f = ot.NumericalMathFunction(['x1', 'p1'], ['y1'], ['x1*p1'])
 >>> parametric = ot.NumericalMathFunction(f, [1], [0., 1.])
->>> measure = otrobopt.MeanStandardDeviationTradeoffMeasure(thetaDist, parametric, 0.4)"
+>>> measure = otrobopt.MeanStandardDeviationTradeoffMeasure(thetaDist, parametric, [0.4])"
 
 // ---------------------------------------------------------------------
 
@@ -35,7 +35,7 @@ Examples
 
 Parameters
 ----------
-alpha : float in :math:`(0,1)`
+alpha : sequence of  float in :math:`(0,1)`
     Tradeoff coefficient"
 
 // ---------------------------------------------------------------------
@@ -45,5 +45,5 @@ alpha : float in :math:`(0,1)`
 
 Returns
 -------
-alpha : float in :math:`(0,1)`
+alpha : sequence of float in :math:`(0,1)`
     Tradeoff coefficient"

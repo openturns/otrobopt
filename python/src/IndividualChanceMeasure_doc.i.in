@@ -3,7 +3,7 @@
 
 .. math::
 
-    M_{f, \theta}(x) = \mathbb{P}(f_k(x, \theta) > 0) \leq \alpha, \forall k \in K
+    M_{f, \theta}(x) = \mathbb{P}(f_k(x, \theta) > 0) \leq \alpha_k, \forall k \in K
 
 Parameters
 ----------
@@ -11,25 +11,34 @@ distribution : :py:class:`openturns.Distribution`
     Distribution of parameters
 function : :py:class:`openturns.NumericalMathFunction`
     Parametric function
-alpha : float
-    Probability level"
+alpha : sequence of float
+    Probability levels
+
+Examples
+--------
+>>> import openturns as ot
+>>> import otrobopt
+>>> thetaDist = ot.Normal(2.0, 0.1)
+>>> f = ot.NumericalMathFunction(['x1', 'p1'], ['y1'], ['x1*p1'])
+>>> parametric = ot.NumericalMathFunction(f, [1], [0., 1.])
+>>> measure = otrobopt.IndividualChanceMeasure(thetaDist, parametric, [0.95])"
 
 // ---------------------------------------------------------------------
 
 %feature("docstring") OTROBOPT::IndividualChanceMeasure::setAlpha
-"Probability level accessor.
+"Probability levels accessor.
 
 Parameters
 ----------
-alpha : float in :math:`(0,1)`
-    Probability level"
+alpha : sequence of float in :math:`(0,1)`
+    Probability levels"
 
 // ---------------------------------------------------------------------
 
 %feature("docstring") OTROBOPT::IndividualChanceMeasure::getAlpha
-"Probability level accessor.
+"Probability levels accessor.
 
 Returns
 -------
-alpha : float in :math:`(0,1)`
-    Probability level"
+alpha : sequence of float in :math:`(0,1)`
+    Probability levels"

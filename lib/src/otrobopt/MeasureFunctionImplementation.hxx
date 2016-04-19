@@ -1,6 +1,6 @@
 //                                               -*- C++ -*-
 /**
- *  @brief MeasureFunctionImplementation
+ *  @brief Tradeoff between mean and standard deviation
  *
  *  Copyright 2005-2016 Airbus-EDF-IMACS-Phimeca
  *
@@ -32,7 +32,7 @@ namespace OTROBOPT
 /**
  * @class MeasureFunctionImplementation
  *
- * MeasureFunctionImplementation is some measurefunction type to illustrate how to add some classes in OpenTURNS
+ * Tradeoff between mean and standard deviation
  */
 class OTROBOPT_API MeasureFunctionImplementation
   : public OT::NumericalMathFunctionImplementation

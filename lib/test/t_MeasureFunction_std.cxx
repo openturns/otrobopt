@@ -24,8 +24,8 @@ int main(int argc, char **argv)
   measures.add(WorstCaseMeasure(thetaDist, parametric));
   measures.add(WorstCaseMeasure(thetaDist, parametric, false));
   measures.add(JointChanceMeasure(thetaDist, parametric, 0.95));
-  measures.add(IndividualChanceMeasure(thetaDist, parametric, 0.95));
-  measures.add(MeanStandardDeviationTradeoffMeasure(thetaDist, parametric, 0.4));
+  measures.add(IndividualChanceMeasure(thetaDist, parametric, NumericalPoint(1, 0.95)));
+  measures.add(MeanStandardDeviationTradeoffMeasure(thetaDist, parametric, NumericalPoint(1, 0.4)));
   measures.add(QuantileMeasure(thetaDist, parametric, 0.8));
 
   AggregatedMeasure aggregated(measures);

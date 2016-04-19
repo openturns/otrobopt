@@ -1,6 +1,6 @@
 //                                               -*- C++ -*-
 /**
- *  @brief QuantileMeasure
+ *  @brief Measure that evaluates as a quantile
  *
  *  Copyright 2005-2016 Airbus-EDF-IMACS-Phimeca
  *
@@ -133,9 +133,9 @@ public:
   {
     GaussKronrod gkr;
     gkr.setRule(GaussKronrodRule::G1K3);
-    IteratedQuadrature algo(gkr);
+    const IteratedQuadrature algo(gkr);
     Pointer<NumericalMathFunctionImplementation> p_wrapper(new QuantileMeasureParametricFunctionWrapper(x_, function_, s[0]));
-    NumericalMathFunction G(p_wrapper);
+    const NumericalMathFunction G(p_wrapper);
     return algo.integrate(G, distribution_.getRange());
   }
 

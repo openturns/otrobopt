@@ -126,7 +126,7 @@ NumericalPoint WorstCaseMeasure::operator()(const NumericalPoint & inP) const
   if (getDistribution().isContinuous())
   {
     Pointer<NumericalMathFunctionImplementation> p_wrapper(new WorstCaseMeasureParametricFunctionWrapper(inP, function));
-    NumericalMathFunction G(p_wrapper);
+    const NumericalMathFunction G(p_wrapper);
     OptimizationProblem problem(G, NumericalMathFunction(), NumericalMathFunction(), getDistribution().getRange());
     problem.setMinimization(isMinimization());
     OptimizationSolver solver(solver_);

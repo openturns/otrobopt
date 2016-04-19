@@ -1,6 +1,6 @@
 //                                               -*- C++ -*-
 /**
- *  @brief JointChanceMeasure
+ *  @brief Joint probability measure
  *
  *  Copyright 2005-2016 Airbus-EDF-IMACS-Phimeca
  *
@@ -30,7 +30,7 @@ namespace OTROBOPT
 /**
  * @class JointChanceMeasure
  *
- * Mean measure
+ * Joint probability measure
  */
 class OTROBOPT_API JointChanceMeasure
   : public MeasureFunctionImplementation

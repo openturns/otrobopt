@@ -13,7 +13,16 @@ distribution : :py:class:`openturns.Distribution`
 function : :py:class:`openturns.NumericalMathFunction`
     Parametric function
 alpha : float in :math:`(0,1)`
-    Probability level"
+    Probability level
+
+Examples
+--------
+>>> import openturns as ot
+>>> import otrobopt
+>>> thetaDist = ot.Normal(2.0, 0.1)
+>>> f = ot.NumericalMathFunction(['x1', 'p1'], ['y1'], ['x1*p1'])
+>>> parametric = ot.NumericalMathFunction(f, [1], [0., 1.])
+>>> measure = otrobopt.JointChanceMeasure(thetaDist, parametric, 0.95)"
 
 // ---------------------------------------------------------------------
 

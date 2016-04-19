@@ -1,6 +1,6 @@
 //                                               -*- C++ -*-
 /**
- *  @brief VarianceMeasure
+ *  @brief Variance measure
  *
  *  Copyright 2005-2016 Airbus-EDF-IMACS-Phimeca
  *
@@ -30,7 +30,7 @@ namespace OTROBOPT
 /**
  * @class VarianceMeasure
  *
- * Mean measure
+ * Variance measure
  */
 class OTROBOPT_API VarianceMeasure
   : public MeasureFunctionImplementation

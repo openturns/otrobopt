@@ -1,6 +1,6 @@
 //                                               -*- C++ -*-
 /**
- *  @brief QuantileMeasure
+ *  @brief Measure that evaluates as a quantile
  *
  *  Copyright 2005-2016 Airbus-EDF-IMACS-Phimeca
  *
@@ -30,7 +30,7 @@ namespace OTROBOPT
 /**
  * @class QuantileMeasure
  *
- * Mean measure
+ * Measure that evaluates as a quantile
  */
 class OTROBOPT_API QuantileMeasure
   : public MeasureFunctionImplementation

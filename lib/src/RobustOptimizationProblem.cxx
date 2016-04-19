@@ -1,6 +1,6 @@
 //                                               -*- C++ -*-
 /**
- *  @brief RobustOptimizationProblem
+ *  @brief Robust optimization problem
  *
  *  Copyright 2005-2016 Airbus-EDF-IMACS-Phimeca
  *

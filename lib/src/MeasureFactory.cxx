@@ -1,6 +1,6 @@
 //                                               -*- C++ -*-
 /**
- *  @brief MeasureFactory
+ *  @brief Measure discretization
  *
  *  Copyright 2005-2016 Airbus-EDF-IMACS-Phimeca
  *
@@ -82,12 +82,16 @@ String MeasureFactory::__repr__() const
 void MeasureFactory::save(Advocate & adv) const
 {
   PersistentObject::save(adv);
+  adv.saveAttribute("measure_", measure_);
+  adv.saveAttribute("experiment_", experiment_);
 }
 
 /* Method load() reloads the object from the StorageManager */
 void MeasureFactory::load(Advocate & adv)
 {
   PersistentObject::load(adv);
+  adv.loadAttribute("measure_", measure_);
+  adv.loadAttribute("experiment_", experiment_);
 }
 
 

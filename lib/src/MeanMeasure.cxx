@@ -1,6 +1,6 @@
 //                                               -*- C++ -*-
 /**
- *  @brief MeanMeasure
+ *  @brief Mean measure
  *
  *  Copyright 2005-2016 Airbus-EDF-IMACS-Phimeca
  *
@@ -119,9 +119,9 @@ NumericalPoint MeanMeasure::operator()(const NumericalPoint & inP) const
   {
     GaussKronrod gkr;
     gkr.setRule(GaussKronrodRule::G1K3);
-    IteratedQuadrature algo(gkr);
+    const IteratedQuadrature algo(gkr);
     Pointer<NumericalMathFunctionImplementation> p_wrapper(new MeanMeasureParametricFunctionWrapper(inP, function, getDistribution()));
-    NumericalMathFunction G(p_wrapper);
+    const NumericalMathFunction G(p_wrapper);
     outP = algo.integrate(G, getDistribution().getRange());
   }
   else

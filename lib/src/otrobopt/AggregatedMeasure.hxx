@@ -1,6 +1,6 @@
 //                                               -*- C++ -*-
 /**
- *  @brief AggregatedMeasure
+ *  @brief Aggregation of measure functions
  *
  *  Copyright 2005-2016 Airbus-EDF-IMACS-Phimeca
  *
@@ -31,7 +31,7 @@ namespace OTROBOPT
 /**
  * @class AggregatedMeasure
  *
- * Mean measure
+ * Aggregation of measure functions
  */
 class OTROBOPT_API AggregatedMeasure
   : public MeasureFunctionImplementation

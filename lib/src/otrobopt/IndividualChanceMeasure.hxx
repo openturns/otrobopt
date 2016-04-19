@@ -1,6 +1,6 @@
 //                                               -*- C++ -*-
 /**
- *  @brief IndividualChanceMeasure
+ *  @brief Individual probability measure
  *
  *  Copyright 2005-2016 Airbus-EDF-IMACS-Phimeca
  *
@@ -30,7 +30,7 @@ namespace OTROBOPT
 /**
  * @class IndividualChanceMeasure
  *
- * Mean measure
+ * Individual probability measure
  */
 class OTROBOPT_API IndividualChanceMeasure
   : public MeasureFunctionImplementation
@@ -43,8 +43,8 @@ public:
 
   /** Parameter constructor */
   IndividualChanceMeasure (const OT::Distribution & distribution,
-                      const OT::NumericalMathFunction & function,
-                      const OT::NumericalScalar alpha);
+                           const OT::NumericalMathFunction & function,
+                           const OT::NumericalPoint & alpha);
 
   /** Virtual constructor method */
   IndividualChanceMeasure * clone() const;
@@ -53,11 +53,8 @@ public:
   OT::NumericalPoint operator()(const OT::NumericalPoint & inP) const;
 
   /** Alpha coefficient accessor */
-  void setAlpha(const OT::NumericalScalar alpha);
-  OT::NumericalScalar getAlpha() const;
-
-  /** Dimension accessor */
-  virtual OT::UnsignedInteger getOutputDimension() const;
+  void setAlpha(const OT::NumericalPoint & alpha);
+  OT::NumericalPoint getAlpha() const;
 
   /** String converter */
   OT::String __repr__() const;
@@ -69,7 +66,7 @@ public:
   virtual void load(OT::Advocate & adv);
 
 private:
-  OT::NumericalScalar alpha_;
+  OT::NumericalPoint alpha_;
 
 }; /* class IndividualChanceMeasure */
 

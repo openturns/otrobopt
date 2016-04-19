@@ -1,6 +1,6 @@
 //                                               -*- C++ -*-
 /**
- *  @brief AggregatedMeasure
+ *  @brief Aggregation of measure functions
  *
  *  Copyright 2005-2016 Airbus-EDF-IMACS-Phimeca
  *
@@ -72,7 +72,7 @@ NumericalPoint AggregatedMeasure::operator()(const NumericalPoint & inP) const
   UnsignedInteger index = 0;
   for (UnsignedInteger i = 0; i < size; ++ i)
   {
-    NumericalPoint outPi(collection_[i](inP));
+    const NumericalPoint outPi(collection_[i](inP));
     std::copy(outPi.begin(), outPi.end(), outP.begin() + index);
     index += outPi.getSize();
   }

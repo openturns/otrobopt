@@ -1,6 +1,6 @@
 //                                               -*- C++ -*-
 /**
- *  @brief MeanStandardDeviationTradeoffMeasure
+ *  @brief Tradeoff between mean and standard deviation
  *
  *  Copyright 2005-2016 Airbus-EDF-IMACS-Phimeca
  *
@@ -37,7 +37,6 @@ static Factory<MeanStandardDeviationTradeoffMeasure> RegisteredFactory;
 /* Default constructor */
 MeanStandardDeviationTradeoffMeasure::MeanStandardDeviationTradeoffMeasure()
   : MeasureFunctionImplementation()
-  , alpha_(0.0)
 {
   // Nothing to do
 }
@@ -45,9 +44,8 @@ MeanStandardDeviationTradeoffMeasure::MeanStandardDeviationTradeoffMeasure()
 /* Parameter constructor */
 MeanStandardDeviationTradeoffMeasure::MeanStandardDeviationTradeoffMeasure (const Distribution & distribution,
                                                                             const NumericalMathFunction & function,
-                                                                            const NumericalScalar alpha)
+                                                                            const NumericalPoint & alpha)
   : MeasureFunctionImplementation(distribution, function)
-  , alpha_(0.0)
 {
   setAlpha(alpha);
 }
@@ -134,10 +132,9 @@ NumericalPoint MeanStandardDeviationTradeoffMeasure::operator()(const NumericalP
     NumericalMathFunction G(p_wrapper);
     // integrate (f(x), f^2(x))
     NumericalPoint integral(algo.integrate(G, getDistribution().getRange()));
-//     integral *= 1.0 / getDistribution().getRange().getVolume();
     // Var(f(x))=\mathbb{E}(f^2(x))-\mathbb{E}(f(x))^2
     NumericalScalar variance = integral[1] - integral[0] * integral[0];
-    outP[0] = (1.0 - alpha_) * integral[0] + alpha_ * sqrt(variance);
+    outP[0] = (1.0 - alpha_[0]) * integral[0] + alpha_[0] * sqrt(variance);
   }
   else
   {
@@ -148,7 +145,7 @@ NumericalPoint MeanStandardDeviationTradeoffMeasure::operator()(const NumericalP
     {
       y[i] = function(inP, support[i]);
     }
-    outP = (1.0 - alpha_) * y.computeMean() + alpha_ * y.computeStandardDeviationPerComponent();
+    outP = (1.0 - alpha_[0]) * y.computeMean() + alpha_[0] * y.computeStandardDeviationPerComponent();
   }
   function.setParameter(parameter);
   return outP;
@@ -156,14 +153,18 @@ NumericalPoint MeanStandardDeviationTradeoffMeasure::operator()(const NumericalP
 
 
 /* Alpha coefficient accessor */
-void MeanStandardDeviationTradeoffMeasure::setAlpha(const NumericalScalar alpha)
+void MeanStandardDeviationTradeoffMeasure::setAlpha(const NumericalPoint & alpha)
 {
-  if (!(alpha >= 0.0) || !(alpha <= 1.0))
-    throw InvalidArgumentException(HERE) << "Alpha should be in (0, 1)";
+  const UnsignedInteger dimension = alpha.getDimension();
+  for(UnsignedInteger j = 0; j < dimension; ++ j)
+  {
+    if (!(alpha[j] >= 0.0) || !(alpha[j] <= 1.0))
+      throw InvalidArgumentException(HERE) << "Alpha should be in (0, 1)";
+  }
   alpha_ = alpha;
 }
 
-NumericalScalar MeanStandardDeviationTradeoffMeasure::getAlpha() const
+NumericalPoint MeanStandardDeviationTradeoffMeasure::getAlpha() const
 {
   return alpha_;
 }

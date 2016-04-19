@@ -1,6 +1,6 @@
 //                                               -*- C++ -*-
 /**
- *  @brief VarianceMeasure
+ *  @brief Variance measure
  *
  *  Copyright 2005-2016 Airbus-EDF-IMACS-Phimeca
  *
@@ -126,9 +126,9 @@ NumericalPoint VarianceMeasure::operator()(const NumericalPoint & inP) const
   {
     GaussKronrod gkr;
     gkr.setRule(GaussKronrodRule::G1K3);
-    IteratedQuadrature algo(gkr);
+    const IteratedQuadrature algo(gkr);
     Pointer<NumericalMathFunctionImplementation> p_wrapper(new VarianceMeasureParametricFunctionWrapper(inP, function, getDistribution()));
-    NumericalMathFunction G(p_wrapper);
+    const NumericalMathFunction G(p_wrapper);
     NumericalPoint integral(algo.integrate(G, getDistribution().getRange()));
     // Var(f(x))=\mathbb{E}(f^2(x))-\mathbb{E}(f(x))^2
     outP[0] = integral[1] - integral[0] * integral[0];

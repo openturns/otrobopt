@@ -1,6 +1,6 @@
 //                                               -*- C++ -*-
 /**
- *  @brief MeanMeasure
+ *  @brief Mean measure
  *
  *  Copyright 2005-2016 Airbus-EDF-IMACS-Phimeca
  *

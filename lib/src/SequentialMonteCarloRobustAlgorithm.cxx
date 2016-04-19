@@ -1,6 +1,6 @@
 //                                               -*- C++ -*-
 /**
- *  @brief SequentialMonteCarloRobustAlgorithm
+ *  @brief Alternating discretization of measures and deterministic optimization steps
  *
  *  Copyright 2005-2016 Airbus-EDF-IMACS-Phimeca
  *

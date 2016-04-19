@@ -1,6 +1,6 @@
 //                                               -*- C++ -*-
 /**
- *  @brief MeanStandardDeviationTradeoffMeasure
+ *  @brief Tradeoff between mean and standard deviation
  *
  *  Copyright 2005-2016 Airbus-EDF-IMACS-Phimeca
  *
@@ -30,7 +30,7 @@ namespace OTROBOPT
 /**
  * @class MeanStandardDeviationTradeoffMeasure
  *
- * Mean measure
+ * Tradeoff between mean and standard deviation
  */
 class OTROBOPT_API MeanStandardDeviationTradeoffMeasure
   : public MeasureFunctionImplementation
@@ -44,7 +44,7 @@ public:
   /** Parameter constructor */
   MeanStandardDeviationTradeoffMeasure (const OT::Distribution & distribution,
                                         const OT::NumericalMathFunction & function,
-                                        const OT::NumericalScalar alpha);
+                                        const OT::NumericalPoint & alpha);
 
   /** Virtual constructor method */
   MeanStandardDeviationTradeoffMeasure * clone() const;
@@ -53,8 +53,8 @@ public:
   OT::NumericalPoint operator()(const OT::NumericalPoint & inP) const;
 
   /** Alpha coefficient accessor */
-  void setAlpha(const OT::NumericalScalar alpha);
-  OT::NumericalScalar getAlpha() const;
+  void setAlpha(const OT::NumericalPoint & alpha);
+  OT::NumericalPoint getAlpha() const;
 
   /** String converter */
   OT::String __repr__() const;
@@ -66,7 +66,7 @@ public:
   virtual void load(OT::Advocate & adv);
 
 private:
-  OT::NumericalScalar alpha_;
+  OT::NumericalPoint alpha_;
 
 }; /* class MeanStandardDeviationTradeoffMeasure */
 

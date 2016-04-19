@@ -1,6 +1,6 @@
 //                                               -*- C++ -*-
 /**
- *  @brief IndividualChanceMeasure
+ *  @brief Individual probability measure
  *
  *  Copyright 2005-2016 Airbus-EDF-IMACS-Phimeca
  *
@@ -37,17 +37,15 @@ static Factory<IndividualChanceMeasure> RegisteredFactory;
 /* Default constructor */
 IndividualChanceMeasure::IndividualChanceMeasure()
   : MeasureFunctionImplementation()
-  , alpha_(0.0)
 {
   // Nothing to do
 }
 
 /* Parameter constructor */
 IndividualChanceMeasure::IndividualChanceMeasure (const Distribution & distribution,
-                                        const NumericalMathFunction & function,
-                                        const NumericalScalar alpha)
+                                                  const NumericalMathFunction & function,
+                                                  const NumericalPoint & alpha)
   : MeasureFunctionImplementation(distribution, function)
-  , alpha_(0.0)
 {
   setAlpha(alpha);
 }
@@ -62,8 +60,8 @@ IndividualChanceMeasure * IndividualChanceMeasure::clone() const
 class IndividualChanceMeasureParametricFunctionWrapper : public NumericalMathFunctionImplementation
 {
 public:
-  IndividualChanceMeasureParametricFunctionWrapper(const NumericalPoint & x,
-                            const NumericalMathFunction & function)
+  IndividualChanceMeasureParametricFunctionWrapper (const NumericalPoint & x,
+                                                    const NumericalMathFunction & function)
   : NumericalMathFunctionImplementation()
   , x_(x)
   , function_(function)
@@ -118,9 +116,9 @@ NumericalPoint IndividualChanceMeasure::operator()(const NumericalPoint & inP) c
   {
     GaussKronrod gkr;
     gkr.setRule(GaussKronrodRule::G1K3);
-    IteratedQuadrature algo(gkr);
+    const IteratedQuadrature algo(gkr);
     Pointer<NumericalMathFunctionImplementation> p_wrapper(new IndividualChanceMeasureParametricFunctionWrapper(inP, function));
-    NumericalMathFunction G(p_wrapper);
+    const NumericalMathFunction G(p_wrapper);
     outP = algo.integrate(G, getDistribution().getRange()) * 1.0 / getDistribution().getRange().getVolume();
   }
   else
@@ -132,31 +130,25 @@ NumericalPoint IndividualChanceMeasure::operator()(const NumericalPoint & inP) c
       outP += 1.0 / size * function(inP, support[i]);
     }
   }
-  NumericalScalar p = 1.0;
-  for (UnsignedInteger j = 0; j < outputDimension; ++ j)
-  {
-    p *= outP[j] > alpha_ ? 1.0 : 0.0;
-  }
   function.setParameter(parameter);
-  return NumericalPoint(1, -p);
+  return alpha_ - outP;
 }
 
 /* Alpha coefficient accessor */
-void IndividualChanceMeasure::setAlpha(const NumericalScalar alpha)
+void IndividualChanceMeasure::setAlpha(const NumericalPoint & alpha)
 {
-  if (!(alpha >= 0.0) || !(alpha <= 1.0))
-    throw InvalidArgumentException(HERE) << "Alpha should be in (0, 1)";
+  const UnsignedInteger dimension = alpha.getDimension();
+  for(UnsignedInteger j = 0; j < dimension; ++ j)
+  {
+    if (!(alpha[j] >= 0.0) || !(alpha[j] <= 1.0))
+      throw InvalidArgumentException(HERE) << "Alpha should be in (0, 1)";
+  }
   alpha_ = alpha;
 }
 
-NumericalScalar IndividualChanceMeasure::getAlpha() const
+NumericalPoint IndividualChanceMeasure::getAlpha() const
 {
   return alpha_;
-}
-
-UnsignedInteger IndividualChanceMeasure::getOutputDimension() const
-{
-  return 1;
 }
 
 /* String converter */

@@ -1,6 +1,6 @@
 //                                               -*- C++ -*-
 /**
- *  @brief MeasureFactory
+ *  @brief Measure discretization
  *
  *  Copyright 2005-2016 Airbus-EDF-IMACS-Phimeca
  *
@@ -33,7 +33,7 @@ namespace OTROBOPT
 /**
  * @class MeasureFactory
  *
- * Mean measure
+ * Measure discretization
  */
 class OTROBOPT_API MeasureFactory
   : public OT::PersistentObject

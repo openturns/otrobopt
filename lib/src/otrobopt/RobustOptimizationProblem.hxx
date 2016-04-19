@@ -1,6 +1,6 @@
 //                                               -*- C++ -*-
 /**
- *  @brief RobustOptimizationProblem
+ *  @brief Robust optimization problem
  *
  *  Copyright 2005-2016 Airbus-EDF-IMACS-Phimeca
  *
@@ -33,7 +33,7 @@ namespace OTROBOPT
 /**
  * @class RobustOptimizationProblem
  *
- * Mean measure
+ * Robust optimization problem
  */
 class OTROBOPT_API RobustOptimizationProblem
   : public OT::OptimizationProblemImplementation

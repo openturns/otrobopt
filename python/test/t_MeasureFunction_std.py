@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#!/usr/bin/env python
 
 from __future__ import print_function
 import openturns as ot
@@ -15,8 +15,8 @@ measures = [otrobopt.MeanMeasure(thetaDist, parametric),
             otrobopt.WorstCaseMeasure(thetaDist, parametric),
             otrobopt.WorstCaseMeasure(thetaDist, parametric, False),
             otrobopt.JointChanceMeasure(thetaDist, parametric, 0.95),
-            otrobopt.IndividualChanceMeasure(thetaDist, parametric, 0.95),
-            otrobopt.MeanStandardDeviationTradeoffMeasure(thetaDist, parametric, 0.4),
+            otrobopt.IndividualChanceMeasure(thetaDist, parametric, [0.95]),
+            otrobopt.MeanStandardDeviationTradeoffMeasure(thetaDist, parametric, [0.4]),
             otrobopt.QuantileMeasure(thetaDist, parametric, 0.8)
             ]
 aggregated = otrobopt.AggregatedMeasure(measures)

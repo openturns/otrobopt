@@ -1,6 +1,6 @@
 //                                               -*- C++ -*-
 /**
- *  @brief JointChanceMeasure
+ *  @brief Joint probability measure
  *
  *  Copyright 2005-2016 Airbus-EDF-IMACS-Phimeca
  *
@@ -63,7 +63,7 @@ class JointChanceMeasureParametricFunctionWrapper : public NumericalMathFunction
 {
 public:
   JointChanceMeasureParametricFunctionWrapper(const NumericalPoint & x,
-                            const NumericalMathFunction & function)
+                                             const NumericalMathFunction & function)
   : NumericalMathFunctionImplementation()
   , x_(x)
   , function_(function)
@@ -76,23 +76,22 @@ public:
 
   NumericalPoint operator()(const NumericalPoint & theta) const
   {
+    const UnsignedInteger outputDimension = function_.getOutputDimension();
     NumericalMathFunction function(function_);
-    return function(x_, theta);
+    NumericalPoint y(function(x_, theta));
+    NumericalScalar result = 1.0;
+    for (UnsignedInteger j = 0; j < outputDimension; ++ j)
+      result *= (y[j] > 0.0 ? 1.0 : 0.0);
+    return NumericalPoint(1, result);
   }
 
   NumericalSample operator()(const NumericalSample & theta) const
   {
     const UnsignedInteger size = theta.getSize();
-    const UnsignedInteger outputDimension = function_.getOutputDimension();
-    NumericalSample outS(size, 1);
+    NumericalSample outS(size, function_.getOutputDimension());
     for (UnsignedInteger i = 0; i < size; ++ i)
     {
-      NumericalPoint outPi(operator()(theta[i]));
-      outS[i][0] = 1.0;
-      for (UnsignedInteger j = 0; j < outputDimension; ++ j)
-      {
-        outS[i][0] *= (outPi[j] > 0.0 ? 1.0 : 0.0);
-      }
+      outS[i] = operator()(theta[i]);
     }
     return outS;
   }
@@ -124,9 +123,9 @@ NumericalPoint JointChanceMeasure::operator()(const NumericalPoint & inP) const
   {
     GaussKronrod gkr;
     gkr.setRule(GaussKronrodRule::G1K3);
-    IteratedQuadrature algo(gkr);
+    const IteratedQuadrature algo(gkr);
     Pointer<NumericalMathFunctionImplementation> p_wrapper(new JointChanceMeasureParametricFunctionWrapper(inP, function));
-    NumericalMathFunction G(p_wrapper);
+    const NumericalMathFunction G(p_wrapper);
     outP = algo.integrate(G, getDistribution().getRange()) * 1.0 / getDistribution().getRange().getVolume();
   }
   else
