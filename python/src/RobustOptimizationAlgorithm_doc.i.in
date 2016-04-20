@@ -8,7 +8,11 @@ Parameters
 problem : :class:`~otrobopt.RobustOptimizationProblem`
     Robust optimization problem
 solver : :py:class:`openturns.OptimizationSolver`
-    Optimization solver"
+    Optimization solver
+
+See also
+--------
+SequentialMonteCarloRobustAlgorithm"
 
 // ---------------------------------------------------------------------
 

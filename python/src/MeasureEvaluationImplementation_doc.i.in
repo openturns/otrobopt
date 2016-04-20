@@ -2,7 +2,13 @@
 "Measure function evaluation base class.
 
 Base class for measure function evaluations, allows to evaluate probabilistic
-objective functions or probabilistic constraint functions."
+objective functions or probabilistic constraint functions.
+
+See also
+--------
+MeanMeasure, VarianceMeasure, MeanStandardDeviationTradeoffMeasure,
+WorstCaseMeasure, JointChanceMeasure, IndividualChanceMeasure,
+QuantileMeasure, AggregatedMeasure"
 %enddef
 %feature("docstring") OTROBOPT::MeasureEvaluationImplementation
 OTROBOPT_MeasureEvaluation_doc
