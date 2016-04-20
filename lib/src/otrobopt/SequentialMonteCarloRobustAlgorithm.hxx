@@ -69,7 +69,7 @@ public:
 
 private:
   // initial sampling size
-  OT::UnsignedInteger N0_;
+  OT::UnsignedInteger initialSamplingSize_;
 
   // number of sampled initial points
   OT::UnsignedInteger initialSearch_;

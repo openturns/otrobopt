@@ -1,6 +1,6 @@
 //                                               -*- C++ -*-
 /**
- *  @brief WorstCaseMeasure
+ *  @brief Worst-case measure evaluation
  *
  *  Copyright 2005-2016 Airbus-EDF-IMACS-Phimeca
  *
@@ -31,7 +31,7 @@ namespace OTROBOPT
 /**
  * @class WorstCaseMeasure
  *
- * Mean measure
+ * Worst-case measure evaluation
  */
 class OTROBOPT_API WorstCaseMeasure
   : public MeasureEvaluationImplementation

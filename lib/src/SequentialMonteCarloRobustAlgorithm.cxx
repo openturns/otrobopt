@@ -44,7 +44,7 @@ static Factory<SequentialMonteCarloRobustAlgorithm> RegisteredFactory;
 /* Default constructor */
 SequentialMonteCarloRobustAlgorithm::SequentialMonteCarloRobustAlgorithm()
   : RobustOptimizationAlgorithm()
-  , N0_(0)
+  , initialSamplingSize_(0)
   , initialSearch_(0)
 {
   // Nothing to do
@@ -54,7 +54,7 @@ SequentialMonteCarloRobustAlgorithm::SequentialMonteCarloRobustAlgorithm()
 SequentialMonteCarloRobustAlgorithm::SequentialMonteCarloRobustAlgorithm (const RobustOptimizationProblem & problem,
                                                                           const OptimizationSolver & solver)
   : RobustOptimizationAlgorithm(problem, solver)
-  , N0_(10)
+  , initialSamplingSize_(10)
   , initialSearch_(10)
 {
   // Nothing to do
@@ -83,7 +83,7 @@ void SequentialMonteCarloRobustAlgorithm::run()
     distributionXi = robustProblem.getReliabilityMeasure().getDistribution();
 
   NumericalSample currentSampleXi(0, distributionXi.getDimension());
-  UnsignedInteger N = N0_;
+  UnsignedInteger N = initialSamplingSize_;
 
   NumericalPoint currentPoint(dimension);
   NumericalPoint currentValue(outputDimension);
@@ -104,7 +104,7 @@ void SequentialMonteCarloRobustAlgorithm::run()
     // discretize the robustness measure
     if (robustProblem.hasRobustnessMeasure())
     {
-      MeasureFactory robustnessFactory(robustProblem.getRobustnessMeasure(), FixedExperiment(currentSampleXi));
+      const MeasureFactory robustnessFactory(robustProblem.getRobustnessMeasure(), FixedExperiment(currentSampleXi));
       MeasureEvaluation rhoJ(robustnessFactory.build());
       problem.setObjective(*rhoJ.getImplementation());
     }
@@ -112,7 +112,7 @@ void SequentialMonteCarloRobustAlgorithm::run()
     // discretize the reliability measure
     if (robustProblem.hasReliabilityMeasure())
     {
-      MeasureFactory reliabilityFactory(robustProblem.getReliabilityMeasure(), FixedExperiment(currentSampleXi));
+      const MeasureFactory reliabilityFactory(robustProblem.getReliabilityMeasure(), FixedExperiment(currentSampleXi));
       MeasureEvaluation pG(reliabilityFactory.build());
       problem.setInequalityConstraint(*pG.getImplementation());
     }
@@ -193,12 +193,12 @@ void SequentialMonteCarloRobustAlgorithm::run()
 /* Initial sampling size accessor */
 void SequentialMonteCarloRobustAlgorithm::setInitialSamplingSize(const OT::UnsignedInteger N0)
 {
-  N0_ = N0;
+  initialSamplingSize_ = N0;
 }
 
 UnsignedInteger SequentialMonteCarloRobustAlgorithm::getInitialSamplingSize() const
 {
-  return N0_;
+  return initialSamplingSize_;
 }
 
 void SequentialMonteCarloRobustAlgorithm::setInitialSearch(const OT::UnsignedInteger initialSearch)
@@ -223,14 +223,16 @@ String SequentialMonteCarloRobustAlgorithm::__repr__() const
 void SequentialMonteCarloRobustAlgorithm::save(Advocate & adv) const
 {
   RobustOptimizationAlgorithm::save(adv);
-  adv.saveAttribute("N0_", N0_);
+  adv.saveAttribute("initialSamplingSize_", initialSamplingSize_);
+  adv.saveAttribute("initialSearch_", initialSearch_);
 }
 
 /* Method load() reloads the object from the StorageManager */
 void SequentialMonteCarloRobustAlgorithm::load(Advocate & adv)
 {
   RobustOptimizationAlgorithm::load(adv);
-  adv.loadAttribute("N0_", N0_);
+  adv.loadAttribute("initialSamplingSize_", initialSamplingSize_);
+  adv.loadAttribute("initialSearch_", initialSearch_);
 }
 
 

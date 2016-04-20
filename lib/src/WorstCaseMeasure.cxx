@@ -1,6 +1,6 @@
 //                                               -*- C++ -*-
 /**
- *  @brief WorstCaseMeasure
+ *  @brief Worst-case measure evaluation
  *
  *  Copyright 2005-2016 Airbus-EDF-IMACS-Phimeca
  *
@@ -191,6 +191,7 @@ void WorstCaseMeasure::save(Advocate & adv) const
 {
   MeasureEvaluationImplementation::save(adv);
   adv.saveAttribute("isMinimization_", isMinimization_);
+  adv.saveAttribute("solver_", solver_);
 }
 
 /* Method load() reloads the object from the StorageManager */
@@ -198,6 +199,7 @@ void WorstCaseMeasure::load(Advocate & adv)
 {
   MeasureEvaluationImplementation::load(adv);
   adv.loadAttribute("isMinimization_", isMinimization_);
+  adv.loadAttribute("solver_", solver_);
 }
 
 
