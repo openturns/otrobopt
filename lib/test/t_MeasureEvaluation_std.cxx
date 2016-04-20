@@ -14,7 +14,7 @@ int main(int argc, char **argv)
   input[0] = "x1";
   input[1] = "p1";
   NumericalMathFunction f(input, Description(1, "y1"), Description(1, "x1*p1"));
-  NumericalMathFunction parametric(f, Indices(1 , 1), NumericalPoint(2, 1.0));
+  NumericalMathFunction parametric(f, Indices(1 , 1), NumericalPoint(1, 1.0));
 
   NumericalPoint x(1, 1.0);
 

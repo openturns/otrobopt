@@ -38,11 +38,11 @@ int main(int argc, char **argv)
 
   // This is capital J: J(x,xi) = calJ(x+xi), the parametric objective function
   NumericalMathFunction JFull(calJ, noise);
-  NumericalMathFunction J(JFull, paramSet, NumericalPoint(4, 0.0));
+  NumericalMathFunction J(JFull, paramSet, NumericalPoint(2, 0.0));
 
   // This is g, the parametric constraints
   NumericalMathFunction gFull(calG, noise);
-  NumericalMathFunction g(gFull, paramSet, NumericalPoint(4, 0.0));
+  NumericalMathFunction g(gFull, paramSet, NumericalPoint(2, 0.0));
 
 
   Interval bounds(NumericalPoint(2, -3.0), NumericalPoint(2, 3.0));

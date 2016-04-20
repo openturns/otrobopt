@@ -14,7 +14,7 @@ Examples
 >>> import otrobopt
 >>> thetaDist = ot.Normal(2.0, 0.1)
 >>> f = ot.NumericalMathFunction(['x1', 'p1'], ['y1'], ['x1*p1'])
->>> parametric = ot.NumericalMathFunction(f, [1], [0.0, 1.0])
+>>> parametric = ot.NumericalMathFunction(f, [1], [1.0])
 >>> measures = [otrobopt.MeanMeasure(thetaDist, parametric),
 ...             otrobopt.VarianceMeasure(thetaDist, parametric)]
 >>> aggregated = otrobopt.AggregatedMeasure(measures)"

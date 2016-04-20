@@ -17,11 +17,11 @@ noise = ot.NumericalMathFunction(['x1', 'x2', 'xi1', 'xi2'], ['x1 + xi1', 'x2 + 
 
 # This is capital J: J(x,xi) = calJ(x+xi), the parametric objective function
 JFull = ot.NumericalMathFunction(calJ, noise)
-J = ot.NumericalMathFunction(JFull, [2, 3], [0.0] * 4)
+J = ot.NumericalMathFunction(JFull, [2, 3], [0.0] * 2)
 
 # This is g, the parametric constraints
 gFull = ot.NumericalMathFunction(calG, noise)
-g = ot.NumericalMathFunction(gFull, [2, 3], [0.0] * 4)
+g = ot.NumericalMathFunction(gFull, [2, 3], [0.0] * 2)
 
 
 bounds = ot.Interval([-3.0] * 2, [3.0] * 2)
