@@ -77,12 +77,13 @@ public:
   NumericalPoint operator()(const NumericalPoint & theta) const
   {
     NumericalMathFunction function(function_);
-    // (f(x), f(x)^2)
+    // (f_1(x), ...., f_d(x), f_1^2(x), ..., f_d^2(x))
     NumericalPoint outP(function(x_, theta));
     outP.add(outP);
-    for (UnsignedInteger j = 0; j < function.getOutputDimension(); ++ j)
+    const UnsignedInteger outputDimension = function_.getOutputDimension();
+    for (UnsignedInteger j = 0; j < outputDimension; ++ j)
     {
-      outP[2 * j + 1] *= outP[2 * j + 1];
+      outP[outputDimension + j] *= outP[j];
     }
     return outP * distribution_.computePDF(theta);
   }
@@ -127,11 +128,16 @@ NumericalPoint VarianceMeasure::operator()(const NumericalPoint & inP) const
     GaussKronrod gkr;
     gkr.setRule(GaussKronrodRule::G1K3);
     const IteratedQuadrature algo(gkr);
+
     Pointer<NumericalMathFunctionImplementation> p_wrapper(new VarianceMeasureParametricFunctionWrapper(inP, function, getDistribution()));
     const NumericalMathFunction G(p_wrapper);
     NumericalPoint integral(algo.integrate(G, getDistribution().getRange()));
-    // Var(f(x))=\mathbb{E}(f^2(x))-\mathbb{E}(f(x))^2
-    outP[0] = integral[1] - integral[0] * integral[0];
+    for (UnsignedInteger j = 0; j < outputDimension; ++ j)
+    {
+      const NumericalScalar mean = integral[j];
+      // Var(f(x))=\mathbb{E}(f^2(x))-\mathbb{E}(f(x))^2
+      outP[j] = integral[outputDimension + j] - mean * mean;
+    }
   }
   else
   {

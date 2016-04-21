@@ -125,28 +125,34 @@ NumericalPoint WorstCaseMeasure::operator()(const NumericalPoint & inP) const
   NumericalPoint outP(outputDimension);
   if (getDistribution().isContinuous())
   {
-    Pointer<NumericalMathFunctionImplementation> p_wrapper(new WorstCaseMeasureParametricFunctionWrapper(inP, function));
-    const NumericalMathFunction G(p_wrapper);
-    OptimizationProblem problem(G, NumericalMathFunction(), NumericalMathFunction(), getDistribution().getRange());
-    problem.setMinimization(isMinimization());
-    OptimizationSolver solver(solver_);
-    solver.setStartingPoint(getDistribution().getMean());
-    solver.setProblem(problem);
-    solver.run();
-    outP = solver.getResult().getOptimalValue();
+    for (UnsignedInteger j = 0; j < outputDimension; ++ j)
+    {
+      Pointer<NumericalMathFunctionImplementation> p_wrapper(new WorstCaseMeasureParametricFunctionWrapper(inP, function));
+      const NumericalMathFunction G(p_wrapper);
+      OptimizationProblem problem(G, NumericalMathFunction(), NumericalMathFunction(), getDistribution().getRange());
+      problem.setMinimization(isMinimization());
+      OptimizationSolver solver(solver_);
+      solver.setStartingPoint(getDistribution().getMean());
+      solver.setProblem(problem);
+      solver.run();
+      NumericalPoint optimalValue(solver.getResult().getOptimalValue());
+      outP[j] = optimalValue[0];
+    }
   }
   else
   {
     NumericalSample support(getDistribution().getSupport());
     const UnsignedInteger size = support.getSize();
-
     for (UnsignedInteger i = 0; i < size; ++ i)
     {
       NumericalPoint y(function(inP, support[i]));
-      if ((i == 0) || ((i > 0) && ((isMinimization_ && (y[0] < outP[0]))
-                                || (!isMinimization_ && (y[0] > outP[0])))))
+      for (UnsignedInteger j = 0; j < outputDimension; ++ j)
       {
-        outP = y;
+        if ((i == 0) || ((i > 0) && ((isMinimization_ && (y[j] < outP[j]))
+                                  || (!isMinimization_ && (y[j] > outP[j])))))
+        {
+          outP[j] = y[j];
+        }
       }
     }
   }

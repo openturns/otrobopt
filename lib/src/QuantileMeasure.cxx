@@ -173,17 +173,21 @@ NumericalPoint QuantileMeasure::operator()(const NumericalPoint & inP) const
 {
   NumericalMathFunction function(getFunction());
   NumericalPoint parameter(function.getParameter());
-  NumericalPoint outP(1);
+  const UnsignedInteger outputDimension = function.getOutputDimension();
+  NumericalPoint outP(outputDimension);
   if (getDistribution().isContinuous())
   {
-    Pointer<NumericalMathFunctionImplementation> p_wrapper(new QuantileMeasureParametricFunctionWrapper2(inP, function, getDistribution()));
-    NumericalMathFunction G(p_wrapper);
-    Brent solver;
-    const NumericalScalar a = function(inP, getDistribution().getRange().getLowerBound())[0];
-    const NumericalScalar b = function(inP, getDistribution().getRange().getUpperBound())[0];
-    const NumericalScalar fA = 0.0;
-    const NumericalScalar fB = 1.0;
-    outP[0] = solver.solve(G, alpha_, a, b, fA, fB);
+    for (UnsignedInteger j = 0; j < outputDimension; ++ j)
+    {
+      Pointer<NumericalMathFunctionImplementation> p_wrapper(new QuantileMeasureParametricFunctionWrapper2(inP, function.getMarginal(j), getDistribution()));
+      NumericalMathFunction G(p_wrapper);
+      Brent solver;
+      const NumericalScalar a = function(inP, getDistribution().getRange().getLowerBound())[0];
+      const NumericalScalar b = function(inP, getDistribution().getRange().getUpperBound())[0];
+      const NumericalScalar fA = 0.0;
+      const NumericalScalar fB = 1.0;
+      outP[j] = solver.solve(G, alpha_, a, b, fA, fB);
+    }
   }
   else
   {
@@ -194,7 +198,7 @@ NumericalPoint QuantileMeasure::operator()(const NumericalPoint & inP) const
     {
       outS[i] = function(inP, support[i]);
     }
-    outP[0] = outS.computeQuantile(alpha_)[0];
+    outP = outS.computeQuantile(alpha_);
   }
   function.setParameter(parameter);
   return outP;

@@ -78,12 +78,13 @@ public:
   NumericalPoint operator()(const NumericalPoint & theta) const
   {
     NumericalMathFunction function(function_);
-    // (f(x), f(x)^2)
+    // (f_1(x), ...., f_d(x), f_1^2(x), ..., f_d^2(x))
     NumericalPoint outP(function(x_, theta));
     outP.add(outP);
-    for (UnsignedInteger j = 0; j < function.getOutputDimension(); ++ j)
+    const UnsignedInteger outputDimension = function_.getOutputDimension();
+    for (UnsignedInteger j = 0; j < outputDimension; ++ j)
     {
-      outP[2 * j + 1] *= outP[2 * j + 1];
+      outP[outputDimension + j] *= outP[j];
     }
     return outP * distribution_.computePDF(theta);
   }
@@ -128,13 +129,18 @@ NumericalPoint MeanStandardDeviationTradeoffMeasure::operator()(const NumericalP
     GaussKronrod gkr;
     gkr.setRule(GaussKronrodRule::G1K3);
     IteratedQuadrature algo(gkr);
+
     Pointer<NumericalMathFunctionImplementation> p_wrapper(new MeanStandardDeviationTradeoffMeasureParametricFunctionWrapper(inP, function, getDistribution()));
     NumericalMathFunction G(p_wrapper);
-    // integrate (f(x), f^2(x))
+    // integrate (f_1(x), ...., f_d(x), f_1^2(x), ..., f_d^2(x))
     NumericalPoint integral(algo.integrate(G, getDistribution().getRange()));
-    // Var(f(x))=\mathbb{E}(f^2(x))-\mathbb{E}(f(x))^2
-    NumericalScalar variance = integral[1] - integral[0] * integral[0];
-    outP[0] = (1.0 - alpha_[0]) * integral[0] + alpha_[0] * sqrt(variance);
+    for (UnsignedInteger j = 0; j < outputDimension; ++ j)
+    {
+      const NumericalScalar mean = integral[j];
+      // Var(f(x))=\mathbb{E}(f^2(x))-\mathbb{E}(f(x))^2
+      const NumericalScalar variance = integral[outputDimension + j] - mean * mean;
+      outP[j] = (1.0 - alpha_[j]) * mean + alpha_[j] * sqrt(variance);
+    }
   }
   else
   {
@@ -145,7 +151,12 @@ NumericalPoint MeanStandardDeviationTradeoffMeasure::operator()(const NumericalP
     {
       y[i] = function(inP, support[i]);
     }
-    outP = (1.0 - alpha_[0]) * y.computeMean() + alpha_[0] * y.computeStandardDeviationPerComponent();
+    NumericalPoint mean(y.computeMean());
+    NumericalPoint standardDeviation(y.computeStandardDeviationPerComponent());
+    for (UnsignedInteger j = 0; j < outputDimension; ++ j)
+    {
+      outP[j] = (1.0 - alpha_[j]) * mean[j] + alpha_[j] * standardDeviation[j];
+    }
   }
   function.setParameter(parameter);
   return outP;
