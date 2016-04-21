@@ -63,8 +63,8 @@ WorstCaseMeasure * WorstCaseMeasure::clone() const
 class WorstCaseMeasureParametricFunctionWrapper : public NumericalMathFunctionImplementation
 {
 public:
-  WorstCaseMeasureParametricFunctionWrapper (const NumericalPoint & x,
-                                        const NumericalMathFunction & function)
+  WorstCaseMeasureParametricFunctionWrapper(const NumericalPoint & x,
+                                            const NumericalMathFunction & function)
   : NumericalMathFunctionImplementation()
   , x_(x)
   , function_(function)
@@ -95,6 +95,18 @@ public:
   Matrix gradient(const NumericalPoint & theta) const
   {
     NumericalMathFunction function(function_);
+    const UnsignedInteger size = theta.getSize();
+    NumericalPoint y(operator()(theta));
+    const NumericalScalar h = 1e-7;
+    Matrix grad(size, 1);
+    for (UnsignedInteger i = 0; i < size; ++ i)
+    {
+      NumericalPoint theta_p(theta);
+      theta_p[i] += h;
+      grad(i, 0) = (operator()(theta_p)[0] - y[0]) / h;
+    }
+    return grad;
+    // FIXME: PR #195
     return function.parameterGradient(x_, theta);
   }
 
@@ -105,7 +117,7 @@ public:
 
   UnsignedInteger getOutputDimension() const
   {
-    return function_.getOutputDimension();
+    return 1;
   }
 
 protected:
@@ -127,7 +139,7 @@ NumericalPoint WorstCaseMeasure::operator()(const NumericalPoint & inP) const
   {
     for (UnsignedInteger j = 0; j < outputDimension; ++ j)
     {
-      Pointer<NumericalMathFunctionImplementation> p_wrapper(new WorstCaseMeasureParametricFunctionWrapper(inP, function));
+      Pointer<NumericalMathFunctionImplementation> p_wrapper(new WorstCaseMeasureParametricFunctionWrapper(inP, function.getMarginal(j)));
       const NumericalMathFunction G(p_wrapper);
       OptimizationProblem problem(G, NumericalMathFunction(), NumericalMathFunction(), getDistribution().getRange());
       problem.setMinimization(isMinimization());

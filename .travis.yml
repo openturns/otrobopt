@@ -9,6 +9,7 @@ install:
   - sudo apt-get -y install cmake gfortran swig texlive-latex-recommended texlive-fonts-recommended texlive-latex-extra python-sphinx python-matplotlib dvipng libxml2-dev liblapack-dev libmuparser-dev libboost-math-dev libtbb-dev libnlopt-dev libhmat-oss-dev python-dev
 # use master for now
   - git clone https://github.com/openturns/openturns.git
+  - wget --no-check-certificate https://github.com/openturns/openturns/pull/195.patch; patch -p1 -i 195.patch
   - pushd openturns
   - cmake -DCMAKE_INSTALL_PREFIX=~/.local -DUSE_SPHINX=OFF .
   - make install -j2
