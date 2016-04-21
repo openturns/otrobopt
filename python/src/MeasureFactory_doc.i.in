@@ -20,7 +20,7 @@ Parameters
 ----------
 measure : :class:`~otrobopt.MeasureEvaluation`
     Measure function
-experiment : :py:class:`openturns.Experiment`
+experiment : :py:class:`openturns.WeightedExperiment`
     Parameters design of experiment
 
 Examples

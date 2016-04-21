@@ -23,7 +23,7 @@
 #define OTROBOPT_MEASUREFACTORY_HXX
 
 #include <openturns/Distribution.hxx>
-#include <openturns/Experiment.hxx>
+#include <openturns/WeightedExperiment.hxx>
 
 #include "otrobopt/MeasureEvaluation.hxx"
 
@@ -46,7 +46,7 @@ public:
 
   /** Parameter constructor */
   MeasureFactory (const MeasureEvaluation & measure,
-                  const OT::Experiment & experiment);
+                  const OT::WeightedExperiment & experiment);
 
   /** Virtual constructor method */
   MeasureFactory * clone() const;
@@ -65,8 +65,7 @@ public:
 
 private:
   MeasureEvaluation measure_;
-  OT::Experiment experiment_;
-
+  OT::Pointer<OT::WeightedExperiment> p_experiment_;
 }; /* class MeasureFactory */
 
 } /* namespace OTROBOPT */

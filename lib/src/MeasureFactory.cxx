@@ -38,16 +38,17 @@ static Factory<MeasureFactory> RegisteredFactory;
 /* Default constructor */
 MeasureFactory::MeasureFactory()
   : PersistentObject()
+  , p_experiment_(0)
 {
   // Nothing to do
 }
 
 /* Parameter constructor */
 MeasureFactory::MeasureFactory (const MeasureEvaluation & measure,
-                                const OT::Experiment & experiment)
+                                const OT::WeightedExperiment & experiment)
   : PersistentObject()
   , measure_(measure)
-  , experiment_(experiment)
+  , p_experiment_(experiment.clone())
 
 {
   // Nothing to do
@@ -63,10 +64,12 @@ MeasureFactory * MeasureFactory::clone() const
 /* Evaluation */
 MeasureEvaluation MeasureFactory::build() const
 {
-  Experiment experiment(experiment_);
-  NumericalSample sample(experiment.generate());
+  // copy experiment as generate is non-const
+  Pointer<WeightedExperiment> p_experiment(p_experiment_->clone());
+  NumericalPoint weights;
+  NumericalSample sample(p_experiment->generateWithWeights(weights));
   MeasureEvaluation measure(measure_);
-  measure.setDistribution(UserDefined(sample));
+  measure.setDistribution(UserDefined(sample, weights));
   return measure;
 }
 
@@ -83,7 +86,7 @@ void MeasureFactory::save(Advocate & adv) const
 {
   PersistentObject::save(adv);
   adv.saveAttribute("measure_", measure_);
-  adv.saveAttribute("experiment_", experiment_);
+  adv.saveAttribute("experiment_", *p_experiment_);
 }
 
 /* Method load() reloads the object from the StorageManager */
@@ -91,7 +94,8 @@ void MeasureFactory::load(Advocate & adv)
 {
   PersistentObject::load(adv);
   adv.loadAttribute("measure_", measure_);
-  adv.loadAttribute("experiment_", experiment_);
+  p_experiment_ = new WeightedExperiment;
+  adv.loadAttribute("experiment_", *p_experiment_);
 }
 
 
