@@ -177,16 +177,57 @@ NumericalPoint QuantileMeasure::operator()(const NumericalPoint & inP) const
   NumericalPoint outP(outputDimension);
   if (getDistribution().isContinuous())
   {
+    const NumericalScalar cdfEpsilon = ResourceMap::GetAsNumericalScalar("DistributionImplementation-DefaultCDFEpsilon");
+
     for (UnsignedInteger j = 0; j < outputDimension; ++ j)
     {
+      // search bounds
+      NumericalScalar lower = getDistribution().getRange().getLowerBound()[j];
+      NumericalScalar upper = getDistribution().getRange().getUpperBound()[j];
+      // This test allows to know if the range has already been computed. If not, it is the role of the computeScalarQuantile() to do it.
+      if (lower > upper)
+      {
+        LOGDEBUG("DistributionImplementation::computeScalarQuantile: look for a bracketing of the bounds of the range");
+        // Find a rough estimate of the lower bound and the upper bound
+        NumericalScalar step(1.0);
+        if (getDistribution().computeCDF(lower) >= cdfEpsilon)
+        {
+          // negative lower bound
+          lower -= step;
+          while (getDistribution().computeCDF(lower) >= cdfEpsilon)
+          {
+            step *= 2.0;
+            lower -= step;
+          }
+        }
+        else
+        {
+          // positive lower bound
+          lower += step;
+          while (getDistribution().computeCDF(lower) <= cdfEpsilon)
+          {
+            step *= 2.0;
+            lower += step;
+          }
+        }
+        // Here, lower is a rough estimate of the lower bound
+        // Go to the upper bound
+        upper = lower;
+        step = 1.0;
+        while (getDistribution().computeComplementaryCDF(upper) >= cdfEpsilon)
+        {
+          upper += step;
+          step *= 2.0;
+        }
+      }
+
       Pointer<NumericalMathFunctionImplementation> p_wrapper(new QuantileMeasureParametricFunctionWrapper2(inP, function.getMarginal(j), getDistribution()));
       NumericalMathFunction G(p_wrapper);
-      Brent solver;
-      const NumericalScalar a = function(inP, getDistribution().getRange().getLowerBound())[0];
-      const NumericalScalar b = function(inP, getDistribution().getRange().getUpperBound())[0];
-      const NumericalScalar fA = 0.0;
-      const NumericalScalar fB = 1.0;
-      outP[j] = solver.solve(G, alpha_, a, b, fA, fB);
+
+      const Brent solver;
+      const NumericalScalar cdfMin = 0.0;
+      const NumericalScalar cdfMax = 1.0;
+      outP[j] = solver.solve(G, alpha_, lower, upper, cdfMin, cdfMax);
     }
   }
   else
