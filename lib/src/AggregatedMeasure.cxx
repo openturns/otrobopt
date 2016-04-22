@@ -21,8 +21,6 @@
  */
 #include "otrobopt/AggregatedMeasure.hxx"
 #include <openturns/PersistentObjectFactory.hxx>
-#include <openturns/GaussKronrod.hxx>
-#include <openturns/IteratedQuadrature.hxx>
 
 using namespace OT;
 

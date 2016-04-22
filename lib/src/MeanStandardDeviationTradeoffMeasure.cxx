@@ -127,8 +127,8 @@ NumericalPoint MeanStandardDeviationTradeoffMeasure::operator()(const NumericalP
   if (getDistribution().isContinuous())
   {
     GaussKronrod gkr;
-    gkr.setRule(GaussKronrodRule::G1K3);
-    IteratedQuadrature algo(gkr);
+    gkr.setRule(static_cast<OT::GaussKronrodRule::GaussKronrodPair>(ResourceMap::GetAsUnsignedInteger("MeanStandardDeviationTradeoffMeasure-GaussKronrodRule")));
+    const IteratedQuadrature algo(gkr);
 
     Pointer<NumericalMathFunctionImplementation> p_wrapper(new MeanStandardDeviationTradeoffMeasureParametricFunctionWrapper(inP, function, getDistribution()));
     NumericalMathFunction G(p_wrapper);

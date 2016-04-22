@@ -55,8 +55,13 @@ OTRobOptResourceMap_init()
     ResourceMap::SetAsUnsignedInteger("SequentialMonteCarloRobustAlgorithm-DefaultInitialSamplingSize", 10);
     ResourceMap::SetAsUnsignedInteger("SequentialMonteCarloRobustAlgorithm-DefaultInitialSearch", 10);
 
-    ResourceMap::SetAsUnsignedInteger("IndividualChanceMeasure-GaussKronrodRule", GaussKronrodRule::G1K3);
-    ResourceMap::SetAsUnsignedInteger("JointChanceMeasure-GaussKronrodRule", GaussKronrodRule::G1K3);
+    ResourceMap::SetAsUnsignedInteger("MeanMeasure-GaussKronrodRule", GaussKronrodRule::G1K3);
+    ResourceMap::SetAsUnsignedInteger("VarianceMeasure-GaussKronrodRule", GaussKronrodRule::G1K3);
+    ResourceMap::SetAsUnsignedInteger("MeanStandardDeviationTradeoffMeasure-GaussKronrodRule", GaussKronrodRule::G1K3);
+    ResourceMap::SetAsUnsignedInteger("QuantileMeasure-GaussKronrodRule", GaussKronrodRule::G1K3);
+
+    ResourceMap::SetAsUnsignedInteger("IndividualChanceMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
+    ResourceMap::SetAsUnsignedInteger("JointChanceMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
     OTRobOptResourceMap_initialized_ = 1;
   }
   assert(OTRobOptResourceMap_initialized_);
