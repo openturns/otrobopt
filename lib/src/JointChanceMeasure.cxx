@@ -122,7 +122,7 @@ NumericalPoint JointChanceMeasure::operator()(const NumericalPoint & inP) const
   if (getDistribution().isContinuous())
   {
     GaussKronrod gkr;
-    gkr.setRule(GaussKronrodRule::G1K3);
+    gkr.setRule(static_cast<OT::GaussKronrodRule::GaussKronrodPair>(ResourceMap::GetAsUnsignedInteger("JointChanceMeasure-GaussKronrodRule")));
     const IteratedQuadrature algo(gkr);
     Pointer<NumericalMathFunctionImplementation> p_wrapper(new JointChanceMeasureParametricFunctionWrapper(inP, function));
     const NumericalMathFunction G(p_wrapper);

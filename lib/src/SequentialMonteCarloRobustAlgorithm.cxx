@@ -44,8 +44,8 @@ static Factory<SequentialMonteCarloRobustAlgorithm> RegisteredFactory;
 /* Default constructor */
 SequentialMonteCarloRobustAlgorithm::SequentialMonteCarloRobustAlgorithm()
   : RobustOptimizationAlgorithm()
-  , initialSamplingSize_(0)
-  , initialSearch_(0)
+  , initialSamplingSize_(ResourceMap::GetAsUnsignedInteger("SequentialMonteCarloRobustAlgorithm-DefaultInitialSamplingSize"))
+  , initialSearch_(ResourceMap::GetAsUnsignedInteger("SequentialMonteCarloRobustAlgorithm-DefaultInitialSearch"))
 {
   // Nothing to do
 }
@@ -54,8 +54,8 @@ SequentialMonteCarloRobustAlgorithm::SequentialMonteCarloRobustAlgorithm()
 SequentialMonteCarloRobustAlgorithm::SequentialMonteCarloRobustAlgorithm (const RobustOptimizationProblem & problem,
                                                                           const OptimizationSolver & solver)
   : RobustOptimizationAlgorithm(problem, solver)
-  , initialSamplingSize_(10)
-  , initialSearch_(10)
+  , initialSamplingSize_(ResourceMap::GetAsUnsignedInteger("SequentialMonteCarloRobustAlgorithm-DefaultInitialSamplingSize"))
+  , initialSearch_(ResourceMap::GetAsUnsignedInteger("SequentialMonteCarloRobustAlgorithm-DefaultInitialSearch"))
 {
   // Nothing to do
 }
@@ -120,7 +120,7 @@ void SequentialMonteCarloRobustAlgorithm::run()
     OptimizationSolver solver(solver_);
     solver.setProblem(problem);
 
-    const NumericalScalar epsilon = 1.0e-2 / sqrt(1.0 * N);
+    const NumericalScalar epsilon = ResourceMap::GetAsNumericalScalar("SequentialMonteCarloRobustAlgorithm-ConvergenceFactor") / sqrt(1.0 * N);
     solver.setMaximumAbsoluteError(epsilon);
     solver.setMaximumRelativeError(epsilon);
     solver.setMaximumResidualError(epsilon);
