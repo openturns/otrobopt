@@ -80,13 +80,8 @@ public:
 
   NumericalSample operator()(const NumericalSample & theta) const
   {
-    const UnsignedInteger size = theta.getSize();
-    NumericalSample outS(size, function_.getOutputDimension());
-    for (UnsignedInteger i = 0; i < size; ++ i)
-    {
-      outS[i] = operator()(theta[i]);
-    }
-    return outS;
+    NumericalMathFunction function(function_);
+    return function(x_, theta);
   }
 
   UnsignedInteger getInputDimension() const

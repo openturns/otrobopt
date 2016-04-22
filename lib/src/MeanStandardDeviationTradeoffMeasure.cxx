@@ -145,12 +145,7 @@ NumericalPoint MeanStandardDeviationTradeoffMeasure::operator()(const NumericalP
   else
   {
     NumericalSample support(getDistribution().getSupport());
-    const UnsignedInteger size = support.getSize();
-    NumericalSample y(size, outputDimension);
-    for (UnsignedInteger i = 0; i < size; ++ i)
-    {
-      y[i] = function(inP, support[i]);
-    }
+    NumericalSample y(function(inP, support));
     NumericalPoint mean(y.computeMean());
     NumericalPoint standardDeviation(y.computeStandardDeviationPerComponent());
     for (UnsignedInteger j = 0; j < outputDimension; ++ j)

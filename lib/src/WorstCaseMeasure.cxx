@@ -83,30 +83,13 @@ public:
 
   NumericalSample operator()(const NumericalSample & theta) const
   {
-    const UnsignedInteger size = theta.getSize();
-    NumericalSample outS(size, function_.getOutputDimension());
-    for (UnsignedInteger i = 0; i < size; ++ i)
-    {
-      outS[i] = operator()(theta[i]);
-    }
-    return outS;
+    NumericalMathFunction function(function_);
+    return function(x_, theta);
   }
 
   Matrix gradient(const NumericalPoint & theta) const
   {
     NumericalMathFunction function(function_);
-    const UnsignedInteger size = theta.getSize();
-    NumericalPoint y(operator()(theta));
-    const NumericalScalar h = 1e-7;
-    Matrix grad(size, 1);
-    for (UnsignedInteger i = 0; i < size; ++ i)
-    {
-      NumericalPoint theta_p(theta);
-      theta_p[i] += h;
-      grad(i, 0) = (operator()(theta_p)[0] - y[0]) / h;
-    }
-    return grad;
-    // FIXME: PR #195
     return function.parameterGradient(x_, theta);
   }
 

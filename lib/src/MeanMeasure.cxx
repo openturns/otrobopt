@@ -82,11 +82,12 @@ public:
 
   NumericalSample operator()(const NumericalSample & theta) const
   {
+    NumericalMathFunction function(function_);
+    NumericalSample outS(function(x_, theta));
     const UnsignedInteger size = theta.getSize();
-    NumericalSample outS(size, function_.getOutputDimension());
     for (UnsignedInteger i = 0; i < size; ++ i)
     {
-      outS[i] = operator()(theta[i]);
+      outS[i] *= distribution_.computePDF(theta[i]);
     }
     return outS;
   }
