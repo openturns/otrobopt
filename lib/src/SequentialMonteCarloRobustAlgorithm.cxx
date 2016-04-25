@@ -136,12 +136,6 @@ void SequentialMonteCarloRobustAlgorithm::run()
       OptimizationResult result(solver.getResult());
       newPoint = result.getOptimalPoint();
       newValue = result.getOptimalValue();
-
-      // save the value of real objective, not the discretized one
-      if (robustProblem.hasRobustnessMeasure())
-      {
-        newValue = getProblem().getObjective()(newPoint);
-      }
     }
     else
     {
