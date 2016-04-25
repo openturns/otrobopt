@@ -125,7 +125,7 @@ void SequentialMonteCarloRobustAlgorithm::run()
     solver.setMaximumRelativeError(epsilon);
     solver.setMaximumResidualError(epsilon);
     solver.setMaximumConstraintError(epsilon);
-    if (getVerbose()) LOGINFO(OSS() << "solve the problem");
+    LOGINFO(OSS() << "solve the problem");
 
     NumericalPoint newPoint;
     NumericalPoint newValue;
@@ -170,11 +170,11 @@ void SequentialMonteCarloRobustAlgorithm::run()
           bestValue = currentValue0;
           newPoint = result.getOptimalPoint();
           newValue = result.getOptimalValue();
-          if (getVerbose()) LOGINFO(OSS() << "Best initial point so far=" << newPoint << " value=" << bestValue);
+          LOGINFO(OSS() << "Best initial point so far=" << newPoint << " value=" << bestValue);
         }
       }
     }
-    if (getVerbose()) LOGINFO(OSS() << "current optimum=" << newPoint);
+    LOGINFO(OSS() << "current optimum=" << newPoint);
 
     const NumericalScalar absoluteError = (newPoint - currentPoint).norm();
     convergence = (iterationNumber > 0) && ((absoluteError < getMaximumAbsoluteError()) || (epsilon < getMaximumAbsoluteError()));

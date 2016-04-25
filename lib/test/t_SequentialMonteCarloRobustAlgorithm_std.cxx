@@ -47,7 +47,6 @@ int main(int argc, char **argv)
 
   Interval bounds(NumericalPoint(2, -3.0), NumericalPoint(2, 3.0));
   SLSQP solver;
-  solver.setVerbose(true);
   solver.setMaximumIterationNumber(100);
 
   NumericalPoint sigma;
@@ -69,7 +68,6 @@ int main(int argc, char **argv)
     algo.setMaximumAbsoluteError(1e-6);
     algo.setInitialSamplingSize(2); // size of initial xsi discretization, x2 at every iteration
     algo.setInitialSearch(1000); // number of multi-start tries, uniform law using bounds
-    algo.setVerbose(true);
     algo.run();
     OptimizationResult result(algo.getResult());
     std::cout << "x*=" << result.getOptimalPoint() << "J(x*)=" << result.getOptimalValue() << "iteration=" << result.getIterationNumber() << std::endl;

@@ -26,7 +26,6 @@ g = ot.NumericalMathFunction(gFull, [2, 3], [0.0] * 2)
 
 bounds = ot.Interval([-3.0] * 2, [3.0] * 2)
 solver = ot.SLSQP()
-solver.setVerbose(True)
 solver.setMaximumIterationNumber(100)
 
 for sigma_xi in [0.1, 0.2, 0.3, 0.4, 0.5]:
@@ -42,7 +41,6 @@ for sigma_xi in [0.1, 0.2, 0.3, 0.4, 0.5]:
     algo.setMaximumAbsoluteError(1e-6)
     algo.setInitialSamplingSize(2) # size of initial xsi discretization, x2 at every iteration
     algo.setInitialSearch(1000) # number of multi-start tries, uniform law using bounds
-    algo.setVerbose(True)
     algo.run()
     result = algo.getResult()
     print ('x*=', result.getOptimalPoint(), 'J(x*)=', result.getOptimalValue(), 'iteration=', result.getIterationNumber())
