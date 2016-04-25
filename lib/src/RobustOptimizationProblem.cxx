@@ -42,15 +42,6 @@ RobustOptimizationProblem::RobustOptimizationProblem()
   // Nothing to do
 }
 
-/* Parameter constructor */
-RobustOptimizationProblem::RobustOptimizationProblem (const MeasureEvaluation & robustnessMeasure,
-                                                      const MeasureEvaluation & reliabilityMeasure)
-  : OptimizationProblemImplementation()
-{
-  setRobustnessMeasure(robustnessMeasure);
-  setReliabilityMeasure(reliabilityMeasure);
-}
-
 /* Virtual constructor method */
 RobustOptimizationProblem * RobustOptimizationProblem::clone() const
 {

@@ -2,15 +2,7 @@
 "Robust optimization problem.
 
 Must consist at least of one :class:`~otrobopt.MeasureEvaluation`, either on
-the objective or the constraint, else a regular
-:class:`openturns.OptimizationProblem` can be used.
-
-Parameters
-----------
-robustnessMeasure : :class:`~otrobopt.MeasureEvaluation`
-    Measure function on the objective.
-reliabilityMeasure : :class:`~otrobopt.MeasureEvaluation`
-    Mesure function on the constraints
+the objective or the constraint.
 
 Examples
 --------
@@ -23,8 +15,10 @@ Pure robustness problem:
 >>> f = ot.NumericalMathFunction(['x1', 'p1'], ['y1'], ['x1*p1'])
 >>> parametric = ot.NumericalMathFunction(f, [1], [1.0])
 >>> robustnessMeasure = otrobopt.MeanMeasure(thetaDist, parametric)
+>>> g = ot.NumericalMathFunction(['x1'], ['y1'], ['x1 - 5.0'])
 >>> problem = RobustOptimizationProblem()
 >>> problem.setRobustnessMeasure(robustnessMeasure)
+>>> problem.setInequalityConstraint(g)
 
 
 Pure reliability problem:
@@ -32,10 +26,12 @@ Pure reliability problem:
 >>> import openturns as ot
 >>> import otrobopt
 >>> thetaDist = ot.Normal(2.0, 0.1)
->>> f = ot.NumericalMathFunction(['x1', 'p1'], ['y1'], ['x1*p1'])
->>> parametric = ot.NumericalMathFunction(f, [1], [1.0])
+>>> f = ot.NumericalMathFunction(['x1'], ['y1'], ['x1 - 5.0'])
+>>> g = ot.NumericalMathFunction(['x1', 'p1'], ['y1'], ['x1*p1'])
+>>> parametric = ot.NumericalMathFunction(g, [1], [1.0])
 >>> reliabilityMeasure = otrobopt.VarianceMeasure(thetaDist, parametric)
 >>> problem = RobustOptimizationProblem()
+>>> problem.setObjective(f)
 >>> problem.setReliabilityMeasure(reliabilityMeasure)
 
 
@@ -48,7 +44,9 @@ Robustness & reliability problem:
 >>> parametric = ot.NumericalMathFunction(f, [1], [1.0])
 >>> robustnessMeasure = otrobopt.MeanMeasure(thetaDist, parametric)
 >>> reliabilityMeasure = otrobopt.VarianceMeasure(thetaDist, parametric)
->>> problem = RobustOptimizationProblem(robustnessMeasure, reliabilityMeasure)"
+>>> problem = RobustOptimizationProblem()
+>>> problem.setRobustnessMeasure(robustnessMeasure)
+>>> problem.setReliabilityMeasure(reliabilityMeasure)"
 
 // ---------------------------------------------------------------------
 

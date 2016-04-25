@@ -61,7 +61,9 @@ int main(int argc, char **argv)
     Normal distributionXi(NumericalPoint(2, 0.0), NumericalPoint(2, sigma[i]), IdentityMatrix(2));
     MeanMeasure robustnessMeasure(distributionXi, J);
     JointChanceMeasure reliabilityMeasure(distributionXi, g, 0.9);
-    RobustOptimizationProblem problem(robustnessMeasure, reliabilityMeasure);
+    RobustOptimizationProblem problem;
+    problem.setRobustnessMeasure(robustnessMeasure);
+    problem.setReliabilityMeasure(reliabilityMeasure);
     problem.setBounds(bounds);
     SequentialMonteCarloRobustAlgorithm algo(problem, solver);
     algo.setMaximumIterationNumber(11);

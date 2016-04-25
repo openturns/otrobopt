@@ -44,10 +44,6 @@ public:
   /** Default constructor */
   RobustOptimizationProblem();
 
-  /** Parameter constructor */
-  RobustOptimizationProblem(const MeasureEvaluation & robustnessMeasure,
-                            const MeasureEvaluation & reliabilityMeasure);
-
   /** Virtual constructor method */
   RobustOptimizationProblem * clone() const;
 
