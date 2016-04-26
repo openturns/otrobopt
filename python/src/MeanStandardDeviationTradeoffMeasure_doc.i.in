@@ -3,9 +3,9 @@
 
 .. math::
 
-    \mu = \int_{\Omega \theta} f(x, \theta) p(\theta) d \theta
+    \mu = \int_{\Omega_{\theta}} f(x, \theta) p(\theta) d \theta
 
-    Var = \int_{\Omega \theta} f(x, \theta)^2 p(\theta) d \theta - \mu^2
+    Var = \int_{\Omega_{\theta}} f(x, \theta)^2 p(\theta) d \theta - \mu^2
 
     M_{f, \theta}(x) = (1-\alpha) \mu + \alpha \sqrt{var}
 

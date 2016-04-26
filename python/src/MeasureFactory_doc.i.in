@@ -7,7 +7,7 @@ For example to discretize the mean measure:
 
 .. math::
 
-    M_{f, \theta}(x) = \int_{\Omega \theta} f(x, \theta) p(\theta) d \theta
+    M_{f, \theta}(x) = \int_{\Omega_{\theta}} f(x, \theta) p(\theta) d \theta
 
 
 we sample :math:`\hat{\theta} = (\theta_1, \dots, \theta_N)` then the measure writes

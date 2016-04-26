@@ -3,7 +3,7 @@
 
 .. math::
 
-    M_{f, \theta}(x) = \int_{\Omega \theta} f(x, \theta) p(\theta) d \theta
+    M_{f, \theta}(x) = \int_{\Omega_{\theta}} f(x, \theta) p(\theta) d \theta
 
 Parameters
 ----------

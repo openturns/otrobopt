@@ -3,7 +3,7 @@
 
 .. math::
 
-    M_{f, \theta}(x) = Inf_{\Omega \theta} f(x, \theta)
+    M_{f, \theta}(x) = Inf_{\Omega_{\theta}} f(x, \theta)
 
 Parameters
 ----------

@@ -63,10 +63,12 @@ class JointChanceMeasureParametricFunctionWrapper : public NumericalMathFunction
 {
 public:
   JointChanceMeasureParametricFunctionWrapper(const NumericalPoint & x,
-                                             const NumericalMathFunction & function)
+                                              const NumericalMathFunction & function,
+                                              const Distribution & distribution)
   : NumericalMathFunctionImplementation()
   , x_(x)
   , function_(function)
+  , distribution_(distribution)
   {}
 
   virtual JointChanceMeasureParametricFunctionWrapper * clone() const
@@ -81,7 +83,13 @@ public:
     NumericalPoint y(function(x_, theta));
     NumericalScalar result = 1.0;
     for (UnsignedInteger j = 0; j < outputDimension; ++ j)
+    {
       result *= (y[j] > 0.0 ? 1.0 : 0.0);
+    }
+    if (result > 0.0)
+    {
+      result = distribution_.computePDF(theta);
+    }
     return NumericalPoint(1, result);
   }
 
@@ -109,6 +117,7 @@ public:
 protected:
   NumericalPoint x_;
   NumericalMathFunction function_;
+  Distribution distribution_;
 };
 
 
@@ -124,9 +133,9 @@ NumericalPoint JointChanceMeasure::operator()(const NumericalPoint & inP) const
     GaussKronrod gkr;
     gkr.setRule(static_cast<OT::GaussKronrodRule::GaussKronrodPair>(ResourceMap::GetAsUnsignedInteger("JointChanceMeasure-GaussKronrodRule")));
     const IteratedQuadrature algo(gkr);
-    Pointer<NumericalMathFunctionImplementation> p_wrapper(new JointChanceMeasureParametricFunctionWrapper(inP, function));
+    Pointer<NumericalMathFunctionImplementation> p_wrapper(new JointChanceMeasureParametricFunctionWrapper(inP, function, getDistribution()));
     const NumericalMathFunction G(p_wrapper);
-    outP = algo.integrate(G, getDistribution().getRange()) * 1.0 / getDistribution().getRange().getVolume();
+    outP = algo.integrate(G, getDistribution().getRange());
   }
   else
   {

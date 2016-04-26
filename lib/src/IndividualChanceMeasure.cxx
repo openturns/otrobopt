@@ -61,10 +61,12 @@ class IndividualChanceMeasureParametricFunctionWrapper : public NumericalMathFun
 {
 public:
   IndividualChanceMeasureParametricFunctionWrapper (const NumericalPoint & x,
-                                                    const NumericalMathFunction & function)
+                                                    const NumericalMathFunction & function,
+                                                    const Distribution & distribution)
   : NumericalMathFunctionImplementation()
   , x_(x)
   , function_(function)
+  , distribution_(distribution)
   {}
 
   virtual IndividualChanceMeasureParametricFunctionWrapper * clone() const
@@ -75,13 +77,23 @@ public:
   NumericalPoint operator()(const NumericalPoint & theta) const
   {
     NumericalMathFunction function(function_);
-    return function(x_, theta);
+    NumericalPoint y(function(x_, theta));
+    for (UnsignedInteger j = 0; j < getOutputDimension(); ++ j)
+    {
+      y[j] = (y[j] > 0.0) ? 1.0 : 0.0;
+    }
+    return y * distribution_.computePDF(theta);
   }
 
   NumericalSample operator()(const NumericalSample & theta) const
   {
-    NumericalMathFunction function(function_);
-    return function(x_, theta);
+    const UnsignedInteger size = theta.getSize();
+    NumericalSample outS(size, function_.getOutputDimension());
+    for (UnsignedInteger i = 0; i < size; ++ i)
+    {
+      outS[i] = operator()(theta[i]);
+    }
+    return outS;
   }
 
   UnsignedInteger getInputDimension() const
@@ -97,6 +109,7 @@ public:
 protected:
   NumericalPoint x_;
   NumericalMathFunction function_;
+  Distribution distribution_;
 };
 
 
@@ -112,9 +125,9 @@ NumericalPoint IndividualChanceMeasure::operator()(const NumericalPoint & inP) c
     GaussKronrod gkr;
     gkr.setRule(static_cast<OT::GaussKronrodRule::GaussKronrodPair>(ResourceMap::GetAsUnsignedInteger("IndividualChanceMeasure-GaussKronrodRule")));
     const IteratedQuadrature algo(gkr);
-    Pointer<NumericalMathFunctionImplementation> p_wrapper(new IndividualChanceMeasureParametricFunctionWrapper(inP, function));
+    Pointer<NumericalMathFunctionImplementation> p_wrapper(new IndividualChanceMeasureParametricFunctionWrapper(inP, function, getDistribution()));
     const NumericalMathFunction G(p_wrapper);
-    outP = algo.integrate(G, getDistribution().getRange()) * 1.0 / getDistribution().getRange().getVolume();
+    outP = algo.integrate(G, getDistribution().getRange());
   }
   else
   {
@@ -122,7 +135,14 @@ NumericalPoint IndividualChanceMeasure::operator()(const NumericalPoint & inP) c
     const UnsignedInteger size = support.getSize();
     for (UnsignedInteger i = 0; i < size; ++ i)
     {
-      outP += 1.0 / size * function(inP, support[i]);
+      NumericalPoint outPi(function(inP, support[i]));
+      for (UnsignedInteger j = 0; j < outputDimension; ++ j)
+      {
+        if (outPi[j] > 0.0)
+        {
+          outP[j] += 1.0 / size;
+        }
+      }
     }
   }
   function.setParameter(parameter);

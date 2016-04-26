@@ -3,8 +3,9 @@
 
 .. math::
 
-    M_{f, \theta}(x) = \mathbb{P}(f_k(x, \theta) > 0, \forall k \in K) \leq \alpha
+    M_{f, \theta}(x) = \mathbb{P}(f_k(x, \theta) \ge 0, \forall k \in K) \leq \alpha
 
+    M_{f, \theta}(x) = \alpha - \int_{\Omega_{\theta}} \prod_{i=1}^d \mathbb{1}_{f(x, \theta) \ge 0} p(\theta) d \theta
 
 Parameters
 ----------
