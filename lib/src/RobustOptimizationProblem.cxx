@@ -22,8 +22,7 @@
 #include "otrobopt/RobustOptimizationProblem.hxx"
 #include <otrobopt/MeasureEvaluationImplementation.hxx>
 #include <openturns/PersistentObjectFactory.hxx>
-#include <openturns/CenteredFiniteDifferenceGradient.hxx>
-#include <openturns/CenteredFiniteDifferenceHessian.hxx>
+#include <openturns/NumericalMathFunctionImplementation.hxx>
 
 using namespace OT;
 
@@ -52,7 +51,9 @@ RobustOptimizationProblem * RobustOptimizationProblem::clone() const
 String RobustOptimizationProblem::__repr__() const
 {
   OSS oss;
-  oss << "class=" << RobustOptimizationProblem::GetClassName();
+  oss << "class=" << RobustOptimizationProblem::GetClassName()
+      << " robustnessMeasure=" << robustnessMeasure_
+      << " reliabilityMeasure=" << reliabilityMeasure_;
   return oss;
 }
 
@@ -60,10 +61,7 @@ String RobustOptimizationProblem::__repr__() const
 void RobustOptimizationProblem::setRobustnessMeasure(const MeasureEvaluation & robustnessMeasure)
 {
   robustnessMeasure_ = robustnessMeasure;
-  NumericalMathFunctionImplementation::EvaluationImplementation evaluation(robustnessMeasure.getImplementation());
-  NumericalMathFunctionImplementation::GradientImplementation gradient = new CenteredFiniteDifferenceGradient(ResourceMap::GetAsNumericalScalar("CenteredFiniteDifferenceGradient-DefaultEpsilon"), evaluation);
-  NumericalMathFunctionImplementation::HessianImplementation hessian = new CenteredFiniteDifferenceHessian(ResourceMap::GetAsNumericalScalar("CenteredFiniteDifferenceHessian-DefaultEpsilon"), evaluation);
-  setObjective(NumericalMathFunction(evaluation, gradient, hessian));
+  setObjective(NumericalMathFunctionImplementation(robustnessMeasure.getImplementation()));
 }
 
 MeasureEvaluation RobustOptimizationProblem::getRobustnessMeasure() const
@@ -79,10 +77,7 @@ Bool RobustOptimizationProblem::hasRobustnessMeasure() const
 void RobustOptimizationProblem::setReliabilityMeasure(const MeasureEvaluation & reliabilityMeasure)
 {
   reliabilityMeasure_ = reliabilityMeasure;
-  NumericalMathFunctionImplementation::EvaluationImplementation evaluation(reliabilityMeasure.getImplementation());
-  NumericalMathFunctionImplementation::GradientImplementation gradient = new CenteredFiniteDifferenceGradient(ResourceMap::GetAsNumericalScalar("CenteredFiniteDifferenceGradient-DefaultEpsilon"), evaluation);
-  NumericalMathFunctionImplementation::HessianImplementation hessian = new CenteredFiniteDifferenceHessian(ResourceMap::GetAsNumericalScalar("CenteredFiniteDifferenceHessian-DefaultEpsilon"), evaluation);
-  setInequalityConstraint(NumericalMathFunction(evaluation, gradient, hessian));
+  setInequalityConstraint(NumericalMathFunctionImplementation(reliabilityMeasure.getImplementation()));
 }
 
 MeasureEvaluation RobustOptimizationProblem::getReliabilityMeasure() const
