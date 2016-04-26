@@ -14,7 +14,7 @@ we sample :math:`\hat{\theta} = (\theta_1, \dots, \theta_N)` with weights :math:
 
 .. math::
 
-    \hat{M}_{f, \hat{\theta}}(x) = \frac{1}{w_i} \sum_{i=1}^N f(x, \theta_i)
+    \hat{M}_{f, \hat{\theta}}(x) = \sum_{i=1}^N \frac{1}{w_i} f(x, \theta_i)
 
 Parameters
 ----------
