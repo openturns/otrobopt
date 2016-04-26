@@ -10,11 +10,11 @@ For example to discretize the mean measure:
     M_{f, \theta}(x) = \int_{\Omega_{\theta}} f(x, \theta) p(\theta) d \theta
 
 
-we sample :math:`\hat{\theta} = (\theta_1, \dots, \theta_N)` then the measure writes
+we sample :math:`\hat{\theta} = (\theta_1, \dots, \theta_N)` with weights :math:`(w_1, \dots, w_N)` then the measure writes:
 
 .. math::
 
-    \hat{M}_{f, \hat{\theta}}(x) = \frac{1}{N} \sum_{i=1}^N f(x, \theta_i)
+    \hat{M}_{f, \hat{\theta}}(x) = \frac{1}{w_i} \sum_{i=1}^N f(x, \theta_i)
 
 Parameters
 ----------
