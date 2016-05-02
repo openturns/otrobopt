@@ -106,7 +106,7 @@ public:
 
   UnsignedInteger getInputDimension() const
   {
-    return function_.getInputDimension();
+    return function_.getParameterDimension();
   }
 
   UnsignedInteger getOutputDimension() const
