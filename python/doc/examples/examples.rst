@@ -4,34 +4,60 @@ Examples
 Example 1
 ---------
 
-This example is a simple analytic function.
+1- Problem statement
+````````````````````
+.. math::
+
+    \begin{aligned}
+    & \underset{x}{\text{minimize}}
+    & & \mathbb{E}((x-2)^2 + 2y^2 -4y + \theta) \\
+    & \text{subject to}
+    & & \mathbb{P}(-x + 4y + \theta -3 \leq 0) \geq 0.9 \\
+    & & & \theta \thicksim \mathcal{U}([1, 3])
+    \end{aligned}
+
+Example 2
+---------
 
 1- Problem statement
 ````````````````````
 .. math::
 
-    
+    \begin{aligned}
+    & \underset{x}{\text{minimize}}
+    & & \mathbb{E}(\sqrt{xy} \theta) \\
+    & \text{subject to}
+    & & \mathbb{P}(2y + 4x - 120 \leq 0) \geq 0.9 \\
+    & & & \theta \thicksim \mathcal{N}(1, 3)
+    \end{aligned}
 
-a- Objective
-''''''''''''
+Example 3
+---------
 
-The parametric function :math:`J(x, \theta)` is subject to minimization
-
+1- Problem statement
+````````````````````
 .. math::
 
-    J(x, \theta) = 15.0 * ((x1+\theta_1)^2 + (x2+\theta_2)^2) - 100.0 * \exp(-5. * ((x1 + \theta_1 + 1.6)^2+(x2 + \theta_2 + 1.6)^2))
+    \begin{aligned}
+    & \underset{x}{\text{minimize}}
+    & & \mathbb{E}(x^3 - x + \theta) \\
+    & \text{subject to}
+    & & \mathbb{P}(x + \theta - 2\leq 0) \geq 0.9 \\
+    & & & \theta \thicksim \epsilon(\lambda)
+    \end{aligned}
 
-    \theta_1, \theta_2 \sim N(0, 0.1)
+Example 4
+---------
 
-    -3 \leq x_1, x2 \leq 3
-
-b- Constraints
-''''''''''''''
-
+1- Problem statement
+````````````````````
 .. math::
 
-    g_1(x, \theta) = (x1+\theta_1 - 0.5)^2 + (x2+\theta_2)^2 - 4.0 \leq 0
-
-    g_2(x, \theta) = (x1+\theta_1 + 0.5)^2 + (x2+\theta_2)^2 - 4.0 \leq 0
-
-
+    \begin{aligned}
+    & \underset{x}{\text{minimize}}
+    & & \mathbb{E}(cos(x) sin(\theta)) \\
+    & \text{subject to}
+    & & \mathbb{P}(-2 - x + \theta \leq 0) \geq 0.9 \\
+    & & & x - 4 \leq 0 \\
+    & & & \theta \thicksim \mathcal{U}([0, 2])
+    \end{aligned}

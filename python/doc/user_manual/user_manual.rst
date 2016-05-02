@@ -13,14 +13,16 @@ parameters :math:`x` and a probabilistic variable :math:`\theta`.
 
 .. math::
 
-    \underset{x \in \mathbb{R}^n}{\text{minimize~}} J(x, \theta)
-
-    \text{subject to~} G(x, \theta) \geq 0
-
-    a \leq x \leq b
-
-    \theta \thicksim \mathcal{D}
-
+    \begin{aligned}
+    & \underset{x \in \mathbb{R}^n}{\text{minimize~}}
+    & & J(x, \theta) \\
+    & \text{subject to}
+    & & G(x, \theta) \geq 0\\
+    &
+    & & a \leq x \leq b\\
+    &
+    & & \theta \thicksim \mathcal{D}
+    \end{aligned}
 
 The definition of the the probabilistic objective/constraint is associated to
 the concept of :class:`~otrobopt.MeasureEvaluation`.
