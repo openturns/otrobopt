@@ -92,6 +92,7 @@ endmacro ( ot_pyinstallcheck_test )
 
 ot_pyinstallcheck_test (MeasureEvaluation_std)
 ot_pyinstallcheck_test (SequentialMonteCarloRobustAlgorithm_std)
+ot_pyinstallcheck_test (SequentialMonteCarloRobustAlgorithm_examples)
 ot_pyinstallcheck_test (docstring)
 
 add_custom_target ( pyinstallcheck COMMAND ${CMAKE_CTEST_COMMAND} -R "^pyinstallcheck_"
