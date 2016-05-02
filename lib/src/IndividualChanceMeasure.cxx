@@ -44,8 +44,10 @@ IndividualChanceMeasure::IndividualChanceMeasure()
 /* Parameter constructor */
 IndividualChanceMeasure::IndividualChanceMeasure (const Distribution & distribution,
                                                   const NumericalMathFunction & function,
+                                                  const ComparisonOperator & op,
                                                   const NumericalPoint & alpha)
   : MeasureEvaluationImplementation(distribution, function)
+  , operator_(op)
 {
   setAlpha(alpha);
 }
@@ -146,7 +148,7 @@ NumericalPoint IndividualChanceMeasure::operator()(const NumericalPoint & inP) c
     }
   }
   function.setParameter(parameter);
-  return alpha_ - outP;
+  return operator_.operator()(1.0, 2.0) ? alpha_ - outP : outP - alpha_;;
 }
 
 /* Alpha coefficient accessor */
@@ -180,6 +182,7 @@ void IndividualChanceMeasure::save(Advocate & adv) const
 {
   MeasureEvaluationImplementation::save(adv);
   adv.saveAttribute("alpha_", alpha_);
+  adv.saveAttribute("operator_", operator_);
 }
 
 /* Method load() reloads the object from the StorageManager */
@@ -187,6 +190,7 @@ void IndividualChanceMeasure::load(Advocate & adv)
 {
   MeasureEvaluationImplementation::load(adv);
   adv.loadAttribute("alpha_", alpha_);
+  adv.loadAttribute("operator_", operator_);
 }
 
 

@@ -44,6 +44,7 @@ public:
   /** Parameter constructor */
   JointChanceMeasure (const OT::Distribution & distribution,
                       const OT::NumericalMathFunction & function,
+                      const OT::ComparisonOperator & op,
                       const OT::NumericalScalar alpha);
 
   /** Virtual constructor method */
@@ -69,6 +70,7 @@ public:
   virtual void load(OT::Advocate & adv);
 
 private:
+  OT::ComparisonOperator operator_;
   OT::NumericalScalar alpha_;
 
 }; /* class JointChanceMeasure */

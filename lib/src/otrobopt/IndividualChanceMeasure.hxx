@@ -44,6 +44,7 @@ public:
   /** Parameter constructor */
   IndividualChanceMeasure (const OT::Distribution & distribution,
                            const OT::NumericalMathFunction & function,
+                           const OT::ComparisonOperator & op,
                            const OT::NumericalPoint & alpha);
 
   /** Virtual constructor method */
@@ -66,6 +67,7 @@ public:
   virtual void load(OT::Advocate & adv);
 
 private:
+  OT::ComparisonOperator operator_;
   OT::NumericalPoint alpha_;
 
 }; /* class IndividualChanceMeasure */

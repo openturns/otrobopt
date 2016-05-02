@@ -3,6 +3,7 @@
 #include "otrobopt/OTRobOpt.hxx"
 #include "openturns/Normal.hxx"
 #include "openturns/LHSExperiment.hxx"
+#include "openturns/Less.hxx"
 
 using namespace OT;
 using namespace OTROBOPT;
@@ -23,8 +24,8 @@ int main(int argc, char **argv)
   measures.add(VarianceMeasure(thetaDist, parametric));
   measures.add(WorstCaseMeasure(thetaDist, parametric));
   measures.add(WorstCaseMeasure(thetaDist, parametric, false));
-  measures.add(JointChanceMeasure(thetaDist, parametric, 0.95));
-  measures.add(IndividualChanceMeasure(thetaDist, parametric, NumericalPoint(1, 0.95)));
+  measures.add(JointChanceMeasure(thetaDist, parametric, Less(), 0.95));
+  measures.add(IndividualChanceMeasure(thetaDist, parametric, Less(), NumericalPoint(1, 0.95)));
   measures.add(MeanStandardDeviationTradeoffMeasure(thetaDist, parametric, NumericalPoint(1, 0.4)));
   measures.add(QuantileMeasure(thetaDist, parametric, 0.8));
 

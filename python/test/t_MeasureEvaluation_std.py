@@ -14,8 +14,8 @@ measures = [otrobopt.MeanMeasure(thetaDist, parametric),
             otrobopt.VarianceMeasure(thetaDist, parametric),
             otrobopt.WorstCaseMeasure(thetaDist, parametric),
             otrobopt.WorstCaseMeasure(thetaDist, parametric, False),
-            otrobopt.JointChanceMeasure(thetaDist, parametric, 0.95),
-            otrobopt.IndividualChanceMeasure(thetaDist, parametric, [0.95]),
+            otrobopt.JointChanceMeasure(thetaDist, parametric, ot.Less(), 0.95),
+            otrobopt.IndividualChanceMeasure(thetaDist, parametric, ot.Less(), [0.95]),
             otrobopt.MeanStandardDeviationTradeoffMeasure(thetaDist, parametric, [0.4]),
             otrobopt.QuantileMeasure(thetaDist, parametric, 0.8)
             ]

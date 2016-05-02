@@ -10,9 +10,9 @@ Example 1
 
     \begin{aligned}
     & \underset{x}{\text{minimize}}
-    & & \mathbb{E}((x-2)^2 + 2y^2 -4y + \theta) \\
+    & & \mathbb{E}((x_1-2)^2 + 2x_2^2 -4x_2 + \theta) \\
     & \text{subject to}
-    & & \mathbb{P}(-x + 4y + \theta -3 \leq 0) \geq 0.9 \\
+    & & \mathbb{P}(-x_1 + 4x_2 + \theta -3 \leq 0) \geq 0.9 \\
     & & & \theta \thicksim \mathcal{U}([1, 3])
     \end{aligned}
 
@@ -25,9 +25,9 @@ Example 2
 
     \begin{aligned}
     & \underset{x}{\text{minimize}}
-    & & \mathbb{E}(\sqrt{xy} \theta) \\
+    & & \mathbb{E}(\sqrt{x_1 x_2} \theta) \\
     & \text{subject to}
-    & & \mathbb{P}(2y + 4x - 120 \leq 0) \geq 0.9 \\
+    & & \mathbb{P}(2x_2 + 4x_1 - 120 \leq 0) \geq 0.9 \\
     & & & \theta \thicksim \mathcal{N}(1, 3)
     \end{aligned}
 

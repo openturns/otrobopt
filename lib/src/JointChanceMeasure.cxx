@@ -45,8 +45,10 @@ JointChanceMeasure::JointChanceMeasure()
 /* Parameter constructor */
 JointChanceMeasure::JointChanceMeasure (const Distribution & distribution,
                                         const NumericalMathFunction & function,
+                                        const ComparisonOperator & op,
                                         const NumericalScalar alpha)
   : MeasureEvaluationImplementation(distribution, function)
+  , operator_(op)
   , alpha_(0.0)
 {
   setAlpha(alpha);
@@ -152,7 +154,7 @@ NumericalPoint JointChanceMeasure::operator()(const NumericalPoint & inP) const
       outP[0] += outV / size;
     }
   }
-  outP[0] = alpha_ - outP[0];
+  outP[0] = operator_.operator()(1.0, 2.0) ? alpha_ - outP[0] : outP[0] - alpha_;
   function.setParameter(parameter);
   return outP;
 }
@@ -189,6 +191,7 @@ void JointChanceMeasure::save(Advocate & adv) const
 {
   MeasureEvaluationImplementation::save(adv);
   adv.saveAttribute("alpha_", alpha_);
+  adv.saveAttribute("operator_", operator_);
 }
 
 /* Method load() reloads the object from the StorageManager */
@@ -196,6 +199,7 @@ void JointChanceMeasure::load(Advocate & adv)
 {
   MeasureEvaluationImplementation::load(adv);
   adv.loadAttribute("alpha_", alpha_);
+  adv.loadAttribute("operator_", operator_);
 }
 
 
