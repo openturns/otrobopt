@@ -108,11 +108,6 @@ void SequentialMonteCarloRobustAlgorithm::run()
       MeasureEvaluation rhoJ(robustnessFactory.build());
       problem.setObjective(*rhoJ.getImplementation());
     }
-    else
-    {
-      // use deterministic objective
-      problem.setObjective(robustProblem.getObjective());
-    }
 
     if (robustProblem.hasReliabilityMeasure())
     {
@@ -120,11 +115,6 @@ void SequentialMonteCarloRobustAlgorithm::run()
       const MeasureFactory reliabilityFactory(robustProblem.getReliabilityMeasure(), FixedExperiment(currentSampleXi));
       MeasureEvaluation pG(reliabilityFactory.build());
       problem.setInequalityConstraint(*pG.getImplementation());
-    }
-    else
-    {
-      // use deterministic constraint
-      problem.setInequalityConstraint(robustProblem.getInequalityConstraint());
     }
 
     OptimizationSolver solver(solver_);
