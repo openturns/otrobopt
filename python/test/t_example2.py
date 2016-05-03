@@ -2,6 +2,7 @@
 
 from __future__ import print_function
 import openturns as ot
+import openturns.testing
 import otrobopt
 
 #ot.Log.Show(ot.Log.Info)
@@ -34,6 +35,7 @@ algo.setInitialSamplingSize(10)
 algo.setInitialSearch(100)
 algo.run()
 result = algo.getResult()
-print ('x*=', result.getOptimalPoint(), 'J(x*)=', result.getOptimalValue()[:1], 'iteration=', result.getIterationNumber())
-
+#print ('x*=', result.getOptimalPoint())
+openturns.testing.assert_almost_equal(result.getOptimalPoint(), [15.0, 30.0], 1e-4)
+print('J(x*)=', result.getOptimalValue()[:1], 'iteration=', result.getIterationNumber())
 
