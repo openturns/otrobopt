@@ -7,10 +7,10 @@ import otrobopt
 #ot.Log.Show(ot.Log.Info)
 
 # This is calligraphic J, the non-robust objective function
-calJ = ot.NumericalMathFunction(['x', 'y', 'xsi'], ['J'], ['(x-2)^2 + 2*y^2 - 4*y + xsi'])
+calJ = ot.NumericalMathFunction(['x0', 'x1', 'theta'], ['J'], ['(x0-2)^2 + 2*x1^2 - 4*x1 + theta'])
 
 # This is calligraphic G, the non-robust inequality constraints function
-calG = ot.NumericalMathFunction(['x', 'y', 'xsi'], ['g'], ['-(-x + 4*y + xsi - 3)'])
+calG = ot.NumericalMathFunction(['x0', 'x1', 'theta'], ['g'], ['-(-x0 + 4*x1 + theta - 3)'])
 
 # This is capital J: J(x,xi) = calJ(x+xi), the parametric objective function
 J = ot.NumericalMathFunction(calJ, [2], [2.0])
@@ -37,7 +37,7 @@ problem.setBounds(bounds)
 algo = otrobopt.SequentialMonteCarloRobustAlgorithm(problem, solver)
 algo.setMaximumIterationNumber(10)
 algo.setMaximumAbsoluteError(1e-3)
-algo.setInitialSamplingSize(10) # size of initial xsi discretization, x2 at every iteration
+algo.setInitialSamplingSize(10) # size of initial theta discretization, x2 at every iteration
 algo.setInitialSearch(100) # number of multi-start tries, uniform law using bounds
 algo.run()
 result = algo.getResult()
