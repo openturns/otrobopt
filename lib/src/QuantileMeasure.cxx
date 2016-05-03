@@ -51,6 +51,7 @@ QuantileMeasure::QuantileMeasure (const Distribution & distribution,
   : MeasureEvaluationImplementation(distribution, function)
 {
   setAlpha(alpha);
+  if (function.getOutputDimension() > 1) throw InvalidArgumentException(HERE) << "Quantile are only computed for 1-d functions.";
 }
 
 /* Virtual constructor method */
@@ -65,10 +66,12 @@ class QuantileMeasureParametricFunctionWrapper : public NumericalMathFunctionImp
 public:
   QuantileMeasureParametricFunctionWrapper(const NumericalPoint & x,
                                            const NumericalMathFunction & function,
+                                           const Distribution & distribution,
                                            const NumericalScalar s)
   : NumericalMathFunctionImplementation()
   , x_(x)
   , function_(function)
+  , distribution_(distribution)
   , s_(s)
   {}
 
@@ -81,7 +84,7 @@ public:
   {
     NumericalMathFunction function(function_);
     const NumericalScalar y = function(x_, theta)[0];
-    const NumericalScalar p = y < s_ ? 1.0 : 0.0;
+    const NumericalScalar p = (y <= s_ ? distribution_.computePDF(theta) : 0.0);
     return NumericalPoint(1, p);
   }
 
@@ -109,6 +112,7 @@ public:
 protected:
   NumericalPoint x_;
   NumericalMathFunction function_;
+  Distribution distribution_;
   NumericalScalar s_;
 };
 
@@ -134,7 +138,7 @@ public:
     GaussKronrod gkr;
     gkr.setRule(static_cast<OT::GaussKronrodRule::GaussKronrodPair>(ResourceMap::GetAsUnsignedInteger("QuantileMeasure-GaussKronrodRule")));
     const IteratedQuadrature algo(gkr);
-    Pointer<NumericalMathFunctionImplementation> p_wrapper(new QuantileMeasureParametricFunctionWrapper(x_, function_, s[0]));
+    Pointer<NumericalMathFunctionImplementation> p_wrapper(new QuantileMeasureParametricFunctionWrapper(x_, function_, distribution_, s[0]));
     const NumericalMathFunction G(p_wrapper);
     return algo.integrate(G, distribution_.getRange());
   }
@@ -177,58 +181,41 @@ NumericalPoint QuantileMeasure::operator()(const NumericalPoint & inP) const
   NumericalPoint outP(outputDimension);
   if (getDistribution().isContinuous())
   {
-    const NumericalScalar cdfEpsilon = ResourceMap::GetAsNumericalScalar("DistributionImplementation-DefaultCDFEpsilon");
+    Pointer<NumericalMathFunctionImplementation> p_wrapper(new QuantileMeasureParametricFunctionWrapper2(inP, function, getDistribution()));
+    NumericalMathFunction G(p_wrapper);
 
-    for (UnsignedInteger j = 0; j < outputDimension; ++ j)
+    NumericalScalar lower = 0.0;
+    NumericalScalar upper = 0.0;
+    NumericalScalar step = 1.0;
+    NumericalScalar cdfMin = G(NumericalPoint(1, lower))[0];
+    NumericalScalar cdfMax = cdfMin;
+    // Go backward until we find a point below the threshold
+    while (cdfMin > alpha_)
     {
-      // search bounds
-      NumericalScalar lower = getDistribution().getRange().getLowerBound()[j];
-      NumericalScalar upper = getDistribution().getRange().getUpperBound()[j];
-      // This test allows to know if the range has already been computed. If not, it is the role of the computeScalarQuantile() to do it.
-      if (lower > upper)
-      {
-        LOGDEBUG("DistributionImplementation::computeScalarQuantile: look for a bracketing of the bounds of the range");
-        // Find a rough estimate of the lower bound and the upper bound
-        NumericalScalar step(1.0);
-        if (getDistribution().computeCDF(lower) >= cdfEpsilon)
-        {
-          // negative lower bound
-          lower -= step;
-          while (getDistribution().computeCDF(lower) >= cdfEpsilon)
-          {
-            step *= 2.0;
-            lower -= step;
-          }
-        }
-        else
-        {
-          // positive lower bound
-          lower += step;
-          while (getDistribution().computeCDF(lower) <= cdfEpsilon)
-          {
-            step *= 2.0;
-            lower += step;
-          }
-        }
-        // Here, lower is a rough estimate of the lower bound
-        // Go to the upper bound
-        upper = lower;
-        step = 1.0;
-        while (getDistribution().computeComplementaryCDF(upper) >= cdfEpsilon)
-        {
-          upper += step;
-          step *= 2.0;
-        }
-      }
-
-      Pointer<NumericalMathFunctionImplementation> p_wrapper(new QuantileMeasureParametricFunctionWrapper2(inP, function.getMarginal(j), getDistribution()));
-      NumericalMathFunction G(p_wrapper);
-
-      const Brent solver;
-      const NumericalScalar cdfMin = 0.0;
-      const NumericalScalar cdfMax = 1.0;
-      outP[j] = solver.solve(G, alpha_, lower, upper, cdfMin, cdfMax);
+      upper = lower;
+      cdfMax = cdfMin;
+      lower -= step;
+      cdfMin = G(NumericalPoint(1, lower))[0];
+      step *= 2.0;
     }
+    // If the initial lower bound was an actual lower bound
+    // Try to narrow the lower bound
+    if (step == 1.0)
+    {
+      upper += step;
+      cdfMax = G(NumericalPoint(1, upper))[0];
+      step *= 2.0;
+      while (cdfMax <= alpha_)
+      {
+        lower = upper;
+        cdfMin = cdfMax;
+        upper += step;
+        cdfMax = G(NumericalPoint(1, upper))[0];
+        step *= 2.0;
+      }
+    } // step == 1
+    const Brent solver;
+    outP[0] = solver.solve(G, alpha_, lower, upper, cdfMin, cdfMax);
   }
   else
   {
