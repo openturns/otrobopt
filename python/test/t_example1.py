@@ -6,23 +6,17 @@ import otrobopt
 
 #ot.Log.Show(ot.Log.Info)
 
-# This is calligraphic J, the non-robust objective function
+
 calJ = ot.NumericalMathFunction(['x0', 'x1', 'theta'], ['J'], ['(x0-2)^2 + 2*x1^2 - 4*x1 + theta'])
-
-# This is calligraphic G, the non-robust inequality constraints function
 calG = ot.NumericalMathFunction(['x0', 'x1', 'theta'], ['g'], ['-(-x0 + 4*x1 + theta - 3)'])
-
-# This is capital J: J(x,xi) = calJ(x+xi), the parametric objective function
 J = ot.NumericalMathFunction(calJ, [2], [2.0])
-
-# This is g, the parametric constraints
 g = ot.NumericalMathFunction(calG, [2], [2.0])
 
 dim = J.getInputDimension()
 
-bounds = ot.Interval([-10.0] * dim, [10.0] * dim)
+
 solver = ot.Cobyla()
-solver.setMaximumIterationNumber(100)
+solver.setMaximumIterationNumber(1000)
 
 distributionXi = ot.Uniform(1.0, 3.0)
 robustnessMeasure = otrobopt.MeanMeasure(distributionXi, J)
@@ -30,17 +24,16 @@ reliabilityMeasure = otrobopt.JointChanceMeasure(distributionXi, g, ot.Greater()
 problem = otrobopt.RobustOptimizationProblem()
 problem.setRobustnessMeasure(robustnessMeasure)
 problem.setReliabilityMeasure(reliabilityMeasure)
+bounds = ot.Interval([-10.0] * dim, [10.0] * dim)
 problem.setBounds(bounds)
 
 
-#ot.ResourceMap.SetAsNumericalScalar('SequentialMonteCarloRobustAlgorithm-ConvergenceFactor', 1e-5)
 algo = otrobopt.SequentialMonteCarloRobustAlgorithm(problem, solver)
 algo.setMaximumIterationNumber(10)
 algo.setMaximumAbsoluteError(1e-3)
-algo.setInitialSamplingSize(10) # size of initial theta discretization, x2 at every iteration
-algo.setInitialSearch(100) # number of multi-start tries, uniform law using bounds
+algo.setInitialSamplingSize(10)
+algo.setInitialSearch(100)
 algo.run()
 result = algo.getResult()
-print ('x*=', result.getOptimalPoint(), 'J(x*)=', result.getOptimalValue(), 'iteration=', result.getIterationNumber())
-print ('g(x*)=', reliabilityMeasure(result.getOptimalPoint()))
+print ('x*=', result.getOptimalPoint(), 'J(x*)=', result.getOptimalValue()[:1], 'iteration=', result.getIterationNumber())
 
