@@ -36,6 +36,6 @@ algo.setInitialSearch(100)
 algo.run()
 result = algo.getResult()
 #print ('x*=', result.getOptimalPoint())
-openturns.testing.assert_almost_equal(result.getOptimalPoint(), [15.0, 30.0], 1e-3)
+openturns.testing.assert_almost_equal(result.getOptimalPoint(), [15.0, 30.0], 1e-4)
 print('J(x*)=', result.getOptimalValue()[:1], 'iteration=', result.getIterationNumber())
 
