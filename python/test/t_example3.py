@@ -17,6 +17,7 @@ dim = J.getInputDimension()
 
 solver = ot.Cobyla()
 solver.setMaximumIterationNumber(1000)
+solver.setStartingPoint([0.0] * dim)
 
 thetaDist = ot.Exponential(2.0)
 robustnessMeasure = otrobopt.MeanMeasure(thetaDist, J)
@@ -25,15 +26,11 @@ problem = otrobopt.RobustOptimizationProblem()
 problem.setMinimization(False)
 problem.setRobustnessMeasure(robustnessMeasure)
 problem.setReliabilityMeasure(reliabilityMeasure)
-bounds = ot.Interval([-20.0] * dim, [2.0] * dim)
-problem.setBounds(bounds)
-
 
 algo = otrobopt.SequentialMonteCarloRobustAlgorithm(problem, solver)
 algo.setMaximumIterationNumber(10)
 algo.setMaximumAbsoluteError(1e-3)
 algo.setInitialSamplingSize(10)
-algo.setInitialSearch(100)
 algo.run()
 result = algo.getResult()
 print ('x*=', result.getOptimalPoint(), 'J(x*)=', result.getOptimalValue()[:1], 'iteration=', result.getIterationNumber())

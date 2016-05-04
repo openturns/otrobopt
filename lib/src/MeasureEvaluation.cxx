@@ -53,7 +53,6 @@ OTRobOptResourceMap_init()
     // SequentialMonteCarloRobustAlgorithm
     ResourceMap::SetAsNumericalScalar("SequentialMonteCarloRobustAlgorithm-ConvergenceFactor", 1e-2);
     ResourceMap::SetAsUnsignedInteger("SequentialMonteCarloRobustAlgorithm-DefaultInitialSamplingSize", 10);
-    ResourceMap::SetAsUnsignedInteger("SequentialMonteCarloRobustAlgorithm-DefaultInitialSearch", 10);
 
     ResourceMap::SetAsUnsignedInteger("MeanMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
     ResourceMap::SetAsUnsignedInteger("VarianceMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);

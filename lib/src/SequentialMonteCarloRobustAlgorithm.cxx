@@ -45,7 +45,7 @@ static Factory<SequentialMonteCarloRobustAlgorithm> RegisteredFactory;
 SequentialMonteCarloRobustAlgorithm::SequentialMonteCarloRobustAlgorithm()
   : RobustOptimizationAlgorithm()
   , initialSamplingSize_(ResourceMap::GetAsUnsignedInteger("SequentialMonteCarloRobustAlgorithm-DefaultInitialSamplingSize"))
-  , initialSearch_(ResourceMap::GetAsUnsignedInteger("SequentialMonteCarloRobustAlgorithm-DefaultInitialSearch"))
+  , initialSearch_(0)
 {
   // Nothing to do
 }
@@ -55,7 +55,7 @@ SequentialMonteCarloRobustAlgorithm::SequentialMonteCarloRobustAlgorithm (const 
                                                                           const OptimizationSolver & solver)
   : RobustOptimizationAlgorithm(problem, solver)
   , initialSamplingSize_(ResourceMap::GetAsUnsignedInteger("SequentialMonteCarloRobustAlgorithm-DefaultInitialSamplingSize"))
-  , initialSearch_(ResourceMap::GetAsUnsignedInteger("SequentialMonteCarloRobustAlgorithm-DefaultInitialSearch"))
+  , initialSearch_(0)
 {
   // Nothing to do
 }
@@ -129,15 +129,7 @@ void SequentialMonteCarloRobustAlgorithm::run()
 
     NumericalPoint newPoint;
     NumericalPoint newValue;
-    if (iterationNumber > 0)
-    {
-      solver.setStartingPoint(currentPoint);
-      solver.run();
-      OptimizationResult result(solver.getResult());
-      newPoint = result.getOptimalPoint();
-      newValue = result.getOptimalValue();
-    }
-    else
+    if ((iterationNumber == 0) && (initialSearch_ > 0)) // multi-start
     {
       if (!getProblem().hasBounds())
         throw InvalidArgumentException(HERE) << "Cannot perform multi-start without bounds";
@@ -168,6 +160,19 @@ void SequentialMonteCarloRobustAlgorithm::run()
         }
       }
     }
+    else
+    {
+      if (iterationNumber == 0)
+      {
+        currentPoint = solver_.getStartingPoint();
+      }
+      solver.setStartingPoint(currentPoint);
+      solver.run();
+      OptimizationResult result(solver.getResult());
+      newPoint = result.getOptimalPoint();
+      newValue = result.getOptimalValue();
+    }
+
     LOGINFO(OSS() << "current optimum=" << newPoint);
 
     const NumericalScalar absoluteError = (newPoint - currentPoint).norm();

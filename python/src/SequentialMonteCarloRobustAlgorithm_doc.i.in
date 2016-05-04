@@ -20,5 +20,47 @@ Initial size of the discretization of :math:`\theta`.
 
 Parameters
 ----------
-N0 : int
+initialSamplingSize : int
     Initial sampling size"
+
+// ---------------------------------------------------------------------
+
+%feature("docstring") OTROBOPT::SequentialMonteCarloRobustAlgorithm::getInitialSamplingSize
+"Initial sampling size accessor.
+
+Initial size of the discretization of :math:`\theta`.
+
+Returns
+-------
+initialSamplingSize : int
+    Initial sampling size"
+
+// ---------------------------------------------------------------------
+
+%feature("docstring") OTROBOPT::SequentialMonteCarloRobustAlgorithm::setInitialSearch
+"Multi-start number accessor.
+
+Initial number of start points used.
+
+Problem bounds must be specified when multi-start is used as start points are
+drawned uniformly into the bounding box.
+
+Parameters
+----------
+initialSearch : int, 0 by default (no multi-start)
+    Multi-start number"
+
+// ---------------------------------------------------------------------
+
+%feature("docstring") OTROBOPT::SequentialMonteCarloRobustAlgorithm::getInitialSearch
+"Multi-start number accessor.
+
+Initial number of start points used.
+
+Problem bounds must be specified when multi-start is used as start points are
+drawned uniformly into the bounding box.
+
+Returns
+-------
+initialSearch : int, 0 by default (no multi-start)
+    Multi-start number"
