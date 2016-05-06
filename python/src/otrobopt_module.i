@@ -28,6 +28,7 @@
 %include AggregatedMeasure.i
 %include JointChanceMeasure.i
 %include IndividualChanceMeasure.i
+%include MeasureFunction.i
 %include MeasureFactory.i
 %include RobustOptimizationProblem.i
 %include RobustOptimizationAlgorithm.i

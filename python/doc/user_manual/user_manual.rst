@@ -27,8 +27,11 @@ parameters :math:`x` and a probabilistic variable :math:`\theta`.
 The definition of the the probabilistic objective/constraint is associated to
 the concept of :class:`~otrobopt.MeasureEvaluation`.
 
-Note that this measure evalution can be discretized over :math:`\theta` so as
+Note that this measure evaluation can be discretized over :math:`\theta` so as
 to define a deterministic optimization problem using :class:`~otrobopt.MeasureFactory`.
+
+A measure evaluation can be used through :class:`~otrobopt.MeasureFunction`
+to expose generic function services.
 
 A robust optimization problem can be defined with
 :class:`~otrobopt.RobustOptimizationProblem`, and then solved using a
@@ -51,6 +54,15 @@ Measure function evaluation
     AggregatedMeasure
     JointChanceMeasure
     IndividualChanceMeasure
+
+Measure function
+----------------
+
+.. autosummary::
+    :toctree: _generated/
+    :template: class.rst_t
+
+    MeasureFunction
 
 Discretize a measure function
 -----------------------------

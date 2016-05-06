@@ -91,6 +91,7 @@ macro ( ot_pyinstallcheck_test TESTNAME )
 endmacro ( ot_pyinstallcheck_test )
 
 ot_pyinstallcheck_test (MeasureEvaluation_std)
+ot_pyinstallcheck_test (MeasureFunction_std)
 ot_pyinstallcheck_test (SequentialMonteCarloRobustAlgorithm_std)
 ot_pyinstallcheck_test (docstring)
 ot_pyinstallcheck_test (example1)
