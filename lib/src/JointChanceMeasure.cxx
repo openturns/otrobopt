@@ -82,17 +82,11 @@ public:
   {
     const UnsignedInteger outputDimension = function_.getOutputDimension();
     NumericalMathFunction function(function_);
-    NumericalPoint y(function(x_, theta));
-    NumericalScalar result = 1.0;
+    const NumericalPoint y(function(x_, theta));
+    Bool result = true;
     for (UnsignedInteger j = 0; j < outputDimension; ++ j)
-    {
-      result *= (y[j] > 0.0 ? 1.0 : 0.0);
-    }
-    if (result > 0.0)
-    {
-      result = distribution_.computePDF(theta);
-    }
-    return NumericalPoint(1, result);
+      if (y[j] < 0.0) return NumericalPoint(1, 0.0);
+    return NumericalPoint(1, distribution_.computePDF(theta));
   }
 
   NumericalSample operator()(const NumericalSample & theta) const
@@ -145,14 +139,17 @@ NumericalPoint JointChanceMeasure::operator()(const NumericalPoint & inP) const
     const UnsignedInteger size = support.getSize();
     for (UnsignedInteger i = 0; i < size; ++ i)
     {
-      NumericalPoint outPi(function(inP, support[i]));
-      NumericalScalar outV = 1.0;
+      const NumericalPoint outPi(function(inP, support[i]));
+      Bool allOk = true;
       for (UnsignedInteger j = 0; j < outputDimension; ++ j)
-      {
-        outV *= outPi[j] > 0.0 ? 1.0 : 0.0;
-      }
-      outP[0] += outV / size;
+        if (outPi[j] < 0.0)
+          {
+            allOk = false;
+            break;
+          }
+      if (allOk) outP[0] += 1.0;
     }
+    outP[0] /= size;
   }
   outP[0] = operator_.operator()(1.0, 2.0) ? alpha_ - outP[0] : outP[0] - alpha_;
   function.setParameter(parameter);
