@@ -42,9 +42,9 @@ MeanMeasure::MeanMeasure()
 }
 
 /* Parameter constructor */
-MeanMeasure::MeanMeasure (const Distribution & distribution,
-                          const NumericalMathFunction & function)
-  : MeasureEvaluationImplementation(distribution, function)
+MeanMeasure::MeanMeasure (const NumericalMathFunction & function,
+                          const Distribution & distribution)
+  : MeasureEvaluationImplementation(function, distribution)
 
 {
   // Nothing to do

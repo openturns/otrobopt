@@ -39,11 +39,11 @@ MeasureEvaluationImplementation::MeasureEvaluationImplementation()
   // Nothing to do
 }
 
-MeasureEvaluationImplementation::MeasureEvaluationImplementation (const Distribution & distribution,
-                                                                  const NumericalMathFunction & function)
+MeasureEvaluationImplementation::MeasureEvaluationImplementation (const NumericalMathFunction & function,
+                                                                  const Distribution & distribution)
   : NumericalMathEvaluationImplementation()
-  , distribution_(distribution)
   , function_(function)
+  , distribution_(distribution)
 {
   if (distribution.getDimension() != function.getParameter().getDimension())
     throw InvalidDimensionException(HERE) << "Function parameter dimension (" << function.getParameter().getDimension()

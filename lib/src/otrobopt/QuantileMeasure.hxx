@@ -42,8 +42,8 @@ public:
   QuantileMeasure();
 
   /** Parameter constructor */
-  QuantileMeasure(const OT::Distribution & distribution,
-                  const OT::NumericalMathFunction & function,
+  QuantileMeasure(const OT::NumericalMathFunction & function,
+                  const OT::Distribution & distribution,
                   const OT::NumericalScalar alpha);
 
   /** Virtual constructor method */

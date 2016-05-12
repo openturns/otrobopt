@@ -42,8 +42,8 @@ public:
   VarianceMeasure();
 
   /** Parameter constructor */
-  VarianceMeasure(const OT::Distribution & distribution,
-                  const OT::NumericalMathFunction & function);
+  VarianceMeasure(const OT::NumericalMathFunction & function,
+                  const OT::Distribution & distribution);
 
   /** Virtual constructor method */
   VarianceMeasure * clone() const;

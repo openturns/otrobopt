@@ -1,16 +1,27 @@
 %feature("docstring") OTROBOPT::WorstCaseMeasure
 "Worst case measure function.
 
+It is built from a parametric function :math:`f` and a distribution :math:`\mathcal{D}` of density function :math:`p`.
+
+In case of a continuous distribution:
+
 .. math::
 
-    M_{f, \theta}(x) = Inf_{\Omega_{\theta}} f(x, \theta)
+    M_{f, \mathcal{D}}(x) = \inf_{\theta \in Supp(\mathcal{D})} f(x, \theta)
+
+In case of a discrete distribution:
+
+.. math::
+
+    M_{f, \mathcal{D}}(x) = \inf_{\theta_i \in Supp(\mathcal{D})} f(x, \theta_i)
+
 
 Parameters
 ----------
-distribution : :py:class:`openturns.Distribution`
-    Distribution of parameters
 function : :py:class:`openturns.NumericalMathFunction`
     Parametric function
+distribution : :py:class:`openturns.Distribution`
+    Distribution of parameters
 isMinimization : bool (optional, defaults to `True`)
     Whether the worst case is the minimization of the criteria
 
@@ -19,9 +30,9 @@ Examples
 >>> import openturns as ot
 >>> import otrobopt
 >>> thetaDist = ot.Normal(2.0, 0.1)
->>> f = ot.NumericalMathFunction(['x', 'theta'], ['y'], ['x*theta'])
->>> parametric = ot.NumericalMathFunction(f, [1], [1.0])
->>> measure = otrobopt.WorstCaseMeasure(thetaDist, parametric, False)"
+>>> f_base = ot.NumericalMathFunction(['x', 'theta'], ['y'], ['x*theta'])
+>>> f = ot.NumericalMathFunction(f_base, [1], [1.0])
+>>> measure = otrobopt.WorstCaseMeasure(f, thetaDist, False)"
 
 // ---------------------------------------------------------------------
 

@@ -76,11 +76,7 @@ void SequentialMonteCarloRobustAlgorithm::run()
   const RobustOptimizationProblem robustProblem(getRobustProblem());
 
   // The distribution of the parameters can come from either
-  Distribution distributionXi;
-  if (robustProblem.hasRobustnessMeasure())
-    distributionXi = robustProblem.getRobustnessMeasure().getDistribution();
-  if (robustProblem.hasReliabilityMeasure())
-    distributionXi = robustProblem.getReliabilityMeasure().getDistribution();
+  Distribution distributionXi(robustProblem.getDistribution());
 
   NumericalSample currentSampleXi(0, distributionXi.getDimension());
   UnsignedInteger N = initialSamplingSize_;

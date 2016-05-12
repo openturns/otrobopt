@@ -43,11 +43,11 @@ JointChanceMeasure::JointChanceMeasure()
 }
 
 /* Parameter constructor */
-JointChanceMeasure::JointChanceMeasure (const Distribution & distribution,
-                                        const NumericalMathFunction & function,
+JointChanceMeasure::JointChanceMeasure (const NumericalMathFunction & function,
+                                        const Distribution & distribution,
                                         const ComparisonOperator & op,
                                         const NumericalScalar alpha)
-  : MeasureEvaluationImplementation(distribution, function)
+  : MeasureEvaluationImplementation(function, distribution)
   , operator_(op)
   , alpha_(0.0)
 {

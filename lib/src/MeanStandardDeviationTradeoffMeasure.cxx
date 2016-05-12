@@ -42,10 +42,10 @@ MeanStandardDeviationTradeoffMeasure::MeanStandardDeviationTradeoffMeasure()
 }
 
 /* Parameter constructor */
-MeanStandardDeviationTradeoffMeasure::MeanStandardDeviationTradeoffMeasure (const Distribution & distribution,
-                                                                            const NumericalMathFunction & function,
+MeanStandardDeviationTradeoffMeasure::MeanStandardDeviationTradeoffMeasure (const NumericalMathFunction & function,
+                                                                            const Distribution & distribution,
                                                                             const NumericalPoint & alpha)
-  : MeasureEvaluationImplementation(distribution, function)
+  : MeasureEvaluationImplementation(function, distribution)
 {
   setAlpha(alpha);
 }
@@ -164,8 +164,9 @@ void MeanStandardDeviationTradeoffMeasure::setAlpha(const NumericalPoint & alpha
   const UnsignedInteger dimension = alpha.getDimension();
   for(UnsignedInteger j = 0; j < dimension; ++ j)
   {
-    if (!(alpha[j] >= 0.0) || !(alpha[j] <= 1.0))
-      throw InvalidArgumentException(HERE) << "Alpha should be in (0, 1)";
+    if (!(alpha[j] > 0.0) || !(alpha[j] < 1.0))
+      LOGWARN(OSS() << "Alpha is not in [0, 1]");
+//       throw InvalidArgumentException(HERE) << "Alpha should be in [0, 1]";
   }
   alpha_ = alpha;
 }

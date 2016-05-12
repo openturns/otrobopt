@@ -42,11 +42,11 @@ IndividualChanceMeasure::IndividualChanceMeasure()
 }
 
 /* Parameter constructor */
-IndividualChanceMeasure::IndividualChanceMeasure (const Distribution & distribution,
-                                                  const NumericalMathFunction & function,
+IndividualChanceMeasure::IndividualChanceMeasure (const NumericalMathFunction & function,
+                                                  const Distribution & distribution,
                                                   const ComparisonOperator & op,
                                                   const NumericalPoint & alpha)
-  : MeasureEvaluationImplementation(distribution, function)
+  : MeasureEvaluationImplementation(function, distribution)
   , operator_(op)
 {
   setAlpha(alpha);

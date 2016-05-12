@@ -42,8 +42,8 @@ public:
   JointChanceMeasure();
 
   /** Parameter constructor */
-  JointChanceMeasure (const OT::Distribution & distribution,
-                      const OT::NumericalMathFunction & function,
+  JointChanceMeasure (const OT::NumericalMathFunction & function,
+                      const OT::Distribution & distribution,
                       const OT::ComparisonOperator & op,
                       const OT::NumericalScalar alpha);
 

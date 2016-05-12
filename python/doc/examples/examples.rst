@@ -10,10 +10,10 @@ Example 1
 
     \begin{aligned}
     & \underset{x}{\text{minimize}}
-    & & \mathbb{E}_{\theta}((x_0-2)^2 + 2x_1^2 -4x_1 + \theta) \\
+    & & \mathbb{E}_{\mathcal{D}}((x_0-2)^2 + 2x_1^2 -4x_1 + \Theta) \\
     & \text{subject to}
-    & & \mathbb{P}_{\theta}(-x_0 + 4x_1 + \theta -3 \leq 0) \geq 0.9 \\
-    & & & \theta \thicksim \mathcal{U}([1, 3])
+    & & \mathbb{P}_{\mathcal{D}}(-x_0 + 4x_1 + \Theta -3 \leq 0) \geq 0.9 \\
+    & & & \Theta \thicksim \mathcal{U}(1, 3)
     \end{aligned}
 
 2- Solution
@@ -35,10 +35,10 @@ Example 2
 
     \begin{aligned}
     & \underset{x}{\text{minimize}}
-    & & \mathbb{E}_{\theta}(\sqrt{x_0} \sqrt{x_1} \theta) \\
+    & & \mathbb{E}_{\mathcal{D}}(\sqrt{x_0} \sqrt{x_1} \Theta) \\
     & \text{subject to}
-    & & \mathbb{P}_{\theta}(2x_1 + 4x_0 - 120 \leq 0) \geq 0.9 \\
-    & & & \theta \thicksim \mathcal{N}(1, 3)
+    & & \mathbb{P}_{\mathcal{D}}(2x_1 + 4x_0 - 120 \leq 0) \geq 0.9 \\
+    & & & \Theta \thicksim \mathcal{N}(1, 3)
     \end{aligned}
 
 2- Solution
@@ -60,10 +60,10 @@ Example 3
 
     \begin{aligned}
     & \underset{x}{\text{minimize}}
-    & & \mathbb{E}_{\theta}(x^3 - x + \theta) \\
+    & & \mathbb{E}_{\mathcal{D}}(x^3 - x + \Theta) \\
     & \text{subject to}
-    & & \mathbb{P}_{\theta}(x + \theta - 2 \leq 0) \geq 0.9 \\
-    & & & \theta \thicksim \epsilon(\lambda = 2)
+    & & \mathbb{P}_{\mathcal{D}}(x + \Theta - 2 \leq 0) \geq 0.9 \\
+    & & & \Theta \thicksim \cE(2)
     \end{aligned}
 
 2- Solution
@@ -85,11 +85,11 @@ Example 4
 
     \begin{aligned}
     & \underset{x}{\text{minimize}}
-    & & \mathbb{E}_{\theta}(cos(x) sin(\theta)) \\
+    & & \mathbb{E}_{\mathcal{D}}(\cos(x) \sin(\Theta)) \\
     & \text{subject to}
-    & & \mathbb{P}_{\theta}(-2 - x + \theta \leq 0) \geq 0.9 \\
+    & & \mathbb{P}_{\mathcal{D}}(-2 - x + \Theta \leq 0) \geq 0.9 \\
     & & & x - 4 \leq 0 \\
-    & & & \theta \thicksim \mathcal{U}([0, 2])
+    & & & \Theta \thicksim \mathcal{U}(0, 2)
     \end{aligned}
 
 2- Solution

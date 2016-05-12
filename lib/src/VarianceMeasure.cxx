@@ -42,9 +42,9 @@ VarianceMeasure::VarianceMeasure()
 }
 
 /* Parameter constructor */
-VarianceMeasure::VarianceMeasure (const Distribution & distribution,
-                                  const NumericalMathFunction & function)
-  : MeasureEvaluationImplementation(distribution, function)
+VarianceMeasure::VarianceMeasure (const NumericalMathFunction & function,
+                                  const Distribution & distribution)
+  : MeasureEvaluationImplementation(function, distribution)
 
 {
   // Nothing to do

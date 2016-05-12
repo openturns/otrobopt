@@ -44,6 +44,15 @@ public:
   /** Default constructor */
   RobustOptimizationProblem();
 
+  RobustOptimizationProblem(const MeasureEvaluation & robustnessMeasure,
+                            const MeasureEvaluation & reliabilityMeasure);
+
+  RobustOptimizationProblem(const OT::NumericalMathFunction & objective,
+                            const MeasureEvaluation & reliabilityMeasure);
+
+  RobustOptimizationProblem(const MeasureEvaluation & robustnessMeasure,
+                            const OT::NumericalMathFunction & constraint);
+
   /** Virtual constructor method */
   RobustOptimizationProblem * clone() const;
 
@@ -55,6 +64,8 @@ public:
   void setReliabilityMeasure(const MeasureEvaluation & reliabilityMeasure);
   MeasureEvaluation getReliabilityMeasure() const;
   OT::Bool hasReliabilityMeasure() const;
+
+  OT::Distribution getDistribution() const;
 
   /** String converter */
   OT::String __repr__() const;

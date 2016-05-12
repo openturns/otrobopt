@@ -1,17 +1,19 @@
 %feature("docstring") OTROBOPT::QuantileMeasure
 "Quantile measure function.
 
+It is built from a parametric function :math:`f` and a distribution :math:`\mathcal{D}` of density function :math:`p`.
+
 .. math::
 
-    M_{f, \theta}(x) = s \text{~with~} \mathbb{P}(f(x, \theta) <= s) = \alpha
+    M_{f, \mathcal{D}, \alpha}(x) = \inf \{ s \in \Rset \: | \: \mathbb{P}(f(x, \Theta) \leq s) \geq \alpha \}
 
 Parameters
 ----------
-distribution : :py:class:`openturns.Distribution`
-    Distribution of parameters
 function : :py:class:`openturns.NumericalMathFunction`
     Parametric function
-alpha : float, in :math:`(0,1)`
+distribution : :py:class:`openturns.Distribution`
+    Distribution of parameters
+alpha : float, in :math:`[0,1]`
     Quantile level
 
 Examples
@@ -19,9 +21,9 @@ Examples
 >>> import openturns as ot
 >>> import otrobopt
 >>> thetaDist = ot.Normal(2.0, 0.1)
->>> f = ot.NumericalMathFunction(['x', 'theta'], ['y'], ['x*theta'])
->>> parametric = ot.NumericalMathFunction(f, [1], [1.0])
->>> measure = otrobopt.QuantileMeasure(thetaDist, parametric, 0.8)"
+>>> f_base = ot.NumericalMathFunction(['x', 'theta'], ['y'], ['x*theta'])
+>>> f = ot.NumericalMathFunction(f_base, [1], [1.0])
+>>> measure = otrobopt.QuantileMeasure(f, thetaDist, 0.8)"
 
 // ---------------------------------------------------------------------
 

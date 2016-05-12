@@ -44,8 +44,8 @@ public:
   MeasureEvaluationImplementation();
 
   /** Parameter constructor */
-  MeasureEvaluationImplementation(const OT::Distribution & distribution,
-                                const OT::NumericalMathFunction & function);
+  MeasureEvaluationImplementation(const OT::NumericalMathFunction & function,
+                                  const OT::Distribution & distribution);
 
   /** Virtual constructor method */
   MeasureEvaluationImplementation * clone() const;
@@ -76,8 +76,8 @@ public:
   virtual void load(OT::Advocate & adv);
 
 private:
-  OT::Distribution distribution_;
   OT::NumericalMathFunction function_;
+  OT::Distribution distribution_;
 
 }; /* class MeasureEvaluationImplementation */
 

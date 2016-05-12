@@ -19,11 +19,9 @@ solver = ot.Cobyla()
 solver.setMaximumIterationNumber(1000)
 
 thetaDist = ot.Normal(1.0, 3.0)
-robustnessMeasure = otrobopt.MeanMeasure(thetaDist, J)
-problem = otrobopt.RobustOptimizationProblem()
+robustnessMeasure = otrobopt.MeanMeasure(J, thetaDist)
+problem = otrobopt.RobustOptimizationProblem(robustnessMeasure, g)
 problem.setMinimization(False)
-problem.setRobustnessMeasure(robustnessMeasure)
-problem.setInequalityConstraint(g)
 bounds = ot.Interval([-50.0] * dim, [50.0] * dim)
 problem.setBounds(bounds)
 

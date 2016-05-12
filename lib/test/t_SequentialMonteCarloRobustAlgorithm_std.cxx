@@ -60,8 +60,8 @@ int main(int argc, char **argv)
   for(UnsignedInteger i = 0; i < sigma.getSize(); ++ i)
   {
     Normal distributionXi(NumericalPoint(2, 0.0), NumericalPoint(2, sigma[i]), IdentityMatrix(2));
-    MeanMeasure robustnessMeasure(distributionXi, J);
-    JointChanceMeasure reliabilityMeasure(distributionXi, g, Less(), 0.9);
+    MeanMeasure robustnessMeasure(J, distributionXi);
+    JointChanceMeasure reliabilityMeasure(g, distributionXi, Less(), 0.9);
     RobustOptimizationProblem problem;
     problem.setRobustnessMeasure(robustnessMeasure);
     problem.setReliabilityMeasure(reliabilityMeasure);

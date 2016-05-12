@@ -42,8 +42,8 @@ public:
   MeanStandardDeviationTradeoffMeasure();
 
   /** Parameter constructor */
-  MeanStandardDeviationTradeoffMeasure (const OT::Distribution & distribution,
-                                        const OT::NumericalMathFunction & function,
+  MeanStandardDeviationTradeoffMeasure (const OT::NumericalMathFunction & function,
+                                        const OT::Distribution & distribution,
                                         const OT::NumericalPoint & alpha);
 
   /** Virtual constructor method */

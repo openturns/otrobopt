@@ -42,8 +42,8 @@ public:
   MeanMeasure();
 
   /** Parameter constructor */
-  MeanMeasure(const OT::Distribution & distribution,
-              const OT::NumericalMathFunction & function);
+  MeanMeasure(const OT::NumericalMathFunction & function,
+              const OT::Distribution & distribution);
 
   /** Virtual constructor method */
   MeanMeasure * clone() const;

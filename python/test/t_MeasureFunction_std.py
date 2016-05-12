@@ -9,7 +9,7 @@ param_fun    = ot.NumericalMathFunction(full_fun, [1], [1.0])
 dist_theta   = ot.Normal(2.0, 1.0)
 
 # Definition of "analytical" mean measure associated to the parametric function
-mean_measure = otrobopt.MeanMeasure(dist_theta, param_fun)
+mean_measure = otrobopt.MeanMeasure(param_fun, dist_theta)
 
 # Definition of "discretized" mean measure
 N = 10

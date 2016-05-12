@@ -42,8 +42,8 @@ public:
   IndividualChanceMeasure();
 
   /** Parameter constructor */
-  IndividualChanceMeasure (const OT::Distribution & distribution,
-                           const OT::NumericalMathFunction & function,
+  IndividualChanceMeasure (const OT::NumericalMathFunction & function,
+                           const OT::Distribution & distribution,
                            const OT::ComparisonOperator & op,
                            const OT::NumericalPoint & alpha);
 

@@ -31,11 +31,9 @@ solver.setMaximumIterationNumber(100)
 for sigma_xi in [0.1, 0.2, 0.3, 0.4, 0.5]:
 
     thetaDist = ot.Normal([0.0] * 2, [sigma_xi] * 2, ot.IdentityMatrix(2))
-    robustnessMeasure = otrobopt.MeanMeasure(thetaDist, J)
-    reliabilityMeasure = otrobopt.JointChanceMeasure(thetaDist, g, ot.Less(), 0.9)
-    problem = otrobopt.RobustOptimizationProblem()
-    problem.setRobustnessMeasure(robustnessMeasure)
-    problem.setReliabilityMeasure(reliabilityMeasure)
+    robustnessMeasure = otrobopt.MeanMeasure(J, thetaDist)
+    reliabilityMeasure = otrobopt.JointChanceMeasure(g, thetaDist, ot.Less(), 0.9)
+    problem = otrobopt.RobustOptimizationProblem(robustnessMeasure, reliabilityMeasure)
     problem.setBounds(bounds)
 
     algo = otrobopt.SequentialMonteCarloRobustAlgorithm(problem, solver)

@@ -51,7 +51,7 @@ MeasureFactory::MeasureFactory (const MeasureEvaluation & measure,
   , p_experiment_(experiment.clone())
 
 {
-  // Nothing to do
+  p_experiment_->setDistribution(measure.getDistribution());
 }
 
 /* Virtual constructor method */

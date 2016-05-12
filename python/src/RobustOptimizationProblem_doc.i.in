@@ -4,6 +4,25 @@
 Must consist at least of one :class:`~otrobopt.MeasureEvaluation`, either on
 the objective or the constraint.
 
+Available constructors:
+
+    RobustOptimizationProblem(*robustnessMeasure, reliabilityMeasure*)
+
+    RobustOptimizationProblem(*objective, reliabilityMeasure*)
+
+    RobustOptimizationProblem(*robustnessMeasure, inequalityConstraint*)
+
+Parameters
+----------
+robustnessMeasure : :class:`~otrobopt.MeasureEvaluation`
+    Measure function on the objective.
+reliabilityMeasure : :class:`~otrobopt.MeasureEvaluation`
+    Mesure function on the constraints
+objective : :py:class:`openturns.NumericalMathFunction`
+    Objective function
+inequalityConstraint : :py:class:`openturns.NumericalMathFunction`
+    Inequality constraint
+
 Examples
 --------
 >>> import openturns as ot
@@ -13,37 +32,31 @@ Examples
 Pure robustness problem:
 
 >>> thetaDist = ot.Normal(2.0, 0.1)
->>> f = ot.NumericalMathFunction(['x1', 'p1'], ['y1'], ['x1*p1'])
->>> parametric = ot.NumericalMathFunction(f, [1], [1.0])
->>> robustnessMeasure = otrobopt.MeanMeasure(thetaDist, parametric)
+>>> f_base = ot.NumericalMathFunction(['x1', 'p1'], ['y1'], ['x1*p1'])
+>>> f = ot.NumericalMathFunction(f_base, [1], [1.0])
+>>> robustnessMeasure = otrobopt.MeanMeasure(f, thetaDist)
 >>> g = ot.NumericalMathFunction(['x1'], ['y1'], ['x1 - 5.0'])
->>> problem = RobustOptimizationProblem()
->>> problem.setRobustnessMeasure(robustnessMeasure)
->>> problem.setInequalityConstraint(g)
+>>> problem = RobustOptimizationProblem(robustnessMeasure, g)
 
 
 Pure reliability problem:
 
 >>> thetaDist = ot.Normal(2.0, 0.1)
 >>> f = ot.NumericalMathFunction(['x1'], ['y1'], ['x1 - 5.0'])
->>> g = ot.NumericalMathFunction(['x1', 'p1'], ['y1'], ['x1*p1'])
->>> parametric = ot.NumericalMathFunction(g, [1], [1.0])
->>> reliabilityMeasure = otrobopt.VarianceMeasure(thetaDist, parametric)
->>> problem = RobustOptimizationProblem()
->>> problem.setObjective(f)
->>> problem.setReliabilityMeasure(reliabilityMeasure)
+>>> g_base = ot.NumericalMathFunction(['x1', 'p1'], ['y1'], ['x1*p1'])
+>>> g = ot.NumericalMathFunction(g_base, [1], [1.0])
+>>> reliabilityMeasure = otrobopt.VarianceMeasure(g, thetaDist)
+>>> problem = RobustOptimizationProblem(f, reliabilityMeasure)
 
 
 Robustness & reliability problem:
 
 >>> thetaDist = ot.Normal(2.0, 0.1)
->>> f = ot.NumericalMathFunction(['x1', 'p1'], ['y1'], ['x1*p1'])
->>> parametric = ot.NumericalMathFunction(f, [1], [1.0])
->>> robustnessMeasure = otrobopt.MeanMeasure(thetaDist, parametric)
->>> reliabilityMeasure = otrobopt.VarianceMeasure(thetaDist, parametric)
->>> problem = RobustOptimizationProblem()
->>> problem.setRobustnessMeasure(robustnessMeasure)
->>> problem.setReliabilityMeasure(reliabilityMeasure)"
+>>> f_base = ot.NumericalMathFunction(['x1', 'p1'], ['y1'], ['x1*p1'])
+>>> f = ot.NumericalMathFunction(f_base, [1], [1.0])
+>>> robustnessMeasure = otrobopt.MeanMeasure(f, thetaDist)
+>>> reliabilityMeasure = otrobopt.VarianceMeasure(f, thetaDist)
+>>> problem = RobustOptimizationProblem(robustnessMeasure, reliabilityMeasure)"
 
 // ---------------------------------------------------------------------
 
@@ -120,3 +133,13 @@ Returns
 -------
 hasReliabilityMeasure : bool
     Whether a reliability measure was set"
+
+// ---------------------------------------------------------------------
+
+%feature("docstring") OTROBOPT::RobustOptimizationProblem::getDistribution
+"Distribution accessor.
+
+Returns
+-------
+distribution : :py:class:`openturns.Distribution`
+    Parameter distribution"

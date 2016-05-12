@@ -14,20 +14,20 @@ int main(int argc, char **argv)
   Description input(2);
   input[0] = "x1";
   input[1] = "p1";
-  NumericalMathFunction f(input, Description(1, "y1"), Description(1, "x1*p1"));
-  NumericalMathFunction parametric(f, Indices(1 , 1), NumericalPoint(1, 1.0));
+  NumericalMathFunction f_base(input, Description(1, "y1"), Description(1, "x1*p1"));
+  NumericalMathFunction f(f_base, Indices(1 , 1), NumericalPoint(1, 1.0));
 
   NumericalPoint x(1, 1.0);
 
   Collection <MeasureEvaluation> measures;
-  measures.add(MeanMeasure(thetaDist, parametric));
-  measures.add(VarianceMeasure(thetaDist, parametric));
-  measures.add(WorstCaseMeasure(thetaDist, parametric));
-  measures.add(WorstCaseMeasure(thetaDist, parametric, false));
-  measures.add(JointChanceMeasure(thetaDist, parametric, Less(), 0.95));
-  measures.add(IndividualChanceMeasure(thetaDist, parametric, Less(), NumericalPoint(1, 0.95)));
-  measures.add(MeanStandardDeviationTradeoffMeasure(thetaDist, parametric, NumericalPoint(1, 0.4)));
-  measures.add(QuantileMeasure(thetaDist, parametric, 0.8));
+  measures.add(MeanMeasure(f, thetaDist));
+  measures.add(VarianceMeasure(f, thetaDist));
+  measures.add(WorstCaseMeasure(f, thetaDist));
+  measures.add(WorstCaseMeasure(f, thetaDist, false));
+  measures.add(JointChanceMeasure(f, thetaDist, Less(), 0.95));
+  measures.add(IndividualChanceMeasure(f, thetaDist, Less(), NumericalPoint(1, 0.95)));
+  measures.add(MeanStandardDeviationTradeoffMeasure(f, thetaDist, NumericalPoint(1, 0.4)));
+  measures.add(QuantileMeasure(f, thetaDist, 0.8));
 
   AggregatedMeasure aggregated(measures);
   measures.add(aggregated);
@@ -38,7 +38,7 @@ int main(int argc, char **argv)
     MeasureEvaluation measure(measures[i]);
     std::cout << measure << "(continuous)"<<measure(x)<< std::endl;
     const UnsignedInteger N = 1000;
-    LHSExperiment experiment(thetaDist, N);
+    LHSExperiment experiment(N);
     MeasureFactory factory(measure, experiment);
     MeasureEvaluation discretizedMeasure(factory.build());
     std::cout << discretizedMeasure << "(discretized)"<<discretizedMeasure(x)<< std::endl;

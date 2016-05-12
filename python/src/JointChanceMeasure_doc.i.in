@@ -1,18 +1,32 @@
 %feature("docstring") OTROBOPT::JointChanceMeasure
 "Joint chance measure function.
 
+It is built from a parametric function :math:`f` and a distribution :math:`\mathcal{D}` of density function :math:`p`.
+
+When the constraint considered is :math:`\mathbb{P}(f_k(x, \theta) \ge 0, \forall k \in K) \geq \alpha`:
+
 .. math::
 
-    M_{f, \theta}(x) = \mathbb{P}(f_k(x, \theta) \ge 0, \forall k \in K) \leq \alpha
+    M_{f, \mathcal{D}, \alpha}(x) = \mathbb{P}\left(\bigcap_{k \in K} \{f_k(x, \Theta) \ge 0\}\right) - \alpha
 
-    M_{f, \theta}(x) = \alpha - \int_{\Omega_{\theta}} \prod_{i=1}^d \mathbb{1}_{f(x, \theta) \ge 0} p(\theta) d \theta
+In case of a continuous distribution:
+
+.. math::
+
+    M_{f, \mathcal{D}, \alpha}(x) = \int_{Supp(\mathcal{D})} \left( \prod_{k \in K} \mathbf{1}_{f_k(x, \theta) \ge 0} \right) p(\theta) d \theta - \alpha
+
+In case of a discrete distribution:
+
+.. math::
+
+    M_{f, \mathcal{D}, \alpha}(x) = \sum_{\theta_i \in Supp(\mathcal{D})}  \left( \prod_{k \in K} \mathbf{1}_{f_k(x, \theta_i) \ge 0} \right) p_i - \alpha
 
 Parameters
 ----------
-distribution : :py:class:`openturns.Distribution`
-    Distribution of parameters
 function : :py:class:`openturns.NumericalMathFunction`
     Parametric function
+distribution : :py:class:`openturns.Distribution`
+    Distribution of parameters
 operator : :py:class:`openturns.ComparisonOperator`
     Comparison operator in front of :math:`\alpha`
 alpha : float in :math:`(0,1)`
@@ -23,9 +37,9 @@ Examples
 >>> import openturns as ot
 >>> import otrobopt
 >>> thetaDist = ot.Normal(2.0, 0.1)
->>> f = ot.NumericalMathFunction(['x', 'theta'], ['y'], ['x*theta'])
->>> parametric = ot.NumericalMathFunction(f, [1], [1.0])
->>> measure = otrobopt.JointChanceMeasure(thetaDist, parametric, ot.Less(), 0.95)"
+>>> f_base = ot.NumericalMathFunction(['x', 'theta'], ['y'], ['x*theta'])
+>>> f = ot.NumericalMathFunction(f_base, [1], [1.0])
+>>> measure = otrobopt.JointChanceMeasure(f, thetaDist, ot.Less(), 0.95)"
 
 // ---------------------------------------------------------------------
 

@@ -41,6 +41,33 @@ RobustOptimizationProblem::RobustOptimizationProblem()
   // Nothing to do
 }
 
+RobustOptimizationProblem::RobustOptimizationProblem(const MeasureEvaluation & robustnessMeasure,
+                                                     const MeasureEvaluation & reliabilityMeasure)
+  : OptimizationProblemImplementation()
+{
+  setRobustnessMeasure(robustnessMeasure);
+  setReliabilityMeasure(reliabilityMeasure);
+//   if (robustnessMeasure.getDistribution() != reliabilityMeasure.getDistribution())
+//     throw InvalidArgumentException(HERE) << "Different distribution";
+}
+
+RobustOptimizationProblem::RobustOptimizationProblem(const NumericalMathFunction & objective,
+                                                     const MeasureEvaluation & reliabilityMeasure)
+  : OptimizationProblemImplementation()
+{
+  setObjective(objective);
+  setReliabilityMeasure(reliabilityMeasure);
+}
+
+RobustOptimizationProblem::RobustOptimizationProblem(const MeasureEvaluation & robustnessMeasure,
+                                                     const NumericalMathFunction & inequalityConstraint)
+  : OptimizationProblemImplementation()
+{
+  setRobustnessMeasure(robustnessMeasure);
+  setInequalityConstraint(inequalityConstraint);
+}
+
+
 /* Virtual constructor method */
 RobustOptimizationProblem * RobustOptimizationProblem::clone() const
 {
@@ -66,6 +93,7 @@ void RobustOptimizationProblem::setRobustnessMeasure(const MeasureEvaluation & r
 
 MeasureEvaluation RobustOptimizationProblem::getRobustnessMeasure() const
 {
+  if (!hasRobustnessMeasure()) throw InvalidArgumentException(HERE) << "No robustness measure defined";
   return robustnessMeasure_;
 }
 
@@ -82,12 +110,23 @@ void RobustOptimizationProblem::setReliabilityMeasure(const MeasureEvaluation & 
 
 MeasureEvaluation RobustOptimizationProblem::getReliabilityMeasure() const
 {
+  if (!hasReliabilityMeasure()) throw InvalidArgumentException(HERE) << "No reliability measure defined";
   return reliabilityMeasure_;
 }
 
 Bool RobustOptimizationProblem::hasReliabilityMeasure() const
 {
   return reliabilityMeasure_.getFunction().getInputDimension() > 0;
+}
+
+Distribution RobustOptimizationProblem::getDistribution() const
+{
+  Distribution distributionXi;
+  if (hasRobustnessMeasure())
+    distributionXi = getRobustnessMeasure().getDistribution();
+  if (hasReliabilityMeasure())
+    distributionXi = getReliabilityMeasure().getDistribution();
+  return distributionXi;
 }
 
 /* Method save() stores the object through the StorageManager */

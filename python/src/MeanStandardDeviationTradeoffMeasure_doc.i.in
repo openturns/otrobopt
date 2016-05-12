@@ -1,22 +1,35 @@
 %feature("docstring") OTROBOPT::MeanStandardDeviationTradeoffMeasure
 "Mean/variance tradeoff measure function.
 
+
+It is built from a parametric function :math:`f` and a distribution :math:`\mathcal{D}` of density function :math:`p`.
+
+In case of a continuous distribution:
+
 .. math::
 
-    \mu = \int_{\Omega_{\theta}} f(x, \theta) p(\theta) d \theta
+    \mu = \int_{Supp(\mathcal{D})} f(x, \theta) p(\theta) d \theta
 
-    Var = \int_{\Omega_{\theta}} f(x, \theta)^2 p(\theta) d \theta - \mu^2
+    Var = \int_{Supp(\mathcal{D})} f(x, \theta)^2 p(\theta) d \theta - \mu^2
 
-    M_{f, \theta}(x) = (1-\alpha) \mu + \alpha \sqrt{var}
+    M_{f, \theta, \alpha}(x) = (1-\alpha) \mu + \alpha \sqrt{Var}
+
+In case of a discrete distribution:
+
+.. math::
+
+    \mu = \sum_{\theta_i \in Supp(\mathcal{D})} f(x, \theta_i) p_i
+
+    M_{f, \mathcal{D}, \alpha}(x) = (1-\alpha) \mu + \alpha \sum_{\theta_i \in Supp(\mathcal{D})} f(x, \theta_i)^2 p_i - \mu^2
 
 
 Parameters
 ----------
-distribution : :py:class:`openturns.Distribution`
-    Distribution of parameters
 function : :py:class:`openturns.NumericalMathFunction`
     Parametric function
-alpha : sequence of float in :math:`(0,1)`
+distribution : :py:class:`openturns.Distribution`
+    Distribution of parameters
+alpha : sequence of float, :math:`\alpha_k \in [0,1]`
     Tradeoff coefficient
 
 Examples
@@ -24,9 +37,9 @@ Examples
 >>> import openturns as ot
 >>> import otrobopt
 >>> thetaDist = ot.Normal(2.0, 0.1)
->>> f = ot.NumericalMathFunction(['x', 'theta'], ['y'], ['x*theta'])
->>> parametric = ot.NumericalMathFunction(f, [1], [1.0])
->>> measure = otrobopt.MeanStandardDeviationTradeoffMeasure(thetaDist, parametric, [0.4])"
+>>> f_base = ot.NumericalMathFunction(['x', 'theta'], ['y'], ['x*theta'])
+>>> f = ot.NumericalMathFunction(f_base, [1], [1.0])
+>>> measure = otrobopt.MeanStandardDeviationTradeoffMeasure(f, thetaDist, [0.4])"
 
 // ---------------------------------------------------------------------
 

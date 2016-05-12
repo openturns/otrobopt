@@ -43,8 +43,8 @@ public:
   WorstCaseMeasure();
 
   /** Parameter constructor */
-  WorstCaseMeasure (const OT::Distribution & distribution,
-                    const OT::NumericalMathFunction & function,
+  WorstCaseMeasure (const OT::NumericalMathFunction & function,
+                    const OT::Distribution & distribution,
                     const OT::Bool minimization = true);
 
   /** Virtual constructor method */

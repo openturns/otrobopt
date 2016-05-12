@@ -43,10 +43,10 @@ WorstCaseMeasure::WorstCaseMeasure()
 }
 
 /* Parameter constructor */
-WorstCaseMeasure::WorstCaseMeasure (const Distribution & distribution,
-                                    const NumericalMathFunction & function,
+WorstCaseMeasure::WorstCaseMeasure (const NumericalMathFunction & function,
+                                    const Distribution & distribution,
                                     const Bool minimization)
-  : MeasureEvaluationImplementation(distribution, function)
+  : MeasureEvaluationImplementation(function, distribution)
   , isMinimization_(minimization)
   , solver_(new TNC())
 {

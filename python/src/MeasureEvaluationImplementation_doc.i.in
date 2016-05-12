@@ -1,8 +1,8 @@
 %define OTROBOPT_MeasureEvaluation_doc
-"Measure function evaluation base class.
+"Measure evaluation base class.
 
-Base class for measure function evaluations, allows to evaluate probabilistic
-objective functions or probabilistic constraint functions.
+Base class for measure function evaluations, allows to define robust
+counterparts of parametric objective or constraint functions.
 
 See also
 --------

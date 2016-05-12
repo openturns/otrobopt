@@ -1,20 +1,15 @@
 %feature("docstring") OTROBOPT::MeasureFactory
 "Discretize a measure function.
 
-It consists in sampling the distribution of the parameter :math:`\theta`.
-
-For example to discretize the mean measure:
-
-.. math::
-
-    M_{f, \theta}(x) = \int_{\Omega_{\theta}} f(x, \theta) p(\theta) d \theta
-
-
-we sample :math:`\hat{\theta} = (\theta_1, \dots, \theta_N)` with weights :math:`(w_1, \dots, w_N)` then the measure writes:
+It consists in replacing the distribution :math:`\mathcal{D}` of the measure by a discrete
+approximation.
 
 .. math::
 
-    \hat{M}_{f, \hat{\theta}}(x) = \sum_{i=1}^N \frac{1}{w_i} f(x, \theta_i)
+    \mathcal{D} \rightarrow \sum_{i=1}^N \omega_i \delta_{\theta_i}
+
+
+Where :math:`\delta_{\theta_i}` is the Dirac measure at :math:`\theta_i`.
 
 Parameters
 ----------
@@ -30,15 +25,15 @@ First define a measure:
 >>> import openturns as ot
 >>> import otrobopt
 >>> thetaDist = ot.Normal(2.0, 0.1)
->>> f = ot.NumericalMathFunction(['x', 'theta'], ['y'], ['x*theta'])
->>> parametric = ot.NumericalMathFunction(f, [1], [1.0])
->>> measure = otrobopt.MeanMeasure(thetaDist, parametric)
+>>> f_base = ot.NumericalMathFunction(['x', 'theta'], ['y'], ['x*theta'])
+>>> f = ot.NumericalMathFunction(f_base, [1], [1.0])
+>>> measure = otrobopt.MeanMeasure(f, thetaDist)
 
 
 Then discretize it:
 
 >>> N = 10
->>> experiment = ot.LHSExperiment(thetaDist, N)
+>>> experiment = ot.LHSExperiment(N)
 >>> factory = otrobopt.MeasureFactory(measure, experiment)
 >>> discretizedMeasure = factory.build()"
 

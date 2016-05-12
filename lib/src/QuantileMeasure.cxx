@@ -45,10 +45,10 @@ QuantileMeasure::QuantileMeasure()
 }
 
 /* Parameter constructor */
-QuantileMeasure::QuantileMeasure (const Distribution & distribution,
-                                  const NumericalMathFunction & function,
+QuantileMeasure::QuantileMeasure (const NumericalMathFunction & function,
+                                  const Distribution & distribution,
                                   const NumericalScalar alpha)
-  : MeasureEvaluationImplementation(distribution, function)
+  : MeasureEvaluationImplementation(function, distribution)
 {
   setAlpha(alpha);
   if (function.getOutputDimension() > 1) throw InvalidArgumentException(HERE) << "Quantile are only computed for 1-d functions.";
