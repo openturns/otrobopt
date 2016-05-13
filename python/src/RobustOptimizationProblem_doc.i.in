@@ -36,7 +36,7 @@ Pure robustness problem:
 >>> f = ot.NumericalMathFunction(f_base, [1], [1.0])
 >>> robustnessMeasure = otrobopt.MeanMeasure(f, thetaDist)
 >>> g = ot.NumericalMathFunction(['x1'], ['y1'], ['x1 - 5.0'])
->>> problem = RobustOptimizationProblem(robustnessMeasure, g)
+>>> problem = otrobopt.RobustOptimizationProblem(robustnessMeasure, g)
 
 
 Pure reliability problem:
@@ -46,7 +46,7 @@ Pure reliability problem:
 >>> g_base = ot.NumericalMathFunction(['x1', 'p1'], ['y1'], ['x1*p1'])
 >>> g = ot.NumericalMathFunction(g_base, [1], [1.0])
 >>> reliabilityMeasure = otrobopt.VarianceMeasure(g, thetaDist)
->>> problem = RobustOptimizationProblem(f, reliabilityMeasure)
+>>> problem = otrobopt.RobustOptimizationProblem(f, reliabilityMeasure)
 
 
 Robustness & reliability problem:
@@ -56,7 +56,7 @@ Robustness & reliability problem:
 >>> f = ot.NumericalMathFunction(f_base, [1], [1.0])
 >>> robustnessMeasure = otrobopt.MeanMeasure(f, thetaDist)
 >>> reliabilityMeasure = otrobopt.VarianceMeasure(f, thetaDist)
->>> problem = RobustOptimizationProblem(robustnessMeasure, reliabilityMeasure)"
+>>> problem = otrobopt.RobustOptimizationProblem(robustnessMeasure, reliabilityMeasure)"
 
 // ---------------------------------------------------------------------
 

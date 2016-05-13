@@ -1,23 +1,23 @@
 %feature("docstring") OTROBOPT::VarianceMeasure
 "Variance measure function.
 
-It is built from a parametric function :math:`f` and a distribution :math:`\mathcal{D}` of density function :math:`p`.
+It is built from a parametric function :math:`f` and a distribution :math:`\cD` of density function :math:`p`.
 
 In case of a continuous distribution:
 
 .. math::
 
-    \mu = \int_{Supp(\mathcal{D})} f(x, \theta) p(\theta) d \theta
+    \mu = \int_{Supp(\cD)} f(x, \theta) p(\theta) d \theta
 
-    M_{f,\mathcal{D}}(x) = \int_{Supp(\mathcal{D})} f(x, \theta)^2 p(\theta) d \theta - \mu^2
+    M_{f,\cD}(x) = \int_{Supp(\cD)} f(x, \theta)^2 p(\theta) d \theta - \mu^2
 
 In case of a discrete distribution:
 
 .. math::
 
-    \mu = \sum_{\theta_i \in Supp(\mathcal{D})} f(x, \theta_i) p_i
+    \mu = \sum_{\theta_i \in Supp(\cD)} f(x, \theta_i) p_i
 
-    M_{f, \mathcal{D}}(x) = \sum_{\theta_i \in Supp(\mathcal{D})} f(x, \theta_i)^2 p_i - \mu^2
+    M_{f, \cD}(x) = \sum_{\theta_i \in Supp(\cD)} f(x, \theta_i)^2 p_i - \mu^2
 
 
 Parameters

@@ -1,12 +1,12 @@
 %feature("docstring") OTROBOPT::MeasureFactory
 "Discretize a measure function.
 
-It consists in replacing the distribution :math:`\mathcal{D}` of the measure by a discrete
+It consists in replacing the distribution :math:`\cD` of the measure by a discrete
 approximation.
 
 .. math::
 
-    \mathcal{D} \rightarrow \sum_{i=1}^N \omega_i \delta_{\theta_i}
+    \cD \rightarrow \sum_{i=1}^N \omega_i \delta_{\theta_i}
 
 
 Where :math:`\delta_{\theta_i}` is the Dirac measure at :math:`\theta_i`.

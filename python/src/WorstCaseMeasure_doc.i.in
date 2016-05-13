@@ -1,19 +1,19 @@
 %feature("docstring") OTROBOPT::WorstCaseMeasure
 "Worst case measure function.
 
-It is built from a parametric function :math:`f` and a distribution :math:`\mathcal{D}` of density function :math:`p`.
+It is built from a parametric function :math:`f` and a distribution :math:`\cD` of density function :math:`p`.
 
 In case of a continuous distribution:
 
 .. math::
 
-    M_{f, \mathcal{D}}(x) = \inf_{\theta \in Supp(\mathcal{D})} f(x, \theta)
+    M_{f, \cD}(x) = \inf_{\theta \in Supp(\cD)} f(x, \theta)
 
 In case of a discrete distribution:
 
 .. math::
 
-    M_{f, \mathcal{D}}(x) = \inf_{\theta_i \in Supp(\mathcal{D})} f(x, \theta_i)
+    M_{f, \cD}(x) = \inf_{\theta_i \in Supp(\cD)} f(x, \theta_i)
 
 
 Parameters

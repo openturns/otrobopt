@@ -1,25 +1,25 @@
 %feature("docstring") OTROBOPT::JointChanceMeasure
 "Joint chance measure function.
 
-It is built from a parametric function :math:`f` and a distribution :math:`\mathcal{D}` of density function :math:`p`.
+It is built from a parametric function :math:`f` and a distribution :math:`\cD` of density function :math:`p`.
 
-When the constraint considered is :math:`\mathbb{P}(f_k(x, \theta) \ge 0, \forall k \in K) \geq \alpha`:
+When the constraint considered is :math:`\Pset (f_k(x, \theta) \ge 0, \forall k \in K) \geq \alpha`:
 
 .. math::
 
-    M_{f, \mathcal{D}, \alpha}(x) = \mathbb{P}\left(\bigcap_{k \in K} \{f_k(x, \Theta) \ge 0\}\right) - \alpha
+    M_{f, \cD, \alpha}(x) = \Pset \left(\bigcap_{k \in K} \{f_k(x, \Theta) \ge 0\}\right) - \alpha
 
 In case of a continuous distribution:
 
 .. math::
 
-    M_{f, \mathcal{D}, \alpha}(x) = \int_{Supp(\mathcal{D})} \left( \prod_{k \in K} \mathbf{1}_{f_k(x, \theta) \ge 0} \right) p(\theta) d \theta - \alpha
+    M_{f, \cD, \alpha}(x) = \int_{Supp(\cD)} \left( \prod_{k \in K} \mathbf{1}_{f_k(x, \theta) \ge 0} \right) p(\theta) d \theta - \alpha
 
 In case of a discrete distribution:
 
 .. math::
 
-    M_{f, \mathcal{D}, \alpha}(x) = \sum_{\theta_i \in Supp(\mathcal{D})}  \left( \prod_{k \in K} \mathbf{1}_{f_k(x, \theta_i) \ge 0} \right) p_i - \alpha
+    M_{f, \cD, \alpha}(x) = \sum_{\theta_i \in Supp(\cD)}  \left( \prod_{k \in K} \mathbf{1}_{f_k(x, \theta_i) \ge 0} \right) p_i - \alpha
 
 Parameters
 ----------

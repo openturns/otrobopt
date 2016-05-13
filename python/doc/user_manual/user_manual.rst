@@ -13,7 +13,7 @@ and :math:`\theta` a parameter.
 .. math::
 
     \begin{aligned}
-    & \underset{x \in \mathbb{R}^n}{\text{minimize~}}
+    & \underset{x \in \Rset^n}{\text{minimize~}}
     & & J(x, \theta) \\
     & \text{subject to}
     & & G(x, \theta) \geq 0\\
@@ -23,9 +23,9 @@ and :math:`\theta` a parameter.
 The problem is made robust by:
 
 - modelling the parameter :math:`\theta` by the
-  the random vector :math:`\Theta` with given distribution :math:`\mathcal{D}`.
+  the random vector :math:`\Theta` with given distribution :math:`\cD`.
 
-- choosing measure functions :math:`\rho_{J, \mathcal{D}}` and :math:`\lambda_{G, \mathcal{D}}`
+- choosing measure functions :math:`\rho_{J, \cD}` and :math:`\lambda_{G, \cD}`
   for the objective and constraint functions.
 
 The the robust optimization problem reads:
@@ -33,10 +33,10 @@ The the robust optimization problem reads:
 .. math::
 
     \begin{aligned}
-    & \underset{x \in \mathbb{R}^n}{\text{minimize~}}
-    & & \rho_{J, \mathcal{D}}(x) \ \\
+    & \underset{x \in \Rset^n}{\text{minimize~}}
+    & & \rho_{J, \cD}(x) \ \\
     & \text{subject to}
-    & & \lambda_{G, \mathcal{D}}(x) \geq 0\\
+    & & \lambda_{G, \cD}(x) \geq 0\\
     \end{aligned}
 
 The definition of the measure functions is associated to

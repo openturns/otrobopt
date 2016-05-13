@@ -47,8 +47,8 @@ RobustOptimizationProblem::RobustOptimizationProblem(const MeasureEvaluation & r
 {
   setRobustnessMeasure(robustnessMeasure);
   setReliabilityMeasure(reliabilityMeasure);
-//   if (robustnessMeasure.getDistribution() != reliabilityMeasure.getDistribution())
-//     throw InvalidArgumentException(HERE) << "Different distribution";
+  if (robustnessMeasure.getDistribution() != reliabilityMeasure.getDistribution())
+    throw InvalidArgumentException(HERE) << "Different measure distributions for objective and constraint";
 }
 
 RobustOptimizationProblem::RobustOptimizationProblem(const NumericalMathFunction & objective,

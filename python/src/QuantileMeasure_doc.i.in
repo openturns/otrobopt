@@ -1,11 +1,11 @@
 %feature("docstring") OTROBOPT::QuantileMeasure
 "Quantile measure function.
 
-It is built from a parametric function :math:`f` and a distribution :math:`\mathcal{D}` of density function :math:`p`.
+It is built from a parametric function :math:`f` and a distribution :math:`\cD` of density function :math:`p`.
 
 .. math::
 
-    M_{f, \mathcal{D}, \alpha}(x) = \inf \{ s \in \Rset \: | \: \mathbb{P}(f(x, \Theta) \leq s) \geq \alpha \}
+    M_{f, \cD, \alpha}(x) = \inf \{ s \in \Rset \: | \: \Pset (f(x, \Theta) \leq s) \geq \alpha \}
 
 Parameters
 ----------

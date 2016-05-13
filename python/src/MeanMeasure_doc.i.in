@@ -1,20 +1,20 @@
 %feature("docstring") OTROBOPT::MeanMeasure
 "Mean measure function.
 
-It is built from a parametric function :math:`f` and a distribution :math:`\mathcal{D}` of density function :math:`p`.
+It is built from a parametric function :math:`f` and a distribution :math:`\cD` of density function :math:`p`.
 
 
 In case of a continuous distribution:
 
 .. math::
 
-    M_{f, \mathcal{D}}(x) = \int_{Supp(\mathcal{D})} f(x, \theta) p(\theta) d \theta
+    M_{f, \cD}(x) = \int_{Supp(\cD)} f(x, \theta) p(\theta) d \theta
 
 In case of a discrete distribution:
 
 .. math::
 
-    M_{f, \mathcal{D}}(x) = \sum_{\theta_i \in Supp(\mathcal{D})} f(x, \theta_i) p_i
+    M_{f, \cD}(x) = \sum_{\theta_i \in Supp(\cD)} f(x, \theta_i) p_i
 
 
 Parameters

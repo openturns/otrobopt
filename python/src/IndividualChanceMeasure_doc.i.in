@@ -1,26 +1,26 @@
 %feature("docstring") OTROBOPT::IndividualChanceMeasure
 "Individual chance measure function.
 
-It is built from a parametric function :math:`f` and a distribution :math:`\mathcal{D}` of density function :math:`p`.
+It is built from a parametric function :math:`f` and a distribution :math:`\cD` of density function :math:`p`.
 
 .. math::
 
-    M_{f, \mathcal{D}, \alpha}(x) = [M_{f_1, \mathcal{D}, \alpha_1}, ..., M_{f_n, \mathcal{D}, \alpha_n}]
+    M_{f, \cD, \alpha}(x) = [M_{f_1, \cD, \alpha_1}, ..., M_{f_n, \cD, \alpha_n}]
 
-    M_{f, \mathcal{D}, \alpha_k}(x) = \mathbb{P}(f_k(x, \theta) \ge 0) \leq \alpha_k, \forall k \in K
+    M_{f, \cD, \alpha_k}(x) = \Pset (f_k(x, \theta) \ge 0) \leq \alpha_k, \forall k \in K
 
 
 In case of a continuous distribution:
 
 .. math::
 
-    M_{f, \mathcal{D}, \alpha_k}(x) = \alpha_k - \int_{Supp(\mathcal{D})} \mathbf{1}_{f_k(x, \theta) \ge 0} p(\theta) d \theta
+    M_{f, \cD, \alpha_k}(x) = \alpha_k - \int_{Supp(\cD)} \mathbf{1}_{f_k(x, \theta) \ge 0} p(\theta) d \theta
 
 In case of a discrete distribution:
 
 .. math::
 
-    M_{f, \mathcal{D}, \alpha_k}(x) = \alpha_k - \sum_{\theta_i \in Supp(\mathcal{D})} \mathbf{1}_{f_k(x, \theta_i) \ge 0} p_i
+    M_{f, \cD, \alpha_k}(x) = \alpha_k - \sum_{\theta_i \in Supp(\cD)} \mathbf{1}_{f_k(x, \theta_i) \ge 0} p_i
 
 
 Parameters
