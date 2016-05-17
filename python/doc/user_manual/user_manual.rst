@@ -70,6 +70,11 @@ Measure evaluation
     :template: class.rst_t
 
     MeasureEvaluation
+
+.. autosummary::
+    :toctree: _generated/
+    :template: MeasureEvaluation.rst_t
+
     MeanMeasure
     MeanStandardDeviationTradeoffMeasure
     QuantileMeasure
@@ -77,6 +82,11 @@ Measure evaluation
     VarianceMeasure
     JointChanceMeasure
     IndividualChanceMeasure
+
+.. autosummary::
+    :toctree: _generated/
+    :template: class.rst_t
+
     AggregatedMeasure
 
 
