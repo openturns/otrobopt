@@ -82,7 +82,7 @@ public:
     NumericalPoint y(function(x_, theta));
     for (UnsignedInteger j = 0; j < getOutputDimension(); ++ j)
     {
-      y[j] = (y[j] > 0.0) ? 1.0 : 0.0;
+      y[j] = (y[j] >= 0.0) ? 1.0 : 0.0;
     }
     return y * distribution_.computePDF(theta);
   }
@@ -150,7 +150,7 @@ NumericalPoint IndividualChanceMeasure::operator()(const NumericalPoint & inP) c
       NumericalPoint outPi(function(inP, support[i]));
       for (UnsignedInteger j = 0; j < outputDimension; ++ j)
       {
-        if (outPi[j] > 0.0)
+        if (outPi[j] >= 0.0)
         {
           outP[j] += 1.0 / size;
         }

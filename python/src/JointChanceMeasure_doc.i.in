@@ -3,7 +3,7 @@
 
 It is built from a parametric function :math:`f` and a distribution :math:`\cD` of density function :math:`p`.
 
-When the constraint considered is :math:`\Pset (f_k(x, \theta) \ge 0, \forall k \in K) \geq \alpha`:
+When the constraint considered is :math:`\Pset (f_k(x, \Theta) \ge 0, \forall k \in K) \geq \alpha`:
 
 .. math::
 
