@@ -109,6 +109,16 @@ public:
     return 1;
   }
 
+  Description getInputDescription() const
+  {
+    return function_.getParameterDescription();
+  }
+
+  Description getOutputDescription() const
+  {
+    return Description(1, "q");
+  }
+
 protected:
   NumericalPoint x_;
   NumericalMathFunction function_;

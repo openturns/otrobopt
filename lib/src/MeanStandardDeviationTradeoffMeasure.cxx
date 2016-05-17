@@ -110,6 +110,18 @@ public:
     return 2 * function_.getOutputDimension();
   }
 
+  Description getInputDescription() const
+  {
+    return function_.getParameterDescription();
+  }
+
+  Description getOutputDescription() const
+  {
+    Description outputDescription(function_.getOutputDescription());
+    outputDescription.add(outputDescription);
+    return outputDescription;
+  }
+
 protected:
   NumericalPoint x_;
   NumericalMathFunction function_;
