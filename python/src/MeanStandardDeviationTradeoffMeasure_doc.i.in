@@ -8,19 +8,21 @@ In case of a continuous distribution:
 
 .. math::
 
-    \mu = \int_{Supp(\cD)} f(x, \theta) p(\theta) d \theta
+    \mu_k = \int_{Supp(\cD)} f_k(x, \theta) p(\theta) d \theta
 
-    Var = \int_{Supp(\cD)} f(x, \theta)^2 p(\theta) d \theta - \mu^2
+    Var_k = \int_{Supp(\cD)} f_k(x, \theta)^2 p(\theta) d \theta - \mu^2
 
-    M_{f, \theta, \alpha}(x) = (1-\alpha) \mu + \alpha \sqrt{Var}
+    M_{f_k, \cD, \alpha_k}(x) = (1-\alpha_k) \mu_k + \alpha_k \sqrt{Var_k}
 
 In case of a discrete distribution:
 
 .. math::
 
-    \mu = \sum_{\theta_i \in Supp(\cD)} f(x, \theta_i) p_i
+    \mu_k = \sum_{\theta_i \in Supp(\cD)} f_k(x, \theta_i) p_i
 
-    M_{f, \cD, \alpha}(x) = (1-\alpha) \mu + \alpha \sum_{\theta_i \in Supp(\cD)} f(x, \theta_i)^2 p_i - \mu^2
+    Var_k = \sum_{\theta_i \in Supp(\cD)} f_k(x, \theta_i)^2 p_i - {\mu_k}^2
+
+    M_{f_k, \cD, \alpha_k}(x) = (1-\alpha_k) \mu_k + \alpha_k \sqrt{Var_k}
 
 
 Parameters
