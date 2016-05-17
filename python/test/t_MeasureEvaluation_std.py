@@ -12,8 +12,8 @@ x = [1.0]
 
 measures = [otrobopt.MeanMeasure(f, thetaDist),
             otrobopt.VarianceMeasure(f, thetaDist),
-            otrobopt.WorstCaseMeasure(f, thetaDist),
-            otrobopt.WorstCaseMeasure(f, thetaDist, False),
+            otrobopt.WorstCaseMeasure(f, ot.Uniform(-1.0, 3.0)),
+            otrobopt.WorstCaseMeasure(f, ot.Uniform(-1.0, 3.0), False),
             otrobopt.JointChanceMeasure(f, thetaDist, ot.Less(), 0.95),
             otrobopt.IndividualChanceMeasure(f,thetaDist, ot.Less(), [0.95]),
             otrobopt.MeanStandardDeviationTradeoffMeasure(f, thetaDist, [0.4]),

@@ -14,11 +14,14 @@ Examples
 >>> import openturns as ot
 >>> import otrobopt
 >>> thetaDist = ot.Normal(2.0, 0.1)
->>> f_base = ot.NumericalMathFunction(['x', 'p1'], ['y'], ['x*theta'])
+>>> f_base = ot.NumericalMathFunction(['x', 'theta'], ['y'], ['x*theta'])
 >>> f = ot.NumericalMathFunction(f_base, [1], [1.0])
 >>> measures = [otrobopt.MeanMeasure(f, thetaDist),
 ...             otrobopt.VarianceMeasure(f, thetaDist)]
->>> aggregated = otrobopt.AggregatedMeasure(measures)"
+>>> measure = otrobopt.AggregatedMeasure(measures)
+>>> x = [1.0]
+>>> print(measure(x))
+[2,0.01]"
 
 // ---------------------------------------------------------------------
 

@@ -32,7 +32,7 @@ Examples
 Pure robustness problem:
 
 >>> thetaDist = ot.Normal(2.0, 0.1)
->>> f_base = ot.NumericalMathFunction(['x1', 'p1'], ['y1'], ['x1*p1'])
+>>> f_base = ot.NumericalMathFunction(['x1', 'theta'], ['y1'], ['x1*theta'])
 >>> f = ot.NumericalMathFunction(f_base, [1], [1.0])
 >>> robustnessMeasure = otrobopt.MeanMeasure(f, thetaDist)
 >>> g = ot.NumericalMathFunction(['x1'], ['y1'], ['x1 - 5.0'])
@@ -43,7 +43,7 @@ Pure reliability problem:
 
 >>> thetaDist = ot.Normal(2.0, 0.1)
 >>> f = ot.NumericalMathFunction(['x1'], ['y1'], ['x1 - 5.0'])
->>> g_base = ot.NumericalMathFunction(['x1', 'p1'], ['y1'], ['x1*p1'])
+>>> g_base = ot.NumericalMathFunction(['x1', 'theta'], ['y1'], ['x1*theta'])
 >>> g = ot.NumericalMathFunction(g_base, [1], [1.0])
 >>> reliabilityMeasure = otrobopt.VarianceMeasure(g, thetaDist)
 >>> problem = otrobopt.RobustOptimizationProblem(f, reliabilityMeasure)
@@ -52,7 +52,7 @@ Pure reliability problem:
 Robustness & reliability problem:
 
 >>> thetaDist = ot.Normal(2.0, 0.1)
->>> f_base = ot.NumericalMathFunction(['x1', 'p1'], ['y1'], ['x1*p1'])
+>>> f_base = ot.NumericalMathFunction(['x1', 'theta'], ['y1'], ['x1*theta'])
 >>> f = ot.NumericalMathFunction(f_base, [1], [1.0])
 >>> robustnessMeasure = otrobopt.MeanMeasure(f, thetaDist)
 >>> reliabilityMeasure = otrobopt.VarianceMeasure(f, thetaDist)

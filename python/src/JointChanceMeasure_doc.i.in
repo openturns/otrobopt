@@ -39,7 +39,10 @@ Examples
 >>> thetaDist = ot.Normal(2.0, 0.1)
 >>> f_base = ot.NumericalMathFunction(['x', 'theta'], ['y'], ['x*theta'])
 >>> f = ot.NumericalMathFunction(f_base, [1], [1.0])
->>> measure = otrobopt.JointChanceMeasure(f, thetaDist, ot.Less(), 0.95)"
+>>> measure = otrobopt.JointChanceMeasure(f, thetaDist, ot.Less(), 0.95)
+>>> x = [1.0]
+>>> print(measure(x))
+[-0.05]"
 
 // ---------------------------------------------------------------------
 

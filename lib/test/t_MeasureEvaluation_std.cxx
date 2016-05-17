@@ -4,6 +4,7 @@
 #include "openturns/Normal.hxx"
 #include "openturns/LHSExperiment.hxx"
 #include "openturns/Less.hxx"
+#include "openturns/Uniform.hxx"
 
 using namespace OT;
 using namespace OTROBOPT;
@@ -22,8 +23,8 @@ int main(int argc, char **argv)
   Collection <MeasureEvaluation> measures;
   measures.add(MeanMeasure(f, thetaDist));
   measures.add(VarianceMeasure(f, thetaDist));
-  measures.add(WorstCaseMeasure(f, thetaDist));
-  measures.add(WorstCaseMeasure(f, thetaDist, false));
+  measures.add(WorstCaseMeasure(f, Uniform(-1.0, 3.0)));
+  measures.add(WorstCaseMeasure(f, Uniform(-1.0, 3.0), false));
   measures.add(JointChanceMeasure(f, thetaDist, Less(), 0.95));
   measures.add(IndividualChanceMeasure(f, thetaDist, Less(), NumericalPoint(1, 0.95)));
   measures.add(MeanStandardDeviationTradeoffMeasure(f, thetaDist, NumericalPoint(1, 0.4)));
