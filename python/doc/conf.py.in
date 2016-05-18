@@ -50,7 +50,7 @@ todo_include_todos = True
 extensions.append('sphinx.ext.coverage')
 
 extensions.append('sphinx.ext.intersphinx')
-intersphinx_mapping = {'python': ('http://openturns.github.io/', None)}
+intersphinx_mapping = {'python': ('http://openturns.github.io/', 'openturns-objects.txt')}
 
 try:
     import sphinx.ext.imgmath
