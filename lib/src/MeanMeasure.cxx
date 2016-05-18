@@ -67,7 +67,9 @@ public:
   , x_(x)
   , function_(function)
   , distribution_(distribution)
-  {}
+  {
+    // Nothing to do
+  }
 
   virtual MeanMeasureParametricFunctionWrapper * clone() const
   {
@@ -84,10 +86,11 @@ public:
   {
     NumericalMathFunction function(function_);
     NumericalSample outS(function(x_, theta));
+    const NumericalSample pdfS(distribution_.computePDF(theta));
     const UnsignedInteger size = theta.getSize();
     for (UnsignedInteger i = 0; i < size; ++ i)
     {
-      outS[i] *= distribution_.computePDF(theta[i]);
+      outS[i] *= pdfS[i][0];
     }
     return outS;
   }
@@ -141,7 +144,7 @@ NumericalPoint MeanMeasure::operator()(const NumericalPoint & inP) const
     const UnsignedInteger size = support.getSize();
     for (UnsignedInteger i = 0; i < size; ++ i)
     {
-      outP += 1.0 / size * function(inP, support[i]);
+      outP += function(inP, support[i]) / size;
     }
   }
   function.setParameter(parameter);

@@ -48,6 +48,8 @@ MeasureEvaluationImplementation::MeasureEvaluationImplementation (const Numerica
   if (distribution.getDimension() != function.getParameter().getDimension())
     throw InvalidDimensionException(HERE) << "Function parameter dimension (" << function.getParameter().getDimension()
       << ") must match the distribution dimension (" << distribution.getDimension()<<")";
+  setInputDescription(function_.getInputDescription());
+  setOutputDescription(function_.getOutputDescription());
 }
 
 

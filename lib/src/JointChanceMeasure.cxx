@@ -52,6 +52,7 @@ JointChanceMeasure::JointChanceMeasure (const NumericalMathFunction & function,
   , alpha_(0.0)
 {
   setAlpha(alpha);
+  setOutputDescription(Description(1, "P"));
 }
 
 /* Virtual constructor method */
@@ -116,7 +117,7 @@ public:
 
   Description getOutputDescription() const
   {
-    return Description(1, "j");
+    return Description(1, "P");
   }
 
 protected:

@@ -86,16 +86,23 @@ public:
     {
       outP[outputDimension + j] *= outP[j];
     }
-    return outP * distribution_.computePDF(theta);
+    const NumericalScalar pdf = distribution_.computePDF(theta);
+    return outP * pdf;
   }
 
   NumericalSample operator()(const NumericalSample & theta) const
   {
+    NumericalMathFunction function(function_);
+    NumericalSample outS(function(x_, theta));
+    outS.stack(outS);
+    const UnsignedInteger outputDimension = function_.getOutputDimension();
+    const NumericalSample pdfS(distribution_.computePDF(theta));
     const UnsignedInteger size = theta.getSize();
-    NumericalSample outS(size, getOutputDimension());
     for (UnsignedInteger i = 0; i < size; ++ i)
     {
-      outS[i] = operator()(theta[i]);
+      for (UnsignedInteger j = 0; j < outputDimension; ++j)
+	outS[i][outputDimension + j] *= outS[i][j];
+      outS[i] *= pdfS[i][0];
     }
     return outS;
   }
@@ -141,11 +148,10 @@ NumericalPoint MeanStandardDeviationTradeoffMeasure::operator()(const NumericalP
     GaussKronrod gkr;
     gkr.setRule(static_cast<OT::GaussKronrodRule::GaussKronrodPair>(ResourceMap::GetAsUnsignedInteger("MeanStandardDeviationTradeoffMeasure-GaussKronrodRule")));
     const IteratedQuadrature algo(gkr);
-
     Pointer<NumericalMathFunctionImplementation> p_wrapper(new MeanStandardDeviationTradeoffMeasureParametricFunctionWrapper(inP, function, getDistribution()));
-    NumericalMathFunction G(p_wrapper);
+    const NumericalMathFunction G(p_wrapper);
     // integrate (f_1(x), ...., f_d(x), f_1^2(x), ..., f_d^2(x))
-    NumericalPoint integral(algo.integrate(G, getDistribution().getRange()));
+    const NumericalPoint integral(algo.integrate(G, getDistribution().getRange()));
     for (UnsignedInteger j = 0; j < outputDimension; ++ j)
     {
       const NumericalScalar mean = integral[j];
@@ -176,9 +182,8 @@ void MeanStandardDeviationTradeoffMeasure::setAlpha(const NumericalPoint & alpha
   const UnsignedInteger dimension = alpha.getDimension();
   for(UnsignedInteger j = 0; j < dimension; ++ j)
   {
-    if (!(alpha[j] > 0.0) || !(alpha[j] < 1.0))
-      LOGWARN(OSS() << "Alpha is not in [0, 1]");
-//       throw InvalidArgumentException(HERE) << "Alpha should be in [0, 1]";
+    if (!(alpha[j] >= 0.0) || !(alpha[j] <= 1.0))
+      throw InvalidArgumentException(HERE) << "Alpha should be in [0, 1]";
   }
   alpha_ = alpha;
 }

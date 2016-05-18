@@ -52,6 +52,7 @@ QuantileMeasure::QuantileMeasure (const NumericalMathFunction & function,
 {
   setAlpha(alpha);
   if (function.getOutputDimension() > 1) throw InvalidArgumentException(HERE) << "Quantile are only computed for 1-d functions.";
+  setOutputDescription(Description(1, "P"));
 }
 
 /* Virtual constructor method */
@@ -60,7 +61,9 @@ QuantileMeasure * QuantileMeasure::clone() const
   return new QuantileMeasure(*this);
 }
 
-
+/* This function is the kernel of the CDF computation of f(x,\Theta):
+   for a given value of x \in R^d, a given value of \Theta \in R^p,
+   a given value of s \in R, it returns 1_{f(x,\Theta)<=s} */
 class QuantileMeasureParametricFunctionWrapper : public NumericalMathFunctionImplementation
 {
 public:
@@ -116,7 +119,7 @@ public:
 
   Description getOutputDescription() const
   {
-    return Description(1, "q");
+    return Description(1, "P");
   }
 
 protected:
@@ -172,6 +175,16 @@ public:
   UnsignedInteger getOutputDimension() const
   {
     return 1;
+  }
+
+  Description getInputDescription() const
+  {
+    return Description(1, "s");
+  }
+
+  Description getOutputDescription() const
+  {
+    return Description(1, "P");
   }
 
 protected:

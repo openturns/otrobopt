@@ -110,7 +110,7 @@ public:
 
   Description getOutputDescription() const
   {
-    return Description(1, "w");
+    return function_.getOutputDescription();
   }
 
 protected:
