@@ -46,17 +46,19 @@
     discretized_graph = discretized_measure.draw(x_min, x_max, n_points)
 
     parametric_curve = parametric_graph.getDrawable(0)
-    continuous_curve = continuous_graph.getDrawable(0)
-    continuous_curve.setColor('red')
     discretized_curve = discretized_graph.getDrawable(0)
 
-    left_graph = continuous_graph
+    left_graph = ot.Graph(continuous_graph)
     left_graph.add(parametric_curve)
-    left_graph.setColors(['blue', 'green', 'red'])
+    #left_graph.setLegends(['measure', 'parametric function'])
+    #left_graph.setLegendPosition('topright')
+    left_graph.setColors(['blue', 'red'])
 
-    right_graph = continuous_graph
+    right_graph = ot.Graph(continuous_graph)
     right_graph.add(discretized_curve)
-    right_graph.setColors(['blue', 'green', 'red'])
+    #right_graph.setLegends(['measure', 'discretized measure'])
+    #right_graph.setLegendPosition('topright')
+    right_graph.setColors(['blue', 'red'])
 
     fig = plt.figure(figsize=(10, 4))
     plt.suptitle(str(measure))
