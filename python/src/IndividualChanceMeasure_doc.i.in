@@ -37,13 +37,13 @@ Examples
 --------
 >>> import openturns as ot
 >>> import otrobopt
->>> thetaDist = ot.Normal(2.0, 0.1)
+>>> thetaDist = ot.Normal(1.0, 1.0)
 >>> f_base = ot.NumericalMathFunction(['x', 'theta'], ['y'], ['x*theta'])
 >>> f = ot.NumericalMathFunction(f_base, [1], [1.0])
->>> measure = otrobopt.IndividualChanceMeasure(f, thetaDist, ot.Less(), [0.95])
+>>> measure = otrobopt.IndividualChanceMeasure(f, thetaDist, ot.GreaterOrEqual(), [0.95])
 >>> x = [1.0]
 >>> print(measure(x))
-[-0.05]"
+[-0.108655]"
 
 // ---------------------------------------------------------------------
 

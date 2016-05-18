@@ -3,7 +3,7 @@
 #include "otrobopt/OTRobOpt.hxx"
 #include "openturns/Normal.hxx"
 #include "openturns/LHSExperiment.hxx"
-#include "openturns/Less.hxx"
+#include "openturns/GreaterOrEqual.hxx"
 #include "openturns/Uniform.hxx"
 
 using namespace OT;
@@ -23,12 +23,12 @@ int main(int argc, char **argv)
   Collection <MeasureEvaluation> measures;
   measures.add(MeanMeasure(f, thetaDist));
   measures.add(VarianceMeasure(f, thetaDist));
-  measures.add(WorstCaseMeasure(f, Uniform(-1.0, 3.0)));
-  measures.add(WorstCaseMeasure(f, Uniform(-1.0, 3.0), false));
-  measures.add(JointChanceMeasure(f, thetaDist, Less(), 0.95));
-  measures.add(IndividualChanceMeasure(f, thetaDist, Less(), NumericalPoint(1, 0.95)));
-  measures.add(MeanStandardDeviationTradeoffMeasure(f, thetaDist, NumericalPoint(1, 0.4)));
-  measures.add(QuantileMeasure(f, thetaDist, 0.8));
+  measures.add(WorstCaseMeasure(f, Uniform(-1.0, 4.0)));
+  measures.add(WorstCaseMeasure(f, Uniform(-1.0, 4.0), false));
+  measures.add(JointChanceMeasure(f, Normal(1.0, 1.0), GreaterOrEqual(), 0.95));
+  measures.add(IndividualChanceMeasure(f, Normal(1.0, 1.0), GreaterOrEqual(), NumericalPoint(1, 0.95)));
+  measures.add(MeanStandardDeviationTradeoffMeasure(f, thetaDist, NumericalPoint(1, 0.8)));
+  measures.add(QuantileMeasure(f, thetaDist, 0.99));
 
   AggregatedMeasure aggregated(measures);
   measures.add(aggregated);

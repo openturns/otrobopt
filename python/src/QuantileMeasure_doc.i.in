@@ -23,10 +23,10 @@ Examples
 >>> thetaDist = ot.Normal(2.0, 0.1)
 >>> f_base = ot.NumericalMathFunction(['x', 'theta'], ['y'], ['x*theta'])
 >>> f = ot.NumericalMathFunction(f_base, [1], [1.0])
->>> measure = otrobopt.QuantileMeasure(f, thetaDist, 0.8)
+>>> measure = otrobopt.QuantileMeasure(f, thetaDist, 0.99)
 >>> x = [1.0]
 >>> print(measure(x))
-[2.08416]"
+[2.23264]"
 
 // ---------------------------------------------------------------------
 

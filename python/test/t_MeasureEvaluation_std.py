@@ -12,12 +12,12 @@ x = [1.0]
 
 measures = [otrobopt.MeanMeasure(f, thetaDist),
             otrobopt.VarianceMeasure(f, thetaDist),
-            otrobopt.WorstCaseMeasure(f, ot.Uniform(-1.0, 3.0)),
-            otrobopt.WorstCaseMeasure(f, ot.Uniform(-1.0, 3.0), False),
-            otrobopt.JointChanceMeasure(f, thetaDist, ot.Less(), 0.95),
-            otrobopt.IndividualChanceMeasure(f,thetaDist, ot.Less(), [0.95]),
-            otrobopt.MeanStandardDeviationTradeoffMeasure(f, thetaDist, [0.4]),
-            otrobopt.QuantileMeasure(f, thetaDist, 0.8)
+            otrobopt.WorstCaseMeasure(f, ot.Uniform(-1.0, 4.0)),
+            otrobopt.WorstCaseMeasure(f, ot.Uniform(-1.0, 4.0), False),
+            otrobopt.JointChanceMeasure(f, ot.Normal(1.0, 1.0), ot.GreaterOrEqual(), 0.95),
+            otrobopt.IndividualChanceMeasure(f, ot.Normal(1.0, 1.0), ot.GreaterOrEqual(), [0.95]),
+            otrobopt.MeanStandardDeviationTradeoffMeasure(f, thetaDist, [0.8]),
+            otrobopt.QuantileMeasure(f, thetaDist, 0.99)
             ]
 aggregated = otrobopt.AggregatedMeasure(measures)
 measures.append(aggregated)
