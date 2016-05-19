@@ -3,7 +3,6 @@
 
 Assembles the output of several measure functions.
 
-
 Parameters
 ----------
 collection : sequence of :class:`~otrobopt.MeasureEvaluation`

@@ -44,14 +44,11 @@ MeasureFactory::MeasureFactory()
 }
 
 /* Parameter constructor */
-MeasureFactory::MeasureFactory (const MeasureEvaluation & measure,
-                                const OT::WeightedExperiment & experiment)
+MeasureFactory::MeasureFactory (const WeightedExperiment & experiment)
   : PersistentObject()
-  , measure_(measure)
   , p_experiment_(experiment.clone())
 
 {
-  p_experiment_->setDistribution(measure.getDistribution());
 }
 
 /* Virtual constructor method */
@@ -62,16 +59,36 @@ MeasureFactory * MeasureFactory::clone() const
 
 
 /* Evaluation */
-MeasureEvaluation MeasureFactory::build() const
+MeasureEvaluation MeasureFactory::build(const MeasureEvaluation & measure) const
 {
   // copy experiment as generate is non-const
   Pointer<WeightedExperiment> p_experiment(p_experiment_->clone());
+  p_experiment->setDistribution(measure.getDistribution());
   NumericalPoint weights;
   NumericalSample sample(p_experiment->generateWithWeights(weights));
-  MeasureEvaluation measure(measure_);
-  measure.setDistribution(UserDefined(sample, weights));
-  return measure;
+  MeasureEvaluation result(measure);
+  result.setDistribution(UserDefined(sample, weights));
+  return result;
 }
+
+
+MeasureFactory::MeasureEvaluationCollection MeasureFactory::buildCollection(const MeasureEvaluationCollection & collection) const
+{
+  const UnsignedInteger size = collection.getSize();
+  if (size == 0) throw InvalidArgumentException(HERE) << "The collection cannot be empty";  
+  // copy experiment as generate is non-const
+  Pointer<WeightedExperiment> p_experiment(p_experiment_->clone());
+  p_experiment->setDistribution(collection[0].getDistribution());
+  NumericalPoint weights;
+  NumericalSample sample(p_experiment->generateWithWeights(weights));
+  MeasureEvaluationCollection result(collection);
+  for (UnsignedInteger i = 0; i < size; ++ i)
+  {
+    result[i].setDistribution(UserDefined(sample, weights));
+  }
+  return result;
+}
+
 
 /* String converter */
 String MeasureFactory::__repr__() const

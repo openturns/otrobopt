@@ -13,8 +13,6 @@ Where :math:`\delta_{\theta_i}` is the Dirac measure at :math:`\theta_i`.
 
 Parameters
 ----------
-measure : :class:`~otrobopt.MeasureEvaluation`
-    Measure function
 experiment : :py:class:`openturns.WeightedExperiment`
     Parameters design of experiment
 
@@ -34,15 +32,35 @@ Then discretize it:
 
 >>> N = 10
 >>> experiment = ot.LHSExperiment(N)
->>> factory = otrobopt.MeasureFactory(measure, experiment)
->>> discretizedMeasure = factory.build()"
+>>> factory = otrobopt.MeasureFactory(experiment)
+>>> discretizedMeasure = factory.build(measure)"
 
 // ---------------------------------------------------------------------
 
 %feature("docstring") OTROBOPT::MeasureFactory::build
 "Discretize a measure.
 
+Parameters
+----------
+measure : :class:`~otrobopt.MeasureEvaluation`
+    Measure
+
 Returns
 -------
 measure : :class:`~otrobopt.MeasureEvaluation`
-    Discretized measure function"
+    Discretized measure"
+
+// ---------------------------------------------------------------------
+
+%feature("docstring") OTROBOPT::MeasureFactory::buildCollection
+"Discretize several measures.
+
+Parameters
+----------
+collection : sequence of :class:`~otrobopt.MeasureEvaluation`
+    The measures to discretize.
+
+Returns
+-------
+measures : sequence of :class:`~otrobopt.MeasureEvaluation`
+    Discretized measures"

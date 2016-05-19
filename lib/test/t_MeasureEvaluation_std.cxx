@@ -40,8 +40,8 @@ int main(int argc, char **argv)
     std::cout << measure << "(continuous)"<<measure(x)<< std::endl;
     const UnsignedInteger N = 1000;
     LHSExperiment experiment(N);
-    MeasureFactory factory(measure, experiment);
-    MeasureEvaluation discretizedMeasure(factory.build());
+    MeasureFactory factory(experiment);
+    MeasureEvaluation discretizedMeasure(factory.build(measure));
     std::cout << discretizedMeasure << "(discretized)"<<discretizedMeasure(x)<< std::endl;
   }
 }

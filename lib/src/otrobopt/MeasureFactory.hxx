@@ -40,19 +40,22 @@ class OTROBOPT_API MeasureFactory
 {
   CLASSNAME;
 
+
 public:
+  typedef OT::Collection<MeasureEvaluation> MeasureEvaluationCollection;
+
   /** Default constructor */
   MeasureFactory();
 
   /** Parameter constructor */
-  MeasureFactory (const MeasureEvaluation & measure,
-                  const OT::WeightedExperiment & experiment);
+  MeasureFactory (const OT::WeightedExperiment & experiment);
 
   /** Virtual constructor method */
   MeasureFactory * clone() const;
 
   /** Evaluation */
-  MeasureEvaluation build() const;
+  MeasureEvaluation build(const MeasureEvaluation & measure) const;
+  MeasureEvaluationCollection buildCollection(const MeasureEvaluationCollection & collection) const;
 
   /** String converter */
   OT::String __repr__() const;

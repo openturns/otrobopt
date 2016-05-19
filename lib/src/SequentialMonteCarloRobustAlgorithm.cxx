@@ -100,16 +100,18 @@ void SequentialMonteCarloRobustAlgorithm::run()
     if (robustProblem.hasRobustnessMeasure())
     {
       // discretize the robustness measure
-      const MeasureFactory robustnessFactory(robustProblem.getRobustnessMeasure(), FixedExperiment(currentSampleXi));
-      MeasureEvaluation rhoJ(robustnessFactory.build());
+      const FixedExperiment experiment(currentSampleXi);
+      const MeasureFactory robustnessFactory(experiment);
+      MeasureEvaluation rhoJ = robustnessFactory.build(robustProblem.getRobustnessMeasure());
       problem.setObjective(*rhoJ.getImplementation());
     }
 
     if (robustProblem.hasReliabilityMeasure())
     {
       // discretize the reliability measure
-      const MeasureFactory reliabilityFactory(robustProblem.getReliabilityMeasure(), FixedExperiment(currentSampleXi));
-      MeasureEvaluation pG(reliabilityFactory.build());
+      const FixedExperiment experiment(currentSampleXi);
+      const MeasureFactory reliabilityFactory(experiment);
+      MeasureEvaluation pG(reliabilityFactory.build(robustProblem.getReliabilityMeasure()));
       problem.setInequalityConstraint(*pG.getImplementation());
     }
 

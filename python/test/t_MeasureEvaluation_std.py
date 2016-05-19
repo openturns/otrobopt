@@ -26,6 +26,6 @@ for measure in measures:
     print(measure, '(continuous)', measure(x))
     N = 10000
     experiment = ot.LHSExperiment(N)
-    factory = otrobopt.MeasureFactory(measure, experiment)
-    discretizedMeasure = factory.build()
+    factory = otrobopt.MeasureFactory(experiment)
+    discretizedMeasure = factory.build(measure)
     print(discretizedMeasure, '(discretized)', discretizedMeasure(x))
