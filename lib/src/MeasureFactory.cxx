@@ -108,7 +108,6 @@ String MeasureFactory::__repr__() const
 void MeasureFactory::save(Advocate & adv) const
 {
   PersistentObject::save(adv);
-  adv.saveAttribute("measure_", measure_);
   adv.saveAttribute("experiment_", *p_experiment_);
 }
 
@@ -116,7 +115,6 @@ void MeasureFactory::save(Advocate & adv) const
 void MeasureFactory::load(Advocate & adv)
 {
   PersistentObject::load(adv);
-  adv.loadAttribute("measure_", measure_);
   p_experiment_ = new WeightedExperiment;
   adv.loadAttribute("experiment_", *p_experiment_);
 }
