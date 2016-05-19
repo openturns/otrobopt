@@ -75,10 +75,16 @@ MeasureEvaluation MeasureFactory::build(const MeasureEvaluation & measure) const
 MeasureFactory::MeasureEvaluationCollection MeasureFactory::buildCollection(const MeasureEvaluationCollection & collection) const
 {
   const UnsignedInteger size = collection.getSize();
-  if (size == 0) throw InvalidArgumentException(HERE) << "The collection cannot be empty";  
+  if (size == 0) throw InvalidArgumentException(HERE) << "The collection cannot be empty";
+  const Distribution distribution(collection[0].getDistribution());
+  for (UnsignedInteger i = 1; i < size; ++ i)
+  {
+    if (collection[i].getDistribution() != distribution) throw InvalidArgumentException(HERE) << "Cannot discretize measures with different distributions";
+  }
+
   // copy experiment as generate is non-const
   Pointer<WeightedExperiment> p_experiment(p_experiment_->clone());
-  p_experiment->setDistribution(collection[0].getDistribution());
+  p_experiment->setDistribution(distribution);
   NumericalPoint weights;
   NumericalSample sample(p_experiment->generateWithWeights(weights));
   MeasureEvaluationCollection result(collection);
