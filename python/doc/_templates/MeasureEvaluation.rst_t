@@ -31,8 +31,8 @@
 
     N = 10
     experiment = ot.LHSExperiment(N)
-    factory = otrobopt.MeasureFactory(measure, experiment)
-    discretizedMeasure = factory.build()
+    factory = otrobopt.MeasureFactory(experiment)
+    discretizedMeasure = factory.build(measure)
 
     continuous_measure = otrobopt.MeasureFunction(measure)
     discretized_measure = otrobopt.MeasureFunction(discretizedMeasure)
