@@ -33,7 +33,14 @@ Then discretize it:
 >>> N = 10
 >>> experiment = ot.LHSExperiment(N)
 >>> factory = otrobopt.MeasureFactory(experiment)
->>> discretizedMeasure = factory.build(measure)"
+>>> discretizedMeasure = factory.build(measure)
+
+
+Discretize several measures at once:
+
+>>> coll = [otrobopt.MeanMeasure(f, thetaDist),
+...         otrobopt.VarianceMeasure(f, thetaDist)]
+>>> discretizedMeasures = factory.buildCollection(coll)"
 
 // ---------------------------------------------------------------------
 
