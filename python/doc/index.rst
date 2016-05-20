@@ -13,6 +13,13 @@ User documentation
    :maxdepth: 2
 
    user_manual/user_manual
+
+Examples
+--------
+
+.. toctree::
+   :maxdepth: 2
+
    examples/examples
 
 Developer documentation

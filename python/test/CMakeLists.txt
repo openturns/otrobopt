@@ -99,6 +99,7 @@ ot_pyinstallcheck_test (example1)
 ot_pyinstallcheck_test (example2)
 ot_pyinstallcheck_test (example3)
 ot_pyinstallcheck_test (example4)
+ot_pyinstallcheck_test (example5)
 
 add_custom_target ( pyinstallcheck COMMAND ${CMAKE_CTEST_COMMAND} -R "^pyinstallcheck_"
                     DEPENDS ${PYINSTALLCHECK_TO_BE_RUN}
