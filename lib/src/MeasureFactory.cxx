@@ -49,6 +49,7 @@ MeasureFactory::MeasureFactory (const WeightedExperiment & experiment)
   , p_experiment_(experiment.clone())
 
 {
+  // Nothing to do
 }
 
 /* Virtual constructor method */
@@ -65,7 +66,7 @@ MeasureEvaluation MeasureFactory::build(const MeasureEvaluation & measure) const
   Pointer<WeightedExperiment> p_experiment(p_experiment_->clone());
   p_experiment->setDistribution(measure.getDistribution());
   NumericalPoint weights;
-  NumericalSample sample(p_experiment->generateWithWeights(weights));
+  const NumericalSample sample(p_experiment->generateWithWeights(weights));
   MeasureEvaluation result(measure);
   result.setDistribution(UserDefined(sample, weights));
   return result;
@@ -86,11 +87,14 @@ MeasureFactory::MeasureEvaluationCollection MeasureFactory::buildCollection(cons
   Pointer<WeightedExperiment> p_experiment(p_experiment_->clone());
   p_experiment->setDistribution(distribution);
   NumericalPoint weights;
-  NumericalSample sample(p_experiment->generateWithWeights(weights));
+  const NumericalSample sample(p_experiment->generateWithWeights(weights));
+  // We build the common discretized distribution once and as a Distribution
+  // in order to make the different copies to share the same implementation
+  const Distribution discretizedDistribution(UserDefined(sample, weights));
   MeasureEvaluationCollection result(collection);
   for (UnsignedInteger i = 0; i < size; ++ i)
   {
-    result[i].setDistribution(UserDefined(sample, weights));
+    result[i].setDistribution(discretizedDistribution);
   }
   return result;
 }
