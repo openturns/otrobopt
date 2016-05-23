@@ -156,20 +156,20 @@ public:
     return algo.integrate(G, distribution_.getRange());
   }
 
-  NumericalSample operator()(const NumericalSample & theta) const
+  NumericalSample operator()(const NumericalSample & s) const
   {
-    const UnsignedInteger size = theta.getSize();
+    const UnsignedInteger size = s.getSize();
     NumericalSample outS(size, getOutputDimension());
     for (UnsignedInteger i = 0; i < size; ++ i)
     {
-      outS[i] = operator()(theta[i]);
+      outS[i] = operator()(s[i]);
     }
     return outS;
   }
 
   UnsignedInteger getInputDimension() const
   {
-    return function_.getParameterDimension();
+    return 1;
   }
 
   UnsignedInteger getOutputDimension() const
