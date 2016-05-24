@@ -23,6 +23,7 @@
 #include <openturns/PersistentObjectFactory.hxx>
 #include <openturns/GaussKronrod.hxx>
 #include <openturns/IteratedQuadrature.hxx>
+#include <openturns/UserDefined.hxx>
 
 using namespace OT;
 
@@ -67,7 +68,9 @@ public:
   , x_(x)
   , function_(function)
   , distribution_(distribution)
-  {}
+  {
+    // Nothing to do
+  }
 
   virtual VarianceMeasureParametricFunctionWrapper * clone() const
   {
@@ -80,22 +83,27 @@ public:
     // (f_1(x), ...., f_d(x), f_1^2(x), ..., f_d^2(x))
     NumericalPoint outP(function(x_, theta));
     outP.add(outP);
-    const UnsignedInteger outputDimension = function_.getOutputDimension();
+    const UnsignedInteger outputDimension = outP.getDimension();
     for (UnsignedInteger j = 0; j < outputDimension; ++ j)
-    {
       outP[outputDimension + j] *= outP[j];
-    }
     return outP * distribution_.computePDF(theta);
   }
 
   NumericalSample operator()(const NumericalSample & theta) const
   {
-    const UnsignedInteger size = theta.getSize();
-    NumericalSample outS(size, getOutputDimension());
-    for (UnsignedInteger i = 0; i < size; ++ i)
-    {
-      outS[i] = operator()(theta[i]);
-    }
+    // To benefit from possible parallelization
+    NumericalMathFunction function(function_);
+    NumericalSample outS(function(x_, theta));
+    const UnsignedInteger size = outS.getSize();
+    const UnsignedInteger outputDimension = outS.getDimension();
+    outS.stack(outS);
+    const NumericalSample pdf(distribution_.computePDF(theta));
+    for (UnsignedInteger i = 0; i < size; ++i)
+      {
+	for (UnsignedInteger j = 0; j < outputDimension; ++j)
+	  outS[i][outputDimension + j] *= outS[i][j];
+	outS[i] *= pdf[i][0];
+      }
     return outS;
   }
 
@@ -153,15 +161,14 @@ NumericalPoint VarianceMeasure::operator()(const NumericalPoint & inP) const
   }
   else
   {
-    NumericalSample support(getDistribution().getSupport());
-    const UnsignedInteger size = support.getSize();
-    NumericalSample y(size, outputDimension);
-    for (UnsignedInteger i = 0; i < size; ++ i)
-    {
-      y[i] = function(inP, support[i]);
-    }
-    outP = y.computeVariance();
-  }
+    // To benefit from possible parallelization
+    const NumericalSample values(function(inP, getDistribution().getSupport()));
+    const NumericalPoint weights(getDistribution().getProbabilities());
+    // Here we use a UserDefined distribution because the algorithm
+    // to compute a centered moment is quite involved in the case of
+    // nonuniform weights
+    outP = UserDefined(values, weights).getCenteredMoment(2);
+  } // discrete
   function.setParameter(parameter);
   return outP;
 }

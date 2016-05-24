@@ -68,7 +68,9 @@ public:
   : NumericalMathFunctionImplementation()
   , x_(x)
   , function_(function)
-  {}
+  {
+    // Nothing to do
+  }
 
   virtual WorstCaseMeasureParametricFunctionWrapper * clone() const
   {
@@ -146,21 +148,20 @@ NumericalPoint WorstCaseMeasure::operator()(const NumericalPoint & inP) const
   }
   else
   {
-    NumericalSample support(getDistribution().getSupport());
-    const UnsignedInteger size = support.getSize();
-    for (UnsignedInteger i = 0; i < size; ++ i)
-    {
-      NumericalPoint y(function(inP, support[i]));
-      for (UnsignedInteger j = 0; j < outputDimension; ++ j)
+    // To benefit from possible parallelization
+    const NumericalSample values(function(inP, getDistribution().getSupport()));
+    const UnsignedInteger size = values.getSize();
+    for (UnsignedInteger j = 0; j < outputDimension; ++ j)
       {
-        if ((i == 0) || ((i > 0) && ((isMinimization_ && (y[j] < outP[j]))
-                                  || (!isMinimization_ && (y[j] > outP[j])))))
-        {
-          outP[j] = y[j];
-        }
-      }
-    }
-  }
+	outP[j] = values[0][j];
+	for (UnsignedInteger i = 1; i < size; ++ i)
+	  {
+	    if ((isMinimization_ && (values[i][j] < outP[j]))
+		|| (!isMinimization_ && (values[i][j] > outP[j])))
+	      outP[j] = values[i][j];
+	  } // for i
+      } // for j
+  } // discrete
   function.setParameter(parameter);
   return outP;
 }

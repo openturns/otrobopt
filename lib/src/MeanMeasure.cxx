@@ -140,12 +140,12 @@ NumericalPoint MeanMeasure::operator()(const NumericalPoint & inP) const
   }
   else
   {
-    NumericalSample support(getDistribution().getSupport());
-    const UnsignedInteger size = support.getSize();
+    // To benefit from possible parallelization
+    const NumericalSample values(function(inP, getDistribution().getSupport()));
+    const UnsignedInteger size = values.getSize();
+    const NumericalPoint weights(getDistribution().getProbabilities());
     for (UnsignedInteger i = 0; i < size; ++ i)
-    {
-      outP += function(inP, support[i]) / size;
-    }
+      outP += values[i] * weights[i];
   }
   function.setParameter(parameter);
   return outP;
