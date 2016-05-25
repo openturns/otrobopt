@@ -118,7 +118,7 @@ void SequentialMonteCarloRobustAlgorithm::run()
     OptimizationSolver solver(solver_);
     solver.setProblem(problem);
 
-    const NumericalScalar epsilon = ResourceMap::GetAsNumericalScalar("SequentialMonteCarloRobustAlgorithm-ConvergenceFactor") / sqrt(1.0 * N);
+    const NumericalScalar epsilon = ResourceMap::GetAsNumericalScalar("SequentialMonteCarloRobustAlgorithm-ConvergenceFactor") / std::sqrt(1.0 * N);
     solver.setMaximumAbsoluteError(epsilon);
     solver.setMaximumRelativeError(epsilon);
     solver.setMaximumResidualError(epsilon);

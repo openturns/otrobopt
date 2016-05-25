@@ -49,9 +49,7 @@ AggregatedMeasure::AggregatedMeasure(const MeasureEvaluationCollection & collect
     throw InvalidArgumentException(HERE) << "Empty collection";
   Collection <NumericalMathFunction> funcColl(size);
   for (UnsignedInteger i = 0; i < size; ++ i)
-  {
     funcColl[i] = collection_[i].getFunction();
-  }
   setFunction(NumericalMathFunction(funcColl));
 }
 
@@ -83,9 +81,7 @@ void AggregatedMeasure::setDistribution(const Distribution & distribution)
 {
   const UnsignedInteger size = collection_.getSize();
   for (UnsignedInteger i = 0; i < size; ++ i)
-  {
     collection_[i].setDistribution(distribution);
-  }
 }
 
 

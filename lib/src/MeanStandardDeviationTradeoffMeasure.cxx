@@ -23,6 +23,7 @@
 #include <openturns/PersistentObjectFactory.hxx>
 #include <openturns/GaussKronrod.hxx>
 #include <openturns/IteratedQuadrature.hxx>
+#include <openturns/UserDefined.hxx>
 
 using namespace OT;
 
@@ -68,7 +69,9 @@ public:
   , x_(x)
   , function_(function)
   , distribution_(distribution)
-  {}
+  {
+    // Nothing to do
+  }
 
   virtual MeanStandardDeviationTradeoffMeasureParametricFunctionWrapper * clone() const
   {
@@ -83,27 +86,25 @@ public:
     outP.add(outP);
     const UnsignedInteger outputDimension = function_.getOutputDimension();
     for (UnsignedInteger j = 0; j < outputDimension; ++ j)
-    {
       outP[outputDimension + j] *= outP[j];
-    }
-    const NumericalScalar pdf = distribution_.computePDF(theta);
-    return outP * pdf;
+    return outP * distribution_.computePDF(theta);
   }
 
   NumericalSample operator()(const NumericalSample & theta) const
   {
+    // To benefit from possible parallelization
     NumericalMathFunction function(function_);
     NumericalSample outS(function(x_, theta));
+    const UnsignedInteger size = outS.getSize();
+    const UnsignedInteger outputDimension = outS.getDimension();
     outS.stack(outS);
-    const UnsignedInteger outputDimension = function_.getOutputDimension();
-    const NumericalSample pdfS(distribution_.computePDF(theta));
-    const UnsignedInteger size = theta.getSize();
-    for (UnsignedInteger i = 0; i < size; ++ i)
-    {
-      for (UnsignedInteger j = 0; j < outputDimension; ++j)
-	outS[i][outputDimension + j] *= outS[i][j];
-      outS[i] *= pdfS[i][0];
-    }
+    const NumericalSample pdf(distribution_.computePDF(theta));
+    for (UnsignedInteger i = 0; i < size; ++i)
+      {
+	for (UnsignedInteger j = 0; j < outputDimension; ++j)
+	  outS[i][outputDimension + j] *= outS[i][j];
+	outS[i] *= pdf[i][0];
+      }
     return outS;
   }
 
@@ -162,15 +163,18 @@ NumericalPoint MeanStandardDeviationTradeoffMeasure::operator()(const NumericalP
   }
   else
   {
-    NumericalSample support(getDistribution().getSupport());
-    NumericalSample y(function(inP, support));
-    NumericalPoint mean(y.computeMean());
-    NumericalPoint standardDeviation(y.computeStandardDeviationPerComponent());
+    // To benefit from possible parallelization
+    const NumericalSample values(function(inP, getDistribution().getSupport()));
+    const NumericalPoint weights(getDistribution().getProbabilities());
+    // Here we use a UserDefined distribution because the algorithm
+    // to compute a standard deviation is quite involved in the case
+    // of nonuniform weights
+    const UserDefined discrete(values, weights);
+    const NumericalPoint mean(discrete.getMean());
+    const NumericalPoint standardDeviation(discrete.getStandardDeviation());
     for (UnsignedInteger j = 0; j < outputDimension; ++ j)
-    {
       outP[j] = (1.0 - alpha_[j]) * mean[j] + alpha_[j] * standardDeviation[j];
-    }
-  }
+  } // discrete
   function.setParameter(parameter);
   return outP;
 }

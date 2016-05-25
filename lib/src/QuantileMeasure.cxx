@@ -24,6 +24,7 @@
 #include <openturns/GaussKronrod.hxx>
 #include <openturns/IteratedQuadrature.hxx>
 #include <openturns/Brent.hxx>
+#include <openturns/UserDefined.hxx>
 
 
 using namespace OT;
@@ -96,9 +97,7 @@ public:
     const UnsignedInteger size = theta.getSize();
     NumericalSample outS(size, getOutputDimension());
     for (UnsignedInteger i = 0; i < size; ++ i)
-    {
       outS[i] = operator()(theta[i]);
-    }
     return outS;
   }
 
@@ -139,7 +138,9 @@ public:
   , x_(x)
   , function_(function)
   , distribution_(distribution)
-  {}
+  {
+    // Nothing to do
+  }
 
   virtual QuantileMeasureParametricFunctionWrapper2 * clone() const
   {
@@ -161,9 +162,7 @@ public:
     const UnsignedInteger size = s.getSize();
     NumericalSample outS(size, getOutputDimension());
     for (UnsignedInteger i = 0; i < size; ++ i)
-    {
       outS[i] = operator()(s[i]);
-    }
     return outS;
   }
 
@@ -242,14 +241,13 @@ NumericalPoint QuantileMeasure::operator()(const NumericalPoint & inP) const
   }
   else
   {
-    NumericalSample support(getDistribution().getSupport());
-    const UnsignedInteger size = support.getSize();
-    NumericalSample outS(size, function.getOutputDimension());
-    for (UnsignedInteger i = 0; i < size; ++ i)
-    {
-      outS[i] = function(inP, support[i]);
-    }
-    outP = outS.computeQuantile(alpha_);
+    // To benefit from possible parallelization
+    const NumericalSample values(function(inP, getDistribution().getSupport()));
+    const NumericalPoint weights(getDistribution().getProbabilities());
+    // Here we use a UserDefined distribution because the algorithm
+    // to compute a quantile is quite involved in the case of nonuniform
+    // weights
+    outP = UserDefined(values, weights).computeQuantile(alpha_);
   }
   function.setParameter(parameter);
   return outP;

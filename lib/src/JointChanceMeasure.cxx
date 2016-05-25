@@ -72,7 +72,9 @@ public:
   , x_(x)
   , function_(function)
   , distribution_(distribution)
-  {}
+  {
+    // Nothing to do
+  }
 
   virtual JointChanceMeasureParametricFunctionWrapper * clone() const
   {
@@ -81,9 +83,9 @@ public:
 
   NumericalPoint operator()(const NumericalPoint & theta) const
   {
-    const UnsignedInteger outputDimension = function_.getOutputDimension();
     NumericalMathFunction function(function_);
     const NumericalPoint y(function(x_, theta));
+    const UnsignedInteger outputDimension = y.getDimension();
     for (UnsignedInteger j = 0; j < outputDimension; ++ j)
       if (y[j] < 0.0) return NumericalPoint(1, 0.0);
     return NumericalPoint(1, distribution_.computePDF(theta));
@@ -91,12 +93,35 @@ public:
 
   NumericalSample operator()(const NumericalSample & theta) const
   {
-    const UnsignedInteger size = theta.getSize();
-    NumericalSample outS(size, function_.getOutputDimension());
-    for (UnsignedInteger i = 0; i < size; ++ i)
-    {
-      outS[i] = operator()(theta[i]);
-    }
+    NumericalMathFunction function(function_);
+    // To benefit from possible parallelism
+    const NumericalSample y(function(x_, theta));
+    const UnsignedInteger size = y.getSize();
+    const UnsignedInteger outputDimension = y.getDimension();
+    // First pass to select the points at which we have to compute the
+    // PDF as it can be costly for some distributions
+    NumericalSample activeTheta(0, theta.getDimension());
+    Indices activeIndices(0);
+    for (UnsignedInteger i = 0; i < size; ++i)
+      {
+	Bool allOk(true);
+	for (UnsignedInteger j = 0; j < outputDimension; ++ j)
+	  if (y[i][j] < 0.0)
+	    {
+	      allOk = false;
+	      break;
+	    } // y[i][j] < 0.0
+	if (allOk)
+	  {
+	    activeTheta.add(theta[i]);
+	    activeIndices.add(i);
+	  } // allOk
+      } // for i
+    // Exploit possible parallelization of computePDF
+    const NumericalSample pdf(distribution_.computePDF(activeTheta));
+    NumericalSample outS(size, 1);
+    for (UnsignedInteger i = 0; i < activeTheta.getSize(); ++i)
+      outS[activeIndices[i]][0] = pdf[i][0];
     return outS;
   }
 
@@ -145,21 +170,23 @@ NumericalPoint JointChanceMeasure::operator()(const NumericalPoint & inP) const
   }
   else
   {
-    NumericalSample support(getDistribution().getSupport());
-    const UnsignedInteger size = support.getSize();
+    // To benefit from possible parallelization
+    const NumericalSample values(function(inP, getDistribution().getSupport()));
+    const NumericalPoint weights(getDistribution().getProbabilities());
+    // Here we compute the marginal complementary CDF locally to avoid
+    // the creation cost of the UserDefined distributions
+    const UnsignedInteger size = values.getSize();
     for (UnsignedInteger i = 0; i < size; ++ i)
     {
-      const NumericalPoint outPi(function(inP, support[i]));
       Bool allOk = true;
       for (UnsignedInteger j = 0; j < outputDimension; ++ j)
-        if (outPi[j] < 0.0)
+        if (values[i][j] < 0.0)
           {
             allOk = false;
             break;
           }
-      if (allOk) outP[0] += 1.0;
-    }
-    outP[0] /= size;
+      if (allOk) outP[0] += weights[i];
+    } // for i
   }
   outP[0] = operator_.operator()(1.0, 2.0) ? alpha_ - outP[0] : outP[0] - alpha_;
   function.setParameter(parameter);

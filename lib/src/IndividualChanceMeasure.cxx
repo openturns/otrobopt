@@ -23,6 +23,7 @@
 #include <openturns/PersistentObjectFactory.hxx>
 #include <openturns/GaussKronrod.hxx>
 #include <openturns/IteratedQuadrature.hxx>
+#include <openturns/UserDefined.hxx>
 
 using namespace OT;
 
@@ -69,7 +70,9 @@ public:
   , x_(x)
   , function_(function)
   , distribution_(distribution)
-  {}
+  {
+    // Nothing to do
+  }
 
   virtual IndividualChanceMeasureParametricFunctionWrapper * clone() const
   {
@@ -81,9 +84,7 @@ public:
     NumericalMathFunction function(function_);
     NumericalPoint y(function(x_, theta));
     for (UnsignedInteger j = 0; j < getOutputDimension(); ++ j)
-    {
       y[j] = (y[j] >= 0.0) ? 1.0 : 0.0;
-    }
     return y * distribution_.computePDF(theta);
   }
 
@@ -92,9 +93,7 @@ public:
     const UnsignedInteger size = theta.getSize();
     NumericalSample outS(size, function_.getOutputDimension());
     for (UnsignedInteger i = 0; i < size; ++ i)
-    {
       outS[i] = operator()(theta[i]);
-    }
     return outS;
   }
 
@@ -143,20 +142,21 @@ NumericalPoint IndividualChanceMeasure::operator()(const NumericalPoint & inP) c
   }
   else
   {
-    NumericalSample support(getDistribution().getSupport());
-    const UnsignedInteger size = support.getSize();
+    // To benefit from possible parallelization
+    const NumericalSample values(function(inP, getDistribution().getSupport()));
+    const NumericalPoint weights(getDistribution().getProbabilities());
+    const UnsignedInteger size = values.getSize();
+    // Here we compute the marginal complementary CDF locally to avoid
+    // the creation cost of the marginal UserDefined distributions
     for (UnsignedInteger i = 0; i < size; ++ i)
     {
-      NumericalPoint outPi(function(inP, support[i]));
       for (UnsignedInteger j = 0; j < outputDimension; ++ j)
       {
-        if (outPi[j] >= 0.0)
-        {
-          outP[j] += 1.0 / size;
-        }
-      }
-    }
-  }
+        if (values[i][j] >= 0.0)
+          outP[j] += weights[j];
+      } // for j
+    } // for i
+  } // discrete
   function.setParameter(parameter);
   return operator_.operator()(1.0, 2.0) ? alpha_ - outP : outP - alpha_;;
 }
