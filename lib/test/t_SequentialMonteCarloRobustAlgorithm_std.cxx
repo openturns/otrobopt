@@ -47,7 +47,7 @@ int main(int argc, char **argv)
 
 
   Interval bounds(NumericalPoint(2, -3.0), NumericalPoint(2, 3.0));
-  SLSQP solver;
+  NLopt solver("LD_SLSQP");
   solver.setMaximumIterationNumber(100);
 
   NumericalPoint sigma;

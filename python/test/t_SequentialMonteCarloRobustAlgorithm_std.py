@@ -25,7 +25,7 @@ g = ot.NumericalMathFunction(gFull, [2, 3], [0.0] * 2)
 
 
 bounds = ot.Interval([-3.0] * 2, [3.0] * 2)
-solver = ot.SLSQP()
+solver = ot.NLopt('LD_SLSQP')
 solver.setMaximumIterationNumber(100)
 
 for sigma_xi in [0.1, 0.2, 0.3, 0.4, 0.5]:
