@@ -38,7 +38,6 @@ static Factory<MeasureFactory> RegisteredFactory;
 /* Default constructor */
 MeasureFactory::MeasureFactory()
   : PersistentObject()
-  , p_experiment_(0)
 {
   // Nothing to do
 }
@@ -46,7 +45,7 @@ MeasureFactory::MeasureFactory()
 /* Parameter constructor */
 MeasureFactory::MeasureFactory (const WeightedExperiment & experiment)
   : PersistentObject()
-  , p_experiment_(experiment.clone())
+  , experiment_(experiment)
 
 {
   // Nothing to do
@@ -63,10 +62,10 @@ MeasureFactory * MeasureFactory::clone() const
 MeasureEvaluation MeasureFactory::build(const MeasureEvaluation & measure) const
 {
   // copy experiment as generate is non-const
-  Pointer<WeightedExperiment> p_experiment(p_experiment_->clone());
-  p_experiment->setDistribution(measure.getDistribution());
+  WeightedExperiment experimentCopy(experiment_);
+  experimentCopy.setDistribution(measure.getDistribution());
   NumericalPoint weights;
-  const NumericalSample sample(p_experiment->generateWithWeights(weights));
+  const NumericalSample sample(experimentCopy.generateWithWeights(weights));
   MeasureEvaluation result(measure);
   result.setDistribution(UserDefined(sample, weights));
   return result;
@@ -84,10 +83,10 @@ MeasureFactory::MeasureEvaluationCollection MeasureFactory::buildCollection(cons
   }
 
   // copy experiment as generate is non-const
-  Pointer<WeightedExperiment> p_experiment(p_experiment_->clone());
-  p_experiment->setDistribution(distribution);
+  WeightedExperiment experimentCopy(experiment_);
+  experimentCopy.setDistribution(distribution);
   NumericalPoint weights;
-  const NumericalSample sample(p_experiment->generateWithWeights(weights));
+  const NumericalSample sample(experimentCopy.generateWithWeights(weights));
   // We build the common discretized distribution once and as a Distribution
   // in order to make the different copies to share the same implementation
   const Distribution discretizedDistribution(UserDefined(sample, weights));
@@ -112,15 +111,14 @@ String MeasureFactory::__repr__() const
 void MeasureFactory::save(Advocate & adv) const
 {
   PersistentObject::save(adv);
-  adv.saveAttribute("experiment_", *p_experiment_);
+  adv.saveAttribute("experiment_", experiment_);
 }
 
 /* Method load() reloads the object from the StorageManager */
 void MeasureFactory::load(Advocate & adv)
 {
   PersistentObject::load(adv);
-  p_experiment_ = new WeightedExperiment;
-  adv.loadAttribute("experiment_", *p_experiment_);
+  adv.loadAttribute("experiment_", experiment_);
 }
 
 

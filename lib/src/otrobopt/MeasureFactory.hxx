@@ -67,7 +67,7 @@ public:
   virtual void load(OT::Advocate & adv);
 
 private:
-  OT::Pointer<OT::WeightedExperiment> p_experiment_;
+  OT::WeightedExperiment experiment_;
 }; /* class MeasureFactory */
 
 } /* namespace OTROBOPT */
