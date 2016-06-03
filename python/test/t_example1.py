@@ -33,5 +33,5 @@ algo.setInitialSamplingSize(10)
 algo.setInitialSearch(100)
 algo.run()
 result = algo.getResult()
-print ('x*=', result.getOptimalPoint(), 'J(x*)=', result.getOptimalValue()[:1], 'iteration=', result.getIterationNumber())
+print ('x*=', result.getOptimalPoint(), 'J(x*)=', result.getOptimalValue(), 'iteration=', result.getIterationNumber())
 

@@ -42,7 +42,7 @@ Pure robustness problem:
 >>> x_et = algo.getResult().getOptimalPoint()
 >>> print(x_et)
 [0.552012]
->>> J_et = algo.getResult().getOptimalValue()[:1]
+>>> J_et = algo.getResult().getOptimalValue()
 >>> print(J_et)
 [3.42652e-05]
 
@@ -60,7 +60,7 @@ Robustness problem with deterministic constraint:
 >>> x_et = algo.getResult().getOptimalPoint()
 >>> print(x_et)
 [5]
->>> J_et = algo.getResult().getOptimalValue()[:1]
+>>> J_et = algo.getResult().getOptimalValue()
 >>> print(J_et)
 [10]
 
@@ -78,7 +78,7 @@ Pure reliability problem:
 >>> x_et = algo.getResult().getOptimalPoint()
 >>> print(x_et)
 [-1.83551]
->>> J_et = algo.getResult().getOptimalValue()[:1]
+>>> J_et = algo.getResult().getOptimalValue()
 >>> print(J_et)
 [-0.835515]
 
@@ -98,7 +98,7 @@ Robustness & reliability problem:
 >>> x_et = algo.getResult().getOptimalPoint()
 >>> print(x_et)
 [-1.83551]
->>> J_et = algo.getResult().getOptimalValue()[:1]
+>>> J_et = algo.getResult().getOptimalValue()
 >>> print(J_et)
 [-3.67103]"
 
