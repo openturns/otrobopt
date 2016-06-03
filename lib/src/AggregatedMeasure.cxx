@@ -23,14 +23,18 @@
 #include <openturns/PersistentObjectFactory.hxx>
 
 using namespace OT;
+namespace OT {
+TEMPLATE_CLASSNAMEINIT(PersistentCollection<OTROBOPT::MeasureEvaluation>);
+}
 
 namespace OTROBOPT
 {
 
 CLASSNAMEINIT(AggregatedMeasure);
 
-static Factory<AggregatedMeasure> RegisteredFactory;
+static Factory<AggregatedMeasure> Factory_AggregatedMeasure;
 
+static const Factory<PersistentCollection<MeasureEvaluation> > Factory_PersistentCollection_MeasureEvaluation;
 
 /* Default constructor */
 AggregatedMeasure::AggregatedMeasure()
@@ -107,12 +111,14 @@ String AggregatedMeasure::__repr__() const
 void AggregatedMeasure::save(Advocate & adv) const
 {
   MeasureEvaluationImplementation::save(adv);
+  adv.saveAttribute("collection_", collection_);
 }
 
 /* Method load() reloads the object from the StorageManager */
 void AggregatedMeasure::load(Advocate & adv)
 {
   MeasureEvaluationImplementation::load(adv);
+  adv.loadAttribute("collection_", collection_);
 }
 
 

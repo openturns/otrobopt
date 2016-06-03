@@ -29,7 +29,7 @@ namespace OTROBOPT
 
 CLASSNAMEINIT(MeasureEvaluationImplementation);
 
-static Factory<MeasureEvaluationImplementation> RegisteredFactory;
+static Factory<MeasureEvaluationImplementation> Factory_MeasureEvaluationImplementation;
 
 
 /* Default constructor */

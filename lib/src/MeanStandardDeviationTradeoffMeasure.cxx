@@ -32,7 +32,7 @@ namespace OTROBOPT
 
 CLASSNAMEINIT(MeanStandardDeviationTradeoffMeasure);
 
-static Factory<MeanStandardDeviationTradeoffMeasure> RegisteredFactory;
+static Factory<MeanStandardDeviationTradeoffMeasure> Factory_MeanStandardDeviationTradeoffMeasure;
 
 
 /* Default constructor */

@@ -34,7 +34,7 @@ namespace OTROBOPT
 
 CLASSNAMEINIT(QuantileMeasure);
 
-static Factory<QuantileMeasure> RegisteredFactory;
+static Factory<QuantileMeasure> Factory_QuantileMeasure;
 
 
 /* Default constructor */

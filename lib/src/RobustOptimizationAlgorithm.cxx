@@ -32,7 +32,7 @@ namespace OTROBOPT
 
 CLASSNAMEINIT(RobustOptimizationAlgorithm);
 
-static Factory<RobustOptimizationAlgorithm> RegisteredFactory;
+static Factory<RobustOptimizationAlgorithm> Factory_RobustOptimizationAlgorithm;
 
 
 /* Default constructor */

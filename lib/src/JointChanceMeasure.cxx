@@ -31,7 +31,7 @@ namespace OTROBOPT
 
 CLASSNAMEINIT(JointChanceMeasure);
 
-static Factory<JointChanceMeasure> RegisteredFactory;
+static Factory<JointChanceMeasure> Factory_JointChanceMeasure;
 
 
 /* Default constructor */

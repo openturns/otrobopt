@@ -32,7 +32,7 @@ namespace OTROBOPT
 
 CLASSNAMEINIT(IndividualChanceMeasure);
 
-static Factory<IndividualChanceMeasure> RegisteredFactory;
+static Factory<IndividualChanceMeasure> Factory_IndividualChanceMeasure;
 
 
 /* Default constructor */

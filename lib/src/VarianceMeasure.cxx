@@ -32,7 +32,7 @@ namespace OTROBOPT
 
 CLASSNAMEINIT(VarianceMeasure);
 
-static Factory<VarianceMeasure> RegisteredFactory;
+static Factory<VarianceMeasure> Factory_VarianceMeasure;
 
 
 /* Default constructor */

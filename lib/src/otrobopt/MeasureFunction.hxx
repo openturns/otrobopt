@@ -29,9 +29,6 @@
 namespace OTROBOPT
 {
 
-/* forward declaration */
-class MeasureFunctionImplementation;
-
 /**
  * @class MeasureFunction
  *
@@ -47,7 +44,7 @@ public:
   /** Default constructor */
   MeasureFunction();
 
-  MeasureFunction(const MeasureEvaluation & evaluation);
+  explicit MeasureFunction(const MeasureEvaluation & evaluation);
 
   /** Evaluation */
   virtual OT::NumericalPoint operator()(const OT::NumericalPoint & inP) const;
@@ -57,6 +54,12 @@ public:
 
   /** String converter */
   OT::String __repr__() const;
+
+  /** Method save() stores the object through the StorageManager */
+  virtual void save(OT::Advocate & adv) const;
+
+  /** Method load() reloads the object from the StorageManager */
+  virtual void load(OT::Advocate & adv);
 
 private:
   MeasureEvaluation evaluation_;

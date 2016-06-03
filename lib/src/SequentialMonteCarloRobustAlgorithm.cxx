@@ -38,7 +38,7 @@ namespace OTROBOPT
 
 CLASSNAMEINIT(SequentialMonteCarloRobustAlgorithm);
 
-static Factory<SequentialMonteCarloRobustAlgorithm> RegisteredFactory;
+static Factory<SequentialMonteCarloRobustAlgorithm> Factory_SequentialMonteCarloRobustAlgorithm;
 
 
 /* Default constructor */
@@ -212,7 +212,9 @@ UnsignedInteger SequentialMonteCarloRobustAlgorithm::getInitialSearch() const
 String SequentialMonteCarloRobustAlgorithm::__repr__() const
 {
   OSS oss;
-  oss << "class=" << SequentialMonteCarloRobustAlgorithm::GetClassName();
+  oss << "class=" << SequentialMonteCarloRobustAlgorithm::GetClassName()
+      << " initialSamplingSize=" << initialSamplingSize_
+      << " initialSearch=" << initialSearch_;
   return oss;
 }
 

@@ -31,7 +31,7 @@ namespace OTROBOPT
 
 CLASSNAMEINIT(RobustOptimizationProblem);
 
-static Factory<RobustOptimizationProblem> RegisteredFactory;
+static Factory<RobustOptimizationProblem> Factory_RobustOptimizationProblem;
 
 
 /* Default constructor */

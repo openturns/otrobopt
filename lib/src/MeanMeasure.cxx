@@ -31,7 +31,7 @@ namespace OTROBOPT
 
 CLASSNAMEINIT(MeanMeasure);
 
-static Factory<MeanMeasure> RegisteredFactory;
+static Factory<MeanMeasure> Factory_MeanMeasure;
 
 
 /* Default constructor */

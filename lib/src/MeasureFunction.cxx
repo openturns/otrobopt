@@ -33,6 +33,8 @@ namespace OTROBOPT
 
 CLASSNAMEINIT(MeasureFunction);
 
+static Factory<MeasureFunction> Factory_MeasureFunction;
+
 /* Default constructor */
 MeasureFunction::MeasureFunction()
   : NumericalMathFunctionImplementation()
@@ -75,8 +77,7 @@ UnsignedInteger MeasureFunction::getOutputDimension() const
 {
   return evaluation_.getImplementation()->getOutputDimension();
 }
-  
-  
+
 /* String converter */
 String MeasureFunction::__repr__() const
 {
@@ -85,6 +86,18 @@ String MeasureFunction::__repr__() const
       << " evaluation=" << evaluation_;
   return oss;
 }
+/* Method save() stores the object through the StorageManager */
+void MeasureFunction::save(Advocate & adv) const
+{
+  NumericalMathFunctionImplementation::save(adv);
+  adv.saveAttribute("evaluation_", evaluation_);
+}
 
+/* Method load() reloads the object from the StorageManager */
+void MeasureFunction::load(Advocate & adv)
+{
+  NumericalMathFunctionImplementation::load(adv);
+  adv.loadAttribute("evaluation_", evaluation_);
+}
 
 } /* namespace OTROBOPT */

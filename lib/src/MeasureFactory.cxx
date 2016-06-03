@@ -32,7 +32,7 @@ namespace OTROBOPT
 
 CLASSNAMEINIT(MeasureFactory);
 
-static Factory<MeasureFactory> RegisteredFactory;
+static Factory<MeasureFactory> Factory_MeasureFactory;
 
 
 /* Default constructor */

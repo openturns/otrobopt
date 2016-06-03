@@ -1,0 +1,10 @@
+measure=  class=MeanMeasure
+measure=  class=VarianceMeasure
+measure=  class=WorstCaseMeasure minimization=false
+measure=  class=JointChanceMeasure alpha=0.95
+measure=  class=IndividualChanceMeasure alpha=class=NumericalPoint name=Unnamed dimension=1 values=[0.95]
+measure=  class=MeanStandardDeviationTradeoffMeasure alpha=class=NumericalPoint name=Unnamed dimension=1 values=[0.8]
+measure=  class=QuantileMeasure alpha=0.99
+measure=  class=AggregatedMeasure collection=[class=MeasureEvaluation implementation=class=MeanMeasure,class=MeasureEvaluation implementation=class=VarianceMeasure,class=MeasureEvaluation implementation=class=WorstCaseMeasure minimization=false,class=MeasureEvaluation implementation=class=JointChanceMeasure alpha=0.95,class=MeasureEvaluation implementation=class=IndividualChanceMeasure alpha=class=NumericalPoint name=Unnamed dimension=1 values=[0.95],class=MeasureEvaluation implementation=class=MeanStandardDeviationTradeoffMeasure alpha=class=NumericalPoint name=Unnamed dimension=1 values=[0.8],class=MeasureEvaluation implementation=class=QuantileMeasure alpha=0.99]
+problem=  class=RobustOptimizationProblem robustnessMeasure=class=MeasureEvaluation implementation=class=MeanMeasure reliabilityMeasure=class=MeasureEvaluation implementation=class=JointChanceMeasure alpha=0.9
+algo=  class=SequentialMonteCarloRobustAlgorithm initialSamplingSize=2 initialSearch=1000

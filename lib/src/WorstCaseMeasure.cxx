@@ -31,7 +31,7 @@ namespace OTROBOPT
 
 CLASSNAMEINIT(WorstCaseMeasure);
 
-static Factory<WorstCaseMeasure> RegisteredFactory;
+static Factory<WorstCaseMeasure> Factory_WorstCaseMeasure;
 
 
 /* Default constructor */
