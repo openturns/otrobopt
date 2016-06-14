@@ -95,10 +95,12 @@ ot_pyinstallcheck_test (MeasureFactory_std)
 ot_pyinstallcheck_test (MeasureFunction_std)
 ot_pyinstallcheck_test (SequentialMonteCarloRobustAlgorithm_std)
 ot_pyinstallcheck_test (docstring)
-ot_pyinstallcheck_test (example1)
-ot_pyinstallcheck_test (example2)
-ot_pyinstallcheck_test (example3)
-ot_pyinstallcheck_test (example4)
+if (NOT CMAKE_SIZEOF_VOID_P STREQUAL "4") # cobyla/i686
+  ot_pyinstallcheck_test (example1)
+  ot_pyinstallcheck_test (example2)
+  ot_pyinstallcheck_test (example3)
+  ot_pyinstallcheck_test (example4)
+endif ()
 ot_pyinstallcheck_test (saveload)
 
 add_custom_target ( pyinstallcheck COMMAND ${CMAKE_CTEST_COMMAND} -R "^pyinstallcheck_"
