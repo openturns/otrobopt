@@ -29,9 +29,9 @@ measures.append(aggregated)
 for measure in measures:
     myStudy.add('measure' + measure.__class__.__name__, measure)
 
-#measure2 = otrobopt.MeanMeasure(f, thetaDist)
-#measureFunction = otrobopt.MeasureFunction(measure2)
-#myStudy.add('measureFunction', measureFunction)
+measure2 = otrobopt.MeanMeasure(f, thetaDist)
+measureFunction = otrobopt.MeasureFunction(measure2)
+myStudy.add('measureFunction', measureFunction)
 
 calJ = ot.NumericalMathFunction(['x1', 'x2'], ['15.0 * (x1^2 + x2^2) - 100.0 * exp(-5. * ((x1 + 1.6)^2+(x2 + 1.6)^2))'])
 # This is calligraphic G, the non-robust inequality constraints function
@@ -75,9 +75,9 @@ for measureCName in list(map(lambda x:x.__class__.__name__, measures)):
     myStudy.fillObject('measure' + measureCName, measure)
     print('measure= ', measure)
 
-#measureFunction = otrobopt.MeasureFunction()
-#myStudy.fillObject('measureFunction', measureFunction)
-#print('measureFunction= ', measureFunction)
+measureFunction = otrobopt.MeasureFunction()
+myStudy.fillObject('measureFunction', measureFunction)
+print('measureFunction= ', measureFunction)
 
 problem = otrobopt.RobustOptimizationProblem()
 myStudy.fillObject('problem', problem)

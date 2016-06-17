@@ -50,6 +50,13 @@ MeasureFunction::MeasureFunction(const MeasureEvaluation & evaluation)
   // Nothing to do
 }
 
+
+MeasureFunction * MeasureFunction::clone() const
+{
+  return new MeasureFunction(*this);
+}
+
+
 /* Evaluation */
 NumericalPoint MeasureFunction::operator()(const NumericalPoint & inP) const
 {

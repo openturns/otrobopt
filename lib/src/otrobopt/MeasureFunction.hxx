@@ -46,6 +46,8 @@ public:
 
   explicit MeasureFunction(const MeasureEvaluation & evaluation);
 
+  MeasureFunction * clone() const;
+
   /** Evaluation */
   virtual OT::NumericalPoint operator()(const OT::NumericalPoint & inP) const;
   virtual OT::NumericalSample operator()(const OT::NumericalSample & inS) const;
