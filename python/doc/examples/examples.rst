@@ -37,7 +37,7 @@ Example 2
     & \underset{x}{\text{minimize}}
     & & \mathbb{E}_{\cD}(\sqrt{x_0} \sqrt{x_1} \Theta) \\
     & \text{subject to}
-    & & \mathbb{P}_{\cD}(2x_1 + 4x_0 - 120 \leq 0) \geq 0.9 \\
+    & & 2x_1 + 4x_0 - 120 \leq 0 \\
     & & & \Theta \thicksim \cN(1, 3)
     \end{aligned}
 
