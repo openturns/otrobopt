@@ -25,7 +25,7 @@ OT_CONFIG_CMD = $(OT_PREFIX)/bin/openturns-config
 
 OT_VERSION ?= $(shell $(OT_CONFIG_CMD) --version)
 
-WINDEPS ?= $(OT_PREFIX)/../../distro/windows/openturns-developers-windeps-$(OT_VERSION)
+WINDEPS ?= $(OT_PREFIX)/../../distro/windows/openturns-developers-windeps
 
 # Module paths
 MOD_SRC    ?= $(PWD)/../..
