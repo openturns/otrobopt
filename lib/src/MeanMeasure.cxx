@@ -131,7 +131,7 @@ NumericalPoint MeanMeasure::operator()(const NumericalPoint & inP) const
   if (getDistribution().isContinuous())
   {
     GaussKronrod gkr;
-    gkr.setRule(static_cast<OT::GaussKronrodRule::GaussKronrodPair>(ResourceMap::GetAsUnsignedInteger("MeanMeasure-GaussKronrodRule")));
+    gkr.setRule(static_cast<GaussKronrodRule::GaussKronrodPair>(ResourceMap::GetAsUnsignedInteger("MeanMeasure-GaussKronrodRule")));
     const IteratedQuadrature algo(gkr);
     Pointer<NumericalMathFunctionImplementation> p_wrapper(new MeanMeasureParametricFunctionWrapper(inP, function, getDistribution()));
     const NumericalMathFunction G(p_wrapper);

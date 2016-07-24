@@ -145,7 +145,7 @@ NumericalPoint VarianceMeasure::operator()(const NumericalPoint & inP) const
   if (getDistribution().isContinuous())
   {
     GaussKronrod gkr;
-    gkr.setRule(static_cast<OT::GaussKronrodRule::GaussKronrodPair>(ResourceMap::GetAsUnsignedInteger("VarianceMeasure-GaussKronrodRule")));
+    gkr.setRule(static_cast<GaussKronrodRule::GaussKronrodPair>(ResourceMap::GetAsUnsignedInteger("VarianceMeasure-GaussKronrodRule")));
     const IteratedQuadrature algo(gkr);
 
     Pointer<NumericalMathFunctionImplementation> p_wrapper(new VarianceMeasureParametricFunctionWrapper(inP, function, getDistribution()));

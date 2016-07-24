@@ -149,7 +149,7 @@ public:
   NumericalPoint operator()(const NumericalPoint & s) const
   {
     GaussKronrod gkr;
-    gkr.setRule(static_cast<OT::GaussKronrodRule::GaussKronrodPair>(ResourceMap::GetAsUnsignedInteger("QuantileMeasure-GaussKronrodRule")));
+    gkr.setRule(static_cast<GaussKronrodRule::GaussKronrodPair>(ResourceMap::GetAsUnsignedInteger("QuantileMeasure-GaussKronrodRule")));
     const IteratedQuadrature algo(gkr);
     Pointer<NumericalMathFunctionImplementation> p_wrapper(new QuantileMeasureParametricFunctionWrapper(x_, function_, distribution_, s[0]));
     const NumericalMathFunction G(p_wrapper);

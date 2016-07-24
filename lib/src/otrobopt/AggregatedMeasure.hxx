@@ -37,7 +37,7 @@ class OTROBOPT_API AggregatedMeasure
 {
   CLASSNAME;
 
-  typedef OT::Collection<MeasureEvaluation> MeasureEvaluationCollection;
+  typedef OT::Collection<MeasureEvaluation>           MeasureEvaluationCollection;
   typedef OT::PersistentCollection<MeasureEvaluation> MeasureEvaluationPersistentCollection;
 
 public:
