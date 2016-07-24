@@ -44,4 +44,6 @@ for sigma_xi in [0.1, 0.2, 0.3, 0.4, 0.5]:
     algo.run()
     result = algo.getResult()
     print ('x*=', result.getOptimalPoint(), 'J(x*)=', result.getOptimalValue(), 'iteration=', result.getIterationNumber())
-
+    #print (algo.getInitialResultCollection())
+    #print (algo.getInitialStartingPoints())
+    #print (algo.getResultCollection())

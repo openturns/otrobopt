@@ -36,7 +36,12 @@ class OTROBOPT_API SequentialMonteCarloRobustAlgorithm
 {
   CLASSNAME;
 
+
 public:
+
+  typedef OT::Collection<OT::OptimizationResult>           OptimizationResultCollection;
+  typedef OT::PersistentCollection<OT::OptimizationResult> OptimizationResultPersistentCollection;
+
   /** Default constructor */
   SequentialMonteCarloRobustAlgorithm();
 
@@ -57,6 +62,15 @@ public:
   void setInitialSearch(const OT::UnsignedInteger initialSearch);
   OT::UnsignedInteger getInitialSearch() const;
 
+  /** Intermediate optimization results accessor */
+  OptimizationResultCollection getResultCollection() const;
+
+  /** Initial starting points accessor */
+  OT::NumericalSample getInitialStartingPoints() const;
+
+  /** Initial optimization results accessor */
+  OptimizationResultCollection getInitialResultCollection() const;
+
   /** String converter */
   OT::String __repr__() const;
 
@@ -72,6 +86,15 @@ private:
 
   // number of sampled initial points
   OT::UnsignedInteger initialSearch_;
+
+  // Full path of results
+  OptimizationResultPersistentCollection resultCollection_;
+
+  // Initial starting points
+  OT::NumericalSample initialStartingPoints_;
+
+  // Initial problem results
+  OptimizationResultPersistentCollection initialResultCollection_;
 
 }; /* class SequentialMonteCarloRobustAlgorithm */
 
