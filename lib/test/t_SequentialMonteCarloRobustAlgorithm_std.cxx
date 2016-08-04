@@ -73,6 +73,6 @@ int main(int argc, char **argv)
     algo.setInitialSearch(1000); // number of multi-start tries, uniform law using bounds
     algo.run();
     OptimizationResult result(algo.getResult());
-    std::cout << "x*=" << result.getOptimalPoint() << "J(x*)=" << result.getOptimalValue() << "iteration=" << result.getIterationNumber() << std::endl;
+    std::cout << "x*=" << result.getOptimalPoint() << " J(x*)=" << result.getOptimalValue() << " iteration=" << result.getIterationNumber() << std::endl;
   }
 }

@@ -190,11 +190,11 @@ void SequentialMonteCarloRobustAlgorithm::run()
     currentPoint = newPoint;
     currentValue = newValue;
 
+    ++ iterationNumber;
+
     // update result
     result_.update(currentPoint, iterationNumber);
     result_.store(currentPoint, currentValue, absoluteError, 0.0, 0.0, 0.0);
-
-    ++ iterationNumber;
   }
   resultCollection_.add(result_);
 }
