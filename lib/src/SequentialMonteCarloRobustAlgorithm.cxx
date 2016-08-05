@@ -23,7 +23,7 @@
 
 #include <openturns/PersistentObjectFactory.hxx>
 #include <openturns/FixedExperiment.hxx>
-#include <openturns/Normal.hxx>
+#include <openturns/IdentityFunction.hxx>
 #include <openturns/ComposedDistribution.hxx>
 #include <openturns/LHSExperiment.hxx>
 #include <openturns/SpecFunc.hxx>
@@ -50,6 +50,7 @@ static Factory<SequentialMonteCarloRobustAlgorithm> Factory_SequentialMonteCarlo
 SequentialMonteCarloRobustAlgorithm::SequentialMonteCarloRobustAlgorithm()
   : RobustOptimizationAlgorithm()
   , initialSamplingSize_(ResourceMap::GetAsUnsignedInteger("SequentialMonteCarloRobustAlgorithm-DefaultInitialSamplingSize"))
+  , samplingSizeIncrement_(IdentityFunction(1))
   , initialSearch_(0)
   , resultCollection_(0)
 {
@@ -61,6 +62,7 @@ SequentialMonteCarloRobustAlgorithm::SequentialMonteCarloRobustAlgorithm (const 
     const OptimizationSolver & solver)
   : RobustOptimizationAlgorithm(problem, solver)
   , initialSamplingSize_(ResourceMap::GetAsUnsignedInteger("SequentialMonteCarloRobustAlgorithm-DefaultInitialSamplingSize"))
+  , samplingSizeIncrement_(IdentityFunction(1))
   , initialSearch_(0)
   , resultCollection_(0)
 {
@@ -99,7 +101,9 @@ void SequentialMonteCarloRobustAlgorithm::run()
   UnsignedInteger iterationNumber = 0;
   while ((!convergence) && (iterationNumber <= getMaximumIterationNumber()))
   {
-    currentSampleXi.add(distributionXi.getSample(N));
+    const UnsignedInteger increment = samplingSizeIncrement_(NumericalPoint(1, N))[0];
+    if (increment == 0) throw InvalidArgumentException(HERE) << "Increment must be positive";
+    currentSampleXi.add(distributionXi.getSample(increment));
     N = currentSampleXi.getSize();
 
     OptimizationProblem problem(getProblem());
@@ -208,6 +212,17 @@ void SequentialMonteCarloRobustAlgorithm::setInitialSamplingSize(const UnsignedI
 UnsignedInteger SequentialMonteCarloRobustAlgorithm::getInitialSamplingSize() const
 {
   return initialSamplingSize_;
+}
+
+/* Discretization increment */
+void SequentialMonteCarloRobustAlgorithm::setSamplingSizeIncrement(const OT::NumericalMathFunction samplingSizeIncrement)
+{
+  samplingSizeIncrement_ = samplingSizeIncrement;
+}
+
+OT::NumericalMathFunction SequentialMonteCarloRobustAlgorithm::getSamplingSizeIncrement() const
+{
+  return samplingSizeIncrement_;
 }
 
 /* Number of initial starting points accessors */

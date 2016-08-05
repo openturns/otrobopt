@@ -37,6 +37,32 @@ initialSamplingSize : int
 
 // ---------------------------------------------------------------------
 
+%feature("docstring") OTROBOPT::SequentialMonteCarloRobustAlgorithm::setSamplingSizeIncrement
+"Sampling size increment accessor.
+
+Sampling size increment of :math:`\theta` as a function of the total size at
+the previous iteration.
+
+Parameters
+----------
+samplingSizeIncrement : :py:class:`openturns.NumericalMathFunction`
+    Sampling size increment"
+
+// ---------------------------------------------------------------------
+
+%feature("docstring") OTROBOPT::SequentialMonteCarloRobustAlgorithm::getSamplingSizeIncrement
+"Sampling size increment accessor.
+
+Sampling size increment of :math:`\theta` as a function of the total size at
+the previous iteration.
+
+Returns
+-------
+samplingSizeIncrement : :py:class:`openturns.NumericalMathFunction`
+    Sampling size increment"
+
+// ---------------------------------------------------------------------
+
 %feature("docstring") OTROBOPT::SequentialMonteCarloRobustAlgorithm::setInitialSearch
 "Multi-start number accessor.
 

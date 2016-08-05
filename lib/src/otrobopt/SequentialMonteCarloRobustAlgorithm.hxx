@@ -59,6 +59,11 @@ public:
   void setInitialSamplingSize(const OT::UnsignedInteger N0);
   OT::UnsignedInteger getInitialSamplingSize() const;
 
+  /** Discretization increment */
+  void setSamplingSizeIncrement(const OT::NumericalMathFunction samplingSizeIncrement);
+  OT::NumericalMathFunction getSamplingSizeIncrement() const;
+
+  /** Multi-start size */
   void setInitialSearch(const OT::UnsignedInteger initialSearch);
   OT::UnsignedInteger getInitialSearch() const;
 
@@ -83,6 +88,7 @@ public:
 private:
   // initial sampling size
   OT::UnsignedInteger initialSamplingSize_;
+  OT::NumericalMathFunction samplingSizeIncrement_;
 
   // number of sampled initial points
   OT::UnsignedInteger initialSearch_;

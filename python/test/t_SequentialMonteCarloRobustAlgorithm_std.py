@@ -39,7 +39,8 @@ for sigma_xi in [0.1, 0.2, 0.3, 0.4, 0.5]:
     algo = otrobopt.SequentialMonteCarloRobustAlgorithm(problem, solver)
     algo.setMaximumIterationNumber(11)
     algo.setMaximumAbsoluteError(1e-6)
-    algo.setInitialSamplingSize(2) # size of initial xsi discretization, x2 at every iteration
+    algo.setInitialSamplingSize(2) # size of initial xsi discretization
+    algo.setSamplingSizeIncrement(ot.PythonFunction(1, 1, lambda x:1.0*x)) # 
     algo.setInitialSearch(1000) # number of multi-start tries, uniform law using bounds
     algo.run()
     result = algo.getResult()
