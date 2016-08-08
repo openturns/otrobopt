@@ -162,14 +162,17 @@ void SequentialMonteCarloRobustAlgorithm::run()
         OptimizationResult result(solver.getResult());
         initialResultCollection_.add(result);
         NumericalScalar currentValue0 = result.getOptimalValue()[0];
-        if ((getProblem().isMinimization() && (currentValue0 < bestValue))
-            || (!getProblem().isMinimization() && (currentValue0 > bestValue)))
-        {
-          bestValue = currentValue0;
-          newPoint = result.getOptimalPoint();
-          newValue = result.getOptimalValue();
-          LOGINFO(OSS() << "Best initial point so far=" << newPoint << " value=" << bestValue);
-        }
+
+        // FIXME: Cobyla can return infeasible point: sweep evaluations to return the best with null constraint error
+        if (!getProblem().hasBounds() || (getProblem().hasBounds() && getProblem().getBounds().contains(result.getOptimalPoint())))
+          if ((getProblem().isMinimization() && (currentValue0 < bestValue))
+              || (!getProblem().isMinimization() && (currentValue0 > bestValue)))
+          {
+            bestValue = currentValue0;
+            newPoint = result.getOptimalPoint();
+            newValue = result.getOptimalValue();
+            LOGINFO(OSS() << "Best initial point so far=" << newPoint << " value=" << bestValue);
+          }
       }
     }
     else
@@ -197,7 +200,7 @@ void SequentialMonteCarloRobustAlgorithm::run()
     ++ iterationNumber;
 
     // update result
-    result_.update(currentPoint, iterationNumber);
+    result_.setIterationNumber(iterationNumber);
     result_.store(currentPoint, currentValue, absoluteError, 0.0, 0.0, 0.0);
   }
   resultCollection_.add(result_);
