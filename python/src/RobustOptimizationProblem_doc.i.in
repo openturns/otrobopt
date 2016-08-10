@@ -41,7 +41,7 @@ Pure robustness problem:
 >>> algo.run()
 >>> x_et = algo.getResult().getOptimalPoint()
 >>> print(x_et)
-[0.552012]
+[0.55...]
 >>> J_et = algo.getResult().getOptimalValue()
 >>> print(J_et)
 [3.42652e-05]
