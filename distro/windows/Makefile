@@ -89,7 +89,7 @@ mod-config: mod-check-compiler
 	cp $(MINGW_PREFIX)/$(TARGET)/bin/python$(PYBASEVER_NODOT).dll $(MOD_BUILD)
 	cd $(MOD_BUILD) && rm -f CMakeCache.txt && $(CMAKE) \
 	  -DCMAKE_BUILD_TYPE=RelWithDebInfo \
-	  -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions --param=ssp-buffer-size=4" \
+	  -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions --param=ssp-buffer-size=4 -D_hypot=hypot" \
 	  -DCMAKE_TOOLCHAIN_FILE=toolchain-$(TARGET).cmake \
 	  -DCMAKE_VERBOSE_MAKEFILE=$(VERBOSE) \
 	  -DOpenTURNS_DIR=$(OT_PREFIX)/lib/cmake/openturns \
