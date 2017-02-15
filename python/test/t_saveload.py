@@ -12,8 +12,8 @@ myStudy = ot.Study()
 myStudy.setStorageManager(ot.XMLStorageManager(fileName))
 
 thetaDist = ot.Normal(2.0, 0.1)
-f_base = ot.NumericalMathFunction(['x', 'theta'], ['y'], ['x*theta'])
-f = ot.NumericalMathFunction(f_base, [1], [1.0])
+f_base = ot.SymbolicFunction(['x', 'theta'], ['x*theta'])
+f = ot.ParametricFunction(f_base, [1], [1.0])
 
 measures = [otrobopt.MeanMeasure(f, thetaDist),
             otrobopt.VarianceMeasure(f, thetaDist),
@@ -33,17 +33,17 @@ measure2 = otrobopt.MeanMeasure(f, thetaDist)
 measureFunction = otrobopt.MeasureFunction(measure2)
 myStudy.add('measureFunction', measureFunction)
 
-calJ = ot.NumericalMathFunction(['x1', 'x2'], ['15.0 * (x1^2 + x2^2) - 100.0 * exp(-5. * ((x1 + 1.6)^2+(x2 + 1.6)^2))'])
+calJ = ot.SymbolicFunction(['x1', 'x2'], ['15.0 * (x1^2 + x2^2) - 100.0 * exp(-5. * ((x1 + 1.6)^2+(x2 + 1.6)^2))'])
 # This is calligraphic G, the non-robust inequality constraints function
-calG = ot.NumericalMathFunction(['x1', 'x2'], ['(x1 - 0.5)^2 + x2^2 - 4.0', '(x1 + 0.5)^2 + x2^2 - 4.0'])
+calG = ot.SymbolicFunction(['x1', 'x2'], ['(x1 - 0.5)^2 + x2^2 - 4.0', '(x1 + 0.5)^2 + x2^2 - 4.0'])
 # This is the perturbation function
-noise = ot.NumericalMathFunction(['x1', 'x2', 'xi1', 'xi2'], ['x1 + xi1', 'x2 + xi2'])
+noise = ot.SymbolicFunction(['x1', 'x2', 'xi1', 'xi2'], ['x1 + xi1', 'x2 + xi2'])
 # This is capital J: J(x,xi) = calJ(x+xi), the parametric objective function
-JFull = ot.NumericalMathFunction(calJ, noise)
-J = ot.NumericalMathFunction(JFull, [2, 3], [0.0] * 2)
+JFull = ot.ComposedFunction(calJ, noise)
+J = ot.ParametricFunction(JFull, [2, 3], [0.0] * 2)
 # This is g, the parametric constraints
-gFull = ot.NumericalMathFunction(calG, noise)
-g = ot.NumericalMathFunction(gFull, [2, 3], [0.0] * 2)
+gFull = ot.ComposedFunction(calG, noise)
+g = ot.ParametricFunction(gFull, [2, 3], [0.0] * 2)
 bounds = ot.Interval([-3.0] * 2, [3.0] * 2)
 sigma_xi = 0.4
 thetaDist = ot.Normal([0.0] * 2, [sigma_xi] * 2, ot.IdentityMatrix(2))
