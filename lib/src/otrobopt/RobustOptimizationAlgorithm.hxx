@@ -22,8 +22,8 @@
 #define OTROBOPT_ROBUSTOPTIMIZATIONALGORITHM_HXX
 
 #include <otrobopt/RobustOptimizationProblem.hxx>
-#include <openturns/OptimizationSolverImplementation.hxx>
-#include <openturns/OptimizationSolver.hxx>
+#include <openturns/OptimizationAlgorithmImplementation.hxx>
+#include <openturns/OptimizationAlgorithm.hxx>
 
 namespace OTROBOPT
 {
@@ -34,7 +34,7 @@ namespace OTROBOPT
  * Solve a robust optimization problem
  */
 class OTROBOPT_API RobustOptimizationAlgorithm
-  : public OT::OptimizationSolverImplementation
+  : public OT::OptimizationAlgorithmImplementation
 {
   CLASSNAME;
 
@@ -44,7 +44,7 @@ public:
 
   /** Parameter constructor */
   RobustOptimizationAlgorithm(const RobustOptimizationProblem & problem,
-                              const OT::OptimizationSolver & solver);
+                              const OT::OptimizationAlgorithm & solver);
 
   /** Virtual constructor method */
   RobustOptimizationAlgorithm * clone() const;
@@ -54,8 +54,8 @@ public:
   RobustOptimizationProblem getRobustProblem() const;
 
   /** Solver accessor */
-  void setOptimizationSolver(const OT::OptimizationSolver & solver);
-  OT::OptimizationSolver getOptimizationSolver() const;
+  void setOptimizationAlgorithm(const OT::OptimizationAlgorithm & solver);
+  OT::OptimizationAlgorithm getOptimizationAlgorithm() const;
 
   /** String converter */
   OT::String __repr__() const;
@@ -71,7 +71,7 @@ protected:
   virtual void checkProblem(const OT::OptimizationProblem & problem) const;
 
   RobustOptimizationProblem robustProblem_;
-  OT::OptimizationSolver solver_;
+  OT::OptimizationAlgorithm solver_;
 
 }; /* class RobustOptimizationAlgorithm */
 

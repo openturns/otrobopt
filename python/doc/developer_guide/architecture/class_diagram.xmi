@@ -242,7 +242,7 @@
       <UML:Generalization name="" isSpecification="false" discriminator="" visibility="public" xmi.id="Ypvqgh9Sj3NU" parent="qJD0h3u1e0dl" namespace="Logical View" child="NTC0Xu0fERLB"/>
       <UML:Generalization name="" isSpecification="false" discriminator="" visibility="public" xmi.id="KWsEhrmXwm57" parent="i8w63l5pka8q" namespace="Logical View" child="4Mn5nioB4LAC"/>
       <UML:Generalization name="" isSpecification="false" discriminator="" visibility="public" xmi.id="4ltyXx5e5Zju" parent="yKJ9s3RVHS1h" namespace="Logical View" child="qJD0h3u1e0dl"/>
-      <UML:Class name="OptimizationSolver" isSpecification="false" isLeaf="false" isRoot="false" visibility="public" xmi.id="z906aWjx81OH" isAbstract="false" namespace="Logical View"/>
+      <UML:Class name="OptimizationAlgorithm" isSpecification="false" isLeaf="false" isRoot="false" visibility="public" xmi.id="z906aWjx81OH" isAbstract="false" namespace="Logical View"/>
       <UML:Generalization name="" isSpecification="false" discriminator="" visibility="public" xmi.id="gwRaZ0zW9zdh" parent="z906aWjx81OH" namespace="Logical View" child="4Mn5nioB4LAC"/>
       <UML:Dependency name="" isSpecification="false" client="i1Jn8sHMHUR5" supplier="qJD0h3u1e0dl" visibility="public" xmi.id="6IUN8INUfUAb" namespace="Logical View"/>
       <UML:Class name="NumericalMathEvaluationImplementation" isSpecification="false" isLeaf="false" isRoot="false" visibility="public" xmi.id="zIkckuD0Rjdo" isAbstract="false" namespace="Logical View"/>

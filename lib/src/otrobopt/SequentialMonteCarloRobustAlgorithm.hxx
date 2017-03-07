@@ -47,7 +47,7 @@ public:
 
   /** Parameter constructor */
   SequentialMonteCarloRobustAlgorithm(const RobustOptimizationProblem & problem,
-                                      const OT::OptimizationSolver & solver);
+                                      const OT::OptimizationAlgorithm & solver);
 
   /** Virtual constructor method */
   SequentialMonteCarloRobustAlgorithm * clone() const;

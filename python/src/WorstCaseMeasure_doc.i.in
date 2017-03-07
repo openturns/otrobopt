@@ -59,20 +59,20 @@ minimization : bool
 
 // ---------------------------------------------------------------------
 
-%feature("docstring") OTROBOPT::WorstCaseMeasure::setOptimizationSolver
+%feature("docstring") OTROBOPT::WorstCaseMeasure::setOptimizationAlgorithm
 "Optimization solver accessor.
 
 Parameters
 ----------
-solver : :py:class:`openturns.OptimizationSolver`
+solver : :py:class:`openturns.OptimizationAlgorithm`
     Optimization solver"
 
 // ---------------------------------------------------------------------
 
-%feature("docstring") OTROBOPT::WorstCaseMeasure::getOptimizationSolver
+%feature("docstring") OTROBOPT::WorstCaseMeasure::getOptimizationAlgorithm
 "Optimization solver accessor.
 
 Returns
 -------
-solver : :py:class:`openturns.OptimizationSolver`
+solver : :py:class:`openturns.OptimizationAlgorithm`
     Optimization solver"
