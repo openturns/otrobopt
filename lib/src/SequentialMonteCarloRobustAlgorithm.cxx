@@ -218,12 +218,12 @@ UnsignedInteger SequentialMonteCarloRobustAlgorithm::getInitialSamplingSize() co
 }
 
 /* Discretization increment */
-void SequentialMonteCarloRobustAlgorithm::setSamplingSizeIncrement(const OT::NumericalMathFunction samplingSizeIncrement)
+void SequentialMonteCarloRobustAlgorithm::setSamplingSizeIncrement(const NumericalMathFunction & samplingSizeIncrement)
 {
   samplingSizeIncrement_ = samplingSizeIncrement;
 }
 
-OT::NumericalMathFunction SequentialMonteCarloRobustAlgorithm::getSamplingSizeIncrement() const
+NumericalMathFunction SequentialMonteCarloRobustAlgorithm::getSamplingSizeIncrement() const
 {
   return samplingSizeIncrement_;
 }

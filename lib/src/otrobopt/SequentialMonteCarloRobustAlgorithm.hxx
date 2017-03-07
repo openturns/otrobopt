@@ -60,7 +60,7 @@ public:
   OT::UnsignedInteger getInitialSamplingSize() const;
 
   /** Discretization increment */
-  void setSamplingSizeIncrement(const OT::NumericalMathFunction samplingSizeIncrement);
+  void setSamplingSizeIncrement(const OT::NumericalMathFunction & samplingSizeIncrement);
   OT::NumericalMathFunction getSamplingSizeIncrement() const;
 
   /** Multi-start size */
