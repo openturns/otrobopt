@@ -137,7 +137,7 @@ NumericalPoint WorstCaseMeasure::operator()(const NumericalPoint & inP) const
       const NumericalMathFunction G(p_wrapper);
       OptimizationProblem problem(G, NumericalMathFunction(), NumericalMathFunction(), getDistribution().getRange());
       problem.setMinimization(isMinimization());
-      OptimizationSolver solver(solver_);
+      OptimizationAlgorithm solver(solver_);
       solver.setStartingPoint(getDistribution().getMean());
       solver.setProblem(problem);
       solver.run();
@@ -166,12 +166,12 @@ NumericalPoint WorstCaseMeasure::operator()(const NumericalPoint & inP) const
 }
 
 /* Optimization solver accessor */
-void WorstCaseMeasure::setOptimizationSolver(const OptimizationSolver & solver)
+void WorstCaseMeasure::setOptimizationAlgorithm(const OptimizationAlgorithm & solver)
 {
   solver_ = solver;
 }
 
-OptimizationSolver WorstCaseMeasure::getOptimizationSolver() const
+OptimizationAlgorithm WorstCaseMeasure::getOptimizationAlgorithm() const
 {
   return solver_;
 }

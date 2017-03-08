@@ -7,6 +7,8 @@
 #include "openturns/GaussProductExperiment.hxx"
 #include "openturns/GreaterOrEqual.hxx"
 #include "openturns/Uniform.hxx"
+#include "openturns/SymbolicFunction.hxx"
+#include "openturns/ParametricFunction.hxx"
 
 using namespace OT;
 using namespace OTROBOPT;
@@ -19,8 +21,8 @@ int main(int argc, char **argv)
     Description input(2);
     input[0] = "x";
     input[1] = "theta";
-    NumericalMathFunction f_base(input, Description(1, "y1"), Description(1, "x*theta"));
-    NumericalMathFunction f(f_base, Indices(1 , 1), NumericalPoint(1, 1.0));
+    SymbolicFunction f_base(input, Description(1, "x*theta"));
+    ParametricFunction f(f_base, Indices(1, 1), NumericalPoint(1, 1.0));
 
     NumericalPoint x(1, 1.0);
 
@@ -65,11 +67,11 @@ int main(int argc, char **argv)
     input[0] = "x";
     input[1] = "theta0";
     input[2] = "theta1";
-    NumericalMathFunction f_base(input, Description(1, "y1"), Description(1, "x*theta0+theta1"));
+    SymbolicFunction f_base(input, Description(1, "x*theta0+theta1"));
     Indices indices(2);
     indices[0] = 1;
     indices[1] = 2;
-    NumericalMathFunction f(f_base, indices, thetaDist.getMean());
+    ParametricFunction f(f_base, indices, thetaDist.getMean());
 
     NumericalPoint x(1, 1.0);
 

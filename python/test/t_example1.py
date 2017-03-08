@@ -7,10 +7,10 @@ import otrobopt
 #ot.Log.Show(ot.Log.Info)
 
 
-calJ = ot.NumericalMathFunction(['x0', 'x1', 'theta'], ['J'], ['(x0-2)^2 + 2*x1^2 - 4*x1 + theta'])
-calG = ot.NumericalMathFunction(['x0', 'x1', 'theta'], ['g'], ['-(-x0 + 4*x1 + theta - 3)'])
-J = ot.NumericalMathFunction(calJ, [2], [2.0])
-g = ot.NumericalMathFunction(calG, [2], [2.0])
+calJ = ot.SymbolicFunction(['x0', 'x1', 'theta'], ['(x0-2)^2 + 2*x1^2 - 4*x1 + theta'])
+calG = ot.SymbolicFunction(['x0', 'x1', 'theta'], ['-(-x0 + 4*x1 + theta - 3)'])
+J = ot.ParametricFunction(calJ, [2], [2.0])
+g = ot.ParametricFunction(calG, [2], [2.0])
 
 dim = J.getInputDimension()
 

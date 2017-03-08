@@ -47,7 +47,7 @@ public:
 
   /** Parameter constructor */
   SequentialMonteCarloRobustAlgorithm(const RobustOptimizationProblem & problem,
-                                      const OT::OptimizationSolver & solver);
+                                      const OT::OptimizationAlgorithm & solver);
 
   /** Virtual constructor method */
   SequentialMonteCarloRobustAlgorithm * clone() const;
@@ -60,7 +60,7 @@ public:
   OT::UnsignedInteger getInitialSamplingSize() const;
 
   /** Discretization increment */
-  void setSamplingSizeIncrement(const OT::NumericalMathFunction samplingSizeIncrement);
+  void setSamplingSizeIncrement(const OT::NumericalMathFunction & samplingSizeIncrement);
   OT::NumericalMathFunction getSamplingSizeIncrement() const;
 
   /** Multi-start size */

@@ -59,7 +59,7 @@ SequentialMonteCarloRobustAlgorithm::SequentialMonteCarloRobustAlgorithm()
 
 /* Parameter constructor */
 SequentialMonteCarloRobustAlgorithm::SequentialMonteCarloRobustAlgorithm (const RobustOptimizationProblem & problem,
-    const OptimizationSolver & solver)
+    const OptimizationAlgorithm & solver)
   : RobustOptimizationAlgorithm(problem, solver)
   , initialSamplingSize_(ResourceMap::GetAsUnsignedInteger("SequentialMonteCarloRobustAlgorithm-DefaultInitialSamplingSize"))
   , samplingSizeIncrement_(IdentityFunction(1))
@@ -126,7 +126,7 @@ void SequentialMonteCarloRobustAlgorithm::run()
       problem.setInequalityConstraint(*pG.getImplementation());
     }
 
-    OptimizationSolver solver(solver_);
+    OptimizationAlgorithm solver(solver_);
     solver.setProblem(problem);
 
     const NumericalScalar epsilon = ResourceMap::GetAsNumericalScalar("SequentialMonteCarloRobustAlgorithm-ConvergenceFactor") / std::sqrt(1.0 * N);
@@ -218,12 +218,12 @@ UnsignedInteger SequentialMonteCarloRobustAlgorithm::getInitialSamplingSize() co
 }
 
 /* Discretization increment */
-void SequentialMonteCarloRobustAlgorithm::setSamplingSizeIncrement(const OT::NumericalMathFunction samplingSizeIncrement)
+void SequentialMonteCarloRobustAlgorithm::setSamplingSizeIncrement(const NumericalMathFunction & samplingSizeIncrement)
 {
   samplingSizeIncrement_ = samplingSizeIncrement;
 }
 
-OT::NumericalMathFunction SequentialMonteCarloRobustAlgorithm::getSamplingSizeIncrement() const
+NumericalMathFunction SequentialMonteCarloRobustAlgorithm::getSamplingSizeIncrement() const
 {
   return samplingSizeIncrement_;
 }
