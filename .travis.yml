@@ -19,17 +19,20 @@ script:
   - make install -j2 && make tests -j2 && ctest -j2 --output-on-failure --timeout 100 
 
 after_success:
-  - test "$TRAVIS_PULL_REQUEST" = "false" -a "$TRAVIS_BRANCH" = "master" || exit 0
+  - test "$TRAVIS_PULL_REQUEST" = "false" || exit 0
   - git clone https://${GH_TOKEN}@github.com/openturns/openturns.github.io.git
-  - REPO_NAME=`echo "${TRAVIS_REPO_SLUG}" | cut -d "/" -f 2`
-  - mkdir -p openturns.github.io/${REPO_NAME}/${TRAVIS_BRANCH}
-  - cp -r ~/.local/share/${REPO_NAME}/doc/html/* openturns.github.io/${REPO_NAME}/${TRAVIS_BRANCH}
+  - PROJECT_REPONAME=`echo "${TRAVIS_REPO_SLUG}" | cut -d "/" -f 2`
+  - if test -n "${TRAVIS_TAG}"; then
+        TRAVIS_BRANCH=${TRAVIS_TAG:1};
+    fi
+  - mkdir -p openturns.github.io/${PROJECT_REPONAME}/${TRAVIS_BRANCH}
+  - cp -r ~/.local/share/${PROJECT_REPONAME}/doc/html/* openturns.github.io/${PROJECT_REPONAME}/${TRAVIS_BRANCH}
   - cd openturns.github.io
   - touch .nojekyll
   - git config user.email "support@travis-ci.com"
   - git config user.name "Travis CI"
   - git add -A .
-  - git commit -a -m "Travis build ${REPO_NAME} ${TRAVIS_BUILD_NUMBER}"
+  - git commit -a -m "Travis build ${PROJECT_REPONAME} ${TRAVIS_BUILD_NUMBER}"
   - git push --quiet origin master > /dev/null 2>&1
 
 env:
