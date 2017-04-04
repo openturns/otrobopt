@@ -50,10 +50,10 @@ AggregatedMeasure::AggregatedMeasure(const MeasureEvaluationCollection & collect
   const UnsignedInteger size = collection_.getSize();
   if (size == 0)
     throw InvalidArgumentException(HERE) << "Empty collection";
-  Collection <NumericalMathFunction> funcColl(size);
+  Collection <Function> funcColl(size);
   for (UnsignedInteger i = 0; i < size; ++ i)
     funcColl[i] = collection_[i].getFunction();
-  setFunction(NumericalMathFunction(funcColl));
+  setFunction(Function(funcColl));
 }
 
 /* Virtual constructor method */
@@ -63,15 +63,15 @@ AggregatedMeasure * AggregatedMeasure::clone() const
 }
 
 /* Evaluation */
-NumericalPoint AggregatedMeasure::operator()(const NumericalPoint & inP) const
+Point AggregatedMeasure::operator()(const Point & inP) const
 {
   const UnsignedInteger outputDimension = getFunction().getOutputDimension();
-  NumericalPoint outP(outputDimension);
+  Point outP(outputDimension);
   const UnsignedInteger size = collection_.getSize();
   UnsignedInteger index = 0;
   for (UnsignedInteger i = 0; i < size; ++ i)
   {
-    const NumericalPoint outPi(collection_[i](inP));
+    const Point outPi(collection_[i](inP));
     std::copy(outPi.begin(), outPi.end(), outP.begin() + index);
     index += outPi.getSize();
   }

@@ -42,10 +42,10 @@ IndividualChanceMeasure::IndividualChanceMeasure()
 }
 
 /* Parameter constructor */
-IndividualChanceMeasure::IndividualChanceMeasure (const NumericalMathFunction & function,
+IndividualChanceMeasure::IndividualChanceMeasure (const Function & function,
                                                   const Distribution & distribution,
                                                   const ComparisonOperator & op,
-                                                  const NumericalPoint & alpha)
+                                                  const Point & alpha)
   : MeasureEvaluationImplementation(function, distribution)
   , operator_(op)
 {
@@ -59,13 +59,13 @@ IndividualChanceMeasure * IndividualChanceMeasure::clone() const
 }
 
 
-class IndividualChanceMeasureParametricFunctionWrapper : public NumericalMathFunctionImplementation
+class IndividualChanceMeasureParametricFunctionWrapper : public FunctionImplementation
 {
 public:
-  IndividualChanceMeasureParametricFunctionWrapper (const NumericalPoint & x,
-                                                    const NumericalMathFunction & function,
+  IndividualChanceMeasureParametricFunctionWrapper (const Point & x,
+                                                    const Function & function,
                                                     const Distribution & distribution)
-  : NumericalMathFunctionImplementation()
+  : FunctionImplementation()
   , x_(x)
   , function_(function)
   , distribution_(distribution)
@@ -78,19 +78,19 @@ public:
     return new IndividualChanceMeasureParametricFunctionWrapper(*this);
   }
 
-  NumericalPoint operator()(const NumericalPoint & theta) const
+  Point operator()(const Point & theta) const
   {
-    NumericalMathFunction function(function_);
-    NumericalPoint y(function(x_, theta));
+    Function function(function_);
+    Point y(function(x_, theta));
     for (UnsignedInteger j = 0; j < getOutputDimension(); ++ j)
       y[j] = (y[j] >= 0.0) ? 1.0 : 0.0;
     return y * distribution_.computePDF(theta);
   }
 
-  NumericalSample operator()(const NumericalSample & theta) const
+  Sample operator()(const Sample & theta) const
   {
     const UnsignedInteger size = theta.getSize();
-    NumericalSample outS(size, function_.getOutputDimension());
+    Sample outS(size, function_.getOutputDimension());
     for (UnsignedInteger i = 0; i < size; ++ i)
       outS[i] = operator()(theta[i]);
     return outS;
@@ -117,33 +117,33 @@ public:
   }
 
 protected:
-  NumericalPoint x_;
-  NumericalMathFunction function_;
+  Point x_;
+  Function function_;
   Distribution distribution_;
 };
 
 
 /* Evaluation */
-NumericalPoint IndividualChanceMeasure::operator()(const NumericalPoint & inP) const
+Point IndividualChanceMeasure::operator()(const Point & inP) const
 {
-  NumericalMathFunction function(getFunction());
-  NumericalPoint parameter(function.getParameter());
+  Function function(getFunction());
+  Point parameter(function.getParameter());
   const UnsignedInteger outputDimension = function.getOutputDimension();
-  NumericalPoint outP(outputDimension);
+  Point outP(outputDimension);
   if (getDistribution().isContinuous())
   {
     GaussKronrod gkr;
     gkr.setRule(static_cast<GaussKronrodRule::GaussKronrodPair>(ResourceMap::GetAsUnsignedInteger("IndividualChanceMeasure-GaussKronrodRule")));
     const IteratedQuadrature algo(gkr);
-    Pointer<NumericalMathFunctionImplementation> p_wrapper(new IndividualChanceMeasureParametricFunctionWrapper(inP, function, getDistribution()));
-    const NumericalMathFunction G(p_wrapper);
+    Pointer<FunctionImplementation> p_wrapper(new IndividualChanceMeasureParametricFunctionWrapper(inP, function, getDistribution()));
+    const Function G(p_wrapper);
     outP = algo.integrate(G, getDistribution().getRange());
   }
   else
   {
     // To benefit from possible parallelization
-    const NumericalSample values(function(inP, getDistribution().getSupport()));
-    const NumericalPoint weights(getDistribution().getProbabilities());
+    const Sample values(function(inP, getDistribution().getSupport()));
+    const Point weights(getDistribution().getProbabilities());
     const UnsignedInteger size = values.getSize();
     // Here we compute the marginal complementary CDF locally to avoid
     // the creation cost of the marginal UserDefined distributions
@@ -161,7 +161,7 @@ NumericalPoint IndividualChanceMeasure::operator()(const NumericalPoint & inP) c
 }
 
 /* Alpha coefficient accessor */
-void IndividualChanceMeasure::setAlpha(const NumericalPoint & alpha)
+void IndividualChanceMeasure::setAlpha(const Point & alpha)
 {
   const UnsignedInteger dimension = alpha.getDimension();
   for(UnsignedInteger j = 0; j < dimension; ++ j)
@@ -172,7 +172,7 @@ void IndividualChanceMeasure::setAlpha(const NumericalPoint & alpha)
   alpha_ = alpha;
 }
 
-NumericalPoint IndividualChanceMeasure::getAlpha() const
+Point IndividualChanceMeasure::getAlpha() const
 {
   return alpha_;
 }

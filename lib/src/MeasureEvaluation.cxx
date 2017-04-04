@@ -50,7 +50,7 @@ OTRobOptResourceMap_init()
     pthread_mutex_init(&OTRobOptResourceMap_InstanceMutex_, NULL);
 #endif
     // SequentialMonteCarloRobustAlgorithm
-    ResourceMap::SetAsNumericalScalar("SequentialMonteCarloRobustAlgorithm-ConvergenceFactor", 1e-2);
+    ResourceMap::SetAsScalar("SequentialMonteCarloRobustAlgorithm-ConvergenceFactor", 1e-2);
     ResourceMap::SetAsUnsignedInteger("SequentialMonteCarloRobustAlgorithm-DefaultInitialSamplingSize", 10);
 
     ResourceMap::SetAsUnsignedInteger("MeanMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
@@ -93,7 +93,7 @@ MeasureEvaluation::MeasureEvaluation(const MeasureEvaluationImplementation & imp
 }
 
 /* Evaluation */
-NumericalPoint MeasureEvaluation::operator()(const NumericalPoint & inP) const
+Point MeasureEvaluation::operator()(const Point & inP) const
 {
   return getImplementation()->operator()(inP);
 }
@@ -111,13 +111,13 @@ Distribution MeasureEvaluation::getDistribution() const
 }
 
 /* Function accessor */
-void MeasureEvaluation::setFunction(const NumericalMathFunction & function)
+void MeasureEvaluation::setFunction(const Function & function)
 {
   copyOnWrite();
   getImplementation()->setFunction(function);
 }
 
-NumericalMathFunction MeasureEvaluation::getFunction() const
+Function MeasureEvaluation::getFunction() const
 {
   return getImplementation()->getFunction();
 }

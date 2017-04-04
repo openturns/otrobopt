@@ -21,7 +21,7 @@
 #ifndef OTROBOPT_MEASUREFUNCTION_HXX
 #define OTROBOPT_MEASUREFUNCTION_HXX
 
-#include <openturns/NumericalMathFunctionImplementation.hxx>
+#include <openturns/FunctionImplementation.hxx>
 
 #include "otrobopt/MeasureEvaluation.hxx"
 
@@ -34,7 +34,7 @@ namespace OTROBOPT
  * Measure function
  */
 class OTROBOPT_API MeasureFunction
-  : public OT::NumericalMathFunctionImplementation
+  : public OT::FunctionImplementation
 {
   CLASSNAME;
 
@@ -48,8 +48,8 @@ public:
   MeasureFunction * clone() const;
 
   /** Evaluation */
-  virtual OT::NumericalPoint operator()(const OT::NumericalPoint & inP) const;
-  virtual OT::NumericalSample operator()(const OT::NumericalSample & inS) const;
+  virtual OT::Point operator()(const OT::Point & inP) const;
+  virtual OT::Sample operator()(const OT::Sample & inS) const;
   virtual OT::UnsignedInteger getInputDimension() const;
   virtual OT::UnsignedInteger getOutputDimension() const;
 

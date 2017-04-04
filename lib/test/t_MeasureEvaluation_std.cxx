@@ -19,10 +19,10 @@ int main(int argc, char **argv)
     Description input(2);
     input[0] = "x";
     input[1] = "theta";
-    NumericalMathFunction f_base(input, Description(1, "y1"), Description(1, "x*theta"));
-    NumericalMathFunction f(f_base, Indices(1 , 1), NumericalPoint(1, 1.0));
+    Function f_base(input, Description(1, "y1"), Description(1, "x*theta"));
+    Function f(f_base, Indices(1 , 1), Point(1, 1.0));
 
-    NumericalPoint x(1, 1.0);
+    Point x(1, 1.0);
 
     Collection <MeasureEvaluation> measures;
     measures.add(MeanMeasure(f, thetaDist));
@@ -30,8 +30,8 @@ int main(int argc, char **argv)
     measures.add(WorstCaseMeasure(f, Uniform(-1.0, 4.0)));
     measures.add(WorstCaseMeasure(f, Uniform(-1.0, 4.0), false));
     measures.add(JointChanceMeasure(f, Normal(1.0, 1.0), GreaterOrEqual(), 0.95));
-    measures.add(IndividualChanceMeasure(f, Normal(1.0, 1.0), GreaterOrEqual(), NumericalPoint(1, 0.95)));
-    measures.add(MeanStandardDeviationTradeoffMeasure(f, thetaDist, NumericalPoint(1, 0.8)));
+    measures.add(IndividualChanceMeasure(f, Normal(1.0, 1.0), GreaterOrEqual(), Point(1, 0.95)));
+    measures.add(MeanStandardDeviationTradeoffMeasure(f, thetaDist, Point(1, 0.8)));
     measures.add(QuantileMeasure(f, thetaDist, 0.99));
 
     AggregatedMeasure aggregated(measures);
@@ -60,18 +60,18 @@ int main(int argc, char **argv)
   }
   // Second test: theta of dimension 2
   {
-    Normal thetaDist(NumericalPoint(2, 2.0), NumericalPoint(2, 0.1), IdentityMatrix(2));
+    Normal thetaDist(Point(2, 2.0), Point(2, 0.1), IdentityMatrix(2));
     Description input(3);
     input[0] = "x";
     input[1] = "theta0";
     input[2] = "theta1";
-    NumericalMathFunction f_base(input, Description(1, "y1"), Description(1, "x*theta0+theta1"));
+    Function f_base(input, Description(1, "y1"), Description(1, "x*theta0+theta1"));
     Indices indices(2);
     indices[0] = 1;
     indices[1] = 2;
-    NumericalMathFunction f(f_base, indices, thetaDist.getMean());
+    Function f(f_base, indices, thetaDist.getMean());
 
-    NumericalPoint x(1, 1.0);
+    Point x(1, 1.0);
 
     Collection <MeasureEvaluation> measures;
     measures.add(MeanMeasure(f, thetaDist));
@@ -79,8 +79,8 @@ int main(int argc, char **argv)
     measures.add(WorstCaseMeasure(f, ComposedDistribution(Collection<Distribution>(2, Uniform(-1.0, 4.0)))));
     measures.add(WorstCaseMeasure(f, ComposedDistribution(Collection<Distribution>(2, Uniform(-1.0, 4.0))), false));
     measures.add(JointChanceMeasure(f, thetaDist, GreaterOrEqual(), 0.5));
-    measures.add(IndividualChanceMeasure(f, thetaDist, GreaterOrEqual(), NumericalPoint(1, 0.5)));
-    measures.add(MeanStandardDeviationTradeoffMeasure(f, thetaDist, NumericalPoint(1, 0.8)));
+    measures.add(IndividualChanceMeasure(f, thetaDist, GreaterOrEqual(), Point(1, 0.5)));
+    measures.add(MeanStandardDeviationTradeoffMeasure(f, thetaDist, Point(1, 0.8)));
     measures.add(QuantileMeasure(f, thetaDist, 0.5));
 
     AggregatedMeasure aggregated(measures);

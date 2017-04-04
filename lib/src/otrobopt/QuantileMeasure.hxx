@@ -41,19 +41,19 @@ public:
   QuantileMeasure();
 
   /** Parameter constructor */
-  QuantileMeasure(const OT::NumericalMathFunction & function,
+  QuantileMeasure(const OT::Function & function,
                   const OT::Distribution & distribution,
-                  const OT::NumericalScalar alpha);
+                  const OT::Scalar alpha);
 
   /** Virtual constructor method */
   QuantileMeasure * clone() const;
 
   /** Evaluation */
-  OT::NumericalPoint operator()(const OT::NumericalPoint & inP) const;
+  OT::Point operator()(const OT::Point & inP) const;
 
   /** Alpha coefficient accessor */
-  void setAlpha(const OT::NumericalScalar alpha);
-  OT::NumericalScalar getAlpha() const;
+  void setAlpha(const OT::Scalar alpha);
+  OT::Scalar getAlpha() const;
 
   /** String converter */
   OT::String __repr__() const;
@@ -65,7 +65,7 @@ public:
   virtual void load(OT::Advocate & adv);
 
 private:
-  OT::NumericalScalar alpha_;
+  OT::Scalar alpha_;
 
 }; /* class QuantileMeasure */
 

@@ -42,7 +42,7 @@ WorstCaseMeasure::WorstCaseMeasure()
 }
 
 /* Parameter constructor */
-WorstCaseMeasure::WorstCaseMeasure (const NumericalMathFunction & function,
+WorstCaseMeasure::WorstCaseMeasure (const Function & function,
                                     const Distribution & distribution,
                                     const Bool minimization)
   : MeasureEvaluationImplementation(function, distribution)
@@ -59,12 +59,12 @@ WorstCaseMeasure * WorstCaseMeasure::clone() const
 }
 
 
-class WorstCaseMeasureParametricFunctionWrapper : public NumericalMathFunctionImplementation
+class WorstCaseMeasureParametricFunctionWrapper : public FunctionImplementation
 {
 public:
-  WorstCaseMeasureParametricFunctionWrapper(const NumericalPoint & x,
-                                            const NumericalMathFunction & function)
-  : NumericalMathFunctionImplementation()
+  WorstCaseMeasureParametricFunctionWrapper(const Point & x,
+                                            const Function & function)
+  : FunctionImplementation()
   , x_(x)
   , function_(function)
   {
@@ -76,21 +76,21 @@ public:
     return new WorstCaseMeasureParametricFunctionWrapper(*this);
   }
 
-  NumericalPoint operator()(const NumericalPoint & theta) const
+  Point operator()(const Point & theta) const
   {
-    NumericalMathFunction function(function_);
+    Function function(function_);
     return function(x_, theta);
   }
 
-  NumericalSample operator()(const NumericalSample & theta) const
+  Sample operator()(const Sample & theta) const
   {
-    NumericalMathFunction function(function_);
+    Function function(function_);
     return function(x_, theta);
   }
 
-  Matrix gradient(const NumericalPoint & theta) const
+  Matrix gradient(const Point & theta) const
   {
-    NumericalMathFunction function(function_);
+    Function function(function_);
     return function.parameterGradient(x_, theta);
   }
 
@@ -115,40 +115,40 @@ public:
   }
 
 protected:
-  NumericalPoint x_;
-  NumericalMathFunction function_;
+  Point x_;
+  Function function_;
 };
 
 
 
 
 /* Evaluation */
-NumericalPoint WorstCaseMeasure::operator()(const NumericalPoint & inP) const
+Point WorstCaseMeasure::operator()(const Point & inP) const
 {
-  NumericalMathFunction function(getFunction());
-  NumericalPoint parameter(function.getParameter());
+  Function function(getFunction());
+  Point parameter(function.getParameter());
   const UnsignedInteger outputDimension = function.getOutputDimension();
-  NumericalPoint outP(outputDimension);
+  Point outP(outputDimension);
   if (getDistribution().isContinuous())
   {
     for (UnsignedInteger j = 0; j < outputDimension; ++ j)
     {
-      Pointer<NumericalMathFunctionImplementation> p_wrapper(new WorstCaseMeasureParametricFunctionWrapper(inP, function.getMarginal(j)));
-      const NumericalMathFunction G(p_wrapper);
-      OptimizationProblem problem(G, NumericalMathFunction(), NumericalMathFunction(), getDistribution().getRange());
+      Pointer<FunctionImplementation> p_wrapper(new WorstCaseMeasureParametricFunctionWrapper(inP, function.getMarginal(j)));
+      const Function G(p_wrapper);
+      OptimizationProblem problem(G, Function(), Function(), getDistribution().getRange());
       problem.setMinimization(isMinimization());
-      OptimizationSolver solver(solver_);
+      OptimizationAlgorithm solver(solver_);
       solver.setStartingPoint(getDistribution().getMean());
       solver.setProblem(problem);
       solver.run();
-      NumericalPoint optimalValue(solver.getResult().getOptimalValue());
+      Point optimalValue(solver.getResult().getOptimalValue());
       outP[j] = optimalValue[0];
     }
   }
   else
   {
     // To benefit from possible parallelization
-    const NumericalSample values(function(inP, getDistribution().getSupport()));
+    const Sample values(function(inP, getDistribution().getSupport()));
     const UnsignedInteger size = values.getSize();
     for (UnsignedInteger j = 0; j < outputDimension; ++ j)
       {
@@ -166,12 +166,12 @@ NumericalPoint WorstCaseMeasure::operator()(const NumericalPoint & inP) const
 }
 
 /* Optimization solver accessor */
-void WorstCaseMeasure::setOptimizationSolver(const OptimizationSolver & solver)
+void WorstCaseMeasure::setOptimizationAlgorithm(const OptimizationAlgorithm & solver)
 {
   solver_ = solver;
 }
 
-OptimizationSolver WorstCaseMeasure::getOptimizationSolver() const
+OptimizationAlgorithm WorstCaseMeasure::getOptimizationAlgorithm() const
 {
   return solver_;
 }

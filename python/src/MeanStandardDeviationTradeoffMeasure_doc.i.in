@@ -27,7 +27,7 @@ In case of a discrete distribution:
 
 Parameters
 ----------
-function : :py:class:`openturns.NumericalMathFunction`
+function : :py:class:`openturns.Function`
     Parametric function
 distribution : :py:class:`openturns.Distribution`
     Distribution of parameters
@@ -39,8 +39,8 @@ Examples
 >>> import openturns as ot
 >>> import otrobopt
 >>> thetaDist = ot.Normal(2.0, 0.1)
->>> f_base = ot.NumericalMathFunction(['x', 'theta'], ['y'], ['x*theta'])
->>> f = ot.NumericalMathFunction(f_base, [1], [1.0])
+>>> f_base = ot.SymbolicFunction(['x', 'theta'], ['x*theta'])
+>>> f = ot.ParametricFunction(f_base, [1], [1.0])
 >>> measure = otrobopt.MeanStandardDeviationTradeoffMeasure(f, thetaDist, [0.4])
 >>> x = [1.0]
 >>> print(measure(x))

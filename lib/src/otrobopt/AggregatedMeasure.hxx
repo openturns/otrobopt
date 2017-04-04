@@ -51,7 +51,7 @@ public:
   AggregatedMeasure * clone() const;
 
   /** Evaluation */
-  OT::NumericalPoint operator()(const OT::NumericalPoint & inP) const;
+  OT::Point operator()(const OT::Point & inP) const;
 
   /** Distribution accessor */
   virtual void setDistribution(const OT::Distribution & distribution);

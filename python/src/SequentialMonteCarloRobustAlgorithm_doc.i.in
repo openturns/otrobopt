@@ -8,7 +8,7 @@ Parameters
 ----------
 problem : :class:`~otrobopt.RobustOptimizationProblem`
     Robust optimization problem
-solver : :py:class:`openturns.OptimizationSolver`
+solver : :py:class:`openturns.OptimizationAlgorithm`
     Optimization solver"
 
 // ---------------------------------------------------------------------
@@ -45,7 +45,7 @@ the previous iteration.
 
 Parameters
 ----------
-samplingSizeIncrement : :py:class:`openturns.NumericalMathFunction`
+samplingSizeIncrement : :py:class:`openturns.Function`
     Sampling size increment"
 
 // ---------------------------------------------------------------------
@@ -58,7 +58,7 @@ the previous iteration.
 
 Returns
 -------
-samplingSizeIncrement : :py:class:`openturns.NumericalMathFunction`
+samplingSizeIncrement : :py:class:`openturns.Function`
     Sampling size increment"
 
 // ---------------------------------------------------------------------
@@ -112,7 +112,7 @@ Optimization starting points during the initial search phase.
 
 Returns
 -------
-startPoints : :class:`openturns.NumericalSample`
+startPoints : :class:`openturns.Sample`
     List of optimization starting points"
 
 // ---------------------------------------------------------------------

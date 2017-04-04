@@ -36,14 +36,14 @@ static Factory<MeasureFunction> Factory_MeasureFunction;
 
 /* Default constructor */
 MeasureFunction::MeasureFunction()
-  : NumericalMathFunctionImplementation()
+  : FunctionImplementation()
 {
   // Nothing to do
 }
 
 /* Default constructor */
 MeasureFunction::MeasureFunction(const MeasureEvaluation & evaluation)
-: NumericalMathFunctionImplementation(evaluation.getImplementation())
+: FunctionImplementation(evaluation.getImplementation())
 , evaluation_(evaluation)
 {
   // Nothing to do
@@ -57,15 +57,15 @@ MeasureFunction * MeasureFunction::clone() const
 
 
 /* Evaluation */
-NumericalPoint MeasureFunction::operator()(const NumericalPoint & inP) const
+Point MeasureFunction::operator()(const Point & inP) const
 {
   return evaluation_.operator()(inP);
 }
 
-NumericalSample MeasureFunction::operator()(const NumericalSample & inS) const
+Sample MeasureFunction::operator()(const Sample & inS) const
 {
   const UnsignedInteger size = inS.getSize();
-  NumericalSample outS(size, getOutputDimension());
+  Sample outS(size, getOutputDimension());
   for (UnsignedInteger i = 0; i < size; ++ i)
   {
     outS[i] = operator()(inS[i]);
@@ -95,14 +95,14 @@ String MeasureFunction::__repr__() const
 /* Method save() stores the object through the StorageManager */
 void MeasureFunction::save(Advocate & adv) const
 {
-  NumericalMathFunctionImplementation::save(adv);
+  FunctionImplementation::save(adv);
   adv.saveAttribute("evaluation_", evaluation_);
 }
 
 /* Method load() reloads the object from the StorageManager */
 void MeasureFunction::load(Advocate & adv)
 {
-  NumericalMathFunctionImplementation::load(adv);
+  FunctionImplementation::load(adv);
   adv.loadAttribute("evaluation_", evaluation_);
 }
 

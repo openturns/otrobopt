@@ -7,7 +7,7 @@ Parameters
 ----------
 problem : :class:`~otrobopt.RobustOptimizationProblem`
     Robust optimization problem
-solver : :py:class:`openturns.OptimizationSolver`
+solver : :py:class:`openturns.OptimizationAlgorithm`
     Optimization solver
 
 See also
@@ -36,20 +36,20 @@ problem : :class:`~otrobopt.RobustOptimizationProblem`
 
 // ---------------------------------------------------------------------
 
-%feature("docstring") OTROBOPT::RobustOptimizationAlgorithm::setOptimizationSolver
+%feature("docstring") OTROBOPT::RobustOptimizationAlgorithm::setOptimizationAlgorithm
 "Optimization solver accessor.
 
 Parameters
 ----------
-solver : :py:class:`openturns.OptimizationSolver`
+solver : :py:class:`openturns.OptimizationAlgorithm`
     Optimization solver"
 
 // ---------------------------------------------------------------------
 
-%feature("docstring") OTROBOPT::RobustOptimizationAlgorithm::getOptimizationSolver
+%feature("docstring") OTROBOPT::RobustOptimizationAlgorithm::getOptimizationAlgorithm
 "Optimization solver accessor.
 
 Returns
 -------
-solver : :py:class:`openturns.OptimizationSolver`
+solver : :py:class:`openturns.OptimizationAlgorithm`
     Optimization solver"

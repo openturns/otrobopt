@@ -2,8 +2,8 @@ from __future__ import print_function
 
 import openturns as ot
 import otrobopt
-full_fun     = ot.NumericalMathFunction(['x', 'theta'], ['theta*x'])
-param_fun    = ot.NumericalMathFunction(full_fun, [1], [1.0])
+full_fun     = ot.SymbolicFunction(['x', 'theta'], ['theta*x'])
+param_fun    = ot.ParametricFunction(full_fun, [1], [1.0])
 
 # Normal distribution associated to parameter theta
 dist_theta   = ot.Normal(2.0, 1.0)

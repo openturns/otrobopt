@@ -21,7 +21,7 @@
 #ifndef OTROBOPT_WORSTCASEMEASURE_HXX
 #define OTROBOPT_WORSTCASEMEASURE_HXX
 
-#include <openturns/OptimizationSolver.hxx>
+#include <openturns/OptimizationAlgorithm.hxx>
 #include "otrobopt/MeasureEvaluationImplementation.hxx"
 
 namespace OTROBOPT
@@ -42,7 +42,7 @@ public:
   WorstCaseMeasure();
 
   /** Parameter constructor */
-  WorstCaseMeasure (const OT::NumericalMathFunction & function,
+  WorstCaseMeasure (const OT::Function & function,
                     const OT::Distribution & distribution,
                     const OT::Bool minimization = true);
 
@@ -50,11 +50,11 @@ public:
   WorstCaseMeasure * clone() const;
 
   /** Evaluation */
-  OT::NumericalPoint operator()(const OT::NumericalPoint & inP) const;
+  OT::Point operator()(const OT::Point & inP) const;
 
   /** Optimization solver accessor */
-  void setOptimizationSolver(const OT::OptimizationSolver & solver);
-  OT::OptimizationSolver getOptimizationSolver() const;
+  void setOptimizationAlgorithm(const OT::OptimizationAlgorithm & solver);
+  OT::OptimizationAlgorithm getOptimizationAlgorithm() const;
 
   /** Minimization accessor */
   void setMinimization(OT::Bool minimization);
@@ -71,7 +71,7 @@ public:
 
 private:
   OT::Bool isMinimization_;
-  OT::OptimizationSolver solver_;
+  OT::OptimizationAlgorithm solver_;
 
 }; /* class WorstCaseMeasure */
 

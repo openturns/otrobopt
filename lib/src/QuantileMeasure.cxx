@@ -45,9 +45,9 @@ QuantileMeasure::QuantileMeasure()
 }
 
 /* Parameter constructor */
-QuantileMeasure::QuantileMeasure (const NumericalMathFunction & function,
+QuantileMeasure::QuantileMeasure (const Function & function,
                                   const Distribution & distribution,
-                                  const NumericalScalar alpha)
+                                  const Scalar alpha)
   : MeasureEvaluationImplementation(function, distribution)
 {
   setAlpha(alpha);
@@ -64,14 +64,14 @@ QuantileMeasure * QuantileMeasure::clone() const
 /* This function is the kernel of the CDF computation of f(x,\Theta):
    for a given value of x \in R^d, a given value of \Theta \in R^p,
    a given value of s \in R, it returns 1_{f(x,\Theta)<=s} */
-class QuantileMeasureParametricFunctionWrapper : public NumericalMathFunctionImplementation
+class QuantileMeasureParametricFunctionWrapper : public FunctionImplementation
 {
 public:
-  QuantileMeasureParametricFunctionWrapper(const NumericalPoint & x,
-                                           const NumericalMathFunction & function,
+  QuantileMeasureParametricFunctionWrapper(const Point & x,
+                                           const Function & function,
                                            const Distribution & distribution,
-                                           const NumericalScalar s)
-  : NumericalMathFunctionImplementation()
+                                           const Scalar s)
+  : FunctionImplementation()
   , x_(x)
   , function_(function)
   , distribution_(distribution)
@@ -83,18 +83,18 @@ public:
     return new QuantileMeasureParametricFunctionWrapper(*this);
   }
 
-  NumericalPoint operator()(const NumericalPoint & theta) const
+  Point operator()(const Point & theta) const
   {
-    NumericalMathFunction function(function_);
-    const NumericalScalar y = function(x_, theta)[0];
-    const NumericalScalar p = (y <= s_ ? distribution_.computePDF(theta) : 0.0);
-    return NumericalPoint(1, p);
+    Function function(function_);
+    const Scalar y = function(x_, theta)[0];
+    const Scalar p = (y <= s_ ? distribution_.computePDF(theta) : 0.0);
+    return Point(1, p);
   }
 
-  NumericalSample operator()(const NumericalSample & theta) const
+  Sample operator()(const Sample & theta) const
   {
     const UnsignedInteger size = theta.getSize();
-    NumericalSample outS(size, getOutputDimension());
+    Sample outS(size, getOutputDimension());
     for (UnsignedInteger i = 0; i < size; ++ i)
       outS[i] = operator()(theta[i]);
     return outS;
@@ -121,19 +121,19 @@ public:
   }
 
 protected:
-  NumericalPoint x_;
-  NumericalMathFunction function_;
+  Point x_;
+  Function function_;
   Distribution distribution_;
-  NumericalScalar s_;
+  Scalar s_;
 };
 
-class QuantileMeasureParametricFunctionWrapper2 : public NumericalMathFunctionImplementation
+class QuantileMeasureParametricFunctionWrapper2 : public FunctionImplementation
 {
 public:
-  QuantileMeasureParametricFunctionWrapper2(const NumericalPoint & x,
-                                            const NumericalMathFunction & function,
+  QuantileMeasureParametricFunctionWrapper2(const Point & x,
+                                            const Function & function,
                                             const Distribution & distribution)
-  : NumericalMathFunctionImplementation()
+  : FunctionImplementation()
   , x_(x)
   , function_(function)
   , distribution_(distribution)
@@ -146,20 +146,20 @@ public:
     return new QuantileMeasureParametricFunctionWrapper2(*this);
   }
 
-  NumericalPoint operator()(const NumericalPoint & s) const
+  Point operator()(const Point & s) const
   {
     GaussKronrod gkr;
     gkr.setRule(static_cast<GaussKronrodRule::GaussKronrodPair>(ResourceMap::GetAsUnsignedInteger("QuantileMeasure-GaussKronrodRule")));
     const IteratedQuadrature algo(gkr);
-    Pointer<NumericalMathFunctionImplementation> p_wrapper(new QuantileMeasureParametricFunctionWrapper(x_, function_, distribution_, s[0]));
-    const NumericalMathFunction G(p_wrapper);
+    Pointer<FunctionImplementation> p_wrapper(new QuantileMeasureParametricFunctionWrapper(x_, function_, distribution_, s[0]));
+    const Function G(p_wrapper);
     return algo.integrate(G, distribution_.getRange());
   }
 
-  NumericalSample operator()(const NumericalSample & s) const
+  Sample operator()(const Sample & s) const
   {
     const UnsignedInteger size = s.getSize();
-    NumericalSample outS(size, getOutputDimension());
+    Sample outS(size, getOutputDimension());
     for (UnsignedInteger i = 0; i < size; ++ i)
       outS[i] = operator()(s[i]);
     return outS;
@@ -186,37 +186,37 @@ public:
   }
 
 protected:
-  NumericalPoint x_;
-  NumericalMathFunction function_;
+  Point x_;
+  Function function_;
   Distribution distribution_;
 };
 
 
 
 /* Evaluation */
-NumericalPoint QuantileMeasure::operator()(const NumericalPoint & inP) const
+Point QuantileMeasure::operator()(const Point & inP) const
 {
-  NumericalMathFunction function(getFunction());
-  NumericalPoint parameter(function.getParameter());
+  Function function(getFunction());
+  Point parameter(function.getParameter());
   const UnsignedInteger outputDimension = function.getOutputDimension();
-  NumericalPoint outP(outputDimension);
+  Point outP(outputDimension);
   if (getDistribution().isContinuous())
   {
-    Pointer<NumericalMathFunctionImplementation> p_wrapper(new QuantileMeasureParametricFunctionWrapper2(inP, function, getDistribution()));
-    NumericalMathFunction G(p_wrapper);
+    Pointer<FunctionImplementation> p_wrapper(new QuantileMeasureParametricFunctionWrapper2(inP, function, getDistribution()));
+    Function G(p_wrapper);
 
-    NumericalScalar lower = 0.0;
-    NumericalScalar upper = 0.0;
-    NumericalScalar step = 1.0;
-    NumericalScalar cdfMin = G(NumericalPoint(1, lower))[0];
-    NumericalScalar cdfMax = cdfMin;
+    Scalar lower = 0.0;
+    Scalar upper = 0.0;
+    Scalar step = 1.0;
+    Scalar cdfMin = G(Point(1, lower))[0];
+    Scalar cdfMax = cdfMin;
     // Go backward until we find a point below the threshold
     while (cdfMin > alpha_)
     {
       upper = lower;
       cdfMax = cdfMin;
       lower -= step;
-      cdfMin = G(NumericalPoint(1, lower))[0];
+      cdfMin = G(Point(1, lower))[0];
       step *= 2.0;
     }
     // If the initial lower bound was an actual lower bound
@@ -224,14 +224,14 @@ NumericalPoint QuantileMeasure::operator()(const NumericalPoint & inP) const
     if (step == 1.0)
     {
       upper += step;
-      cdfMax = G(NumericalPoint(1, upper))[0];
+      cdfMax = G(Point(1, upper))[0];
       step *= 2.0;
       while (cdfMax <= alpha_)
       {
         lower = upper;
         cdfMin = cdfMax;
         upper += step;
-        cdfMax = G(NumericalPoint(1, upper))[0];
+        cdfMax = G(Point(1, upper))[0];
         step *= 2.0;
       }
     } // step == 1
@@ -241,8 +241,8 @@ NumericalPoint QuantileMeasure::operator()(const NumericalPoint & inP) const
   else
   {
     // To benefit from possible parallelization
-    const NumericalSample values(function(inP, getDistribution().getSupport()));
-    const NumericalPoint weights(getDistribution().getProbabilities());
+    const Sample values(function(inP, getDistribution().getSupport()));
+    const Point weights(getDistribution().getProbabilities());
     // Here we use a UserDefined distribution because the algorithm
     // to compute a quantile is quite involved in the case of nonuniform
     // weights
@@ -253,14 +253,14 @@ NumericalPoint QuantileMeasure::operator()(const NumericalPoint & inP) const
 }
 
 /* Alpha coefficient accessor */
-void QuantileMeasure::setAlpha(const NumericalScalar alpha)
+void QuantileMeasure::setAlpha(const Scalar alpha)
 {
   if (!(alpha >= 0.0) || !(alpha <= 1.0))
     throw InvalidArgumentException(HERE) << "Alpha should be in (0, 1)";
   alpha_ = alpha;
 }
 
-NumericalScalar QuantileMeasure::getAlpha() const
+Scalar QuantileMeasure::getAlpha() const
 {
   return alpha_;
 }

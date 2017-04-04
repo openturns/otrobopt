@@ -46,11 +46,11 @@ public:
   RobustOptimizationProblem(const MeasureEvaluation & robustnessMeasure,
                             const MeasureEvaluation & reliabilityMeasure);
 
-  RobustOptimizationProblem(const OT::NumericalMathFunction & objective,
+  RobustOptimizationProblem(const OT::Function & objective,
                             const MeasureEvaluation & reliabilityMeasure);
 
   RobustOptimizationProblem(const MeasureEvaluation & robustnessMeasure,
-                            const OT::NumericalMathFunction & constraint);
+                            const OT::Function & constraint);
 
   /** Virtual constructor method */
   RobustOptimizationProblem * clone() const;

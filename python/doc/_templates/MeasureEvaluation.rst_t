@@ -15,8 +15,8 @@
     elif 'ChanceMeasure' in '{{ objname }}':
         thetaDist = ot.Normal(1.0, 1.0)
 
-    f_base = ot.NumericalMathFunction(['x', 'theta'], ['y'], ['x*theta'])
-    f = ot.NumericalMathFunction(f_base, [1], thetaDist.getMean())
+    f_base = ot.Function(['x', 'theta'], ['y'], ['x*theta'])
+    f = ot.Function(f_base, [1], thetaDist.getMean())
 
     if '{{ objname }}' == 'JointChanceMeasure':
         measure = otrobopt.JointChanceMeasure(f, thetaDist, ot.GreaterOrEqual(), 0.95)

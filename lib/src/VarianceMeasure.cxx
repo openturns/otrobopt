@@ -42,7 +42,7 @@ VarianceMeasure::VarianceMeasure()
 }
 
 /* Parameter constructor */
-VarianceMeasure::VarianceMeasure (const NumericalMathFunction & function,
+VarianceMeasure::VarianceMeasure (const Function & function,
                                   const Distribution & distribution)
   : MeasureEvaluationImplementation(function, distribution)
 
@@ -57,13 +57,13 @@ VarianceMeasure * VarianceMeasure::clone() const
 }
 
 
-class VarianceMeasureParametricFunctionWrapper : public NumericalMathFunctionImplementation
+class VarianceMeasureParametricFunctionWrapper : public FunctionImplementation
 {
 public:
-  VarianceMeasureParametricFunctionWrapper (const NumericalPoint & x,
-                                            const NumericalMathFunction & function,
+  VarianceMeasureParametricFunctionWrapper (const Point & x,
+                                            const Function & function,
                                             const Distribution & distribution)
-  : NumericalMathFunctionImplementation()
+  : FunctionImplementation()
   , x_(x)
   , function_(function)
   , distribution_(distribution)
@@ -76,11 +76,11 @@ public:
     return new VarianceMeasureParametricFunctionWrapper(*this);
   }
 
-  NumericalPoint operator()(const NumericalPoint & theta) const
+  Point operator()(const Point & theta) const
   {
-    NumericalMathFunction function(function_);
+    Function function(function_);
     // (f_1(x), ...., f_d(x), f_1^2(x), ..., f_d^2(x))
-    NumericalPoint outP(function(x_, theta));
+    Point outP(function(x_, theta));
     outP.add(outP);
     const UnsignedInteger outputDimension = outP.getDimension();
     for (UnsignedInteger j = 0; j < outputDimension; ++ j)
@@ -88,15 +88,15 @@ public:
     return outP * distribution_.computePDF(theta);
   }
 
-  NumericalSample operator()(const NumericalSample & theta) const
+  Sample operator()(const Sample & theta) const
   {
     // To benefit from possible parallelization
-    NumericalMathFunction function(function_);
-    NumericalSample outS(function(x_, theta));
+    Function function(function_);
+    Sample outS(function(x_, theta));
     const UnsignedInteger size = outS.getSize();
     const UnsignedInteger outputDimension = outS.getDimension();
     outS.stack(outS);
-    const NumericalSample pdf(distribution_.computePDF(theta));
+    const Sample pdf(distribution_.computePDF(theta));
     for (UnsignedInteger i = 0; i < size; ++i)
       {
 	for (UnsignedInteger j = 0; j < outputDimension; ++j)
@@ -129,31 +129,31 @@ public:
   }
 
 protected:
-  NumericalPoint x_;
-  NumericalMathFunction function_;
+  Point x_;
+  Function function_;
   Distribution distribution_;
 };
 
 
 /* Evaluation */
-NumericalPoint VarianceMeasure::operator()(const NumericalPoint & inP) const
+Point VarianceMeasure::operator()(const Point & inP) const
 {
-  NumericalMathFunction function(getFunction());
-  NumericalPoint parameter(function.getParameter());
+  Function function(getFunction());
+  Point parameter(function.getParameter());
   const UnsignedInteger outputDimension = function.getOutputDimension();
-  NumericalPoint outP(outputDimension);
+  Point outP(outputDimension);
   if (getDistribution().isContinuous())
   {
     GaussKronrod gkr;
     gkr.setRule(static_cast<GaussKronrodRule::GaussKronrodPair>(ResourceMap::GetAsUnsignedInteger("VarianceMeasure-GaussKronrodRule")));
     const IteratedQuadrature algo(gkr);
 
-    Pointer<NumericalMathFunctionImplementation> p_wrapper(new VarianceMeasureParametricFunctionWrapper(inP, function, getDistribution()));
-    const NumericalMathFunction G(p_wrapper);
-    NumericalPoint integral(algo.integrate(G, getDistribution().getRange()));
+    Pointer<FunctionImplementation> p_wrapper(new VarianceMeasureParametricFunctionWrapper(inP, function, getDistribution()));
+    const Function G(p_wrapper);
+    Point integral(algo.integrate(G, getDistribution().getRange()));
     for (UnsignedInteger j = 0; j < outputDimension; ++ j)
     {
-      const NumericalScalar mean = integral[j];
+      const Scalar mean = integral[j];
       // Var(f(x))=\mathbb{E}(f^2(x))-\mathbb{E}(f(x))^2
       outP[j] = integral[outputDimension + j] - mean * mean;
     }
@@ -161,8 +161,8 @@ NumericalPoint VarianceMeasure::operator()(const NumericalPoint & inP) const
   else
   {
     // To benefit from possible parallelization
-    const NumericalSample values(function(inP, getDistribution().getSupport()));
-    const NumericalPoint weights(getDistribution().getProbabilities());
+    const Sample values(function(inP, getDistribution().getSupport()));
+    const Point weights(getDistribution().getProbabilities());
     // Here we use a UserDefined distribution because the algorithm
     // to compute a centered moment is quite involved in the case of
     // nonuniform weights

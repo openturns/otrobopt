@@ -41,7 +41,7 @@ MeanMeasure::MeanMeasure()
 }
 
 /* Parameter constructor */
-MeanMeasure::MeanMeasure (const NumericalMathFunction & function,
+MeanMeasure::MeanMeasure (const Function & function,
                           const Distribution & distribution)
   : MeasureEvaluationImplementation(function, distribution)
 
@@ -56,13 +56,13 @@ MeanMeasure * MeanMeasure::clone() const
 }
 
 
-class MeanMeasureParametricFunctionWrapper : public NumericalMathFunctionImplementation
+class MeanMeasureParametricFunctionWrapper : public FunctionImplementation
 {
 public:
-  MeanMeasureParametricFunctionWrapper (const NumericalPoint & x,
-                                        const NumericalMathFunction & function,
+  MeanMeasureParametricFunctionWrapper (const Point & x,
+                                        const Function & function,
                                         const Distribution & distribution)
-  : NumericalMathFunctionImplementation()
+  : FunctionImplementation()
   , x_(x)
   , function_(function)
   , distribution_(distribution)
@@ -75,17 +75,17 @@ public:
     return new MeanMeasureParametricFunctionWrapper(*this);
   }
 
-  NumericalPoint operator()(const NumericalPoint & theta) const
+  Point operator()(const Point & theta) const
   {
-    NumericalMathFunction function(function_);
+    Function function(function_);
     return function(x_, theta) * distribution_.computePDF(theta);
   }
 
-  NumericalSample operator()(const NumericalSample & theta) const
+  Sample operator()(const Sample & theta) const
   {
-    NumericalMathFunction function(function_);
-    NumericalSample outS(function(x_, theta));
-    const NumericalSample pdfS(distribution_.computePDF(theta));
+    Function function(function_);
+    Sample outS(function(x_, theta));
+    const Sample pdfS(distribution_.computePDF(theta));
     const UnsignedInteger size = theta.getSize();
     for (UnsignedInteger i = 0; i < size; ++ i)
     {
@@ -115,34 +115,34 @@ public:
   }
 
 protected:
-  NumericalPoint x_;
-  NumericalMathFunction function_;
+  Point x_;
+  Function function_;
   Distribution distribution_;
 };
 
 
 /* Evaluation */
-NumericalPoint MeanMeasure::operator()(const NumericalPoint & inP) const
+Point MeanMeasure::operator()(const Point & inP) const
 {
-  NumericalMathFunction function(getFunction());
-  NumericalPoint parameter(function.getParameter());
+  Function function(getFunction());
+  Point parameter(function.getParameter());
   const UnsignedInteger outputDimension = function.getOutputDimension();
-  NumericalPoint outP(outputDimension);
+  Point outP(outputDimension);
   if (getDistribution().isContinuous())
   {
     GaussKronrod gkr;
     gkr.setRule(static_cast<GaussKronrodRule::GaussKronrodPair>(ResourceMap::GetAsUnsignedInteger("MeanMeasure-GaussKronrodRule")));
     const IteratedQuadrature algo(gkr);
-    Pointer<NumericalMathFunctionImplementation> p_wrapper(new MeanMeasureParametricFunctionWrapper(inP, function, getDistribution()));
-    const NumericalMathFunction G(p_wrapper);
+    Pointer<FunctionImplementation> p_wrapper(new MeanMeasureParametricFunctionWrapper(inP, function, getDistribution()));
+    const Function G(p_wrapper);
     outP = algo.integrate(G, getDistribution().getRange());
   }
   else
   {
     // To benefit from possible parallelization
-    const NumericalSample values(function(inP, getDistribution().getSupport()));
+    const Sample values(function(inP, getDistribution().getSupport()));
     const UnsignedInteger size = values.getSize();
-    const NumericalPoint weights(getDistribution().getProbabilities());
+    const Point weights(getDistribution().getProbabilities());
     for (UnsignedInteger i = 0; i < size; ++ i)
       outP += values[i] * weights[i];
   }
