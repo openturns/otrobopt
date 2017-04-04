@@ -36,15 +36,15 @@ static Factory<RobustOptimizationAlgorithm> Factory_RobustOptimizationAlgorithm;
 
 /* Default constructor */
 RobustOptimizationAlgorithm::RobustOptimizationAlgorithm()
-  : OptimizationSolverImplementation()
+  : OptimizationAlgorithmImplementation()
 {
   // Nothing to do
 }
 
 /* Parameter constructor */
 RobustOptimizationAlgorithm::RobustOptimizationAlgorithm (const RobustOptimizationProblem & problem,
-                                                          const OptimizationSolver & solver)
-  : OptimizationSolverImplementation(problem)
+                                                          const OptimizationAlgorithm & solver)
+  : OptimizationAlgorithmImplementation(problem)
   , solver_(solver)
 {
   setRobustProblem(problem);
@@ -89,12 +89,12 @@ RobustOptimizationProblem RobustOptimizationAlgorithm::getRobustProblem() const
 
 
 /* Solver accessors */
-void RobustOptimizationAlgorithm::setOptimizationSolver(const OptimizationSolver & solver)
+void RobustOptimizationAlgorithm::setOptimizationAlgorithm(const OptimizationAlgorithm & solver)
 {
   solver_ = solver;
 }
 
-OptimizationSolver RobustOptimizationAlgorithm::getOptimizationSolver() const
+OptimizationAlgorithm RobustOptimizationAlgorithm::getOptimizationAlgorithm() const
 {
   return solver_;
 }
@@ -103,7 +103,7 @@ OptimizationSolver RobustOptimizationAlgorithm::getOptimizationSolver() const
 /* Method save() stores the object through the StorageManager */
 void RobustOptimizationAlgorithm::save(Advocate & adv) const
 {
-  OptimizationSolverImplementation::save(adv);
+  OptimizationAlgorithmImplementation::save(adv);
   adv.saveAttribute("robustProblem_", robustProblem_);
   adv.saveAttribute("solver_", solver_);
 }
@@ -111,7 +111,7 @@ void RobustOptimizationAlgorithm::save(Advocate & adv) const
 /* Method load() reloads the object from the StorageManager */
 void RobustOptimizationAlgorithm::load(Advocate & adv)
 {
-  OptimizationSolverImplementation::load(adv);
+  OptimizationAlgorithmImplementation::load(adv);
   adv.loadAttribute("robustProblem_", robustProblem_);
   adv.loadAttribute("solver_", solver_);
 }

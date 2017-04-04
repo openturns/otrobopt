@@ -47,7 +47,7 @@ public:
 
   /** Parameter constructor */
   SequentialMonteCarloRobustAlgorithm(const RobustOptimizationProblem & problem,
-                                      const OT::OptimizationSolver & solver);
+                                      const OT::OptimizationAlgorithm & solver);
 
   /** Virtual constructor method */
   SequentialMonteCarloRobustAlgorithm * clone() const;
@@ -60,8 +60,8 @@ public:
   OT::UnsignedInteger getInitialSamplingSize() const;
 
   /** Discretization increment */
-  void setSamplingSizeIncrement(const OT::NumericalMathFunction samplingSizeIncrement);
-  OT::NumericalMathFunction getSamplingSizeIncrement() const;
+  void setSamplingSizeIncrement(const OT::Function & samplingSizeIncrement);
+  OT::Function getSamplingSizeIncrement() const;
 
   /** Multi-start size */
   void setInitialSearch(const OT::UnsignedInteger initialSearch);
@@ -71,7 +71,7 @@ public:
   OptimizationResultCollection getResultCollection() const;
 
   /** Initial starting points accessor */
-  OT::NumericalSample getInitialStartingPoints() const;
+  OT::Sample getInitialStartingPoints() const;
 
   /** Initial optimization results accessor */
   OptimizationResultCollection getInitialResultCollection() const;
@@ -88,7 +88,7 @@ public:
 private:
   // initial sampling size
   OT::UnsignedInteger initialSamplingSize_;
-  OT::NumericalMathFunction samplingSizeIncrement_;
+  OT::Function samplingSizeIncrement_;
 
   // number of sampled initial points
   OT::UnsignedInteger initialSearch_;
@@ -97,7 +97,7 @@ private:
   OptimizationResultPersistentCollection resultCollection_;
 
   // Initial starting points
-  OT::NumericalSample initialStartingPoints_;
+  OT::Sample initialStartingPoints_;
 
   // Initial problem results
   OptimizationResultPersistentCollection initialResultCollection_;

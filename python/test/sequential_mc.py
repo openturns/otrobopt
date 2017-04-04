@@ -19,23 +19,23 @@ class LinearCombinationFunction(OpenTURNSPythonFunction):
 ##################################################################
 
 # This is calligraphic J, the non-robust objective function
-calJ = NumericalMathFunction(["x1", "x2"], ["15.0 * (x1^2 + x2^2) - 100.0 * exp(-5. * ((x1 + 1.6)^2+(x2 + 1.6)^2))"])
+calJ = Function(["x1", "x2"], ["15.0 * (x1^2 + x2^2) - 100.0 * exp(-5. * ((x1 + 1.6)^2+(x2 + 1.6)^2))"])
 
 # This is calligraphic G, the non-robust inequality constraints function
-calG = NumericalMathFunction(["x1", "x2"], ["(x1 - 0.5)^2 + x2^2 - 4.0", "(x1 + 0.5)^2 + x2^2 - 4.0"])
+calG = Function(["x1", "x2"], ["(x1 - 0.5)^2 + x2^2 - 4.0", "(x1 + 0.5)^2 + x2^2 - 4.0"])
 
 ######################################################
 # Here we define the parametric optimization problem #
 ######################################################
 
 # This is the perturbation function
-noise = NumericalMathFunction(["x1", "x2", "xi1", "xi2"], ["x1 + xi1", "x2 + xi2"])
+noise = Function(["x1", "x2", "xi1", "xi2"], ["x1 + xi1", "x2 + xi2"])
 
 # This is capital J: J(x,xi) = calJ(x+xi), the parametric objective function
-J = NumericalMathFunction(calJ, noise)
+J = Function(calJ, noise)
 
 # This is g, the parametric constraints
-g = NumericalMathFunction(calG, noise)
+g = Function(calG, noise)
 
 ##################################################
 # Here we define the robust optimization problem #
@@ -50,33 +50,33 @@ def discretizeExpectation(J, sampleXi):
     # For each value of the parameter
     for i in range(size):
         # Build a copy of J as a parametric function (the third and fourth arguments of J are the parameters)
-        currentContributor = NumericalMathFunction(J, [2, 3])
+        currentContributor = Function(J, [2, 3])
         # Set the value of the parameter
-        currentContributor.setParameter(NumericalPointWithDescription(sampleXi[i]))
+        currentContributor.setParameter(PointWithDescription(sampleXi[i]))
         # Augment the collection
         functionCollection.append(currentContributor)
     # The resulting discretized expectation is the linear combination of all the parametric functions with a uniform weight of 1/size
-    # Here we have a bug when using the combination: AnalyticalNumericalMathFunction+several clones using ParametricFunction into LinearCombinationFunction, due to a race condition in the initialization of the underlying AnalyticalFunction and the parallel evaluation of the LinearCombination. It is solved by reimplementing a sequential evaluation in Python.
-    #return NumericalMathFunction(functionCollection, [1.0 / size]*size)
-    return NumericalMathFunction(LinearCombinationFunction(functionCollection, [1.0 / size]*size))
+    # Here we have a bug when using the combination: AnalyticalFunction+several clones using ParametricFunction into LinearCombinationFunction, due to a race condition in the initialization of the underlying AnalyticalFunction and the parallel evaluation of the LinearCombination. It is solved by reimplementing a sequential evaluation in Python.
+    #return Function(functionCollection, [1.0 / size]*size)
+    return Function(LinearCombinationFunction(functionCollection, [1.0 / size]*size))
 
 # The reliability measure is the joint chance constraint of level alpha
 def discretizeJointChance(g, sampleXi, alpha):
     size = sampleXi.getSize()
     functionCollection = list()
-    test = NumericalMathFunction(["y1", "y2"], ["(y1 >= 0.0) && (y2 >= 0.0)"])
+    test = Function(["y1", "y2"], ["(y1 >= 0.0) && (y2 >= 0.0)"])
     # For each value of the parameter
     for i in range(size):
         # Build a copy of g as a parametric function (the third and fourth arguments of g are the parameters)
-        currentContributor = NumericalMathFunction(g, [2, 3])
+        currentContributor = Function(g, [2, 3])
         # Set the value of the parameter
-        currentContributor.setParameter(NumericalPointWithDescription(sampleXi[i]))
+        currentContributor.setParameter(PointWithDescription(sampleXi[i]))
         # Augment the collection
-        functionCollection.append(NumericalMathFunction(test, currentContributor))
+        functionCollection.append(Function(test, currentContributor))
     # The resulting discretized probability is the linear combination of all the test functions with a uniform weight of 1/size
-    # Here we have a bug when using the combination: AnalyticalNumericalMathFunction+several clones using ParametricFunction into LinearCombinationFunction, due to a race condition in the initialization of the underlying AnalyticalFunction and the parallel evaluation of the LinearCombination. It is solved by reimplementing a sequential evaluation in Python.
-    # return NumericalMathFunction(NumericalMathFunction("t", str(alpha) + " - t"), NumericalMathFunction(functionCollection, [1.0 / size]*size))
-    return NumericalMathFunction(NumericalMathFunction("t", str(alpha) + " - t"), NumericalMathFunction(LinearCombinationFunction(functionCollection, [1.0 / size]*size)))
+    # Here we have a bug when using the combination: AnalyticalFunction+several clones using ParametricFunction into LinearCombinationFunction, due to a race condition in the initialization of the underlying AnalyticalFunction and the parallel evaluation of the LinearCombination. It is solved by reimplementing a sequential evaluation in Python.
+    # return Function(Function("t", str(alpha) + " - t"), Function(functionCollection, [1.0 / size]*size))
+    return Function(Function("t", str(alpha) + " - t"), Function(LinearCombinationFunction(functionCollection, [1.0 / size]*size)))
 
 ################################################################################
 # Here we solve the robust optimization problem using the sequential algorithm #
@@ -97,12 +97,12 @@ class sequentialRobustOptimisationSolver:
         self.epsilon_ = epsilon
         self.drawFlag_ = drawFlag
         self.verbose_ = verbose
-        self.path_ = NumericalSample(0, J.getInputDimension() - distributionXi.getDimension())
+        self.path_ = Sample(0, J.getInputDimension() - distributionXi.getDimension())
         self.directory_ = directory
         
     def solve(self):
-        self.path_ = NumericalSample(0, self.J_.getInputDimension() - self.distributionXi_.getDimension())
-        currentSampleXi = NumericalSample(0, distributionXi.getDimension())
+        self.path_ = Sample(0, self.J_.getInputDimension() - self.distributionXi_.getDimension())
+        currentSampleXi = Sample(0, distributionXi.getDimension())
         currentN = self.N0_
         for iteration in range(self.robustIteration_):
             if self.verbose_:
@@ -162,7 +162,7 @@ class sequentialRobustOptimisationSolver:
                 bestValue = self.solver_.getResult().getOptimalValue()[0]
             else:
                 startingPoints = LHSExperiment(ComposedDistribution([Uniform(self.bounds_.getLowerBound()[i], self.bounds_.getUpperBound()[i]) for i in range(self.bounds_.getDimension())]), self.initialSearch_).generate()
-                bestValue = SpecFunc.MaxNumericalScalar
+                bestValue = SpecFunc.MaxScalar
                 newPoint = startingPoints[0]
                 for i in range(startingPoints.getSize()):
                     if i % (startingPoints.getSize() / 100) == 0:

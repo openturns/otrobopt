@@ -41,20 +41,20 @@ public:
   JointChanceMeasure();
 
   /** Parameter constructor */
-  JointChanceMeasure (const OT::NumericalMathFunction & function,
+  JointChanceMeasure (const OT::Function & function,
                       const OT::Distribution & distribution,
                       const OT::ComparisonOperator & op,
-                      const OT::NumericalScalar alpha);
+                      const OT::Scalar alpha);
 
   /** Virtual constructor method */
   JointChanceMeasure * clone() const;
 
   /** Evaluation */
-  OT::NumericalPoint operator()(const OT::NumericalPoint & inP) const;
+  OT::Point operator()(const OT::Point & inP) const;
 
   /** Alpha coefficient accessor */
-  void setAlpha(const OT::NumericalScalar alpha);
-  OT::NumericalScalar getAlpha() const;
+  void setAlpha(const OT::Scalar alpha);
+  OT::Scalar getAlpha() const;
 
   /** Dimension accessor */
   virtual OT::UnsignedInteger getOutputDimension() const;
@@ -70,7 +70,7 @@ public:
 
 private:
   OT::ComparisonOperator operator_;
-  OT::NumericalScalar alpha_;
+  OT::Scalar alpha_;
 
 }; /* class JointChanceMeasure */
 

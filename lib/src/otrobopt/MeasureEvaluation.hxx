@@ -23,7 +23,6 @@
 
 #include <openturns/TypedInterfaceObject.hxx>
 #include <openturns/StorageManager.hxx>
-#include <openturns/NumericalPoint.hxx>
 #include <openturns/Distribution.hxx>
 
 #include "otrobopt/OTRobOptprivate.hxx"
@@ -56,11 +55,11 @@ public:
   OT::Distribution getDistribution() const;
 
   /** Function accessor */
-  void setFunction(const OT::NumericalMathFunction & function);
-  OT::NumericalMathFunction getFunction() const;
+  void setFunction(const OT::Function & function);
+  OT::Function getFunction() const;
 
   /** Evaluation */
-  OT::NumericalPoint operator()(const OT::NumericalPoint & inP) const;
+  OT::Point operator()(const OT::Point & inP) const;
 
   /** String converter */
   OT::String __repr__() const;

@@ -8,9 +8,9 @@ import otrobopt
 #ot.Log.Show(ot.Log.Info)
 
 
-calJ = ot.NumericalMathFunction(['x0', 'x1', 'theta'], ['J'], ['sqrt(x0) * sqrt(x1) * theta'])
-g = ot.NumericalMathFunction(['x0', 'x1'], ['g'], ['-(2*x1 + 4*x0 -120)'])
-J = ot.NumericalMathFunction(calJ, [2], [1.0])
+calJ = ot.SymbolicFunction(['x0', 'x1', 'theta'], ['sqrt(x0) * sqrt(x1) * theta'])
+g = ot.SymbolicFunction(['x0', 'x1'], ['-(2*x1 + 4*x0 -120)'])
+J = ot.ParametricFunction(calJ, [2], [1.0])
 
 dim = J.getInputDimension()
 

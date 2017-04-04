@@ -13,7 +13,7 @@ First define a measure:
 >>> import openturns as ot
 >>> import otrobopt
 >>> thetaDist = ot.Normal(2.0, 0.1)
->>> f = ot.NumericalMathFunction(['x', 'theta'], ['y'], ['x*theta'])
->>> parametric = ot.NumericalMathFunction(f, [1], [1.0])
+>>> f = ot.SymbolicFunction(['x', 'theta'], ['x*theta'])
+>>> parametric = ot.ParametricFunction(f, [1], [1.0])
 >>> evaluation = otrobopt.MeanMeasure(parametric, thetaDist)
 >>> function = otrobopt.MeasureFunction(evaluation)"

@@ -46,7 +46,7 @@ OTROBOPT_MeasureEvaluation_getDistribution_doc
 
 Parameters
 ----------
-function : :py:class:`openturns.NumericalMathFunction`
+function : :py:class:`openturns.Function`
     Parametric function."
 %enddef
 %feature("docstring") OTROBOPT::MeasureEvaluationImplementation::setFunction
@@ -59,7 +59,7 @@ OTROBOPT_MeasureEvaluation_setFunction_doc
 
 Returns
 -------
-function : :py:class:`openturns.NumericalMathFunction`
+function : :py:class:`openturns.Function`
     Parametric function."
 %enddef
 %feature("docstring") OTROBOPT::MeasureEvaluationImplementation::getFunction

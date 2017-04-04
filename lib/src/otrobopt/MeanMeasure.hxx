@@ -41,14 +41,14 @@ public:
   MeanMeasure();
 
   /** Parameter constructor */
-  MeanMeasure(const OT::NumericalMathFunction & function,
+  MeanMeasure(const OT::Function & function,
               const OT::Distribution & distribution);
 
   /** Virtual constructor method */
   MeanMeasure * clone() const;
 
   /** Evaluation */
-  OT::NumericalPoint operator()(const OT::NumericalPoint & inP) const;
+  OT::Point operator()(const OT::Point & inP) const;
 
   /** String converter */
   OT::String __repr__() const;

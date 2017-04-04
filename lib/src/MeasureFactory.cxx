@@ -63,8 +63,8 @@ MeasureEvaluation MeasureFactory::build(const MeasureEvaluation & measure) const
   // copy experiment as generate is non-const
   WeightedExperiment experimentCopy(experiment_);
   experimentCopy.setDistribution(measure.getDistribution());
-  NumericalPoint weights;
-  const NumericalSample sample(experimentCopy.generateWithWeights(weights));
+  Point weights;
+  const Sample sample(experimentCopy.generateWithWeights(weights));
   MeasureEvaluation result(measure);
   result.setDistribution(UserDefined(sample, weights));
   return result;
@@ -84,8 +84,8 @@ MeasureFactory::MeasureEvaluationCollection MeasureFactory::buildCollection(cons
   // copy experiment as generate is non-const
   WeightedExperiment experimentCopy(experiment_);
   experimentCopy.setDistribution(distribution);
-  NumericalPoint weights;
-  const NumericalSample sample(experimentCopy.generateWithWeights(weights));
+  Point weights;
+  const Sample sample(experimentCopy.generateWithWeights(weights));
   // We build the common discretized distribution once and as a Distribution
   // in order to make the different copies to share the same implementation
   const Distribution discretizedDistribution(UserDefined(sample, weights));

@@ -33,14 +33,14 @@ static Factory<MeasureEvaluationImplementation> Factory_MeasureEvaluationImpleme
 
 /* Default constructor */
 MeasureEvaluationImplementation::MeasureEvaluationImplementation()
-  : NumericalMathEvaluationImplementation()
+  : EvaluationImplementation()
 {
   // Nothing to do
 }
 
-MeasureEvaluationImplementation::MeasureEvaluationImplementation (const NumericalMathFunction & function,
+MeasureEvaluationImplementation::MeasureEvaluationImplementation (const Function & function,
                                                                   const Distribution & distribution)
-  : NumericalMathEvaluationImplementation()
+  : EvaluationImplementation()
   , function_(function)
   , distribution_(distribution)
 {
@@ -60,9 +60,9 @@ MeasureEvaluationImplementation * MeasureEvaluationImplementation::clone() const
 
 
 /* Evaluation */
-NumericalPoint MeasureEvaluationImplementation::operator()(const NumericalPoint & inP) const
+Point MeasureEvaluationImplementation::operator()(const Point & inP) const
 {
-  throw NotYetImplementedException(HERE) << "MeasureEvaluationImplementation::operator()(const NumericalPoint & inP)";
+  throw NotYetImplementedException(HERE) << "MeasureEvaluationImplementation::operator()(const Point & inP)";
 }
 
 
@@ -98,12 +98,12 @@ Distribution MeasureEvaluationImplementation::getDistribution() const
 
 
 /* Function accessor */
-void MeasureEvaluationImplementation::setFunction(const NumericalMathFunction & function)
+void MeasureEvaluationImplementation::setFunction(const Function & function)
 {
   function_ = function;
 }
 
-NumericalMathFunction MeasureEvaluationImplementation::getFunction() const
+Function MeasureEvaluationImplementation::getFunction() const
 {
   return function_;
 }
@@ -122,7 +122,7 @@ UnsignedInteger MeasureEvaluationImplementation::getOutputDimension() const
 /* Method save() stores the object through the StorageManager */
 void MeasureEvaluationImplementation::save(Advocate & adv) const
 {
-  NumericalMathEvaluationImplementation::save(adv);
+  EvaluationImplementation::save(adv);
   adv.saveAttribute("distribution_", distribution_);
   adv.saveAttribute("function_", function_);
 }
@@ -130,7 +130,7 @@ void MeasureEvaluationImplementation::save(Advocate & adv) const
 /* Method load() reloads the object from the StorageManager */
 void MeasureEvaluationImplementation::load(Advocate & adv)
 {
-  NumericalMathEvaluationImplementation::load(adv);
+  EvaluationImplementation::load(adv);
   adv.loadAttribute("distribution_", distribution_);
   adv.loadAttribute("function_", function_);
 }

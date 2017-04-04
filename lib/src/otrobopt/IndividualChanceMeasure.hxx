@@ -41,20 +41,20 @@ public:
   IndividualChanceMeasure();
 
   /** Parameter constructor */
-  IndividualChanceMeasure (const OT::NumericalMathFunction & function,
+  IndividualChanceMeasure (const OT::Function & function,
                            const OT::Distribution & distribution,
                            const OT::ComparisonOperator & op,
-                           const OT::NumericalPoint & alpha);
+                           const OT::Point & alpha);
 
   /** Virtual constructor method */
   IndividualChanceMeasure * clone() const;
 
   /** Evaluation */
-  OT::NumericalPoint operator()(const OT::NumericalPoint & inP) const;
+  OT::Point operator()(const OT::Point & inP) const;
 
   /** Alpha coefficient accessor */
-  void setAlpha(const OT::NumericalPoint & alpha);
-  OT::NumericalPoint getAlpha() const;
+  void setAlpha(const OT::Point & alpha);
+  OT::Point getAlpha() const;
 
   /** String converter */
   OT::String __repr__() const;
@@ -67,7 +67,7 @@ public:
 
 private:
   OT::ComparisonOperator operator_;
-  OT::NumericalPoint alpha_;
+  OT::Point alpha_;
 
 }; /* class IndividualChanceMeasure */
 

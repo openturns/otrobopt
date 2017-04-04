@@ -59,7 +59,7 @@ SequentialMonteCarloRobustAlgorithm::SequentialMonteCarloRobustAlgorithm()
 
 /* Parameter constructor */
 SequentialMonteCarloRobustAlgorithm::SequentialMonteCarloRobustAlgorithm (const RobustOptimizationProblem & problem,
-    const OptimizationSolver & solver)
+    const OptimizationAlgorithm & solver)
   : RobustOptimizationAlgorithm(problem, solver)
   , initialSamplingSize_(ResourceMap::GetAsUnsignedInteger("SequentialMonteCarloRobustAlgorithm-DefaultInitialSamplingSize"))
   , samplingSizeIncrement_(IdentityFunction(1))
@@ -87,11 +87,11 @@ void SequentialMonteCarloRobustAlgorithm::run()
   // The distribution of the parameters can come from either
   Distribution distributionXi(robustProblem.getDistribution());
 
-  NumericalSample currentSampleXi(0, distributionXi.getDimension());
+  Sample currentSampleXi(0, distributionXi.getDimension());
   UnsignedInteger N = initialSamplingSize_;
 
-  NumericalPoint currentPoint(dimension);
-  NumericalPoint currentValue(outputDimension);
+  Point currentPoint(dimension);
+  Point currentValue(outputDimension);
 
   Bool convergence = false;
 
@@ -101,7 +101,7 @@ void SequentialMonteCarloRobustAlgorithm::run()
   UnsignedInteger iterationNumber = 0;
   while ((!convergence) && (iterationNumber <= getMaximumIterationNumber()))
   {
-    const UnsignedInteger increment = samplingSizeIncrement_(NumericalPoint(1, N))[0];
+    const UnsignedInteger increment = samplingSizeIncrement_(Point(1, N))[0];
     if (increment == 0) throw InvalidArgumentException(HERE) << "Increment must be positive";
     currentSampleXi.add(distributionXi.getSample(increment));
     N = currentSampleXi.getSize();
@@ -126,18 +126,18 @@ void SequentialMonteCarloRobustAlgorithm::run()
       problem.setInequalityConstraint(*pG.getImplementation());
     }
 
-    OptimizationSolver solver(solver_);
+    OptimizationAlgorithm solver(solver_);
     solver.setProblem(problem);
 
-    const NumericalScalar epsilon = ResourceMap::GetAsNumericalScalar("SequentialMonteCarloRobustAlgorithm-ConvergenceFactor") / std::sqrt(1.0 * N);
+    const Scalar epsilon = ResourceMap::GetAsScalar("SequentialMonteCarloRobustAlgorithm-ConvergenceFactor") / std::sqrt(1.0 * N);
     solver.setMaximumAbsoluteError(epsilon);
     solver.setMaximumRelativeError(epsilon);
     solver.setMaximumResidualError(epsilon);
     solver.setMaximumConstraintError(epsilon);
     LOGINFO(OSS() << "solve the problem");
 
-    NumericalPoint newPoint;
-    NumericalPoint newValue;
+    Point newPoint;
+    Point newValue;
     if ((iterationNumber == 0) && (initialSearch_ > 0)) // multi-start
     {
       if (!getProblem().hasBounds())
@@ -151,17 +151,17 @@ void SequentialMonteCarloRobustAlgorithm::run()
       Distribution initialDistribution = ComposedDistribution(coll);
 
       LHSExperiment initialExperiment(initialDistribution, initialSearch_);
-      NumericalSample startingPoints(initialExperiment.generate());
+      Sample startingPoints(initialExperiment.generate());
       initialStartingPoints_ = startingPoints;
 
-      NumericalScalar bestValue = getProblem().isMinimization() ? SpecFunc::MaxNumericalScalar : -SpecFunc::MaxNumericalScalar;
+      Scalar bestValue = getProblem().isMinimization() ? SpecFunc::MaxScalar : -SpecFunc::MaxScalar;
       for (UnsignedInteger i = 0; i < initialSearch_; ++ i)
       {
         solver.setStartingPoint(startingPoints[i]);
         solver.run();
         OptimizationResult result(solver.getResult());
         initialResultCollection_.add(result);
-        NumericalScalar currentValue0 = result.getOptimalValue()[0];
+        Scalar currentValue0 = result.getOptimalValue()[0];
 
         // FIXME: Cobyla can return infeasible point: sweep evaluations to return the best with null constraint error
         if (!getProblem().hasBounds() || (getProblem().hasBounds() && getProblem().getBounds().contains(result.getOptimalPoint())))
@@ -191,7 +191,7 @@ void SequentialMonteCarloRobustAlgorithm::run()
 
     LOGINFO(OSS() << "current optimum=" << newPoint);
 
-    const NumericalScalar absoluteError = (newPoint - currentPoint).norm();
+    const Scalar absoluteError = (newPoint - currentPoint).norm();
     convergence = (iterationNumber > 0) && ((absoluteError < getMaximumAbsoluteError()) || (epsilon < getMaximumAbsoluteError()));
 
     currentPoint = newPoint;
@@ -218,12 +218,12 @@ UnsignedInteger SequentialMonteCarloRobustAlgorithm::getInitialSamplingSize() co
 }
 
 /* Discretization increment */
-void SequentialMonteCarloRobustAlgorithm::setSamplingSizeIncrement(const OT::NumericalMathFunction samplingSizeIncrement)
+void SequentialMonteCarloRobustAlgorithm::setSamplingSizeIncrement(const Function & samplingSizeIncrement)
 {
   samplingSizeIncrement_ = samplingSizeIncrement;
 }
 
-OT::NumericalMathFunction SequentialMonteCarloRobustAlgorithm::getSamplingSizeIncrement() const
+OT::Function SequentialMonteCarloRobustAlgorithm::getSamplingSizeIncrement() const
 {
   return samplingSizeIncrement_;
 }
@@ -252,7 +252,7 @@ SequentialMonteCarloRobustAlgorithm::OptimizationResultCollection SequentialMont
 }
 
 
-NumericalSample SequentialMonteCarloRobustAlgorithm::getInitialStartingPoints() const
+Sample SequentialMonteCarloRobustAlgorithm::getInitialStartingPoints() const
 {
   return initialStartingPoints_;
 }

@@ -41,14 +41,14 @@ public:
   VarianceMeasure();
 
   /** Parameter constructor */
-  VarianceMeasure(const OT::NumericalMathFunction & function,
+  VarianceMeasure(const OT::Function & function,
                   const OT::Distribution & distribution);
 
   /** Virtual constructor method */
   VarianceMeasure * clone() const;
 
   /** Evaluation */
-  OT::NumericalPoint operator()(const OT::NumericalPoint & inP) const;
+  OT::Point operator()(const OT::Point & inP) const;
 
   /** String converter */
   OT::String __repr__() const;

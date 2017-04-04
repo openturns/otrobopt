@@ -35,7 +35,7 @@ namespace OTROBOPT
  * Measure function evaluation implementation
  */
 class OTROBOPT_API MeasureEvaluationImplementation
-  : public OT::NumericalMathEvaluationImplementation
+  : public OT::EvaluationImplementation
 {
   CLASSNAME;
 
@@ -44,22 +44,22 @@ public:
   MeasureEvaluationImplementation();
 
   /** Parameter constructor */
-  MeasureEvaluationImplementation(const OT::NumericalMathFunction & function,
+  MeasureEvaluationImplementation(const OT::Function & function,
                                   const OT::Distribution & distribution);
 
   /** Virtual constructor method */
   MeasureEvaluationImplementation * clone() const;
 
   /** Evaluation */
-  virtual OT::NumericalPoint operator()(const OT::NumericalPoint & inP) const;
+  virtual OT::Point operator()(const OT::Point & inP) const;
 
   /** Distribution accessor */
   virtual void setDistribution(const OT::Distribution & distribution);
   virtual OT::Distribution getDistribution() const;
 
   /** Function accessor */
-  virtual void setFunction(const OT::NumericalMathFunction & function);
-  virtual OT::NumericalMathFunction getFunction() const;
+  virtual void setFunction(const OT::Function & function);
+  virtual OT::Function getFunction() const;
 
   /** Dimension accessor */
   virtual OT::UnsignedInteger getInputDimension() const;
@@ -76,7 +76,7 @@ public:
   virtual void load(OT::Advocate & adv);
 
 private:
-  OT::NumericalMathFunction function_;
+  OT::Function function_;
   OT::Distribution distribution_;
 
 }; /* class MeasureEvaluationImplementation */

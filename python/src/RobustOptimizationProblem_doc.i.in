@@ -18,9 +18,9 @@ robustnessMeasure : :class:`~otrobopt.MeasureEvaluation`
     Measure function on the objective.
 reliabilityMeasure : :class:`~otrobopt.MeasureEvaluation`
     Mesure function on the constraints
-objective : :py:class:`openturns.NumericalMathFunction`
+objective : :py:class:`openturns.Function`
     Objective function
-inequalityConstraint : :py:class:`openturns.NumericalMathFunction`
+inequalityConstraint : :py:class:`openturns.Function`
     Inequality constraint
 
 Examples
@@ -32,10 +32,10 @@ Examples
 Pure robustness problem:
 
 >>> thetaDist = ot.Normal(2.0, 0.1)
->>> f_base = ot.NumericalMathFunction(['x1', 'theta'], ['y1'], ['x1*theta+cos(x1+theta)'])
->>> f = ot.NumericalMathFunction(f_base, [1], [1.0])
+>>> f_base = ot.SymbolicFunction(['x1', 'theta'], ['x1*theta+cos(x1+theta)'])
+>>> f = ot.ParametricFunction(f_base, [1], [1.0])
 >>> robustnessMeasure = otrobopt.VarianceMeasure(f, thetaDist) 
->>> problem = otrobopt.RobustOptimizationProblem(robustnessMeasure, ot.NumericalMathFunction())
+>>> problem = otrobopt.RobustOptimizationProblem(robustnessMeasure, ot.Function())
 >>> algo = ot.Cobyla(problem)
 >>> algo.setStartingPoint([0.0]*robustnessMeasure.getInputDimension())
 >>> algo.run()
@@ -49,10 +49,10 @@ Pure robustness problem:
 Robustness problem with deterministic constraint:
 
 >>> thetaDist = ot.Normal(2.0, 0.1)
->>> f_base = ot.NumericalMathFunction(['x1', 'theta'], ['y1'], ['x1*theta'])
->>> f = ot.NumericalMathFunction(f_base, [1], [1.0])
+>>> f_base = ot.SymbolicFunction(['x1', 'theta'], ['x1*theta'])
+>>> f = ot.ParametricFunction(f_base, [1], [1.0])
 >>> robustnessMeasure = otrobopt.MeanMeasure(f, thetaDist)
->>> g = ot.NumericalMathFunction(['x1'], ['y1'], ['x1 - 5.0'])
+>>> g = ot.SymbolicFunction(['x1'], ['x1 - 5.0'])
 >>> problem = otrobopt.RobustOptimizationProblem(robustnessMeasure, g)
 >>> algo = ot.Cobyla(problem)
 >>> algo.setStartingPoint([0.0]*robustnessMeasure.getInputDimension())
@@ -67,9 +67,9 @@ Robustness problem with deterministic constraint:
 Pure reliability problem:
 
 >>> thetaDist = ot.Normal(2.0, 0.1)
->>> f = ot.NumericalMathFunction(['x1'], ['y1'], ['x1+1'])
->>> g_base = ot.NumericalMathFunction(['x1', 'theta'], ['y1'], ['x1+theta'])
->>> g = ot.NumericalMathFunction(g_base, [1], [1.0])
+>>> f = ot.SymbolicFunction(['x1'], ['x1+1'])
+>>> g_base = ot.SymbolicFunction(['x1', 'theta'], ['x1+theta'])
+>>> g = ot.ParametricFunction(g_base, [1], [1.0])
 >>> reliabilityMeasure = otrobopt.JointChanceMeasure(g, thetaDist, ot.Greater(), 0.95)
 >>> problem = otrobopt.RobustOptimizationProblem(f, reliabilityMeasure)
 >>> algo = ot.Cobyla(problem)
@@ -85,11 +85,11 @@ Pure reliability problem:
 Robustness & reliability problem:
 
 >>> thetaDist = ot.Normal(2.0, 0.1)
->>> f_base = ot.NumericalMathFunction(['x1', 'theta'], ['y1'], ['x1*theta'])
->>> f = ot.NumericalMathFunction(f_base, [1], [1.0])
+>>> f_base = ot.SymbolicFunction(['x1', 'theta'], ['x1*theta'])
+>>> f = ot.ParametricFunction(f_base, [1], [1.0])
 >>> robustnessMeasure = otrobopt.MeanMeasure(f, thetaDist)
->>> g_base = ot.NumericalMathFunction(['x1', 'theta'], ['y1'], ['x1+theta'])
->>> g = ot.NumericalMathFunction(g_base, [1], [1.0])
+>>> g_base = ot.SymbolicFunction(['x1', 'theta'], ['x1+theta'])
+>>> g = ot.ParametricFunction(g_base, [1], [1.0])
 >>> reliabilityMeasure = otrobopt.JointChanceMeasure(g, thetaDist, ot.Greater(), 0.95)
 >>> problem = otrobopt.RobustOptimizationProblem(robustnessMeasure, reliabilityMeasure)
 >>> algo = ot.Cobyla(problem)

@@ -21,7 +21,7 @@
 #include "otrobopt/RobustOptimizationProblem.hxx"
 #include <otrobopt/MeasureEvaluationImplementation.hxx>
 #include <openturns/PersistentObjectFactory.hxx>
-#include <openturns/NumericalMathFunctionImplementation.hxx>
+#include <openturns/FunctionImplementation.hxx>
 
 using namespace OT;
 
@@ -50,7 +50,7 @@ RobustOptimizationProblem::RobustOptimizationProblem(const MeasureEvaluation & r
     throw InvalidArgumentException(HERE) << "Different measure distributions for objective and constraint";
 }
 
-RobustOptimizationProblem::RobustOptimizationProblem(const NumericalMathFunction & objective,
+RobustOptimizationProblem::RobustOptimizationProblem(const Function & objective,
                                                      const MeasureEvaluation & reliabilityMeasure)
   : OptimizationProblemImplementation()
 {
@@ -59,7 +59,7 @@ RobustOptimizationProblem::RobustOptimizationProblem(const NumericalMathFunction
 }
 
 RobustOptimizationProblem::RobustOptimizationProblem(const MeasureEvaluation & robustnessMeasure,
-                                                     const NumericalMathFunction & inequalityConstraint)
+                                                     const Function & inequalityConstraint)
   : OptimizationProblemImplementation()
 {
   setRobustnessMeasure(robustnessMeasure);
@@ -87,7 +87,7 @@ String RobustOptimizationProblem::__repr__() const
 void RobustOptimizationProblem::setRobustnessMeasure(const MeasureEvaluation & robustnessMeasure)
 {
   robustnessMeasure_ = robustnessMeasure;
-  setObjective(NumericalMathFunctionImplementation(robustnessMeasure.getImplementation()));
+  setObjective(FunctionImplementation(robustnessMeasure.getImplementation()));
 }
 
 MeasureEvaluation RobustOptimizationProblem::getRobustnessMeasure() const
@@ -104,7 +104,7 @@ Bool RobustOptimizationProblem::hasRobustnessMeasure() const
 void RobustOptimizationProblem::setReliabilityMeasure(const MeasureEvaluation & reliabilityMeasure)
 {
   reliabilityMeasure_ = reliabilityMeasure;
-  setInequalityConstraint(NumericalMathFunctionImplementation(reliabilityMeasure.getImplementation()));
+  setInequalityConstraint(FunctionImplementation(reliabilityMeasure.getImplementation()));
 }
 
 MeasureEvaluation RobustOptimizationProblem::getReliabilityMeasure() const

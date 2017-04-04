@@ -42,10 +42,10 @@ JointChanceMeasure::JointChanceMeasure()
 }
 
 /* Parameter constructor */
-JointChanceMeasure::JointChanceMeasure (const NumericalMathFunction & function,
+JointChanceMeasure::JointChanceMeasure (const Function & function,
                                         const Distribution & distribution,
                                         const ComparisonOperator & op,
-                                        const NumericalScalar alpha)
+                                        const Scalar alpha)
   : MeasureEvaluationImplementation(function, distribution)
   , operator_(op)
   , alpha_(0.0)
@@ -61,13 +61,13 @@ JointChanceMeasure * JointChanceMeasure::clone() const
 }
 
 
-class JointChanceMeasureParametricFunctionWrapper : public NumericalMathFunctionImplementation
+class JointChanceMeasureParametricFunctionWrapper : public FunctionImplementation
 {
 public:
-  JointChanceMeasureParametricFunctionWrapper(const NumericalPoint & x,
-                                              const NumericalMathFunction & function,
+  JointChanceMeasureParametricFunctionWrapper(const Point & x,
+                                              const Function & function,
                                               const Distribution & distribution)
-  : NumericalMathFunctionImplementation()
+  : FunctionImplementation()
   , x_(x)
   , function_(function)
   , distribution_(distribution)
@@ -80,26 +80,26 @@ public:
     return new JointChanceMeasureParametricFunctionWrapper(*this);
   }
 
-  NumericalPoint operator()(const NumericalPoint & theta) const
+  Point operator()(const Point & theta) const
   {
-    NumericalMathFunction function(function_);
-    const NumericalPoint y(function(x_, theta));
+    Function function(function_);
+    const Point y(function(x_, theta));
     const UnsignedInteger outputDimension = y.getDimension();
     for (UnsignedInteger j = 0; j < outputDimension; ++ j)
-      if (y[j] < 0.0) return NumericalPoint(1, 0.0);
-    return NumericalPoint(1, distribution_.computePDF(theta));
+      if (y[j] < 0.0) return Point(1, 0.0);
+    return Point(1, distribution_.computePDF(theta));
   }
 
-  NumericalSample operator()(const NumericalSample & theta) const
+  Sample operator()(const Sample & theta) const
   {
-    NumericalMathFunction function(function_);
+    Function function(function_);
     // To benefit from possible parallelism
-    const NumericalSample y(function(x_, theta));
+    const Sample y(function(x_, theta));
     const UnsignedInteger size = y.getSize();
     const UnsignedInteger outputDimension = y.getDimension();
     // First pass to select the points at which we have to compute the
     // PDF as it can be costly for some distributions
-    NumericalSample activeTheta(0, theta.getDimension());
+    Sample activeTheta(0, theta.getDimension());
     Indices activeIndices(0);
     for (UnsignedInteger i = 0; i < size; ++i)
       {
@@ -117,8 +117,8 @@ public:
 	  } // allOk
       } // for i
     // Exploit possible parallelization of computePDF
-    const NumericalSample pdf(distribution_.computePDF(activeTheta));
-    NumericalSample outS(size, 1);
+    const Sample pdf(distribution_.computePDF(activeTheta));
+    Sample outS(size, 1);
     for (UnsignedInteger i = 0; i < activeTheta.getSize(); ++i)
       outS[activeIndices[i]][0] = pdf[i][0];
     return outS;
@@ -145,33 +145,33 @@ public:
   }
 
 protected:
-  NumericalPoint x_;
-  NumericalMathFunction function_;
+  Point x_;
+  Function function_;
   Distribution distribution_;
 };
 
 
 /* Evaluation */
-NumericalPoint JointChanceMeasure::operator()(const NumericalPoint & inP) const
+Point JointChanceMeasure::operator()(const Point & inP) const
 {
-  NumericalMathFunction function(getFunction());
-  NumericalPoint parameter(function.getParameter());
+  Function function(getFunction());
+  Point parameter(function.getParameter());
   const UnsignedInteger outputDimension = getFunction().getOutputDimension();
-  NumericalPoint outP(1);
+  Point outP(1);
   if (getDistribution().isContinuous())
   {
     GaussKronrod gkr;
     gkr.setRule(static_cast<GaussKronrodRule::GaussKronrodPair>(ResourceMap::GetAsUnsignedInteger("JointChanceMeasure-GaussKronrodRule")));
     const IteratedQuadrature algo(gkr);
-    Pointer<NumericalMathFunctionImplementation> p_wrapper(new JointChanceMeasureParametricFunctionWrapper(inP, function, getDistribution()));
-    const NumericalMathFunction G(p_wrapper);
+    Pointer<FunctionImplementation> p_wrapper(new JointChanceMeasureParametricFunctionWrapper(inP, function, getDistribution()));
+    const Function G(p_wrapper);
     outP = algo.integrate(G, getDistribution().getRange());
   }
   else
   {
     // To benefit from possible parallelization
-    const NumericalSample values(function(inP, getDistribution().getSupport()));
-    const NumericalPoint weights(getDistribution().getProbabilities());
+    const Sample values(function(inP, getDistribution().getSupport()));
+    const Point weights(getDistribution().getProbabilities());
     // Here we compute the marginal complementary CDF locally to avoid
     // the creation cost of the UserDefined distributions
     const UnsignedInteger size = values.getSize();
@@ -198,14 +198,14 @@ UnsignedInteger JointChanceMeasure::getOutputDimension() const
 }
 
 /* Alpha coefficient accessor */
-void JointChanceMeasure::setAlpha(const NumericalScalar alpha)
+void JointChanceMeasure::setAlpha(const Scalar alpha)
 {
   if (!(alpha >= 0.0) || !(alpha <= 1.0))
     throw InvalidArgumentException(HERE) << "Alpha should be in (0, 1)";
   alpha_ = alpha;
 }
 
-NumericalScalar JointChanceMeasure::getAlpha() const
+Scalar JointChanceMeasure::getAlpha() const
 {
   return alpha_;
 }
