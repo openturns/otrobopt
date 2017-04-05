@@ -97,8 +97,9 @@ include_directories ( ${INTERNAL_INCLUDE_DIRS} )
 
 
 ot_check_test (MeasureEvaluation_std)
+if (NOT WIN32)
 ot_check_test (SequentialMonteCarloRobustAlgorithm_std)
-
+endif()
 
 add_custom_target ( cppcheck COMMAND ${CMAKE_CTEST_COMMAND} -R "^cppcheck_"
                     DEPENDS ${CHECK_TO_BE_RUN}
