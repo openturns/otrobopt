@@ -7,10 +7,10 @@ import otrobopt
 #ot.Log.Show(ot.Log.Info)
 
 
-calJ = ot.Function(['x', 'theta'], ['J'], ['cos(x) * sin(theta)'])
-calG = ot.Function(['x', 'theta'], ['g1', 'g2'], ['-(-2 - x + theta)', '-(x - 4)'])
-J = ot.Function(calJ, [1], [1.0])
-g = ot.Function(calG, [1], [1.0])
+calJ = ot.SymbolicFunction(['x', 'theta'], ['cos(x) * sin(theta)'])
+calG = ot.SymbolicFunction(['x', 'theta'], ['-(-2 - x + theta)', '-(x - 4)'])
+J = ot.ParametricFunction(calJ, [1], [1.0])
+g = ot.ParametricFunction(calG, [1], [1.0])
 
 dim = J.getInputDimension()
 
