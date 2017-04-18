@@ -38,8 +38,8 @@ for measure in measures:
 
 # Second test: theta of dimension 2
 thetaDist = ot.Normal([2.0]*2, [0.1]*2, ot.IdentityMatrix(2))
-f_base = ot.Function(['x', 'theta0', 'theta1'], ['y'], ['x*theta0+theta1'])
-f = ot.Function(f_base, [1, 2], thetaDist.getMean())
+f_base = ot.SymbolicFunction(['x', 'theta0', 'theta1'], ['x*theta0+theta1'])
+f = ot.ParametricFunction(f_base, [1, 2], thetaDist.getMean())
 
 x = [1.0]
 
