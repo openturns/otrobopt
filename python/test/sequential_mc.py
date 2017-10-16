@@ -19,23 +19,23 @@ class LinearCombinationFunction(OpenTURNSPythonFunction):
 ##################################################################
 
 # This is calligraphic J, the non-robust objective function
-calJ = Function(["x1", "x2"], ["15.0 * (x1^2 + x2^2) - 100.0 * exp(-5. * ((x1 + 1.6)^2+(x2 + 1.6)^2))"])
+calJ = SymbolicFunction(["x1", "x2"], ["15.0 * (x1^2 + x2^2) - 100.0 * exp(-5. * ((x1 + 1.6)^2+(x2 + 1.6)^2))"])
 
 # This is calligraphic G, the non-robust inequality constraints function
-calG = Function(["x1", "x2"], ["(x1 - 0.5)^2 + x2^2 - 4.0", "(x1 + 0.5)^2 + x2^2 - 4.0"])
+calG = SymbolicFunction(["x1", "x2"], ["(x1 - 0.5)^2 + x2^2 - 4.0", "(x1 + 0.5)^2 + x2^2 - 4.0"])
 
 ######################################################
 # Here we define the parametric optimization problem #
 ######################################################
 
 # This is the perturbation function
-noise = Function(["x1", "x2", "xi1", "xi2"], ["x1 + xi1", "x2 + xi2"])
+noise = SymbolicFunction(["x1", "x2", "xi1", "xi2"], ["x1 + xi1", "x2 + xi2"])
 
 # This is capital J: J(x,xi) = calJ(x+xi), the parametric objective function
-J = Function(calJ, noise)
+J = ComposedFunction(calJ, noise)
 
 # This is g, the parametric constraints
-g = Function(calG, noise)
+g = ComposedFunction(calG, noise)
 
 ##################################################
 # Here we define the robust optimization problem #
@@ -58,7 +58,7 @@ def discretizeExpectation(J, sampleXi):
     # The resulting discretized expectation is the linear combination of all the parametric functions with a uniform weight of 1/size
     # Here we have a bug when using the combination: AnalyticalFunction+several clones using ParametricFunction into LinearCombinationFunction, due to a race condition in the initialization of the underlying AnalyticalFunction and the parallel evaluation of the LinearCombination. It is solved by reimplementing a sequential evaluation in Python.
     #return Function(functionCollection, [1.0 / size]*size)
-    return Function(LinearCombinationFunction(functionCollection, [1.0 / size]*size))
+    return LinearCombinationFunction(functionCollection, [1.0 / size]*size)
 
 # The reliability measure is the joint chance constraint of level alpha
 def discretizeJointChance(g, sampleXi, alpha):
@@ -68,15 +68,13 @@ def discretizeJointChance(g, sampleXi, alpha):
     # For each value of the parameter
     for i in range(size):
         # Build a copy of g as a parametric function (the third and fourth arguments of g are the parameters)
-        currentContributor = Function(g, [2, 3])
-        # Set the value of the parameter
-        currentContributor.setParameter(PointWithDescription(sampleXi[i]))
+        currentContributor = ParametricFunction(g, [2, 3], sampleXi[i])
         # Augment the collection
         functionCollection.append(Function(test, currentContributor))
     # The resulting discretized probability is the linear combination of all the test functions with a uniform weight of 1/size
     # Here we have a bug when using the combination: AnalyticalFunction+several clones using ParametricFunction into LinearCombinationFunction, due to a race condition in the initialization of the underlying AnalyticalFunction and the parallel evaluation of the LinearCombination. It is solved by reimplementing a sequential evaluation in Python.
     # return Function(Function("t", str(alpha) + " - t"), Function(functionCollection, [1.0 / size]*size))
-    return Function(Function("t", str(alpha) + " - t"), Function(LinearCombinationFunction(functionCollection, [1.0 / size]*size)))
+    return ComposedFunction(SymbolicFunction("t", str(alpha) + " - t"), LinearCombinationFunction(functionCollection, [1.0 / size]*size))
 
 ################################################################################
 # Here we solve the robust optimization problem using the sequential algorithm #
