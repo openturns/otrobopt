@@ -1,12 +1,8 @@
 #include <iostream>
 
 #include "otrobopt/OTRobOpt.hxx"
-#include "openturns/Normal.hxx"
-#include "openturns/ComposedDistribution.hxx"
-#include "openturns/LHSExperiment.hxx"
-#include "openturns/GaussProductExperiment.hxx"
-#include "openturns/GreaterOrEqual.hxx"
-#include "openturns/Uniform.hxx"
+#include "openturns/OT.hxx"
+
 
 using namespace OT;
 using namespace OTROBOPT;
@@ -20,7 +16,7 @@ int main(int argc, char **argv)
     input[0] = "x";
     input[1] = "theta";
     Function f_base(input, Description(1, "y1"), Description(1, "x*theta"));
-    Function f(f_base, Indices(1 , 1), Point(1, 1.0));
+    ParametricFunction f(f_base, Indices(1 , 1), Point(1, 1.0));
 
     Point x(1, 1.0);
 
@@ -69,7 +65,7 @@ int main(int argc, char **argv)
     Indices indices(2);
     indices[0] = 1;
     indices[1] = 2;
-    Function f(f_base, indices, thetaDist.getMean());
+    ParametricFunction f(f_base, indices, thetaDist.getMean());
 
     Point x(1, 1.0);
 

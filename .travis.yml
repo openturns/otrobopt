@@ -1,16 +1,14 @@
-language: generic
-sudo: required
+language: cpp
 dist: trusty
+sudo: required
 
 install:
   - curl http://ubuntu.openturns.org/openturns.org-repo.key | sudo apt-key add -
   - echo deb http://ubuntu.openturns.org trusty main | sudo tee /etc/apt/sources.list.d/openturns.list
   - sudo apt-get update
   - sudo apt-get -y install libopenturns-dev python-openturns cmake gfortran swig texlive-latex-recommended texlive-fonts-recommended texlive-latex-extra python-dev
-# use newer matplotlib
-  - pip install matplotlib --user
-# sphinx >=1.2 is looking better
-  - pip install git+https://github.com/sphinx-doc/sphinx.git --user
+  - sudo rm -r /opt/python/*
+  - pip install sphinx numpydoc matplotlib --user --upgrade
 
 script:
   - cmake -DCMAKE_INSTALL_PREFIX=~/.local
@@ -19,7 +17,7 @@ script:
   - make install -j2 && make tests -j2 && ctest -j2 --output-on-failure --timeout 100 
 
 after_success:
-  - test "$TRAVIS_PULL_REQUEST" = "false" || exit 0
+  - test "$TRAVIS_PULL_REQUEST" = "false" -a "$TRAVIS_BRANCH" = "master" || exit 0
   - git clone https://${GH_TOKEN}@github.com/openturns/openturns.github.io.git
   - PROJECT_REPONAME=`echo "${TRAVIS_REPO_SLUG}" | cut -d "/" -f 2`
   - if test -n "${TRAVIS_TAG}"; then

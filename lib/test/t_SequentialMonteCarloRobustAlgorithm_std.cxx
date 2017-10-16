@@ -1,9 +1,7 @@
 #include <iostream>
 
 #include "otrobopt/OTRobOpt.hxx"
-#include "openturns/NLopt.hxx"
-#include "openturns/Normal.hxx"
-#include "openturns/Less.hxx"
+#include "openturns/OT.hxx"
 
 using namespace OT;
 using namespace OTROBOPT;
@@ -17,13 +15,13 @@ int main(int argc, char **argv)
   input[1] = "x2";
 
   // This is calligraphic J, the non-robust objective function
-  Function calJ(input, Description(1, "15.0 * (x1^2 + x2^2) - 100.0 * exp(-5. * ((x1 + 1.6)^2+(x2 + 1.6)^2))"));
+  SymbolicFunction calJ(input, Description(1, "15.0 * (x1^2 + x2^2) - 100.0 * exp(-5. * ((x1 + 1.6)^2+(x2 + 1.6)^2))"));
 
   // This is calligraphic G, the non-robust inequality constraints function
   Description formula;
   formula.add("(x1 - 0.5)^2 + x2^2 - 4.0");
   formula.add("(x1 + 0.5)^2 + x2^2 - 4.0");
-  Function calG(input, formula);
+  SymbolicFunction calG(input, formula);
 
   // This is the perturbation function
   input.add("xi1");
@@ -31,19 +29,19 @@ int main(int argc, char **argv)
   formula = Description();
   formula.add("x1 + xi1");
   formula.add("x2 + xi2");
-  Function noise(input, formula);
+  SymbolicFunction noise(input, formula);
 
   Indices paramSet;
   paramSet.add(2);
   paramSet.add(3);
 
   // This is capital J: J(x,xi) = calJ(x+xi), the parametric objective function
-  Function JFull(calJ, noise);
-  Function J(JFull, paramSet, Point(2, 0.0));
+  ComposedFunction JFull(calJ, noise);
+  ParametricFunction J(JFull, paramSet, Point(2, 0.0));
 
   // This is g, the parametric constraints
-  Function gFull(calG, noise);
-  Function g(gFull, paramSet, Point(2, 0.0));
+  ComposedFunction gFull(calG, noise);
+  ParametricFunction g(gFull, paramSet, Point(2, 0.0));
 
 
   Interval bounds(Point(2, -3.0), Point(2, 3.0));

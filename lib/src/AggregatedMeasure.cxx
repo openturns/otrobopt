@@ -20,6 +20,7 @@
  */
 #include "otrobopt/AggregatedMeasure.hxx"
 #include <openturns/PersistentObjectFactory.hxx>
+#include <openturns/AggregatedFunction.hxx>
 
 using namespace OT;
 namespace OT {
@@ -53,7 +54,7 @@ AggregatedMeasure::AggregatedMeasure(const MeasureEvaluationCollection & collect
   Collection <Function> funcColl(size);
   for (UnsignedInteger i = 0; i < size; ++ i)
     funcColl[i] = collection_[i].getFunction();
-  setFunction(Function(funcColl));
+  setFunction(AggregatedFunction(funcColl));
 }
 
 /* Virtual constructor method */
