@@ -83,7 +83,8 @@ public:
   Point operator()(const Point & theta) const
   {
     Function function(function_);
-    const Point y(function(x_, theta));
+    function.setParameter(theta);
+    const Point y(function(x_));
     const UnsignedInteger outputDimension = y.getDimension();
     for (UnsignedInteger j = 0; j < outputDimension; ++ j)
       if (y[j] < 0.0) return Point(1, 0.0);
@@ -93,10 +94,14 @@ public:
   Sample operator()(const Sample & theta) const
   {
     Function function(function_);
-    // To benefit from possible parallelism
-    const Sample y(function(x_, theta));
-    const UnsignedInteger size = y.getSize();
-    const UnsignedInteger outputDimension = y.getDimension();
+    const UnsignedInteger outputDimension = function.getOutputDimension();
+    const UnsignedInteger size = theta.getSize();
+    Sample y(size, outputDimension);
+    for (UnsignedInteger i = 0; i < size; ++i)
+    {
+      function.setParameter(theta[i]);
+      y[i] = function(x_);
+    }
     // First pass to select the points at which we have to compute the
     // PDF as it can be costly for some distributions
     Sample activeTheta(0, theta.getDimension());
@@ -105,11 +110,11 @@ public:
       {
 	Bool allOk(true);
 	for (UnsignedInteger j = 0; j < outputDimension; ++ j)
-	  if (y[i][j] < 0.0)
+	  if (y(i, j) < 0.0)
 	    {
 	      allOk = false;
 	      break;
-	    } // y[i][j] < 0.0
+	    } // y(i, j) < 0.0
 	if (allOk)
 	  {
 	    activeTheta.add(theta[i]);
@@ -120,7 +125,7 @@ public:
     const Sample pdf(distribution_.computePDF(activeTheta));
     Sample outS(size, 1);
     for (UnsignedInteger i = 0; i < activeTheta.getSize(); ++i)
-      outS[activeIndices[i]][0] = pdf[i][0];
+      outS(activeIndices[i], 0) = pdf(i, 0);
     return outS;
   }
 
@@ -155,8 +160,7 @@ protected:
 Point JointChanceMeasure::operator()(const Point & inP) const
 {
   Function function(getFunction());
-  Point parameter(function.getParameter());
-  const UnsignedInteger outputDimension = getFunction().getOutputDimension();
+  const UnsignedInteger outputDimension = function.getOutputDimension();
   Point outP(1);
   if (getDistribution().isContinuous())
   {
@@ -169,17 +173,22 @@ Point JointChanceMeasure::operator()(const Point & inP) const
   }
   else
   {
-    // To benefit from possible parallelization
-    const Sample values(function(inP, getDistribution().getSupport()));
+    const Sample parameters(getDistribution().getSupport());
+    const UnsignedInteger size = parameters.getSize();
+    Sample values(size, outputDimension);
+    for (UnsignedInteger i = 0; i < size; ++i)
+    {
+      function.setParameter(parameters[i]);
+      values[i] = function(inP);
+    }
     const Point weights(getDistribution().getProbabilities());
     // Here we compute the marginal complementary CDF locally to avoid
     // the creation cost of the UserDefined distributions
-    const UnsignedInteger size = values.getSize();
     for (UnsignedInteger i = 0; i < size; ++ i)
     {
       Bool allOk = true;
       for (UnsignedInteger j = 0; j < outputDimension; ++ j)
-        if (values[i][j] < 0.0)
+        if (values(i, j) < 0.0)
           {
             allOk = false;
             break;
@@ -188,7 +197,6 @@ Point JointChanceMeasure::operator()(const Point & inP) const
     } // for i
   }
   outP[0] = operator_.operator()(1.0, 2.0) ? alpha_ - outP[0] : outP[0] - alpha_;
-  function.setParameter(parameter);
   return outP;
 }
 

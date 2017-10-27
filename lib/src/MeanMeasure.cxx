@@ -78,18 +78,21 @@ public:
   Point operator()(const Point & theta) const
   {
     Function function(function_);
-    return function(x_, theta) * distribution_.computePDF(theta);
+    function.setParameter(theta);
+    return function(x_) * distribution_.computePDF(theta);
   }
 
   Sample operator()(const Sample & theta) const
   {
     Function function(function_);
-    Sample outS(function(x_, theta));
-    const Sample pdfS(distribution_.computePDF(theta));
+    const UnsignedInteger outputDimension = function.getOutputDimension();
     const UnsignedInteger size = theta.getSize();
-    for (UnsignedInteger i = 0; i < size; ++ i)
+    Sample outS(size, outputDimension);
+    const Sample pdfS(distribution_.computePDF(theta));
+    for (UnsignedInteger i = 0; i < size; ++i)
     {
-      outS[i] *= pdfS[i][0];
+      function.setParameter(theta[i]);
+      outS[i] = function(x_) * pdfS(i, 0);
     }
     return outS;
   }
@@ -125,7 +128,6 @@ protected:
 Point MeanMeasure::operator()(const Point & inP) const
 {
   Function function(getFunction());
-  Point parameter(function.getParameter());
   const UnsignedInteger outputDimension = function.getOutputDimension();
   Point outP(outputDimension);
   if (getDistribution().isContinuous())
@@ -139,14 +141,15 @@ Point MeanMeasure::operator()(const Point & inP) const
   }
   else
   {
-    // To benefit from possible parallelization
-    const Sample values(function(inP, getDistribution().getSupport()));
-    const UnsignedInteger size = values.getSize();
     const Point weights(getDistribution().getProbabilities());
-    for (UnsignedInteger i = 0; i < size; ++ i)
-      outP += values[i] * weights[i];
+    const Sample parameters(getDistribution().getSupport());
+    const UnsignedInteger size = parameters.getSize();
+    for (UnsignedInteger i = 0; i < size; ++i)
+    {
+      function.setParameter(parameters[i]);
+      outP += function(inP) * weights[i];
+    }
   }
-  function.setParameter(parameter);
   return outP;
 }
 

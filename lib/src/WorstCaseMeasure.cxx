@@ -79,19 +79,29 @@ public:
   Point operator()(const Point & theta) const
   {
     Function function(function_);
-    return function(x_, theta);
+    function.setParameter(theta);
+    return function(x_);
   }
 
   Sample operator()(const Sample & theta) const
   {
     Function function(function_);
-    return function(x_, theta);
+    const UnsignedInteger size = theta.getSize();
+    const UnsignedInteger outputDimension = function.getOutputDimension();
+    Sample values(size, outputDimension);
+    for (UnsignedInteger i = 0; i < size; ++i)
+    {
+      function.setParameter(theta[i]);
+      values[i] = function(x_);
+    }
+    return values;
   }
 
   Matrix gradient(const Point & theta) const
   {
     Function function(function_);
-    return function.parameterGradient(x_, theta);
+    function.setParameter(theta);
+    return function.parameterGradient(x_);
   }
 
   UnsignedInteger getInputDimension() const
@@ -126,7 +136,6 @@ protected:
 Point WorstCaseMeasure::operator()(const Point & inP) const
 {
   Function function(getFunction());
-  Point parameter(function.getParameter());
   const UnsignedInteger outputDimension = function.getOutputDimension();
   Point outP(outputDimension);
   if (getDistribution().isContinuous())
@@ -147,21 +156,19 @@ Point WorstCaseMeasure::operator()(const Point & inP) const
   }
   else
   {
-    // To benefit from possible parallelization
-    const Sample values(function(inP, getDistribution().getSupport()));
-    const UnsignedInteger size = values.getSize();
-    for (UnsignedInteger j = 0; j < outputDimension; ++ j)
-      {
-	outP[j] = values[0][j];
-	for (UnsignedInteger i = 1; i < size; ++ i)
-	  {
-	    if ((isMinimization_ && (values[i][j] < outP[j]))
-		|| (!isMinimization_ && (values[i][j] > outP[j])))
-	      outP[j] = values[i][j];
-	  } // for i
-      } // for j
+    const Sample parameters(getDistribution().getSupport());
+    const UnsignedInteger size = parameters.getSize();
+    Sample values(size, outputDimension);
+    for (UnsignedInteger i = 0; i < size; ++i)
+    {
+      function.setParameter(parameters[i]);
+      values[i] = function(inP);
+    }
+    if (isMinimization_)
+      outP = values.getMin();
+    else
+      outP = values.getMax();
   } // discrete
-  function.setParameter(parameter);
   return outP;
 }
 
