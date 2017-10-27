@@ -80,10 +80,11 @@ public:
   Point operator()(const Point & theta) const
   {
     Function function(function_);
+    function.setParameter(theta);
     // (f_1(x), ...., f_d(x), f_1^2(x), ..., f_d^2(x))
-    Point outP(function(x_, theta));
+    Point outP(function(x_));
     outP.add(outP);
-    const UnsignedInteger outputDimension = function_.getOutputDimension();
+    const UnsignedInteger outputDimension = function.getOutputDimension();
     for (UnsignedInteger j = 0; j < outputDimension; ++ j)
       outP[outputDimension + j] *= outP[j];
     return outP * distribution_.computePDF(theta);
@@ -91,18 +92,23 @@ public:
 
   Sample operator()(const Sample & theta) const
   {
-    // To benefit from possible parallelization
     Function function(function_);
-    Sample outS(function(x_, theta));
-    const UnsignedInteger size = outS.getSize();
-    const UnsignedInteger outputDimension = outS.getDimension();
+    const UnsignedInteger outputDimension = function.getOutputDimension();
+    const UnsignedInteger size = theta.getSize();
+    Sample outS(size, outputDimension);
+    for (UnsignedInteger i = 0; i < size; ++i)
+    {
+      function.setParameter(theta[i]);
+      outS[i] = function(x_);
+    }
+
     outS.stack(outS);
     const Sample pdf(distribution_.computePDF(theta));
     for (UnsignedInteger i = 0; i < size; ++i)
       {
 	for (UnsignedInteger j = 0; j < outputDimension; ++j)
-	  outS[i][outputDimension + j] *= outS[i][j];
-	outS[i] *= pdf[i][0];
+	  outS(i, outputDimension + j) *= outS(i, j);
+	outS[i] *= pdf(i, 0);
       }
     return outS;
   }
@@ -140,7 +146,6 @@ protected:
 Point MeanStandardDeviationTradeoffMeasure::operator()(const Point & inP) const
 {
   Function function(getFunction());
-  Point parameter(function.getParameter());
   const UnsignedInteger outputDimension = function.getOutputDimension();
   Point outP(outputDimension);
   if (getDistribution().isContinuous())
@@ -162,9 +167,15 @@ Point MeanStandardDeviationTradeoffMeasure::operator()(const Point & inP) const
   }
   else
   {
-    // To benefit from possible parallelization
-    const Sample values(function(inP, getDistribution().getSupport()));
     const Point weights(getDistribution().getProbabilities());
+    const Sample parameters(getDistribution().getSupport());
+    const UnsignedInteger size = parameters.getSize();
+    Sample values(size, outputDimension);
+    for (UnsignedInteger i = 0; i < size; ++i)
+    {
+      function.setParameter(parameters[i]);
+      values[i] = function(inP);
+    }
     // Here we use a UserDefined distribution because the algorithm
     // to compute a standard deviation is quite involved in the case
     // of nonuniform weights
@@ -174,7 +185,6 @@ Point MeanStandardDeviationTradeoffMeasure::operator()(const Point & inP) const
     for (UnsignedInteger j = 0; j < outputDimension; ++ j)
       outP[j] = (1.0 - alpha_[j]) * mean[j] + alpha_[j] * standardDeviation[j];
   } // discrete
-  function.setParameter(parameter);
   return outP;
 }
 

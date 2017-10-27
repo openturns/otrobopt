@@ -86,17 +86,23 @@ public:
   Point operator()(const Point & theta) const
   {
     Function function(function_);
-    const Scalar y = function(x_, theta)[0];
+    function.setParameter(theta);
+    const Scalar y = function(x_)[0];
     const Scalar p = (y <= s_ ? distribution_.computePDF(theta) : 0.0);
     return Point(1, p);
   }
 
   Sample operator()(const Sample & theta) const
   {
+    Function function(function_);
     const UnsignedInteger size = theta.getSize();
-    Sample outS(size, getOutputDimension());
+    Sample outS(size, 1);
     for (UnsignedInteger i = 0; i < size; ++ i)
-      outS[i] = operator()(theta[i]);
+    {
+      function.setParameter(theta[i]);
+      const Scalar y = function(x_)[0];
+      outS(i, 0) = (y <= s_ ? distribution_.computePDF(theta[i]) : 0.0);
+    }
     return outS;
   }
 
@@ -197,7 +203,6 @@ protected:
 Point QuantileMeasure::operator()(const Point & inP) const
 {
   Function function(getFunction());
-  Point parameter(function.getParameter());
   const UnsignedInteger outputDimension = function.getOutputDimension();
   Point outP(outputDimension);
   if (getDistribution().isContinuous())
@@ -240,15 +245,20 @@ Point QuantileMeasure::operator()(const Point & inP) const
   }
   else
   {
-    // To benefit from possible parallelization
-    const Sample values(function(inP, getDistribution().getSupport()));
     const Point weights(getDistribution().getProbabilities());
+    const Sample parameters(getDistribution().getSupport());
+    const UnsignedInteger size = parameters.getSize();
+    Sample values(size, outputDimension);
+    for (UnsignedInteger i = 0; i < size; ++i)
+    {
+      function.setParameter(parameters[i]);
+      values[i] = function(inP);
+    }
     // Here we use a UserDefined distribution because the algorithm
     // to compute a quantile is quite involved in the case of nonuniform
     // weights
     outP = UserDefined(values, weights).computeQuantile(alpha_);
   }
-  function.setParameter(parameter);
   return outP;
 }
 

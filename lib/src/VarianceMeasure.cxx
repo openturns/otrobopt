@@ -79,8 +79,9 @@ public:
   Point operator()(const Point & theta) const
   {
     Function function(function_);
+    function.setParameter(theta);
     // (f_1(x), ...., f_d(x), f_1^2(x), ..., f_d^2(x))
-    Point outP(function(x_, theta));
+    Point outP(function(x_));
     outP.add(outP);
     const UnsignedInteger outputDimension = outP.getDimension();
     for (UnsignedInteger j = 0; j < outputDimension; ++ j)
@@ -90,18 +91,22 @@ public:
 
   Sample operator()(const Sample & theta) const
   {
-    // To benefit from possible parallelization
     Function function(function_);
-    Sample outS(function(x_, theta));
-    const UnsignedInteger size = outS.getSize();
-    const UnsignedInteger outputDimension = outS.getDimension();
+    const UnsignedInteger size = theta.getSize();
+    const UnsignedInteger outputDimension = function.getOutputDimension();
+    Sample outS(size, outputDimension);
+    for (UnsignedInteger i = 0; i < size; ++i)
+    {
+      function.setParameter(theta[i]);
+      outS[i] = function(x_);
+    }
     outS.stack(outS);
     const Sample pdf(distribution_.computePDF(theta));
     for (UnsignedInteger i = 0; i < size; ++i)
       {
 	for (UnsignedInteger j = 0; j < outputDimension; ++j)
-	  outS[i][outputDimension + j] *= outS[i][j];
-	outS[i] *= pdf[i][0];
+	  outS(i, outputDimension + j) *= outS(i, j);
+	outS[i] *= pdf(i, 0);
       }
     return outS;
   }
@@ -139,7 +144,6 @@ protected:
 Point VarianceMeasure::operator()(const Point & inP) const
 {
   Function function(getFunction());
-  Point parameter(function.getParameter());
   const UnsignedInteger outputDimension = function.getOutputDimension();
   Point outP(outputDimension);
   if (getDistribution().isContinuous())
@@ -160,15 +164,21 @@ Point VarianceMeasure::operator()(const Point & inP) const
   }
   else
   {
-    // To benefit from possible parallelization
-    const Sample values(function(inP, getDistribution().getSupport()));
     const Point weights(getDistribution().getProbabilities());
+    const Sample parameters(getDistribution().getSupport());
+    const UnsignedInteger size = parameters.getSize();
+    Sample values(size, outputDimension);
+    for (UnsignedInteger i = 0; i < size; ++i)
+    {
+      function.setParameter(parameters[i]);
+      values[i] = function(inP);
+    }
+
     // Here we use a UserDefined distribution because the algorithm
     // to compute a centered moment is quite involved in the case of
     // nonuniform weights
     outP = UserDefined(values, weights).getCenteredMoment(2);
   } // discrete
-  function.setParameter(parameter);
   return outP;
 }
 

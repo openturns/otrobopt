@@ -81,7 +81,8 @@ public:
   Point operator()(const Point & theta) const
   {
     Function function(function_);
-    Point y(function(x_, theta));
+    function.setParameter(theta);
+    Point y(function(x_));
     for (UnsignedInteger j = 0; j < getOutputDimension(); ++ j)
       y[j] = (y[j] >= 0.0) ? 1.0 : 0.0;
     return y * distribution_.computePDF(theta);
@@ -127,7 +128,6 @@ protected:
 Point IndividualChanceMeasure::operator()(const Point & inP) const
 {
   Function function(getFunction());
-  Point parameter(function.getParameter());
   const UnsignedInteger outputDimension = function.getOutputDimension();
   Point outP(outputDimension);
   if (getDistribution().isContinuous())
@@ -141,22 +141,26 @@ Point IndividualChanceMeasure::operator()(const Point & inP) const
   }
   else
   {
-    // To benefit from possible parallelization
-    const Sample values(function(inP, getDistribution().getSupport()));
     const Point weights(getDistribution().getProbabilities());
-    const UnsignedInteger size = values.getSize();
+    const Sample parameters(getDistribution().getSupport());
+    const UnsignedInteger size = parameters.getSize();
+    Sample values(size, outputDimension);
+    for (UnsignedInteger i = 0; i < size; ++i)
+    {
+      function.setParameter(parameters[i]);
+      values[i] = function(inP);
+    }
     // Here we compute the marginal complementary CDF locally to avoid
     // the creation cost of the marginal UserDefined distributions
     for (UnsignedInteger i = 0; i < size; ++ i)
     {
       for (UnsignedInteger j = 0; j < outputDimension; ++ j)
       {
-        if (values[i][j] >= 0.0)
+        if (values(i, j) >= 0.0)
           outP[j] += weights[j];
       } // for j
     } // for i
   } // discrete
-  function.setParameter(parameter);
   return operator_.operator()(1.0, 2.0) ? alpha_ - outP : outP - alpha_;;
 }
 
