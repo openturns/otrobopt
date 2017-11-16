@@ -22,7 +22,7 @@ thetaDist = ot.Normal(1.0, 3.0)
 robustnessMeasure = otrobopt.MeanMeasure(J, thetaDist)
 problem = otrobopt.RobustOptimizationProblem(robustnessMeasure, g)
 problem.setMinimization(False)
-bounds = ot.Interval([-50.0] * dim, [50.0] * dim)
+bounds = ot.Interval([5.0] * dim, [50.0] * dim)
 problem.setBounds(bounds)
 
 
