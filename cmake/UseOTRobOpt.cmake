@@ -4,7 +4,7 @@
 #
 #  Use OTRobOpt in CMake files
 #
-#  Copyright (C) 2005-2014 Airbus-EDF-Phimeca
+#  Copyright 2005-2018 Airbus-EDF-Phimeca
 #
 #  This library is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU Lesser General Public License as published by
@@ -19,8 +19,6 @@
 #  You should have received a copy of the GNU Lesser General Public
 #  along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #
-#  @author dutka
-#  @date   2010-02-04 16:44:49 +0100 (Thu, 04 Feb 2010)
 #
 
 add_definitions     ( ${OTROBOPT_DEFINITIONS} )
