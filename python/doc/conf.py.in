@@ -50,7 +50,7 @@ todo_include_todos = True
 extensions.append('sphinx.ext.coverage')
 
 extensions.append('sphinx.ext.intersphinx')
-intersphinx_mapping = {'python': ('http://openturns.github.io/', 'openturns-objects.txt')}
+intersphinx_mapping = {'python': ('http://openturns.github.io/openturns/latest', 'openturns-objects.txt')}
 
 try:
     import sphinx.ext.imgmath
@@ -85,7 +85,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'OTRobOpt'
-copyright = u'2015, Airbus-EDF-IMACS-Phimeca'
+copyright = u'2015-2018 Airbus-EDF-IMACS-Phimeca'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
