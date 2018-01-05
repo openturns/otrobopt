@@ -1,0 +1,4 @@
+%feature("docstring") OTROBOPT::SubsetSamplingResult
+"SubsetSampling result class."
+
+// ---------------------------------------------------------------------
