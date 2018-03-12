@@ -35,7 +35,7 @@ namespace OTROBOPT
 class OTROBOPT_API WorstCaseMeasure
   : public MeasureEvaluationImplementation
 {
-  CLASSNAME;
+  CLASSNAME
 
 public:
   /** Default constructor */

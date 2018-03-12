@@ -29,7 +29,7 @@ using namespace OT;
 namespace OTROBOPT
 {
 
-CLASSNAMEINIT(RobustOptimizationAlgorithm);
+CLASSNAMEINIT(RobustOptimizationAlgorithm)
 
 static Factory<RobustOptimizationAlgorithm> Factory_RobustOptimizationAlgorithm;
 

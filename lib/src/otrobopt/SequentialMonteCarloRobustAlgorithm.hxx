@@ -34,7 +34,7 @@ namespace OTROBOPT
 class OTROBOPT_API SequentialMonteCarloRobustAlgorithm
   : public RobustOptimizationAlgorithm
 {
-  CLASSNAME;
+  CLASSNAME
 
 
 public:

@@ -19,9 +19,7 @@ string ( TOLOWER ${CMAKE_PROJECT_NAME} PACKAGE_NAME )
 list ( APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake )
 
 find_package (OpenTURNS NO_MODULE REQUIRED)
-if (OPENTURNS_FOUND)
-  message (STATUS "Found OpenTURNS: ${OPENTURNS_ROOT_DIR}")
-endif ()
+message (STATUS "Found OpenTURNS: ${OPENTURNS_ROOT_DIR} (found version \"${OPENTURNS_VERSION_STRING}\")")
 include ( ${OPENTURNS_USE_FILE} )
 set ( OTROBOPT_DEFINITIONS ${OPENTURNS_DEFINITIONS} )
 if (NOT BUILD_SHARED_LIBS)
@@ -55,24 +53,38 @@ if ( BUILD_PYTHON )
   if (USE_SPHINX)
     find_program (SPHINX_EXECUTABLE NAMES sphinx-build DOC "Sphinx Documentation Builder (sphinx-doc.org)")
     if (SPHINX_EXECUTABLE)
-      find_python_module (sphinx 1.1)
+      find_python_module (numpydoc)
+      if (NUMPYDOC_FOUND)
+        find_python_module (sphinx 1.1)
+      endif ()
+    endif ()
+    if (NOT SPHINX_FOUND)
+      message (STATUS "Disabling documentation")
     endif ()
   endif ()
 
   if ( PYTHONINTERP_FOUND )
-    execute_process ( COMMAND ${PYTHON_EXECUTABLE} -c "from distutils import sysconfig; print(sysconfig.get_python_lib(plat_specific=True, prefix='${CMAKE_INSTALL_PREFIX}'))"
-                      OUTPUT_VARIABLE _ABS_PYTHON_MODULE_PATH
-                      RESULT_VARIABLE _PYTHON_pythonlib_result 
-                      OUTPUT_STRIP_TRAILING_WHITESPACE )
-
-    if (NOT _PYTHON_pythonlib_result) 
-      get_filename_component ( _ABS_PYTHON_MODULE_PATH ${_ABS_PYTHON_MODULE_PATH} ABSOLUTE )
-      file ( RELATIVE_PATH _REL_PYTHON_MODULE_PATH ${CMAKE_INSTALL_PREFIX} ${_ABS_PYTHON_MODULE_PATH} )                   
-
-      set (OTROBOPT_PYTHON_MODULE_PATH ${_REL_PYTHON_MODULE_PATH})
+    if (DEFINED PYTHON_SITE_PACKAGES)
+      set (OTROBOPT_PYTHON_MODULE_PATH ${PYTHON_SITE_PACKAGES})
 
     else ()
-      message ( SEND_ERROR "Could not run ${PYTHON_EXECUTABLE}" ) 
+      execute_process ( COMMAND ${PYTHON_EXECUTABLE} -c "from distutils import sysconfig; print(sysconfig.get_python_lib(plat_specific=True, prefix='${CMAKE_INSTALL_PREFIX}'))"
+                        OUTPUT_VARIABLE _ABS_PYTHON_MODULE_PATH
+                        RESULT_VARIABLE _PYTHON_pythonlib_result
+                        OUTPUT_STRIP_TRAILING_WHITESPACE )
+
+      if (_PYTHON_pythonlib_result)
+        message (SEND_ERROR "Could not run ${PYTHON_EXECUTABLE}")
+      endif ()
+
+      get_filename_component (_ABS_PYTHON_MODULE_PATH ${_ABS_PYTHON_MODULE_PATH} ABSOLUTE)
+      file (RELATIVE_PATH OTROBOPT_PYTHON_MODULE_PATH ${CMAKE_INSTALL_PREFIX} ${_ABS_PYTHON_MODULE_PATH})
+    endif ()
+
+    if (IS_ABSOLUTE ${OTROBOPT_PYTHON_MODULE_PATH})
+      set (PYTHON_MODULE_PATH ${OTROBOPT_PYTHON_MODULE_PATH})
+    else ()
+      set (PYTHON_MODULE_PATH ${CMAKE_INSTALL_PREFIX}/${OTROBOPT_PYTHON_MODULE_PATH})
     endif ()
 
     if (CMAKE_VERSION VERSION_LESS "2.8.6")
@@ -95,7 +107,7 @@ foreach (_var PYTHON_MODULE_PATH LIBRARY_PATH INCLUDE_PATH CONFIG_CMAKE_PATH)
 endforeach ()
 
 # RPATH settings
-set (CMAKE_INSTALL_RPATH ${LIBRARY_PATH} ${CMAKE_Fortran_IMPLICIT_LINK_DIRECTORIES})
+set (CMAKE_INSTALL_RPATH ${LIBRARY_PATH})
 set (CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 if(POLICY CMP0042)
   # Set MACOSX_RPATH to ON
@@ -128,20 +140,6 @@ macro ( ot_add_current_dir_to_include_dirs )
 endmacro ( ot_add_current_dir_to_include_dirs )
 
 
-# The tests can't be run if this function is absent
-enable_testing ()
-add_custom_target ( tests COMMENT "Build tests" )
-add_custom_target ( check COMMENT "Run pre-installation tests" )
-add_custom_target ( installcheck COMMENT "Run post-installation tests" )
-
-add_subdirectory ( lib )
-add_dependencies ( check cppcheck )
-
-if ( PYTHONINTERP_FOUND AND PYTHONLIBS_FOUND AND SWIG_FOUND AND BUILD_SHARED_LIBS )
-  add_subdirectory ( python )
-  add_dependencies ( installcheck pyinstallcheck )
-endif ()
-
 set ( CPACK_PACKAGE_NAME          ${PACKAGE_NAME} )
 set ( CPACK_PACKAGE_VERSION_MAJOR 0              )
 set ( CPACK_PACKAGE_VERSION_MINOR 2              )
@@ -158,6 +156,22 @@ if ( CPACK_PACKAGE_VERSION_PATCH )
   set ( PACKAGE_VERSION       ${PACKAGE_VERSION}.${CPACK_PACKAGE_VERSION_PATCH} )
 endif ()
 set ( CPACK_SOURCE_PACKAGE_FILE_NAME ${PACKAGE_NAME}-${PACKAGE_VERSION} )
+
+
+# The tests can't be run if this function is absent
+enable_testing ()
+add_custom_target (tests COMMENT "Build tests")
+add_custom_target (check COMMENT "Run pre-installation tests")
+add_custom_target (installcheck COMMENT "Run post-installation tests")
+
+add_subdirectory (lib)
+add_dependencies (check cppcheck)
+
+if (PYTHONINTERP_FOUND AND PYTHONLIBS_FOUND AND SWIG_FOUND AND BUILD_SHARED_LIBS)
+  add_subdirectory (python)
+  add_dependencies (installcheck pyinstallcheck)
+endif ()
+
 
 # uninstall target
 configure_file (

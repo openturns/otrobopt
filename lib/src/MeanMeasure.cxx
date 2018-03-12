@@ -28,7 +28,7 @@ using namespace OT;
 namespace OTROBOPT
 {
 
-CLASSNAMEINIT(MeanMeasure);
+CLASSNAMEINIT(MeanMeasure)
 
 static Factory<MeanMeasure> Factory_MeanMeasure;
 

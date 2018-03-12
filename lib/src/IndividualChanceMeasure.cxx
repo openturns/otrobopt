@@ -29,7 +29,7 @@ using namespace OT;
 namespace OTROBOPT
 {
 
-CLASSNAMEINIT(IndividualChanceMeasure);
+CLASSNAMEINIT(IndividualChanceMeasure)
 
 static Factory<IndividualChanceMeasure> Factory_IndividualChanceMeasure;
 

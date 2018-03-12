@@ -31,7 +31,7 @@ using namespace OT;
 namespace OTROBOPT
 {
 
-CLASSNAMEINIT(QuantileMeasure);
+CLASSNAMEINIT(QuantileMeasure)
 
 static Factory<QuantileMeasure> Factory_QuantileMeasure;
 

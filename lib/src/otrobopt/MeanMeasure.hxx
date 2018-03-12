@@ -34,7 +34,7 @@ namespace OTROBOPT
 class OTROBOPT_API MeanMeasure
   : public MeasureEvaluationImplementation
 {
-  CLASSNAME;
+  CLASSNAME
 
 public:
   /** Default constructor */

@@ -29,7 +29,7 @@ using namespace OT;
 namespace OTROBOPT
 {
 
-CLASSNAMEINIT(MeasureFactory);
+CLASSNAMEINIT(MeasureFactory)
 
 static Factory<MeasureFactory> Factory_MeasureFactory;
 

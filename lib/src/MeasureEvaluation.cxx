@@ -76,7 +76,7 @@ OTRobOptResourceMap_init()
 
 static const OTRobOptResourceMap_init static_initializer_OTRobOptResourceMap;
 
-CLASSNAMEINIT(MeasureEvaluation);
+CLASSNAMEINIT(MeasureEvaluation)
 
 /* Default constructor */
 MeasureEvaluation::MeasureEvaluation()

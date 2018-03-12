@@ -26,7 +26,7 @@ using namespace OT;
 namespace OTROBOPT
 {
 
-CLASSNAMEINIT(MeasureEvaluationImplementation);
+CLASSNAMEINIT(MeasureEvaluationImplementation)
 
 static Factory<MeasureEvaluationImplementation> Factory_MeasureEvaluationImplementation;
 

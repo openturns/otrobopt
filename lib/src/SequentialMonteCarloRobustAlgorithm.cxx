@@ -33,7 +33,7 @@
 using namespace OT;
 
 namespace OT {
-TEMPLATE_CLASSNAMEINIT(PersistentCollection<OptimizationResult>);
+TEMPLATE_CLASSNAMEINIT(PersistentCollection<OptimizationResult>)
 }
 
 namespace OTROBOPT
@@ -41,7 +41,7 @@ namespace OTROBOPT
 
 static const Factory<PersistentCollection<OptimizationResult> > Factory_PersistentCollection_OptimizationResult;
 
-CLASSNAMEINIT(SequentialMonteCarloRobustAlgorithm);
+CLASSNAMEINIT(SequentialMonteCarloRobustAlgorithm)
 
 static Factory<SequentialMonteCarloRobustAlgorithm> Factory_SequentialMonteCarloRobustAlgorithm;
 

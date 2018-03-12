@@ -28,7 +28,7 @@ using namespace OT;
 namespace OTROBOPT
 {
 
-CLASSNAMEINIT(JointChanceMeasure);
+CLASSNAMEINIT(JointChanceMeasure)
 
 static Factory<JointChanceMeasure> Factory_JointChanceMeasure;
 

@@ -41,7 +41,7 @@ class MeasureEvaluationImplementation;
 class OTROBOPT_API MeasureEvaluation
   : public OT::TypedInterfaceObject<MeasureEvaluationImplementation>
 {
-  CLASSNAME;
+  CLASSNAME
 
 public:
 

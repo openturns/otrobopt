@@ -93,7 +93,7 @@ install ( FILES ${SWIGFILES}
 
 
 
-if (SPHINX_FOUND AND SPHINX_EXECUTABLE)
+if (SPHINX_FOUND)
 
   # create a build site-package from which sphinx can import
   set (OTROBOPT_PYTHON_BUILD_MODULE_PATH ${CMAKE_CURRENT_BINARY_DIR}/site-packages)
@@ -183,6 +183,7 @@ if (SPHINX_FOUND AND SPHINX_EXECUTABLE)
     add_custom_target ( sphinx_${format}
                         COMMAND ${SPHINX_EXECUTABLE}
                                   -b ${format}
+                                  -d ${SPHINX_BINARY_DIR}/.doctrees
                                   ${SPHINX_FLAGS}
                                   ${SPHINX_BINARY_DIR}
                                   ${SPHINX_BINARY_DIR}/${format}

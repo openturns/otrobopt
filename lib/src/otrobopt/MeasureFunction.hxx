@@ -36,7 +36,7 @@ namespace OTROBOPT
 class OTROBOPT_API MeasureFunction
   : public OT::FunctionImplementation
 {
-  CLASSNAME;
+  CLASSNAME
 
 public:
 
