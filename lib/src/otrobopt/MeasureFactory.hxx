@@ -37,7 +37,7 @@ namespace OTROBOPT
 class OTROBOPT_API MeasureFactory
   : public OT::PersistentObject
 {
-  CLASSNAME;
+  CLASSNAME
 
 
 public:

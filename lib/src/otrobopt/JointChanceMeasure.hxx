@@ -34,7 +34,7 @@ namespace OTROBOPT
 class OTROBOPT_API JointChanceMeasure
   : public MeasureEvaluationImplementation
 {
-  CLASSNAME;
+  CLASSNAME
 
 public:
   /** Default constructor */

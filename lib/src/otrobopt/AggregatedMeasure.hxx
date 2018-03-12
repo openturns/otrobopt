@@ -35,7 +35,7 @@ namespace OTROBOPT
 class OTROBOPT_API AggregatedMeasure
   : public MeasureEvaluationImplementation
 {
-  CLASSNAME;
+  CLASSNAME
 
   typedef OT::Collection<MeasureEvaluation>           MeasureEvaluationCollection;
   typedef OT::PersistentCollection<MeasureEvaluation> MeasureEvaluationPersistentCollection;

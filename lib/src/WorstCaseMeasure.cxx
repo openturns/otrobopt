@@ -28,7 +28,7 @@ using namespace OT;
 namespace OTROBOPT
 {
 
-CLASSNAMEINIT(WorstCaseMeasure);
+CLASSNAMEINIT(WorstCaseMeasure)
 
 static Factory<WorstCaseMeasure> Factory_WorstCaseMeasure;
 

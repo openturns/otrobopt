@@ -30,7 +30,7 @@ namespace OTROBOPT
 {
 
 
-CLASSNAMEINIT(MeasureFunction);
+CLASSNAMEINIT(MeasureFunction)
 
 static Factory<MeasureFunction> Factory_MeasureFunction;
 

@@ -37,7 +37,7 @@ namespace OTROBOPT
 class OTROBOPT_API MeasureEvaluationImplementation
   : public OT::EvaluationImplementation
 {
-  CLASSNAME;
+  CLASSNAME
 
 public:
   /** Default constructor */

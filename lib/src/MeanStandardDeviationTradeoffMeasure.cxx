@@ -29,7 +29,7 @@ using namespace OT;
 namespace OTROBOPT
 {
 
-CLASSNAMEINIT(MeanStandardDeviationTradeoffMeasure);
+CLASSNAMEINIT(MeanStandardDeviationTradeoffMeasure)
 
 static Factory<MeanStandardDeviationTradeoffMeasure> Factory_MeanStandardDeviationTradeoffMeasure;
 

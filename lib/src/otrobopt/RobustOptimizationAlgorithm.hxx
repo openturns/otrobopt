@@ -36,7 +36,7 @@ namespace OTROBOPT
 class OTROBOPT_API RobustOptimizationAlgorithm
   : public OT::OptimizationAlgorithmImplementation
 {
-  CLASSNAME;
+  CLASSNAME
 
 public:
   /** Default constructor */

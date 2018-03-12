@@ -28,7 +28,7 @@ using namespace OT;
 namespace OTROBOPT
 {
 
-CLASSNAMEINIT(RobustOptimizationProblem);
+CLASSNAMEINIT(RobustOptimizationProblem)
 
 static Factory<RobustOptimizationProblem> Factory_RobustOptimizationProblem;
 

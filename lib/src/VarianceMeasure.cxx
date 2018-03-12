@@ -29,7 +29,7 @@ using namespace OT;
 namespace OTROBOPT
 {
 
-CLASSNAMEINIT(VarianceMeasure);
+CLASSNAMEINIT(VarianceMeasure)
 
 static Factory<VarianceMeasure> Factory_VarianceMeasure;
 

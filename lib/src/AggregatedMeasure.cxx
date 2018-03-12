@@ -30,7 +30,7 @@ TEMPLATE_CLASSNAMEINIT(PersistentCollection<OTROBOPT::MeasureEvaluation>);
 namespace OTROBOPT
 {
 
-CLASSNAMEINIT(AggregatedMeasure);
+CLASSNAMEINIT(AggregatedMeasure)
 
 static Factory<AggregatedMeasure> Factory_AggregatedMeasure;
 

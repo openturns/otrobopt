@@ -37,7 +37,7 @@ namespace OTROBOPT
 class OTROBOPT_API RobustOptimizationProblem
   : public OT::OptimizationProblemImplementation
 {
-  CLASSNAME;
+  CLASSNAME
 
 public:
   /** Default constructor */
