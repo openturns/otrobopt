@@ -87,7 +87,7 @@ String RobustOptimizationProblem::__repr__() const
 void RobustOptimizationProblem::setRobustnessMeasure(const MeasureEvaluation & robustnessMeasure)
 {
   robustnessMeasure_ = robustnessMeasure;
-  setObjective(FunctionImplementation(robustnessMeasure.getImplementation()));
+  setObjective(FunctionImplementation(Evaluation(robustnessMeasure.getImplementation())));
 }
 
 MeasureEvaluation RobustOptimizationProblem::getRobustnessMeasure() const
@@ -104,7 +104,7 @@ Bool RobustOptimizationProblem::hasRobustnessMeasure() const
 void RobustOptimizationProblem::setReliabilityMeasure(const MeasureEvaluation & reliabilityMeasure)
 {
   reliabilityMeasure_ = reliabilityMeasure;
-  setInequalityConstraint(FunctionImplementation(reliabilityMeasure.getImplementation()));
+  setInequalityConstraint(FunctionImplementation(Evaluation(reliabilityMeasure.getImplementation())));
 }
 
 MeasureEvaluation RobustOptimizationProblem::getReliabilityMeasure() const

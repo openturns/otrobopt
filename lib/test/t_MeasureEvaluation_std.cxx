@@ -15,7 +15,7 @@ int main(int argc, char **argv)
     Description input(2);
     input[0] = "x";
     input[1] = "theta";
-    Function f_base(input, Description(1, "y1"), Description(1, "x*theta"));
+    SymbolicFunction f_base(input, Description(1, "x*theta"));
     ParametricFunction f(f_base, Indices(1 , 1), Point(1, 1.0));
 
     Point x(1, 1.0);
@@ -61,7 +61,7 @@ int main(int argc, char **argv)
     input[0] = "x";
     input[1] = "theta0";
     input[2] = "theta1";
-    Function f_base(input, Description(1, "y1"), Description(1, "x*theta0+theta1"));
+    SymbolicFunction f_base(input, Description(1, "x*theta0+theta1"));
     Indices indices(2);
     indices[0] = 1;
     indices[1] = 2;
