@@ -41,7 +41,7 @@ RobustOptimizationProblem::RobustOptimizationProblem()
 }
 
 RobustOptimizationProblem::RobustOptimizationProblem(const MeasureEvaluation & robustnessMeasure,
-                                                     const MeasureEvaluation & reliabilityMeasure)
+    const MeasureEvaluation & reliabilityMeasure)
   : OptimizationProblemImplementation()
 {
   setRobustnessMeasure(robustnessMeasure);
@@ -51,7 +51,7 @@ RobustOptimizationProblem::RobustOptimizationProblem(const MeasureEvaluation & r
 }
 
 RobustOptimizationProblem::RobustOptimizationProblem(const Function & objective,
-                                                     const MeasureEvaluation & reliabilityMeasure)
+    const MeasureEvaluation & reliabilityMeasure)
   : OptimizationProblemImplementation()
 {
   setObjective(objective);
@@ -59,7 +59,7 @@ RobustOptimizationProblem::RobustOptimizationProblem(const Function & objective,
 }
 
 RobustOptimizationProblem::RobustOptimizationProblem(const MeasureEvaluation & robustnessMeasure,
-                                                     const Function & inequalityConstraint)
+    const Function & inequalityConstraint)
   : OptimizationProblemImplementation()
 {
   setRobustnessMeasure(robustnessMeasure);

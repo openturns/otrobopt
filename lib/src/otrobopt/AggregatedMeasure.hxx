@@ -56,7 +56,7 @@ public:
   /** Distribution accessor */
   virtual void setDistribution(const OT::Distribution & distribution);
   virtual OT::Distribution getDistribution() const;
-  
+
   /** String converter */
   OT::String __repr__() const;
 

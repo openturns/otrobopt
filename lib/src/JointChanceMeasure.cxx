@@ -65,12 +65,12 @@ class JointChanceMeasureParametricFunctionWrapper : public FunctionImplementatio
 {
 public:
   JointChanceMeasureParametricFunctionWrapper(const Point & x,
-                                              const Function & function,
-                                              const Distribution & distribution)
-  : FunctionImplementation()
-  , x_(x)
-  , function_(function)
-  , distribution_(distribution)
+      const Function & function,
+      const Distribution & distribution)
+    : FunctionImplementation()
+    , x_(x)
+    , function_(function)
+    , distribution_(distribution)
   {
     // Nothing to do
   }
@@ -107,20 +107,20 @@ public:
     Sample activeTheta(0, theta.getDimension());
     Indices activeIndices(0);
     for (UnsignedInteger i = 0; i < size; ++i)
+    {
+      Bool allOk(true);
+      for (UnsignedInteger j = 0; j < outputDimension; ++ j)
+        if (y(i, j) < 0.0)
+        {
+          allOk = false;
+          break;
+        } // y(i, j) < 0.0
+      if (allOk)
       {
-	Bool allOk(true);
-	for (UnsignedInteger j = 0; j < outputDimension; ++ j)
-	  if (y(i, j) < 0.0)
-	    {
-	      allOk = false;
-	      break;
-	    } // y(i, j) < 0.0
-	if (allOk)
-	  {
-	    activeTheta.add(theta[i]);
-	    activeIndices.add(i);
-	  } // allOk
-      } // for i
+        activeTheta.add(theta[i]);
+        activeIndices.add(i);
+      } // allOk
+    } // for i
     // Exploit possible parallelization of computePDF
     const Sample pdf(distribution_.computePDF(activeTheta));
     Sample outS(size, 1);
@@ -189,10 +189,10 @@ Point JointChanceMeasure::operator()(const Point & inP) const
       Bool allOk = true;
       for (UnsignedInteger j = 0; j < outputDimension; ++ j)
         if (values(i, j) < 0.0)
-          {
-            allOk = false;
-            break;
-          }
+        {
+          allOk = false;
+          break;
+        }
       if (allOk) outP[0] += weights[i];
     } // for i
   }

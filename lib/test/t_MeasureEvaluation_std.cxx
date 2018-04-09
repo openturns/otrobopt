@@ -39,18 +39,18 @@ int main(int argc, char **argv)
       MeasureEvaluation measure(measures[i]);
       std::cout << measure << "(continuous)" << measure(x) << std::endl;
       {
-	const UnsignedInteger N = 1000;
-	LHSExperiment experiment(N);
-	MeasureFactory factory(experiment);
-	MeasureEvaluation discretizedMeasure(factory.build(measure));
-	std::cout << discretizedMeasure << "(discretized LHS)" << discretizedMeasure(x) << std::endl;
+        const UnsignedInteger N = 1000;
+        LHSExperiment experiment(N);
+        MeasureFactory factory(experiment);
+        MeasureEvaluation discretizedMeasure(factory.build(measure));
+        std::cout << discretizedMeasure << "(discretized LHS)" << discretizedMeasure(x) << std::endl;
       }
       {
-	const UnsignedInteger N = 4;
-	GaussProductExperiment experiment(Indices(1, N));
-	MeasureFactory factory(experiment);
-	MeasureEvaluation discretizedMeasure(factory.build(measure));
-	std::cout << discretizedMeasure << "(discretized Gauss)" << discretizedMeasure(x) << std::endl;
+        const UnsignedInteger N = 4;
+        GaussProductExperiment experiment(Indices(1, N));
+        MeasureFactory factory(experiment);
+        MeasureEvaluation discretizedMeasure(factory.build(measure));
+        std::cout << discretizedMeasure << "(discretized Gauss)" << discretizedMeasure(x) << std::endl;
       }
     }
   }
@@ -88,18 +88,18 @@ int main(int argc, char **argv)
       MeasureEvaluation measure(measures[i]);
       std::cout << measure << "(continuous)" << measure(x) << std::endl;
       {
-	const UnsignedInteger N = 1000;
-	LHSExperiment experiment(N);
-	MeasureFactory factory(experiment);
-	MeasureEvaluation discretizedMeasure(factory.build(measure));
-	std::cout << discretizedMeasure << "(discretized LHS)" << discretizedMeasure(x) << std::endl;
+        const UnsignedInteger N = 1000;
+        LHSExperiment experiment(N);
+        MeasureFactory factory(experiment);
+        MeasureEvaluation discretizedMeasure(factory.build(measure));
+        std::cout << discretizedMeasure << "(discretized LHS)" << discretizedMeasure(x) << std::endl;
       }
       {
-	const UnsignedInteger N = 4;
-	GaussProductExperiment experiment(measure.getDistribution(), Indices(2, N));
-	MeasureFactory factory(experiment);
-	MeasureEvaluation discretizedMeasure(factory.build(measure));
-	std::cout << discretizedMeasure << "(discretized Gauss)" << discretizedMeasure(x) << std::endl;
+        const UnsignedInteger N = 4;
+        GaussProductExperiment experiment(measure.getDistribution(), Indices(2, N));
+        MeasureFactory factory(experiment);
+        MeasureEvaluation discretizedMeasure(factory.build(measure));
+        std::cout << discretizedMeasure << "(discretized Gauss)" << discretizedMeasure(x) << std::endl;
       }
     }
   }

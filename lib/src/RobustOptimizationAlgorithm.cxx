@@ -43,7 +43,7 @@ RobustOptimizationAlgorithm::RobustOptimizationAlgorithm()
 
 /* Parameter constructor */
 RobustOptimizationAlgorithm::RobustOptimizationAlgorithm (const RobustOptimizationProblem & problem,
-                                                          const OptimizationAlgorithm & solver)
+    const OptimizationAlgorithm & solver)
   : OptimizationAlgorithmImplementation(problem)
   , solver_(solver)
 {

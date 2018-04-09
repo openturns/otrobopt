@@ -43,8 +43,8 @@ MeanStandardDeviationTradeoffMeasure::MeanStandardDeviationTradeoffMeasure()
 
 /* Parameter constructor */
 MeanStandardDeviationTradeoffMeasure::MeanStandardDeviationTradeoffMeasure (const Function & function,
-                                                                            const Distribution & distribution,
-                                                                            const Point & alpha)
+    const Distribution & distribution,
+    const Point & alpha)
   : MeasureEvaluationImplementation(function, distribution)
 {
   setAlpha(alpha);
@@ -58,16 +58,16 @@ MeanStandardDeviationTradeoffMeasure * MeanStandardDeviationTradeoffMeasure::clo
 
 
 class MeanStandardDeviationTradeoffMeasureParametricFunctionWrapper
-: public FunctionImplementation
+  : public FunctionImplementation
 {
 public:
   MeanStandardDeviationTradeoffMeasureParametricFunctionWrapper(const Point & x,
-                                                                const Function & function,
-                                                                const Distribution & distribution)
-  : FunctionImplementation()
-  , x_(x)
-  , function_(function)
-  , distribution_(distribution)
+      const Function & function,
+      const Distribution & distribution)
+    : FunctionImplementation()
+    , x_(x)
+    , function_(function)
+    , distribution_(distribution)
   {
     // Nothing to do
   }
@@ -105,11 +105,11 @@ public:
     outS.stack(outS);
     const Sample pdf(distribution_.computePDF(theta));
     for (UnsignedInteger i = 0; i < size; ++i)
-      {
-	for (UnsignedInteger j = 0; j < outputDimension; ++j)
-	  outS(i, outputDimension + j) *= outS(i, j);
-	outS[i] *= pdf(i, 0);
-      }
+    {
+      for (UnsignedInteger j = 0; j < outputDimension; ++j)
+        outS(i, outputDimension + j) *= outS(i, j);
+      outS[i] *= pdf(i, 0);
+    }
     return outS;
   }
 

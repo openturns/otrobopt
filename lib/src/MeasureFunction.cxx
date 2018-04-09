@@ -43,8 +43,8 @@ MeasureFunction::MeasureFunction()
 
 /* Default constructor */
 MeasureFunction::MeasureFunction(const MeasureEvaluation & evaluation)
-: FunctionImplementation(Evaluation(evaluation.getImplementation()))
-, evaluation_(evaluation)
+  : FunctionImplementation(Evaluation(evaluation.getImplementation()))
+  , evaluation_(evaluation)
 {
   // Nothing to do
 }
