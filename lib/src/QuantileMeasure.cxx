@@ -68,14 +68,14 @@ class QuantileMeasureParametricFunctionWrapper : public FunctionImplementation
 {
 public:
   QuantileMeasureParametricFunctionWrapper(const Point & x,
-                                           const Function & function,
-                                           const Distribution & distribution,
-                                           const Scalar s)
-  : FunctionImplementation()
-  , x_(x)
-  , function_(function)
-  , distribution_(distribution)
-  , s_(s)
+      const Function & function,
+      const Distribution & distribution,
+      const Scalar s)
+    : FunctionImplementation()
+    , x_(x)
+    , function_(function)
+    , distribution_(distribution)
+    , s_(s)
   {}
 
   virtual QuantileMeasureParametricFunctionWrapper * clone() const
@@ -137,12 +137,12 @@ class QuantileMeasureParametricFunctionWrapper2 : public FunctionImplementation
 {
 public:
   QuantileMeasureParametricFunctionWrapper2(const Point & x,
-                                            const Function & function,
-                                            const Distribution & distribution)
-  : FunctionImplementation()
-  , x_(x)
-  , function_(function)
-  , distribution_(distribution)
+      const Function & function,
+      const Distribution & distribution)
+    : FunctionImplementation()
+    , x_(x)
+    , function_(function)
+    , distribution_(distribution)
   {
     // Nothing to do
   }

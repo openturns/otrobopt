@@ -36,41 +36,41 @@ static UnsignedInteger OTRobOptResourceMap_initialized_ = 0;
 class OTRobOptResourceMap_init
 {
 public:
-OTRobOptResourceMap_init()
-{
-
-  if (!OTRobOptResourceMap_initialized_)
+  OTRobOptResourceMap_init()
   {
+
+    if (!OTRobOptResourceMap_initialized_)
+    {
 #ifndef OT_MUTEXINIT_NOCHECK
-    pthread_mutexattr_t attr;
-    pthread_mutexattr_init( &attr );
-    pthread_mutexattr_settype( &attr, PTHREAD_MUTEX_RECURSIVE );
-    pthread_mutex_init(&OTRobOptResourceMap_InstanceMutex_, &attr);
+      pthread_mutexattr_t attr;
+      pthread_mutexattr_init( &attr );
+      pthread_mutexattr_settype( &attr, PTHREAD_MUTEX_RECURSIVE );
+      pthread_mutex_init(&OTRobOptResourceMap_InstanceMutex_, &attr);
 #else
-    pthread_mutex_init(&OTRobOptResourceMap_InstanceMutex_, NULL);
+      pthread_mutex_init(&OTRobOptResourceMap_InstanceMutex_, NULL);
 #endif
-    // SequentialMonteCarloRobustAlgorithm
-    ResourceMap::SetAsScalar("SequentialMonteCarloRobustAlgorithm-ConvergenceFactor", 1e-2);
-    ResourceMap::SetAsUnsignedInteger("SequentialMonteCarloRobustAlgorithm-DefaultInitialSamplingSize", 10);
+      // SequentialMonteCarloRobustAlgorithm
+      ResourceMap::SetAsScalar("SequentialMonteCarloRobustAlgorithm-ConvergenceFactor", 1e-2);
+      ResourceMap::SetAsUnsignedInteger("SequentialMonteCarloRobustAlgorithm-DefaultInitialSamplingSize", 10);
 
-    ResourceMap::SetAsUnsignedInteger("MeanMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
-    ResourceMap::SetAsUnsignedInteger("VarianceMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
-    ResourceMap::SetAsUnsignedInteger("MeanStandardDeviationTradeoffMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
-    ResourceMap::SetAsUnsignedInteger("QuantileMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
+      ResourceMap::SetAsUnsignedInteger("MeanMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
+      ResourceMap::SetAsUnsignedInteger("VarianceMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
+      ResourceMap::SetAsUnsignedInteger("MeanStandardDeviationTradeoffMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
+      ResourceMap::SetAsUnsignedInteger("QuantileMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
 
-    ResourceMap::SetAsUnsignedInteger("IndividualChanceMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
-    ResourceMap::SetAsUnsignedInteger("JointChanceMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
-    OTRobOptResourceMap_initialized_ = 1;
+      ResourceMap::SetAsUnsignedInteger("IndividualChanceMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
+      ResourceMap::SetAsUnsignedInteger("JointChanceMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
+      OTRobOptResourceMap_initialized_ = 1;
+    }
+    assert(OTRobOptResourceMap_initialized_);
   }
-  assert(OTRobOptResourceMap_initialized_);
-}
 
-~OTRobOptResourceMap_init()
-{
-  if (OTRobOptResourceMap_initialized_)
-    pthread_mutex_destroy(&OTRobOptResourceMap_InstanceMutex_);
-  OTRobOptResourceMap_initialized_ = 0;
-}
+  ~OTRobOptResourceMap_init()
+  {
+    if (OTRobOptResourceMap_initialized_)
+      pthread_mutex_destroy(&OTRobOptResourceMap_InstanceMutex_);
+    OTRobOptResourceMap_initialized_ = 0;
+  }
 
 };
 
@@ -87,7 +87,7 @@ MeasureEvaluation::MeasureEvaluation()
 
 /* Default constructor */
 MeasureEvaluation::MeasureEvaluation(const MeasureEvaluationImplementation & implementation)
-: TypedInterfaceObject<MeasureEvaluationImplementation>(implementation.clone())
+  : TypedInterfaceObject<MeasureEvaluationImplementation>(implementation.clone())
 {
   // Nothing to do
 }

@@ -23,7 +23,8 @@
 #include <openturns/AggregatedFunction.hxx>
 
 using namespace OT;
-namespace OT {
+namespace OT
+{
 TEMPLATE_CLASSNAMEINIT(PersistentCollection<OTROBOPT::MeasureEvaluation>);
 }
 

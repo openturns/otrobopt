@@ -62,10 +62,10 @@ public:
   MeanMeasureParametricFunctionWrapper (const Point & x,
                                         const Function & function,
                                         const Distribution & distribution)
-  : FunctionImplementation()
-  , x_(x)
-  , function_(function)
-  , distribution_(distribution)
+    : FunctionImplementation()
+    , x_(x)
+    , function_(function)
+    , distribution_(distribution)
   {
     // Nothing to do
   }

@@ -43,9 +43,9 @@ IndividualChanceMeasure::IndividualChanceMeasure()
 
 /* Parameter constructor */
 IndividualChanceMeasure::IndividualChanceMeasure (const Function & function,
-                                                  const Distribution & distribution,
-                                                  const ComparisonOperator & op,
-                                                  const Point & alpha)
+    const Distribution & distribution,
+    const ComparisonOperator & op,
+    const Point & alpha)
   : MeasureEvaluationImplementation(function, distribution)
   , operator_(op)
 {
@@ -63,12 +63,12 @@ class IndividualChanceMeasureParametricFunctionWrapper : public FunctionImplemen
 {
 public:
   IndividualChanceMeasureParametricFunctionWrapper (const Point & x,
-                                                    const Function & function,
-                                                    const Distribution & distribution)
-  : FunctionImplementation()
-  , x_(x)
-  , function_(function)
-  , distribution_(distribution)
+      const Function & function,
+      const Distribution & distribution)
+    : FunctionImplementation()
+    , x_(x)
+    , function_(function)
+    , distribution_(distribution)
   {
     // Nothing to do
   }

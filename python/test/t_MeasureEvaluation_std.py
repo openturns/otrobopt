@@ -15,8 +15,10 @@ measures = [otrobopt.MeanMeasure(f, thetaDist),
             otrobopt.VarianceMeasure(f, thetaDist),
             otrobopt.WorstCaseMeasure(f, ot.Uniform(-1.0, 4.0)),
             otrobopt.WorstCaseMeasure(f, ot.Uniform(-1.0, 4.0), False),
-            otrobopt.JointChanceMeasure(f, ot.Normal(1.0, 1.0), ot.GreaterOrEqual(), 0.95),
-            otrobopt.IndividualChanceMeasure(f, ot.Normal(1.0, 1.0), ot.GreaterOrEqual(), [0.95]),
+            otrobopt.JointChanceMeasure(
+                f, ot.Normal(1.0, 1.0), ot.GreaterOrEqual(), 0.95),
+            otrobopt.IndividualChanceMeasure(
+                f, ot.Normal(1.0, 1.0), ot.GreaterOrEqual(), [0.95]),
             otrobopt.MeanStandardDeviationTradeoffMeasure(f, thetaDist, [0.8]),
             otrobopt.QuantileMeasure(f, thetaDist, 0.99)
             ]
@@ -37,7 +39,7 @@ for measure in measures:
     print(discretizedMeasure, '(discretized Gauss)', discretizedMeasure(x))
 
 # Second test: theta of dimension 2
-thetaDist = ot.Normal([2.0]*2, [0.1]*2, ot.IdentityMatrix(2))
+thetaDist = ot.Normal([2.0] * 2, [0.1] * 2, ot.IdentityMatrix(2))
 f_base = ot.SymbolicFunction(['x', 'theta0', 'theta1'], ['x*theta0+theta1'])
 f = ot.ParametricFunction(f_base, [1, 2], thetaDist.getMean())
 
@@ -45,10 +47,15 @@ x = [1.0]
 
 measures = [otrobopt.MeanMeasure(f, thetaDist),
             otrobopt.VarianceMeasure(f, thetaDist),
-            otrobopt.WorstCaseMeasure(f, ot.ComposedDistribution([ot.Uniform(-1.0, 4.0)]*2)),
-            otrobopt.WorstCaseMeasure(f, ot.ComposedDistribution([ot.Uniform(-1.0, 4.0)]*2), False),
-            otrobopt.JointChanceMeasure(f, thetaDist, ot.GreaterOrEqual(), 0.95),
-            otrobopt.IndividualChanceMeasure(f, thetaDist, ot.GreaterOrEqual(), [0.5]),
+            otrobopt.WorstCaseMeasure(
+                f, ot.ComposedDistribution([ot.Uniform(-1.0, 4.0)] * 2)),
+            otrobopt.WorstCaseMeasure(
+                f, ot.ComposedDistribution(
+                    [ot.Uniform(-1.0, 4.0)] * 2), False),
+            otrobopt.JointChanceMeasure(
+                f, thetaDist, ot.GreaterOrEqual(), 0.95),
+            otrobopt.IndividualChanceMeasure(
+                f, thetaDist, ot.GreaterOrEqual(), [0.5]),
             otrobopt.MeanStandardDeviationTradeoffMeasure(f, thetaDist, [0.8]),
             otrobopt.QuantileMeasure(f, thetaDist, 0.5)
             ]
@@ -63,7 +70,7 @@ for measure in measures:
     discretizedMeasure = factory.build(measure)
     print(discretizedMeasure, '(discretized LHS)', discretizedMeasure(x))
     N = 4
-    experiment = ot.GaussProductExperiment(measure.getDistribution(), [N]*2)
+    experiment = ot.GaussProductExperiment(measure.getDistribution(), [N] * 2)
     factory = otrobopt.MeasureFactory(experiment)
     discretizedMeasure = factory.build(measure)
     print(discretizedMeasure, '(discretized Gauss)', discretizedMeasure(x))

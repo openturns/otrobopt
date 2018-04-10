@@ -39,14 +39,14 @@ MeasureEvaluationImplementation::MeasureEvaluationImplementation()
 }
 
 MeasureEvaluationImplementation::MeasureEvaluationImplementation (const Function & function,
-                                                                  const Distribution & distribution)
+    const Distribution & distribution)
   : EvaluationImplementation()
   , function_(function)
   , distribution_(distribution)
 {
   if (distribution.getDimension() != function.getParameter().getDimension())
     throw InvalidDimensionException(HERE) << "Function parameter dimension (" << function.getParameter().getDimension()
-      << ") must match the distribution dimension (" << distribution.getDimension()<<")";
+                                          << ") must match the distribution dimension (" << distribution.getDimension() << ")";
   setInputDescription(function_.getInputDescription());
   setOutputDescription(function_.getOutputDescription());
 }
@@ -71,7 +71,7 @@ String MeasureEvaluationImplementation::__repr__() const
 {
   OSS oss;
   oss << "class=" << MeasureEvaluationImplementation::GetClassName()
-      << " distribution="<< distribution_
+      << " distribution=" << distribution_
       << " function=" << function_;
   return oss;
 }

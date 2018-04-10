@@ -61,12 +61,12 @@ class VarianceMeasureParametricFunctionWrapper : public FunctionImplementation
 {
 public:
   VarianceMeasureParametricFunctionWrapper (const Point & x,
-                                            const Function & function,
-                                            const Distribution & distribution)
-  : FunctionImplementation()
-  , x_(x)
-  , function_(function)
-  , distribution_(distribution)
+      const Function & function,
+      const Distribution & distribution)
+    : FunctionImplementation()
+    , x_(x)
+    , function_(function)
+    , distribution_(distribution)
   {
     // Nothing to do
   }
@@ -103,11 +103,11 @@ public:
     outS.stack(outS);
     const Sample pdf(distribution_.computePDF(theta));
     for (UnsignedInteger i = 0; i < size; ++i)
-      {
-	for (UnsignedInteger j = 0; j < outputDimension; ++j)
-	  outS(i, outputDimension + j) *= outS(i, j);
-	outS[i] *= pdf(i, 0);
-      }
+    {
+      for (UnsignedInteger j = 0; j < outputDimension; ++j)
+        outS(i, outputDimension + j) *= outS(i, j);
+      outS[i] *= pdf(i, 0);
+    }
     return outS;
   }
 

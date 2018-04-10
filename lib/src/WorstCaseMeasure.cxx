@@ -63,10 +63,10 @@ class WorstCaseMeasureParametricFunctionWrapper : public FunctionImplementation
 {
 public:
   WorstCaseMeasureParametricFunctionWrapper(const Point & x,
-                                            const Function & function)
-  : FunctionImplementation()
-  , x_(x)
-  , function_(function)
+      const Function & function)
+    : FunctionImplementation()
+    , x_(x)
+    , function_(function)
   {
     // Nothing to do
   }

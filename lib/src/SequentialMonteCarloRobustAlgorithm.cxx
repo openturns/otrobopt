@@ -32,7 +32,8 @@
 
 using namespace OT;
 
-namespace OT {
+namespace OT
+{
 TEMPLATE_CLASSNAMEINIT(PersistentCollection<OptimizationResult>)
 }
 
