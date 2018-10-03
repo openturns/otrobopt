@@ -73,6 +73,7 @@ Python textual interface to OTRobOpt uncertainty library
 %build
 %cmake -DINSTALL_DESTDIR:PATH=%{buildroot} \
        -DCMAKE_SKIP_INSTALL_RPATH:BOOL=ON \
+       -DPYTHON_EXECUTABLE=/usr/bin/python \
        -DUSE_SPHINX=OFF .
 make %{?_smp_mflags}
 
