@@ -6,7 +6,7 @@ if ( MINGW )
   set ( REPLACE_EOL " | tr -d '\\\\015' " )
   # By default, Mingw-g++ puts 3 digits to real exponent whereas g++ puts 2.
   set ( ADAPT_CHECK_TESTS_EXPONENT "PRINTF_EXPONENT_DIGITS=2" )
-  
+
   add_library ( CRT_fp8 STATIC CRT_fp8.c )
   set_target_properties ( CRT_fp8 PROPERTIES LINKER_LANGUAGE CXX )
 endif ()
@@ -57,18 +57,15 @@ macro ( ot_check_test TESTNAME )
   endforeach ( _ARG )
 
   if (_IGNOREOUT)
-    set ( COMMAND "( ${TESTNAME_LOC} ${_PARAMS} > /dev/null )" )
-    set ( EXTERNAL_COMMAND "./${TESTNAME_TGT} ${_PARAMS} > $DEBUG_FILE 2>&1" )
+    set ( COMMAND "( ${CMAKE_CROSSCOMPILING_EMULATOR} ${TESTNAME_LOC} ${_PARAMS} > /dev/null )" )
   else (_IGNOREOUT)
     set ( TESTNAME_OUT ${TESTNAME_TGT}.expout )
     set ( OUTFILE_LOC ${CMAKE_CURRENT_SOURCE_DIR}/${TESTNAME_OUT} ) 
-    set ( COMMAND "( ${TESTNAME_LOC} ${_PARAMS} ${REPLACE_EOL} > ${CMAKE_CURRENT_BINARY_DIR}/${TESTNAME_TGT}.out ) && diff -u ${OUTFILE_LOC} ${CMAKE_CURRENT_BINARY_DIR}/${TESTNAME_TGT}.out" )
-    set ( EXTERNAL_COMMAND "( ./${TESTNAME_TGT} ${_PARAMS} 2>$DEBUG_FILE | tr -d '\\\\r' > ${TESTNAME_TGT}.out ) && diff -u ${TESTNAME_OUT} ${TESTNAME_TGT}.out" )
+    set ( COMMAND "( ${CMAKE_CROSSCOMPILING_EMULATOR} ${TESTNAME_LOC} ${_PARAMS} ${REPLACE_EOL} > ${CMAKE_CURRENT_BINARY_DIR}/${TESTNAME_TGT}.out ) && diff -u ${OUTFILE_LOC} ${CMAKE_CURRENT_BINARY_DIR}/${TESTNAME_TGT}.out" )
   endif (_IGNOREOUT)
 
   if (_PRE OR _POST)
     set ( COMMAND "${_PRE}${COMMAND}${_POST}" )
-    set ( EXTERNAL_COMMAND "${_PRE}${EXTERNAL_COMMAND}${_POST}" )
   endif (_PRE OR _POST)
 
   add_test ( cppcheck_${TESTNAME} "sh" "-c" "${COMMAND}" )
@@ -77,22 +74,10 @@ macro ( ot_check_test TESTNAME )
   install ( FILES ${TESTNAME_SRC}
             DESTINATION ${OTROBOPT_EXAMPLE_PATH} 
           )
-
-  if ( INSTALL_TESTS )
-    install ( FILES ${TESTNAME_OUT}
-              DESTINATION ${OTROBOPT_EXAMPLE_PATH} 
-            )
-    install ( TARGETS ${TESTNAME_TGT}
-              DESTINATION ${OTROBOPT_EXAMPLE_PATH} 
-            )
-
-#     add_check_file ( ${EXTERNAL_CHECK_FILE} ${TESTNAME_TGT} ${EXTERNAL_COMMAND} ${CUR_CHECK} )
-#     math( EXPR CUR_CHECK "${CUR_CHECK} + 1" )
-  endif ()
-
-endmacro ( ot_check_test )
+endmacro ()
 
 include_directories ( ${INTERNAL_INCLUDE_DIRS} )
+
 
 
 
@@ -104,6 +89,3 @@ endif()
 add_custom_target ( cppcheck COMMAND ${CMAKE_CTEST_COMMAND} -R "^cppcheck_"
                     DEPENDS ${CHECK_TO_BE_RUN}
                     COMMENT "Run C++ pre-installation tests" )
-
-
-
