@@ -15,7 +15,7 @@ FFLAGS="${FFLAGS:-%optflags}" ; export FFLAGS ; \
 -DBUILD_SHARED_LIBS:BOOL=ON
 
 Name:           otrobopt
-Version:        0.3
+Version:        0.4
 Release:        0%{?dist}
 Summary:        OpenTURNS module
 Group:          System Environment/Libraries
