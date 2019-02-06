@@ -54,7 +54,11 @@ macro ( ot_add_python_module MODULENAME SOURCEFILE )
 
   target_link_libraries_with_dynamic_lookup (${module_target} ${PYTHON_LIBRARIES})
 
-  set_target_properties (${module_target} PROPERTIES OUTPUT_NAME _${MODULENAME})
+  set_target_properties (${module_target} PROPERTIES OUTPUT_NAME ${MODULENAME})
+
+  if (CMAKE_VERSION VERSION_LESS 3.13)
+    set_target_properties (${module_target} PROPERTIES PREFIX "_")
+  endif ()
 
   if (CMAKE_VERSION VERSION_LESS 3.1)
     set_target_properties (${module_target} PROPERTIES NO_SONAME ON)
