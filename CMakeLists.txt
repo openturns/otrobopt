@@ -107,13 +107,17 @@ endforeach ()
 # RPATH settings
 set (CMAKE_INSTALL_RPATH ${LIBRARY_PATH})
 set (CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-if(POLICY CMP0042)
-  # Set MACOSX_RPATH to ON
+if (POLICY CMP0042)
+  # MACOSX_RPATH is enabled by default
   cmake_policy(SET CMP0042 NEW)
 endif()
-if(POLICY CMP0078)
-  # Set MACOSX_RPATH to ON
+if (POLICY CMP0078)
+  # UseSWIG generates standard target names
   cmake_policy(SET CMP0078 NEW)
+endif()
+if (POLICY CMP0086)
+  # UseSWIG honors SWIG_MODULE_NAME via -module flag
+  cmake_policy(SET CMP0086 NEW)
 endif()
 
 # Some useful macros to ease CMakeLists.txt file writing
