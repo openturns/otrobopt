@@ -1,10 +1,9 @@
 language: cpp
-dist: trusty
 sudo: required
 
 install:
   - curl http://ubuntu.openturns.org/openturns.org-repo.key | sudo apt-key add -
-  - echo deb http://ubuntu.openturns.org trusty main | sudo tee /etc/apt/sources.list.d/openturns.list
+  - echo deb http://ubuntu.openturns.org xenial main | sudo tee /etc/apt/sources.list.d/openturns.list
   - sudo apt-get update
   - sudo apt-get -y install libopenturns-dev python-openturns cmake gfortran swig texlive-latex-recommended texlive-fonts-recommended texlive-latex-extra python-dev
   - sudo rm -r /opt/python/*
