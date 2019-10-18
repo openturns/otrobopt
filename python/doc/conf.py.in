@@ -33,7 +33,11 @@ sys.path.insert(0, '@OPENTURNS_PYTHON_MODULE_PATH@')
 extensions = ['sphinx.ext.autodoc']
 
 extensions.append('sphinx.ext.autodoc')
-autodoc_default_flags = ['members', 'inherited-members']
+
+if LooseVersion(sphinx.__version__) >= '1.8':
+    autodoc_default_options = {'members': None, 'inherited-members': None, 'exclude-members': 'thisown'}
+else:
+    autodoc_default_flags =  ['members', 'inherited-members']
 
 extensions.append('sphinx.ext.autosummary')
 autosummary_generate = True
