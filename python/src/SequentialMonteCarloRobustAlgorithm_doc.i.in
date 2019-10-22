@@ -1,8 +1,20 @@
 %feature("docstring") OTROBOPT::SequentialMonteCarloRobustAlgorithm
 "Sequential Monte Carlo robust optimization algorithm.
 
-Solves a robust optimization problem by alternating measure discretizing
+Solves a robust optimization problem by alternating discretizing
 measures and solving deterministic problems.
+
+Measures are discretized using an initial size that can be set with
+:py:meth:`setInitialSamplingSize` and a size increment that is set with
+:py:meth:`setSamplingSizeIncrement`.
+
+The optimization problems relies on a Multi-Start algorithm from an initial LHS
+experiment and an internal solver that can be set by :py:meth:`setOptimizationAlgorithm`.
+The ResourceMap key `SequentialMonteCarloRobustAlgorithm-ConvergenceFactor`
+can be used to control the convergence criteria of the inner solver.
+
+The algorithm stops when the number of iterations has been reached or the
+absolute error is small enough.
 
 Parameters
 ----------
@@ -69,7 +81,7 @@ samplingSizeIncrement : :py:class:`openturns.Function`
 Initial number of start points used.
 
 Problem bounds must be specified when multi-start is used as start points are
-drawned uniformly into the bounding box.
+drawn uniformly into the bounding box using an LHS experiment.
 
 Parameters
 ----------
@@ -84,7 +96,7 @@ initialSearch : int, 0 by default (no multi-start)
 Initial number of start points used.
 
 Problem bounds must be specified when multi-start is used as start points are
-drawned uniformly into the bounding box.
+drawn uniformly into the bounding box.
 
 Returns
 -------
