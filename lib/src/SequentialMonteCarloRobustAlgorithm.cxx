@@ -203,6 +203,17 @@ void SequentialMonteCarloRobustAlgorithm::run()
     // update result
     result_.setIterationNumber(iterationNumber);
     result_.store(currentPoint, currentValue, absoluteError, 0.0, 0.0, 0.0);
+
+    // callbacks
+    if (progressCallback_.first)
+    {
+      progressCallback_.first((100.0 * iterationNumber) / getMaximumIterationNumber(), progressCallback_.second);
+    }
+    if (stopCallback_.first && stopCallback_.first(stopCallback_.second))
+    {
+      LOGWARN(OSS() << "Optimization was stopped by user");
+      break;
+    }
   }
   resultCollection_.add(result_);
 }
