@@ -60,7 +60,7 @@ MeasureEvaluationImplementation * MeasureEvaluationImplementation::clone() const
 
 
 /* Evaluation */
-Point MeasureEvaluationImplementation::operator()(const Point & inP) const
+Point MeasureEvaluationImplementation::operator()(const Point & /*inP*/) const
 {
   throw NotYetImplementedException(HERE) << "MeasureEvaluationImplementation::operator()(const Point & inP)";
 }

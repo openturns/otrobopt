@@ -49,17 +49,24 @@ public:
 #else
       pthread_mutex_init(&OTRobOptResourceMap_InstanceMutex_, NULL);
 #endif
+      // openturns<1.15
+#ifndef OPENTURNS_VERSION
+#define AddAsScalar SetAsScalar
+#define AddAsUnsignedInteger SetAsUnsignedInteger
+#define AddAsBool SetAsBool
+#define AddAsScalar SetAsScalar
+#endif
       // SequentialMonteCarloRobustAlgorithm
-      ResourceMap::SetAsScalar("SequentialMonteCarloRobustAlgorithm-ConvergenceFactor", 1e-2);
-      ResourceMap::SetAsUnsignedInteger("SequentialMonteCarloRobustAlgorithm-DefaultInitialSamplingSize", 10);
+      ResourceMap::AddAsScalar("SequentialMonteCarloRobustAlgorithm-ConvergenceFactor", 1e-2);
+      ResourceMap::AddAsUnsignedInteger("SequentialMonteCarloRobustAlgorithm-DefaultInitialSamplingSize", 10);
 
-      ResourceMap::SetAsUnsignedInteger("MeanMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
-      ResourceMap::SetAsUnsignedInteger("VarianceMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
-      ResourceMap::SetAsUnsignedInteger("MeanStandardDeviationTradeoffMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
-      ResourceMap::SetAsUnsignedInteger("QuantileMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
+      ResourceMap::AddAsUnsignedInteger("MeanMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
+      ResourceMap::AddAsUnsignedInteger("VarianceMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
+      ResourceMap::AddAsUnsignedInteger("MeanStandardDeviationTradeoffMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
+      ResourceMap::AddAsUnsignedInteger("QuantileMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
 
-      ResourceMap::SetAsUnsignedInteger("IndividualChanceMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
-      ResourceMap::SetAsUnsignedInteger("JointChanceMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
+      ResourceMap::AddAsUnsignedInteger("IndividualChanceMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
+      ResourceMap::AddAsUnsignedInteger("JointChanceMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
       OTRobOptResourceMap_initialized_ = 1;
     }
     assert(OTRobOptResourceMap_initialized_);
