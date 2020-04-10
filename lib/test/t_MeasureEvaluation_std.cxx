@@ -7,7 +7,7 @@
 using namespace OT;
 using namespace OTROBOPT;
 
-int main(int argc, char **argv)
+int main()
 {
   // First test: theta of dimension 1
   {

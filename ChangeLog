@@ -1,0 +1,4 @@
+= 0.7 release (2020-04-08)
+
+ * #26 (The key "SequentialMonteCarloRobustAlgorithm-ConvergenceFactor" should not be used for setMaximumAbsoluteError)
+

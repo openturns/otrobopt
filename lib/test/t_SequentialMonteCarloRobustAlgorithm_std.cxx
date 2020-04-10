@@ -6,7 +6,7 @@
 using namespace OT;
 using namespace OTROBOPT;
 
-int main(int argc, char **argv)
+int main()
 {
   //Log.Show(Log.Info);
 
