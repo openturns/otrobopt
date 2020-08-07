@@ -11,22 +11,6 @@ struct traitsPythonType< OT::OptimizationResult >
   typedef _PyObject_ Type;
 };
 
-template <>
-inline
-OT::OptimizationResult
-convert< _PyObject_, OT::OptimizationResult >(PyObject * pyObj)
-{
-  void * ptr = 0;
-  if (SWIG_IsOK(SWIG_ConvertPtr(pyObj, &ptr, SWIGTYPE_p_OT__OptimizationResult, 0))) {
-    OT::OptimizationResult * p_mf = reinterpret_cast< OT::OptimizationResult * >(ptr);
-    return *p_mf;
-  }
-  else {
-    throw OT::InvalidArgumentException(HERE) << "Object passed as argument is not convertible to an OptimizationResult";
-  }
-  return OT::OptimizationResult();
-}
-
 }
 %}
 
