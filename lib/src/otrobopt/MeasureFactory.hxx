@@ -50,20 +50,20 @@ public:
   MeasureFactory (const OT::WeightedExperiment & experiment);
 
   /** Virtual constructor method */
-  MeasureFactory * clone() const;
+  MeasureFactory * clone() const override;
 
   /** Evaluation */
   MeasureEvaluation build(const MeasureEvaluation & measure) const;
   MeasureEvaluationCollection buildCollection(const MeasureEvaluationCollection & collection) const;
 
   /** String converter */
-  OT::String __repr__() const;
+  OT::String __repr__() const override;
 
   /** Method save() stores the object through the StorageManager */
-  virtual void save(OT::Advocate & adv) const;
+  void save(OT::Advocate & adv) const override;
 
   /** Method load() reloads the object from the StorageManager */
-  virtual void load(OT::Advocate & adv);
+  void load(OT::Advocate & adv) override;
 
 private:
   OT::WeightedExperiment experiment_;

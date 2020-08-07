@@ -45,22 +45,22 @@ public:
 
   explicit MeasureFunction(const MeasureEvaluation & evaluation);
 
-  MeasureFunction * clone() const;
+  MeasureFunction * clone() const override;
 
   /** Evaluation */
-  virtual OT::Point operator()(const OT::Point & inP) const;
-  virtual OT::Sample operator()(const OT::Sample & inS) const;
-  virtual OT::UnsignedInteger getInputDimension() const;
-  virtual OT::UnsignedInteger getOutputDimension() const;
+  OT::Point operator()(const OT::Point & inP) const override;
+  OT::Sample operator()(const OT::Sample & inS) const override;
+  OT::UnsignedInteger getInputDimension() const override;
+  OT::UnsignedInteger getOutputDimension() const override;
 
   /** String converter */
-  OT::String __repr__() const;
+  OT::String __repr__() const override;
 
   /** Method save() stores the object through the StorageManager */
-  virtual void save(OT::Advocate & adv) const;
+  void save(OT::Advocate & adv) const override;
 
   /** Method load() reloads the object from the StorageManager */
-  virtual void load(OT::Advocate & adv);
+  void load(OT::Advocate & adv) override;
 
 private:
   MeasureEvaluation evaluation_;

@@ -47,10 +47,10 @@ public:
                     const OT::Bool minimization = true);
 
   /** Virtual constructor method */
-  WorstCaseMeasure * clone() const;
+  WorstCaseMeasure * clone() const override;
 
   /** Evaluation */
-  OT::Point operator()(const OT::Point & inP) const;
+  OT::Point operator()(const OT::Point & inP) const override;
 
   /** Optimization solver accessor */
   void setOptimizationAlgorithm(const OT::OptimizationAlgorithm & solver);
@@ -61,13 +61,13 @@ public:
   OT::Bool isMinimization() const;
 
   /** String converter */
-  OT::String __repr__() const;
+  OT::String __repr__() const override;
 
   /** Method save() stores the object through the StorageManager */
-  virtual void save(OT::Advocate & adv) const;
+  virtual void save(OT::Advocate & adv) const override;
 
   /** Method load() reloads the object from the StorageManager */
-  virtual void load(OT::Advocate & adv);
+  virtual void load(OT::Advocate & adv) override;
 
 private:
   OT::Bool isMinimization_;

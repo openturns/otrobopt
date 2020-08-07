@@ -46,23 +46,23 @@ public:
                   const OT::Scalar alpha);
 
   /** Virtual constructor method */
-  QuantileMeasure * clone() const;
+  QuantileMeasure * clone() const override;
 
   /** Evaluation */
-  OT::Point operator()(const OT::Point & inP) const;
+  OT::Point operator()(const OT::Point & inP) const override;
 
   /** Alpha coefficient accessor */
   void setAlpha(const OT::Scalar alpha);
   OT::Scalar getAlpha() const;
 
   /** String converter */
-  OT::String __repr__() const;
+  OT::String __repr__() const override;
 
   /** Method save() stores the object through the StorageManager */
-  virtual void save(OT::Advocate & adv) const;
+  virtual void save(OT::Advocate & adv) const override;
 
   /** Method load() reloads the object from the StorageManager */
-  virtual void load(OT::Advocate & adv);
+  virtual void load(OT::Advocate & adv) override;
 
 private:
   OT::Scalar alpha_;
