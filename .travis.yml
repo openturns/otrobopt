@@ -1,5 +1,4 @@
 language: cpp
-sudo: required
 
 install:
   - curl http://ubuntu.openturns.org/openturns.org-repo.key | sudo apt-key add -
@@ -7,7 +6,7 @@ install:
   - sudo apt-get update
   - sudo apt-get -y install libopenturns-dev python3-openturns python3-dev cmake swig texlive-latex-recommended texlive-fonts-recommended texlive-latex-extra python3-matplotlib python3-pip python3-setuptools
   - sudo rm -r /opt/python/*
-  - pip3 install "sphinx<3" numpydoc "matplotlib<3" --user --upgrade
+  - pip3 install "sphinx<3" numpydoc "matplotlib<3" "numpy<1.19" --user --upgrade
 
 script:
   - cmake -DCMAKE_INSTALL_PREFIX=~/.local
