@@ -47,26 +47,26 @@ public:
                       const OT::Scalar alpha);
 
   /** Virtual constructor method */
-  JointChanceMeasure * clone() const;
+  JointChanceMeasure * clone() const override;
 
   /** Evaluation */
-  OT::Point operator()(const OT::Point & inP) const;
+  OT::Point operator()(const OT::Point & inP) const override;
 
   /** Alpha coefficient accessor */
   void setAlpha(const OT::Scalar alpha);
   OT::Scalar getAlpha() const;
 
   /** Dimension accessor */
-  virtual OT::UnsignedInteger getOutputDimension() const;
+  OT::UnsignedInteger getOutputDimension() const override;
 
   /** String converter */
-  OT::String __repr__() const;
+  OT::String __repr__() const override;
 
   /** Method save() stores the object through the StorageManager */
-  virtual void save(OT::Advocate & adv) const;
+  void save(OT::Advocate & adv) const override;
 
   /** Method load() reloads the object from the StorageManager */
-  virtual void load(OT::Advocate & adv);
+  void load(OT::Advocate & adv) override;
 
 private:
   OT::ComparisonOperator operator_;

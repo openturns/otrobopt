@@ -53,7 +53,7 @@ public:
                             const OT::Function & constraint);
 
   /** Virtual constructor method */
-  RobustOptimizationProblem * clone() const;
+  RobustOptimizationProblem * clone() const override;
 
   /** Measure accessors */
   void setRobustnessMeasure(const MeasureEvaluation & robustnessMeasure);
@@ -67,13 +67,13 @@ public:
   OT::Distribution getDistribution() const;
 
   /** String converter */
-  OT::String __repr__() const;
+  OT::String __repr__() const override;
 
   /** Method save() stores the object through the StorageManager */
-  virtual void save(OT::Advocate & adv) const;
+  virtual void save(OT::Advocate & adv) const override;
 
   /** Method load() reloads the object from the StorageManager */
-  virtual void load(OT::Advocate & adv);
+  virtual void load(OT::Advocate & adv) override;
 
 private:
   MeasureEvaluation robustnessMeasure_;

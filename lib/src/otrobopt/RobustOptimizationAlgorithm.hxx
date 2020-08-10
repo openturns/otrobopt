@@ -47,7 +47,7 @@ public:
                               const OT::OptimizationAlgorithm & solver);
 
   /** Virtual constructor method */
-  RobustOptimizationAlgorithm * clone() const;
+  RobustOptimizationAlgorithm * clone() const override;
 
   /** Problem accessors */
   void setRobustProblem(const RobustOptimizationProblem & problem);
@@ -58,17 +58,17 @@ public:
   OT::OptimizationAlgorithm getOptimizationAlgorithm() const;
 
   /** String converter */
-  OT::String __repr__() const;
+  OT::String __repr__() const override;
 
   /** Method save() stores the object through the StorageManager */
-  virtual void save(OT::Advocate & adv) const;
+  void save(OT::Advocate & adv) const override;
 
   /** Method load() reloads the object from the StorageManager */
-  virtual void load(OT::Advocate & adv);
+  void load(OT::Advocate & adv) override;
 
 protected:
   /** Check whether this problem can be solved by this solver.  Must be overloaded by the actual optimisation algorithm */
-  virtual void checkProblem(const OT::OptimizationProblem & problem) const;
+  void checkProblem(const OT::OptimizationProblem & problem) const override;
 
   RobustOptimizationProblem robustProblem_;
   OT::OptimizationAlgorithm solver_;

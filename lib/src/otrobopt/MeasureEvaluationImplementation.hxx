@@ -48,10 +48,10 @@ public:
                                   const OT::Distribution & distribution);
 
   /** Virtual constructor method */
-  MeasureEvaluationImplementation * clone() const;
+  MeasureEvaluationImplementation * clone() const override;
 
   /** Evaluation */
-  virtual OT::Point operator()(const OT::Point & inP) const;
+  OT::Point operator()(const OT::Point & inP) const override;
 
   /** Distribution accessor */
   virtual void setDistribution(const OT::Distribution & distribution);
@@ -62,18 +62,18 @@ public:
   virtual OT::Function getFunction() const;
 
   /** Dimension accessor */
-  virtual OT::UnsignedInteger getInputDimension() const;
-  virtual OT::UnsignedInteger getOutputDimension() const;
+  OT::UnsignedInteger getInputDimension() const override;
+  OT::UnsignedInteger getOutputDimension() const override;
 
   /** String converter */
-  virtual OT::String __repr__() const;
-  virtual OT::String __str__(const OT::String & offset = "") const;
+  OT::String __repr__() const override;
+  OT::String __str__(const OT::String & offset = "") const override;
 
   /** Method save() stores the object through the StorageManager */
-  virtual void save(OT::Advocate & adv) const;
+  void save(OT::Advocate & adv) const override;
 
   /** Method load() reloads the object from the StorageManager */
-  virtual void load(OT::Advocate & adv);
+  void load(OT::Advocate & adv) override;
 
 private:
   OT::Function function_;

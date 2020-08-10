@@ -62,7 +62,7 @@ public:
   OT::Point operator()(const OT::Point & inP) const;
 
   /** String converter */
-  OT::String __repr__() const;
+  OT::String __repr__() const override;
 
 private:
 

@@ -50,10 +50,10 @@ public:
                                       const OT::OptimizationAlgorithm & solver);
 
   /** Virtual constructor method */
-  SequentialMonteCarloRobustAlgorithm * clone() const;
+  SequentialMonteCarloRobustAlgorithm * clone() const override;
 
   /** Evaluation */
-  virtual void run();
+  void run() override;
 
   /** Initial sampling size accessor */
   void setInitialSamplingSize(const OT::UnsignedInteger N0);
@@ -77,13 +77,13 @@ public:
   OptimizationResultCollection getInitialResultCollection() const;
 
   /** String converter */
-  OT::String __repr__() const;
+  OT::String __repr__() const override;
 
   /** Method save() stores the object through the StorageManager */
-  virtual void save(OT::Advocate & adv) const;
+  virtual void save(OT::Advocate & adv) const override;
 
   /** Method load() reloads the object from the StorageManager */
-  virtual void load(OT::Advocate & adv);
+  virtual void load(OT::Advocate & adv) override;
 
 private:
   // initial sampling size

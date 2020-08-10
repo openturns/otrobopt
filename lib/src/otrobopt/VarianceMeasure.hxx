@@ -45,19 +45,19 @@ public:
                   const OT::Distribution & distribution);
 
   /** Virtual constructor method */
-  VarianceMeasure * clone() const;
+  VarianceMeasure * clone() const override;
 
   /** Evaluation */
-  OT::Point operator()(const OT::Point & inP) const;
+  OT::Point operator()(const OT::Point & inP) const override;
 
   /** String converter */
-  OT::String __repr__() const;
+  OT::String __repr__() const override;
 
   /** Method save() stores the object through the StorageManager */
-  virtual void save(OT::Advocate & adv) const;
+  virtual void save(OT::Advocate & adv) const override;
 
   /** Method load() reloads the object from the StorageManager */
-  virtual void load(OT::Advocate & adv);
+  virtual void load(OT::Advocate & adv) override;
 
 private:
 

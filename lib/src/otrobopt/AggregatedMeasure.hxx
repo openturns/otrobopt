@@ -48,23 +48,23 @@ public:
   AggregatedMeasure(const MeasureEvaluationCollection & collection);
 
   /** Virtual constructor method */
-  AggregatedMeasure * clone() const;
+  AggregatedMeasure * clone() const override;
 
   /** Evaluation */
-  OT::Point operator()(const OT::Point & inP) const;
+  OT::Point operator()(const OT::Point & inP) const override;
 
   /** Distribution accessor */
-  virtual void setDistribution(const OT::Distribution & distribution);
-  virtual OT::Distribution getDistribution() const;
+  void setDistribution(const OT::Distribution & distribution) override;
+  OT::Distribution getDistribution() const override;
 
   /** String converter */
-  OT::String __repr__() const;
+  OT::String __repr__() const override;
 
   /** Method save() stores the object through the StorageManager */
-  virtual void save(OT::Advocate & adv) const;
+  void save(OT::Advocate & adv) const override;
 
   /** Method load() reloads the object from the StorageManager */
-  virtual void load(OT::Advocate & adv);
+  void load(OT::Advocate & adv) override;
 
 private:
   MeasureEvaluationPersistentCollection collection_;
