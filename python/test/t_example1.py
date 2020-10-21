@@ -18,6 +18,7 @@ dim = J.getInputDimension()
 
 
 solver = ot.Cobyla()
+solver.setIgnoreFailure(True)
 solver.setMaximumIterationNumber(1000)
 
 thetaDist = ot.Uniform(1.0, 3.0)

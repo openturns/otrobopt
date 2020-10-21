@@ -367,16 +367,6 @@ Section "!${MODULE_NAME} DLL & doc" SEC01
 SectionEnd
 
 
-Section "${MODULE_NAME} python examples" SEC02
-  SetOverwrite on
-
-  !insertmacro PRINT "Install Python examples in $MODULE_INSTALL_PATH\examples."
-  SetOutPath "$MODULE_INSTALL_PATH\examples"
-  File "${MODULE_PREFIX}\share\${MODULE_NAME_LOWERCASE}\examples\*.py"
-  File "${MODULE_PREFIX}\share\${MODULE_NAME_LOWERCASE}\examples\*.cxx"
-SectionEnd
-
-
 Section -AdditionalIcons
   !insertmacro PRINT "Create OpenTURNS ${MODULE_NAME_LOWERCASE} menu."
   ; install shortcuts on every accounts
@@ -392,7 +382,6 @@ SectionEnd
 ; Section descriptions
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
 !insertmacro MUI_DESCRIPTION_TEXT ${SEC01} "${MODULE_NAME} DLL, headers and doc."
-!insertmacro MUI_DESCRIPTION_TEXT ${SEC02} "${MODULE_NAME} python examples."
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 

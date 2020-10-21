@@ -53,13 +53,6 @@ Requires:       openturns-devel
 %description devel
 Development files for OTRobOpt library.
 
-%package examples
-Summary:        OTRobOpt examples
-Group:          Productivity/Scientific/Math
-
-%description examples
-Example files for OTRobOpt
-
 %package -n python3-%{name}
 Summary:        OTRobOpt library
 Group:          Productivity/Scientific/Math
@@ -102,11 +95,6 @@ rm -rf %{buildroot}
 %{_includedir}/%{name}/swig/
 %{_libdir}/*.so
 %{_libdir}/cmake/
-
-%files examples
-%defattr(-,root,root,-)
-%dir %{_datadir}/%{name}
-%{_datadir}/%{name}/examples/
 
 %files -n python3-%{name}
 %defattr(-,root,root,-)

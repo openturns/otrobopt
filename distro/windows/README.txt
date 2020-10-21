@@ -1,8 +1,5 @@
 # otrobopt module
 
-Examples
-  Template examples can be found here: C:\Python27\Lib\site-packages\otrobopt\examples\otrobopt
-
 Installation
   Silent install can be done with the switch /S (e.g. openturns-otrobopt-0.0-py27.exe /S).
   To test otrobopt module installation, in an OpenTURNS python console type:

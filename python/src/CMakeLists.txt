@@ -68,10 +68,6 @@ macro ( ot_add_python_module MODULENAME SOURCEFILE )
     set_target_properties (${module_target} PROPERTIES PREFIX "_")
   endif ()
 
-  if (CMAKE_VERSION VERSION_LESS 3.1)
-    set_target_properties (${module_target} PROPERTIES NO_SONAME ON)
-  endif ()
-
   install (FILES ${CMAKE_CURRENT_BINARY_DIR}/${MODULENAME}.py
            DESTINATION ${OTROBOPT_PYTHON_MODULE_PATH}/${PACKAGE_NAME})
   install (TARGETS ${module_target}
