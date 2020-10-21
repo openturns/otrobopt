@@ -1,8 +1,8 @@
 language: cpp
 
 install:
-  - curl http://ubuntu.openturns.org/openturns.org-repo.key | sudo apt-key add -
-  - echo deb http://ubuntu.openturns.org xenial main | sudo tee /etc/apt/sources.list.d/openturns.list
+  - curl https://openturns.github.io/apt/public.key | apt-key add -
+  - echo deb https://openturns.github.io/ubuntu xenial main | tee /etc/apt/sources.list.d/openturns.list
   - sudo apt-get update
   - sudo apt-get -y install libopenturns-dev python3-openturns python3-dev cmake swig texlive-latex-recommended texlive-fonts-recommended texlive-latex-extra python3-matplotlib python3-pip python3-setuptools
   - sudo rm -r /opt/python/*
