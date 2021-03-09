@@ -32,6 +32,7 @@ Classifier: Intended Audience :: Developers
 Classifier: Intended Audience :: Financial and Insurance Industry
 Classifier: Intended Audience :: Information Technology
 Classifier: Intended Audience :: Science/Research
+Requires-Dist: openturns (>=1.16)
 
 Robust optimization module for OpenTURNS
 It provides useful features
