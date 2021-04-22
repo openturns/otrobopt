@@ -97,7 +97,10 @@ void SequentialMonteCarloRobustAlgorithm::run()
   Bool convergence = false;
 
   // reset result
-  setResult(OptimizationResult(currentPoint, currentValue, 0, 0.0, 0.0, 0.0, 0.0, robustProblem));
+  OptimizationResult result(robustProblem);
+  result.setOptimalPoint(currentPoint);
+  result.setOptimalValue(currentValue);
+  setResult(result);
 
   UnsignedInteger iterationNumber = 0;
   while ((!convergence) && (iterationNumber <= getMaximumIterationNumber()))
