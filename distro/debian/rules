@@ -37,6 +37,7 @@ cmake-configure-%:
             -DCMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO:STRING='$(ldflags)' \
             -DCMAKE_SKIP_INSTALL_RPATH:BOOL=ON \
             -DCMAKE_INSTALL_PREFIX:PATH=/usr \
+            -DCMAKE_INSTALL_LIBDIR:PATH=/usr/lib \
             -DINSTALL_DESTDIR:PATH=$(CURDIR)/debian/otrobopt \
             -DPYTHON_EXECUTABLE:FILEPATH=/usr/bin/python$* \
             -DPYTHON_INCLUDE_DIR:PATH=$$(python$*-config --includes | sed -e 's/ .*//' -e 's/^-I//') \

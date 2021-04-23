@@ -1,20 +1,16 @@
 
 
-set ( ADAPT_CHECK_TESTS_EXPONENT )
-set ( REPLACE_EOL " | cat " )
-set ( PATH_SEP ":" )
-if ( MINGW )
+set (PATH_SEP ":")
+if (WIN32)
   # replace dos eols
-  set ( REPLACE_EOL " | tr -d '\\\\015' " )
-  # By default, Mingw-g++ puts 3 digits to real exponent whereas g++ puts 2.
-  set ( ADAPT_CHECK_TESTS_EXPONENT "PRINTF_EXPONENT_DIGITS=2" )
-  set ( PATH_SEP "\\;" )
+  set (REPLACE_EOL " | tr -d '\\\\015' ")
+  
+  set (PATH_SEP "\\;")
 endif ()
 
 
 set ( PYINSTALLCHECK_ENVIRONMENT "OPENTURNS_CONFIG_PATH=${INSTALL_DESTDIR}${SYSCONFIG_PATH}/openturns"
                                  "PYTHONPATH=${OPENTURNS_PYTHON${PYTHON_VERSION_MAJOR}_MODULE_PATH}${PATH_SEP}${INSTALL_DESTDIR}${PYTHON_MODULE_PATH}${PATH_SEP}$ENV{PYTHONPATH}"
-                                 ${ADAPT_CHECK_TESTS_EXPONENT}
     )
 
 
