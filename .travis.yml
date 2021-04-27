@@ -1,29 +1,21 @@
-language: cpp
-dist: bionic
+language: generic
 
-install:
-  - curl https://openturns.github.io/apt/public.key | sudo apt-key add -
-  - echo deb https://openturns.github.io/apt/ubuntu bionic main | sudo tee /etc/apt/sources.list.d/openturns.list
-  - sudo apt-get update
-  - sudo apt-get -y install libopenturns-dev python3-openturns python3-dev cmake swig texlive-latex-recommended texlive-fonts-recommended texlive-latex-extra python3-matplotlib python3-sphinx python3-numpydoc
-  - sudo rm -r /opt/python/*
+services:
+  - docker
 
 script:
-  - cmake -DCMAKE_INSTALL_PREFIX=~/.local
-    -DCMAKE_CXX_FLAGS="-Wall -Wextra"
-    -DPYTHON_EXECUTABLE=/usr/bin/python3
-    .
-  - make install -j2 && make tests -j2 && ctest -j2 --output-on-failure --timeout 100
+  - docker pull openturns/archlinux-module
+  - docker run --rm -e MAKEFLAGS='-j2' -v `pwd`:/io openturns/archlinux-module /io/run_docker_build.sh `id -u` `id -g`
 
 after_success:
   - test "$TRAVIS_PULL_REQUEST" = "false" -a "$TRAVIS_BRANCH" = "master" || exit 0
-  - git clone https://${GH_TOKEN}@github.com/openturns/openturns.github.io.git
+  - git clone --depth 1 https://${GH_TOKEN}@github.com/openturns/openturns.github.io.git
   - PROJECT_REPONAME=`echo "${TRAVIS_REPO_SLUG}" | cut -d "/" -f 2`
   - if test -n "${TRAVIS_TAG}"; then
         TRAVIS_BRANCH=${TRAVIS_TAG:1};
     fi
   - mkdir -p openturns.github.io/${PROJECT_REPONAME}/${TRAVIS_BRANCH}
-  - cp -r ~/.local/share/${PROJECT_REPONAME}/doc/html/* openturns.github.io/${PROJECT_REPONAME}/${TRAVIS_BRANCH}
+  - cp -r html/* openturns.github.io/${PROJECT_REPONAME}/${TRAVIS_BRANCH}
   - cd openturns.github.io
   - touch .nojekyll
   - git config user.email "support@travis-ci.com"
