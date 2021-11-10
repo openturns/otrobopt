@@ -1,0 +1,34 @@
+name: Build
+on: [push, pull_request]
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build
+        run: |
+          docker pull openturns/archlinux-module
+          docker run -e MAKEFLAGS='-j2' -v `pwd`:/io openturns/archlinux-module /io/.ci_support/run_docker_linux.sh `id -u` `id -g`
+      - name: Upload
+        if: ${{ github.ref == 'refs/heads/master' }}
+        run: |
+          exit 0
+          git clone --depth 1 https://${{ secrets.GH_TOKEN }}@github.com/openturns/openturns.github.io.git /tmp/io
+          mkdir -p /tmp/io/otrobopt/master
+          cp -r html/* /tmp/io/otrobopt/master
+          cd /tmp/io
+          touch .nojekyll
+          git config user.email "support@gh.com"
+          git config user.name "GitHub Actions"
+          git add -A .
+          git commit -a -m "GitHub Actions build ${GITHUB_REPOSITORY} ${GITHUB_RUN_ID}"
+          git push --quiet origin master > /dev/null 2>&1
+
+  mingw:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build
+        run: |
+          docker pull openturns/archlinux-module-mingw
+          docker run -e MAKEFLAGS='-j2' -v `pwd`:/io openturns/archlinux-module-mingw /io/.ci_support/run_docker_mingw.sh

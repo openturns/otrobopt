@@ -1,5 +1,5 @@
-.. image:: https://travis-ci.org/openturns/otrobopt.svg?branch=master
-    :target: https://travis-ci.org/openturns/otrobopt
+.. image:: https://github.com/openturns/otrobopt/actions/workflows/build.yml/badge.svg?branch=master
+    :target: https://github.com/openturns/otrobopt/actions/workflows/build.yml
 
 OTRobOpt Module
 =================
