@@ -2,9 +2,6 @@
 
 set (PATH_SEP ":")
 if (WIN32)
-  # replace dos eols
-  set (REPLACE_EOL " | tr -d '\\\\015' ")
-  
   set (PATH_SEP "\\;")
 endif ()
 
@@ -51,7 +48,7 @@ macro ( ot_pyinstallcheck_test TESTNAME )
   else (_IGNOREOUT)
     set ( TESTNAME_OUT ${TESTNAME_TGT}.expout )
     set ( OUTFILE_LOC ${CMAKE_CURRENT_SOURCE_DIR}/${TESTNAME_OUT} ) 
-    set ( COMMAND "( ${PYTHON_EXECUTABLE} ${TESTNAME_LOC} ${_PARAMS} ${REPLACE_EOL} > ${CMAKE_CURRENT_BINARY_DIR}/${TESTNAME_TGT}.out ) && diff -u ${OUTFILE_LOC} ${CMAKE_CURRENT_BINARY_DIR}/${TESTNAME_TGT}.out" )
+    set ( COMMAND "( ${PYTHON_EXECUTABLE} ${TESTNAME_LOC} ${_PARAMS} > ${CMAKE_CURRENT_BINARY_DIR}/${TESTNAME_TGT}.out ) && diff -u --strip-trailing-cr ${OUTFILE_LOC} ${CMAKE_CURRENT_BINARY_DIR}/${TESTNAME_TGT}.out" )
   endif (_IGNOREOUT)
 
   if (_PRE OR _POST)

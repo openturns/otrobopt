@@ -1,11 +1,6 @@
 
-if (WIN32)
-  # replace dos eols
-  set (REPLACE_EOL " | tr -d '\\\\015' ")
-
-  if (MINGW AND CMAKE_SIZEOF_VOID_P EQUAL 4)
-    add_library (CRT_fp8 STATIC CRT_fp8.c)
-  endif ()
+if (MINGW AND CMAKE_SIZEOF_VOID_P EQUAL 4)
+  add_library (CRT_fp8 STATIC CRT_fp8.c)
 endif ()
 
 set (CHECK_ENVIRONMENT)
@@ -57,7 +52,7 @@ macro ( ot_check_test TESTNAME )
   else (_IGNOREOUT)
     set ( TESTNAME_OUT ${TESTNAME_TGT}.expout )
     set ( OUTFILE_LOC ${CMAKE_CURRENT_SOURCE_DIR}/${TESTNAME_OUT} ) 
-    set ( COMMAND "( ${CMAKE_CROSSCOMPILING_EMULATOR} ${TESTNAME_LOC} ${_PARAMS} ${REPLACE_EOL} > ${CMAKE_CURRENT_BINARY_DIR}/${TESTNAME_TGT}.out ) && diff -u ${OUTFILE_LOC} ${CMAKE_CURRENT_BINARY_DIR}/${TESTNAME_TGT}.out" )
+    set ( COMMAND "( ${CMAKE_CROSSCOMPILING_EMULATOR} ${TESTNAME_LOC} ${_PARAMS} > ${CMAKE_CURRENT_BINARY_DIR}/${TESTNAME_TGT}.out ) && diff -u --strip-trailing-cr ${OUTFILE_LOC} ${CMAKE_CURRENT_BINARY_DIR}/${TESTNAME_TGT}.out" )
   endif (_IGNOREOUT)
 
   if (_PRE OR _POST)
