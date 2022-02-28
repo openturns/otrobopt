@@ -68,11 +68,13 @@ class VarianceMeasureParametricFunctionWrapper : public FunctionImplementation
 public:
   VarianceMeasureParametricFunctionWrapper (const Point & x,
       const Function & function,
-      const Distribution & distribution)
+      const Distribution & distribution,
+      const Scalar pdfThreshold)
     : FunctionImplementation()
     , x_(x)
     , function_(function)
     , distribution_(distribution)
+    , pdfThreshold_(pdfThreshold)
   {
     // Nothing to do
   }
@@ -84,36 +86,49 @@ public:
 
   Point operator()(const Point & theta) const
   {
+    const Scalar pdf = distribution_.computePDF(theta);
+    const UnsignedInteger outputDimension = function_.getOutputDimension();
+    // (f_1(x), ...., f_d(x), f_1^2(x), ..., f_d^2(x))
+    Point outP(2 * outputDimension, 0.0);
+    if (pdf <= pdfThreshold_) return outP;
     Function function(function_);
     function.setParameter(theta);
-    // (f_1(x), ...., f_d(x), f_1^2(x), ..., f_d^2(x))
-    Point outP(function(x_));
-    outP.add(outP);
-    const UnsignedInteger outputDimension = outP.getDimension();
+    const Point outF(function(x_));
     for (UnsignedInteger j = 0; j < outputDimension; ++ j)
-      outP[outputDimension + j] *= outP[j];
-    return outP * distribution_.computePDF(theta);
+      {
+        const Scalar fj = outF[j];
+        outP[j] = fj * pdf;
+        outP[outputDimension + j] = fj * outP[j];
+      }
+    return outP;
   }
 
   Sample operator()(const Sample & theta) const
   {
-    Function function(function_);
+    const Point pdfs(distribution_.computePDF(theta).asPoint());
+    Indices significant(0);
     const UnsignedInteger size = theta.getSize();
-    const UnsignedInteger outputDimension = function.getOutputDimension();
-    Sample outS(size, outputDimension);
     for (UnsignedInteger i = 0; i < size; ++i)
+      if (pdfs[i] > pdfThreshold_) significant.add(i);
+    // (f_1(x), ...., f_d(x), f_1^2(x), ..., f_d^2(x))
+    const UnsignedInteger outputDimension = function_.getOutputDimension();
+    Sample outS(size, 2 * outputDimension);
+    // Early exit to avoid the copy of function_
+    if (significant.getSize() == 0) return outS;
+    Function function(function_);
+    for (UnsignedInteger i = 0; i < significant.getSize(); ++i)
     {
-      function.setParameter(theta[i]);
-      outS[i] = function(x_);
-    }
-    outS.stack(outS);
-    const Sample pdf(distribution_.computePDF(theta));
-    for (UnsignedInteger i = 0; i < size; ++i)
-    {
-      for (UnsignedInteger j = 0; j < outputDimension; ++j)
-        outS(i, outputDimension + j) *= outS(i, j);
-      outS[i] *= pdf(i, 0);
-    }
+      const UnsignedInteger j = significant[i];
+      function.setParameter(theta[j]);
+      const Point fJ = function(x_);
+      const Scalar pdfJ = pdfs[j];
+      for (UnsignedInteger k = 0; k < outputDimension; ++k)
+        {
+          const Scalar fk = fJ[k];
+          outS(j, k) = fk * pdfJ;
+          outS(j, outputDimension + k) = fk * outS(j, k);
+        } // k
+    } // i
     return outS;
   }
 
@@ -143,6 +158,7 @@ protected:
   Point x_;
   Function function_;
   Distribution distribution_;
+  Scalar pdfThreshold_;
 };
 
 
@@ -154,7 +170,7 @@ Point VarianceMeasure::operator()(const Point & inP) const
   Point outP(outputDimension);
   if (getDistribution().isContinuous())
   {
-    Pointer<FunctionImplementation> p_wrapper(new VarianceMeasureParametricFunctionWrapper(inP, function, getDistribution()));
+    Pointer<FunctionImplementation> p_wrapper(new VarianceMeasureParametricFunctionWrapper(inP, function, getDistribution(), pdfThreshold_));
     const Function G(p_wrapper);
     Point integral(integrationAlgorithm_.integrate(G, getDistribution().getRange()));
     for (UnsignedInteger j = 0; j < outputDimension; ++ j)
@@ -166,15 +182,20 @@ Point VarianceMeasure::operator()(const Point & inP) const
   }
   else
   {
-    const Point weights(getDistribution().getProbabilities());
+    const Point pdfs(getDistribution().getProbabilities());
     const Sample parameters(getDistribution().getSupport());
     const UnsignedInteger size = parameters.getSize();
-    Sample values(size, outputDimension);
+    Sample values(0, outputDimension);
+    Point weights(0);
     for (UnsignedInteger i = 0; i < size; ++i)
     {
-      function.setParameter(parameters[i]);
-      values[i] = function(inP);
-    }
+      if (pdfs[i] > pdfThreshold_)
+        {
+          function.setParameter(parameters[i]);
+          values.add(function(inP));
+          weights.add(pdfs[i]);
+        }
+    } // for
 
     // Here we use a UserDefined distribution because the algorithm
     // to compute a central moment is quite involved in the case of

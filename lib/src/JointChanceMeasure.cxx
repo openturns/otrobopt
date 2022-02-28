@@ -73,11 +73,13 @@ class JointChanceMeasureParametricFunctionWrapper : public FunctionImplementatio
 public:
   JointChanceMeasureParametricFunctionWrapper(const Point & x,
       const Function & function,
-      const Distribution & distribution)
+      const Distribution & distribution,
+      const Scalar pdfThreshold)
     : FunctionImplementation()
     , x_(x)
     , function_(function)
     , distribution_(distribution)
+    , pdfThreshold_(pdfThreshold)
   {
     // Nothing to do
   }
@@ -89,50 +91,23 @@ public:
 
   Point operator()(const Point & theta) const
   {
+    const Scalar pdf = distribution_.computePDF(theta);
+    if (pdf <= pdfThreshold_) return Point(1, 0.0);
     Function function(function_);
     function.setParameter(theta);
     const Point y(function(x_));
     const UnsignedInteger outputDimension = y.getDimension();
     for (UnsignedInteger j = 0; j < outputDimension; ++ j)
       if (y[j] < 0.0) return Point(1, 0.0);
-    return Point(1, distribution_.computePDF(theta));
+    return Point(1, pdf);
   }
 
   Sample operator()(const Sample & theta) const
   {
-    Function function(function_);
-    const UnsignedInteger outputDimension = function.getOutputDimension();
     const UnsignedInteger size = theta.getSize();
-    Sample y(size, outputDimension);
-    for (UnsignedInteger i = 0; i < size; ++i)
-    {
-      function.setParameter(theta[i]);
-      y[i] = function(x_);
-    }
-    // First pass to select the points at which we have to compute the
-    // PDF as it can be costly for some distributions
-    Sample activeTheta(0, theta.getDimension());
-    Indices activeIndices(0);
-    for (UnsignedInteger i = 0; i < size; ++i)
-    {
-      Bool allOk(true);
-      for (UnsignedInteger j = 0; j < outputDimension; ++ j)
-        if (y(i, j) < 0.0)
-        {
-          allOk = false;
-          break;
-        } // y(i, j) < 0.0
-      if (allOk)
-      {
-        activeTheta.add(theta[i]);
-        activeIndices.add(i);
-      } // allOk
-    } // for i
-    // Exploit possible parallelization of computePDF
-    const Sample pdf(distribution_.computePDF(activeTheta));
     Sample outS(size, 1);
-    for (UnsignedInteger i = 0; i < activeTheta.getSize(); ++i)
-      outS(activeIndices[i], 0) = pdf(i, 0);
+    for (UnsignedInteger i = 0; i < size; ++ i)
+      outS(i, 0) = operator()(theta[i])[0];
     return outS;
   }
 
@@ -160,6 +135,7 @@ protected:
   Point x_;
   Function function_;
   Distribution distribution_;
+  Scalar pdfThreshold_;
 };
 
 
@@ -171,24 +147,29 @@ Point JointChanceMeasure::operator()(const Point & inP) const
   Point outP(1);
   if (getDistribution().isContinuous())
   {
-    Pointer<FunctionImplementation> p_wrapper(new JointChanceMeasureParametricFunctionWrapper(inP, function, getDistribution()));
+    Pointer<FunctionImplementation> p_wrapper(new JointChanceMeasureParametricFunctionWrapper(inP, function, getDistribution(), pdfThreshold_));
     const Function G(p_wrapper);
     outP = integrationAlgorithm_.integrate(G, getDistribution().getRange());
   }
   else
   {
+    const Point pdfs(getDistribution().getProbabilities());
     const Sample parameters(getDistribution().getSupport());
     const UnsignedInteger size = parameters.getSize();
-    Sample values(size, outputDimension);
+    Sample values(0, outputDimension);
+    Point weights(0);
     for (UnsignedInteger i = 0; i < size; ++i)
     {
-      function.setParameter(parameters[i]);
-      values[i] = function(inP);
+      if (pdfs[i] > pdfThreshold_)
+        {
+          function.setParameter(parameters[i]);
+          values.add(function(inP));
+          weights.add(pdfs[i]);
+        }
     }
-    const Point weights(getDistribution().getProbabilities());
     // Here we compute the marginal complementary CDF locally to avoid
     // the creation cost of the UserDefined distributions
-    for (UnsignedInteger i = 0; i < size; ++ i)
+    for (UnsignedInteger i = 0; i < weights.getSize(); ++ i)
     {
       Bool allOk = true;
       for (UnsignedInteger j = 0; j < outputDimension; ++ j)

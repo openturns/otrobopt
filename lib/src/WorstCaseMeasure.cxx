@@ -129,6 +129,68 @@ protected:
   Function function_;
 };
 
+// The constraint on the PDF is defined on a log-scale for numerical stability
+class WorstCaseMeasureLogPDFWrapper : public FunctionImplementation
+{
+public:
+  WorstCaseMeasureLogPDFWrapper(const Distribution & distribution,
+                                const Scalar logPDFThreshold)
+    : FunctionImplementation()
+    , distribution_(distribution)
+    , logPDFThreshold_(logPDFThreshold)
+  {
+    // Nothing to do
+  }
+
+  virtual WorstCaseMeasureLogPDFWrapper * clone() const
+  {
+    return new WorstCaseMeasureLogPDFWrapper(*this);
+  }
+
+  Point operator()(const Point & theta) const
+  {
+    return Point(1, distribution_.computeLogPDF(theta));
+  }
+
+  Sample operator()(const Sample & theta) const
+  {
+    return distribution_.computeLogPDF(theta);
+  }
+
+  Matrix gradient(const Point & theta) const
+  {
+    const Scalar logPDF(distribution_.computeLogPDF(theta));
+    const UnsignedInteger dimension = distribution_.getDimension();
+    Point result(dimension);
+    if (logPDF > logPDFThreshold_) result = distribution_.computeDDF(theta) * std::exp(-logPDF);
+    return Matrix(dimension, 1, result);
+  }
+
+  UnsignedInteger getInputDimension() const
+  {
+    return distribution_.getDimension();
+  }
+
+  UnsignedInteger getOutputDimension() const
+  {
+    return 1;
+  }
+
+  Description getInputDescription() const
+  {
+    return distribution_.getDescription();
+  }
+
+  Description getOutputDescription() const
+  {
+    return Description(1, "logPDF");
+  }
+
+protected:
+  Distribution distribution_;
+  Scalar logPDFThreshold_;
+};
+
 
 
 
@@ -138,36 +200,43 @@ Point WorstCaseMeasure::operator()(const Point & inP) const
   Function function(getFunction());
   const UnsignedInteger outputDimension = function.getOutputDimension();
   Point outP(outputDimension);
-  if (getDistribution().isContinuous())
+  if (distribution_.isContinuous())
   {
+    Function C;
+    if (pdfThreshold_ > 0.0)
+      {
+        const Pointer<FunctionImplementation> p_wrapper(new WorstCaseMeasureLogPDFWrapper(distribution_, std::log(pdfThreshold_)));
+        C = Function(p_wrapper);
+      }
     for (UnsignedInteger j = 0; j < outputDimension; ++ j)
     {
-      Pointer<FunctionImplementation> p_wrapper(new WorstCaseMeasureParametricFunctionWrapper(inP, function.getMarginal(j)));
+      const Pointer<FunctionImplementation> p_wrapper(new WorstCaseMeasureParametricFunctionWrapper(inP, function.getMarginal(j)));
       const Function G(p_wrapper);
-      OptimizationProblem problem(G, Function(), Function(), getDistribution().getRange());
+      OptimizationProblem problem(G, Function(), C, distribution_.getRange());
       problem.setMinimization(isMinimization());
       OptimizationAlgorithm solver(solver_);
-      solver.setStartingPoint(getDistribution().getMean());
+      solver.setStartingPoint(distribution_.getMean());
       solver.setProblem(problem);
       solver.run();
-      Point optimalValue(solver.getResult().getOptimalValue());
+      const Point optimalValue(solver.getResult().getOptimalValue());
       outP[j] = optimalValue[0];
-    }
+    } // j
   }
   else
   {
-    const Sample parameters(getDistribution().getSupport());
-    const UnsignedInteger size = parameters.getSize();
-    Sample values(size, outputDimension);
+    const Point pdfs(distribution_.getProbabilities());
+    const Sample parameters(distribution_.getSupport());
+    const UnsignedInteger size = pdfs.getSize();
+    Sample values(0, outputDimension);
     for (UnsignedInteger i = 0; i < size; ++i)
     {
-      function.setParameter(parameters[i]);
-      values[i] = function(inP);
-    }
-    if (isMinimization_)
-      outP = values.getMin();
-    else
-      outP = values.getMax();
+      if (pdfs[i] > pdfThreshold_)
+        {
+          function.setParameter(parameters[i]);
+          values.add(function(inP));
+        }
+    } // i
+    outP = (isMinimization_ ? values.getMin() : values.getMax());
   } // discrete
   return outP;
 }

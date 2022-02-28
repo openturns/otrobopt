@@ -77,12 +77,14 @@ public:
   QuantileMeasureParametricFunctionWrapper(const Point & x,
       const Function & function,
       const Distribution & distribution,
-      const Scalar s)
+      const Scalar s,
+      const Scalar pdfThreshold)
     : FunctionImplementation()
     , x_(x)
     , function_(function)
     , distribution_(distribution)
     , s_(s)
+    , pdfThreshold_(pdfThreshold)
   {}
 
   virtual QuantileMeasureParametricFunctionWrapper * clone() const
@@ -92,23 +94,32 @@ public:
 
   Point operator()(const Point & theta) const
   {
+    const Scalar pdf = distribution_.computePDF(theta);
+    if (pdf <= pdfThreshold_) return Point(1, 0.0);
     Function function(function_);
     function.setParameter(theta);
     const Scalar y = function(x_)[0];
-    const Scalar p = (y <= s_ ? distribution_.computePDF(theta) : 0.0);
+    const Scalar p = (y <= s_ ? pdf : 0.0);
     return Point(1, p);
   }
 
   Sample operator()(const Sample & theta) const
   {
-    Function function(function_);
+    const Point pdfs(distribution_.computePDF(theta).asPoint());
+    Indices significant(0);
     const UnsignedInteger size = theta.getSize();
+    for (UnsignedInteger i = 0; i < size; ++i)
+      if (pdfs[i] > pdfThreshold_) significant.add(i);
     Sample outS(size, 1);
-    for (UnsignedInteger i = 0; i < size; ++ i)
+    // Early exit to avoid the copy of function_
+    if (significant.getSize() == 0) return outS;
+    Function function(function_);
+    for (UnsignedInteger i = 0; i < significant.getSize(); ++ i)
     {
-      function.setParameter(theta[i]);
+      const UnsignedInteger j = significant[i];
+      function.setParameter(theta[j]);
       const Scalar y = function(x_)[0];
-      outS(i, 0) = (y <= s_ ? distribution_.computePDF(theta[i]) : 0.0);
+      outS(i, 0) = (y <= s_ ? pdfs[j] : 0.0);
     }
     return outS;
   }
@@ -138,6 +149,7 @@ protected:
   Function function_;
   Distribution distribution_;
   Scalar s_;
+  Scalar pdfThreshold_;
 };
 
 class QuantileMeasureParametricFunctionWrapper2 : public FunctionImplementation
@@ -146,12 +158,14 @@ public:
   QuantileMeasureParametricFunctionWrapper2(const Point & x,
       const Function & function,
       const Distribution & distribution,
-      const IntegrationAlgorithm & algorithm)
+      const IntegrationAlgorithm & algorithm,
+      const Scalar pdfThreshold)
     : FunctionImplementation()
     , x_(x)
     , function_(function)
     , distribution_(distribution)
     , integrationAlgorithm_(algorithm)
+    , pdfThreshold_(pdfThreshold)
   {
     // Nothing to do
   }
@@ -163,7 +177,7 @@ public:
 
   Point operator()(const Point & s) const
   {
-    Pointer<FunctionImplementation> p_wrapper(new QuantileMeasureParametricFunctionWrapper(x_, function_, distribution_, s[0]));
+    Pointer<FunctionImplementation> p_wrapper(new QuantileMeasureParametricFunctionWrapper(x_, function_, distribution_, s[0], pdfThreshold_));
     const Function G(p_wrapper);
     return integrationAlgorithm_.integrate(G, distribution_.getRange());
   }
@@ -202,6 +216,7 @@ protected:
   Function function_;
   Distribution distribution_;
   IntegrationAlgorithm integrationAlgorithm_;
+  Scalar pdfThreshold_;
 };
 
 
@@ -214,7 +229,7 @@ Point QuantileMeasure::operator()(const Point & inP) const
   Point outP(outputDimension);
   if (getDistribution().isContinuous())
   {
-    Pointer<FunctionImplementation> p_wrapper(new QuantileMeasureParametricFunctionWrapper2(inP, function, getDistribution(), integrationAlgorithm_));
+    Pointer<FunctionImplementation> p_wrapper(new QuantileMeasureParametricFunctionWrapper2(inP, function, getDistribution(), integrationAlgorithm_, pdfThreshold_));
     Function G(p_wrapper);
 
     Scalar lower = 0.0;
@@ -252,18 +267,24 @@ Point QuantileMeasure::operator()(const Point & inP) const
   }
   else
   {
-    const Point weights(getDistribution().getProbabilities());
+    const Point pdfs(getDistribution().getProbabilities());
     const Sample parameters(getDistribution().getSupport());
     const UnsignedInteger size = parameters.getSize();
-    Sample values(size, outputDimension);
+    Sample values(0, outputDimension);
+    Point weights(0);
     for (UnsignedInteger i = 0; i < size; ++i)
     {
-      function.setParameter(parameters[i]);
-      values[i] = function(inP);
-    }
+      if (pdfs[i] > pdfThreshold_)
+        {
+          function.setParameter(parameters[i]);
+          values.add(function(inP));
+          weights.add(pdfs[i]);
+        }
+    } // for
+
     // Here we use a UserDefined distribution because the algorithm
-    // to compute a quantile is quite involved in the case of nonuniform
-    // weights
+    // to compute a central moment is quite involved in the case of
+    // nonuniform weights
     outP = UserDefined(values, weights).computeQuantile(alpha_);
   }
   return outP;

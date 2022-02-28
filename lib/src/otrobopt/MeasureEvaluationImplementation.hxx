@@ -70,6 +70,11 @@ public:
   virtual void setIntegrationAlgorithm(const OT::IntegrationAlgorithm & algorithm);
   virtual OT::IntegrationAlgorithm getIntegrationAlgorithm() const;
 
+  /** PDF threshold accessor */
+  OT::Scalar getPDFThreshold() const;
+
+  void setPDFThreshold(const OT::Scalar threshold);
+
   /** String converter */
   OT::String __repr__() const override;
   OT::String __str__(const OT::String & offset = "") const override;
@@ -81,9 +86,17 @@ public:
   void load(OT::Advocate & adv) override;
 
 protected:
+  /** Underlying parametric function */
   OT::Function function_;
+
+  /** Parameter distribution of the emasure */
   OT::Distribution distribution_;
+
+  /** Algorithm used to compute the high precision value of the measure */
   OT::IntegrationAlgorithm integrationAlgorithm_;
+
+  /** Threshold under which PDF is consider to be zero */
+  OT::Scalar pdfThreshold_;
 }; /* class MeasureEvaluationImplementation */
 
 } /* namespace OTROBOPT */

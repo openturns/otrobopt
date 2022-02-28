@@ -35,6 +35,7 @@ static Factory<MeasureEvaluationImplementation> Factory_MeasureEvaluationImpleme
 /* Default constructor */
 MeasureEvaluationImplementation::MeasureEvaluationImplementation()
   : EvaluationImplementation()
+  , pdfThreshold_(SpecFunc::Precision)
 {
   // Nothing to do
 }
@@ -45,6 +46,7 @@ MeasureEvaluationImplementation::MeasureEvaluationImplementation (const Function
   , function_(function)
   , distribution_(distribution)
   , integrationAlgorithm_(IteratedQuadrature())
+  , pdfThreshold_(SpecFunc::Precision)
 {
   if (distribution.getDimension() != function.getParameter().getDimension())
     throw InvalidDimensionException(HERE) << "Function parameter dimension (" << function.getParameter().getDimension()
@@ -133,6 +135,18 @@ IntegrationAlgorithm MeasureEvaluationImplementation::getIntegrationAlgorithm() 
 }
 
 
+/* PDF threshold accessor */
+Scalar MeasureEvaluationImplementation::getPDFThreshold() const
+{
+  return pdfThreshold_;
+}
+
+void MeasureEvaluationImplementation::setPDFThreshold(const Scalar threshold)
+{
+  pdfThreshold_ = threshold;
+}
+
+
 /* Method save() stores the object through the StorageManager */
 void MeasureEvaluationImplementation::save(Advocate & adv) const
 {
@@ -140,6 +154,7 @@ void MeasureEvaluationImplementation::save(Advocate & adv) const
   adv.saveAttribute("distribution_", distribution_);
   adv.saveAttribute("function_", function_);
   adv.saveAttribute("integrationAlgorithm_", integrationAlgorithm_);
+  adv.saveAttribute("pdfThreshold_", pdfThreshold_);
 }
 
 /* Method load() reloads the object from the StorageManager */
@@ -149,6 +164,7 @@ void MeasureEvaluationImplementation::load(Advocate & adv)
   adv.loadAttribute("distribution_", distribution_);
   adv.loadAttribute("function_", function_);
   adv.loadAttribute("integrationAlgorithm_", integrationAlgorithm_);
+  adv.loadAttribute("pdfThreshold_", pdfThreshold_);
 }
 
 

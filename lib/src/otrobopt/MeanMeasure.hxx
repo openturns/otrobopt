@@ -50,11 +50,6 @@ public:
   /** Evaluation */
   OT::Point operator()(const OT::Point & inP) const override;
 
-  /** PDF threshold accessor */
-  OT::Scalar getPDFThreshold() const;
-
-  void setPDFThreshold(const OT::Scalar threshold);
-
   /** String converter */
   OT::String __repr__() const override;
 
@@ -66,8 +61,6 @@ public:
 
 private:
 
-  /** Threshold under which PDF is consider to be zero */
-  OT::Scalar pdfThreshold_;
 }; /* class MeanMeasure */
 
 } /* namespace OTROBOPT */

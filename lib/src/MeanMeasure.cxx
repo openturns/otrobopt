@@ -36,7 +36,6 @@ static Factory<MeanMeasure> Factory_MeanMeasure;
 /* Default constructor */
 MeanMeasure::MeanMeasure()
   : MeasureEvaluationImplementation()
-  , pdfThreshold_(SpecFunc::Precision)
 {
   // Set the default integration algorithm
   GaussKronrod gkr;
@@ -48,7 +47,6 @@ MeanMeasure::MeanMeasure()
 MeanMeasure::MeanMeasure (const Function & function,
                           const Distribution & distribution)
   : MeasureEvaluationImplementation(function, distribution)
-  , pdfThreshold_(SpecFunc::Precision)
 {
   // Set the default integration algorithm
   GaussKronrod gkr;
@@ -86,25 +84,31 @@ public:
 
   Point operator()(const Point & theta) const
   {
+    const Scalar pdf = distribution_.computePDF(theta);
+    if (pdf <= pdfThreshold_) return Point(function_.getOutputDimension(), 0.0);
     Function function(function_);
     function.setParameter(theta);
-    return function(x_) * distribution_.computePDF(theta);
+    return function(x_) * pdf;
   }
 
   Sample operator()(const Sample & theta) const
   {
-    Function function(function_);
-    const UnsignedInteger outputDimension = function.getOutputDimension();
+    const Point pdfs(distribution_.computePDF(theta).asPoint());
+    Indices significant(0);
     const UnsignedInteger size = theta.getSize();
+    const UnsignedInteger outputDimension = function_.getOutputDimension();
     Sample outS(size, outputDimension);
     const Point pdfS(distribution_.computePDF(theta).asPoint());
     for (UnsignedInteger i = 0; i < size; ++i)
+      if (pdfs[i] > pdfThreshold_) significant.add(i);
+    // Early exit to avoid the copy of function_
+    if (significant.getSize() == 0) return outS;
+    Function function(function_);
+    for (UnsignedInteger i = 0; i < significant.getSize(); ++i)
     {
-      if (pdfS[i] > pdfThreshold_)
-      {
-        function.setParameter(theta[i]);
-        outS[i] = function(x_) * pdfS[i];
-      }
+      const UnsignedInteger j = significant[i];
+      function.setParameter(theta[j]);
+      outS[j] = function(x_) * pdfs[j];
     } // for
     return outS;
   }
@@ -151,30 +155,19 @@ Point MeanMeasure::operator()(const Point & inP) const
   }
   else
   {
-    const Point pdfS(getDistribution().getProbabilities());
+    const Point pdfs(getDistribution().getProbabilities());
     const Sample parameters(getDistribution().getSupport());
     const UnsignedInteger size = parameters.getSize();
     for (UnsignedInteger i = 0; i < size; ++i)
     {
-      if (pdfS[i] > pdfThreshold_)
+      if (pdfs[i] > pdfThreshold_)
       {
         function.setParameter(parameters[i]);
-        outP += function(inP) * pdfS[i];
+        outP += function(inP) * pdfs[i];
       }
     } // for
   } // !isContinuous
   return outP;
-}
-
-/* PDF threshold accessor */
-Scalar MeanMeasure::getPDFThreshold() const
-{
-  return pdfThreshold_;
-}
-
-void MeanMeasure::setPDFThreshold(const Scalar threshold)
-{
-  pdfThreshold_ = threshold;
 }
 
 
@@ -191,14 +184,12 @@ String MeanMeasure::__repr__() const
 void MeanMeasure::save(Advocate & adv) const
 {
   MeasureEvaluationImplementation::save(adv);
-  adv.saveAttribute("pdfThreshold_", pdfThreshold_);
 }
 
 /* Method load() reloads the object from the StorageManager */
 void MeanMeasure::load(Advocate & adv)
 {
   MeasureEvaluationImplementation::load(adv);
-  adv.loadAttribute("pdfThreshold_", pdfThreshold_);
 }
 
 

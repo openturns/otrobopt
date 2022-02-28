@@ -71,11 +71,13 @@ class IndividualChanceMeasureParametricFunctionWrapper : public FunctionImplemen
 public:
   IndividualChanceMeasureParametricFunctionWrapper (const Point & x,
       const Function & function,
-      const Distribution & distribution)
+      const Distribution & distribution,
+      const Scalar pdfThreshold)
     : FunctionImplementation()
     , x_(x)
     , function_(function)
     , distribution_(distribution)
+    , pdfThreshold_(pdfThreshold)
   {
     // Nothing to do
   }
@@ -87,12 +89,16 @@ public:
 
   Point operator()(const Point & theta) const
   {
+    const Scalar pdf = distribution_.computePDF(theta);
+    const UnsignedInteger outputDimension = function_.getOutputDimension();
+    Point outP(outputDimension);
+    if (pdf <= pdfThreshold_) return outP;
     Function function(function_);
     function.setParameter(theta);
     Point y(function(x_));
     for (UnsignedInteger j = 0; j < getOutputDimension(); ++ j)
-      y[j] = (y[j] >= 0.0) ? 1.0 : 0.0;
-    return y * distribution_.computePDF(theta);
+      outP[j] = (y[j] >= 0.0) ? pdf : 0.0;
+    return outP;
   }
 
   Sample operator()(const Sample & theta) const
@@ -128,6 +134,7 @@ protected:
   Point x_;
   Function function_;
   Distribution distribution_;
+  Scalar pdfThreshold_;
 };
 
 
@@ -139,24 +146,29 @@ Point IndividualChanceMeasure::operator()(const Point & inP) const
   Point outP(outputDimension);
   if (getDistribution().isContinuous())
   {
-    Pointer<FunctionImplementation> p_wrapper(new IndividualChanceMeasureParametricFunctionWrapper(inP, function, getDistribution()));
+    Pointer<FunctionImplementation> p_wrapper(new IndividualChanceMeasureParametricFunctionWrapper(inP, function, getDistribution(), pdfThreshold_));
     const Function G(p_wrapper);
     outP = integrationAlgorithm_.integrate(G, getDistribution().getRange());
   }
   else
   {
-    const Point weights(getDistribution().getProbabilities());
+    const Point pdfs(getDistribution().getProbabilities());
     const Sample parameters(getDistribution().getSupport());
     const UnsignedInteger size = parameters.getSize();
-    Sample values(size, outputDimension);
+    Sample values(0, outputDimension);
+    Point weights(0);
     for (UnsignedInteger i = 0; i < size; ++i)
     {
-      function.setParameter(parameters[i]);
-      values[i] = function(inP);
+      if (pdfs[i] > pdfThreshold_)
+        {
+          function.setParameter(parameters[i]);
+          values.add(function(inP));
+          weights.add(pdfs[i]);
+        }
     }
     // Here we compute the marginal complementary CDF locally to avoid
     // the creation cost of the marginal UserDefined distributions
-    for (UnsignedInteger i = 0; i < size; ++ i)
+    for (UnsignedInteger i = 0; i < weights.getSize(); ++ i)
     {
       for (UnsignedInteger j = 0; j < outputDimension; ++ j)
       {
@@ -165,7 +177,7 @@ Point IndividualChanceMeasure::operator()(const Point & inP) const
       } // for j
     } // for i
   } // discrete
-  return operator_.operator()(1.0, 2.0) ? alpha_ - outP : outP - alpha_;;
+  return operator_.operator()(1.0, 2.0) ? alpha_ - outP : outP - alpha_;
 }
 
 /* Alpha coefficient accessor */
