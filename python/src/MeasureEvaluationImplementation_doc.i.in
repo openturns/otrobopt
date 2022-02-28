@@ -90,3 +90,30 @@ algorithm : :py:class:`openturns.IntegrationAlgorithm`
 %feature("docstring") OTROBOPT::MeasureEvaluationImplementation::getIntegrationAlgorithm
 OTROBOPT_MeasureEvaluation_getIntegrationAlgorithm_doc
 
+// ---------------------------------------------------------------------
+
+%define OTROBOPT_MeasureEvaluation_getPDFThreshold_doc
+"PDF threshold accessor.
+
+Returns
+-------
+threshold : float
+    PDF threshold under which the contribution is not computed."
+%enddef
+%feature("docstring") OTROBOPT::MeasureEvaluationImplementation::getPDFThreshold
+OTROBOPT_MeasureEvaluation_getPDFThreshold_doc
+
+// ---------------------------------------------------------------------
+
+%define OTROBOPT_MeasureEvaluation_setPDFThreshold_doc
+"PDF threshold accessor.
+
+Parameters
+----------
+threshold : float
+    PDF threshold under which the contribution is not computed."
+%enddef
+%feature("docstring") OTROBOPT::MeasureEvaluationImplementation::setPDFThreshold
+OTROBOPT_MeasureEvaluation_setPDFThreshold_doc
+
+// ---------------------------------------------------------------------
