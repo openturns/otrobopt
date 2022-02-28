@@ -38,3 +38,23 @@ Examples
 
 // ---------------------------------------------------------------------
 
+%feature("docstring") OTROBOPT::MeanMeasure::getPDFThreshold
+"PDF threshold accessor.
+
+Returns
+-------
+threshold : float
+    PDF threshold under which the contribution is not computed."
+
+// ---------------------------------------------------------------------
+
+%feature("docstring") OTROBOPT::MeanMeasure::setPDFThreshold
+"PDF threshold accessor.
+
+Parameters
+----------
+threshold : float
+    PDF threshold under which the contribution is not computed."
+
+// ---------------------------------------------------------------------
+

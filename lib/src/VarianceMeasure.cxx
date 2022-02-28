@@ -38,7 +38,10 @@ static Factory<VarianceMeasure> Factory_VarianceMeasure;
 VarianceMeasure::VarianceMeasure()
   : MeasureEvaluationImplementation()
 {
-  // Nothing to do
+  // Set the default integration algorithm
+  GaussKronrod gkr;
+  gkr.setRule(static_cast<GaussKronrodRule::GaussKronrodPair>(ResourceMap::GetAsUnsignedInteger("VarianceMeasure-GaussKronrodRule")));
+  integrationAlgorithm_ = IteratedQuadrature(gkr);
 }
 
 /* Parameter constructor */
@@ -47,7 +50,10 @@ VarianceMeasure::VarianceMeasure (const Function & function,
   : MeasureEvaluationImplementation(function, distribution)
 
 {
-  // Nothing to do
+  // Set the default integration algorithm
+  GaussKronrod gkr;
+  gkr.setRule(static_cast<GaussKronrodRule::GaussKronrodPair>(ResourceMap::GetAsUnsignedInteger("VarianceMeasure-GaussKronrodRule")));
+  integrationAlgorithm_ = IteratedQuadrature(gkr);
 }
 
 /* Virtual constructor method */
@@ -148,13 +154,9 @@ Point VarianceMeasure::operator()(const Point & inP) const
   Point outP(outputDimension);
   if (getDistribution().isContinuous())
   {
-    GaussKronrod gkr;
-    gkr.setRule(static_cast<GaussKronrodRule::GaussKronrodPair>(ResourceMap::GetAsUnsignedInteger("VarianceMeasure-GaussKronrodRule")));
-    const IteratedQuadrature algo(gkr);
-
     Pointer<FunctionImplementation> p_wrapper(new VarianceMeasureParametricFunctionWrapper(inP, function, getDistribution()));
     const Function G(p_wrapper);
-    Point integral(algo.integrate(G, getDistribution().getRange()));
+    Point integral(integrationAlgorithm_.integrate(G, getDistribution().getRange()));
     for (UnsignedInteger j = 0; j < outputDimension; ++ j)
     {
       const Scalar mean = integral[j];
@@ -175,7 +177,7 @@ Point VarianceMeasure::operator()(const Point & inP) const
     }
 
     // Here we use a UserDefined distribution because the algorithm
-    // to compute a centered moment is quite involved in the case of
+    // to compute a central moment is quite involved in the case of
     // nonuniform weights
     outP = UserDefined(values, weights).getCentralMoment(2);
   } // discrete
