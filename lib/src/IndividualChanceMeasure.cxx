@@ -38,7 +38,10 @@ static Factory<IndividualChanceMeasure> Factory_IndividualChanceMeasure;
 IndividualChanceMeasure::IndividualChanceMeasure()
   : MeasureEvaluationImplementation()
 {
-  // Nothing to do
+  // Set the default integration algorithm
+  GaussKronrod gkr;
+  gkr.setRule(static_cast<GaussKronrodRule::GaussKronrodPair>(ResourceMap::GetAsUnsignedInteger("IndividualChanceMeasure-GaussKronrodRule")));
+  integrationAlgorithm_ = IteratedQuadrature(gkr);
 }
 
 /* Parameter constructor */
@@ -50,6 +53,10 @@ IndividualChanceMeasure::IndividualChanceMeasure (const Function & function,
   , operator_(op)
 {
   setAlpha(alpha);
+  // Set the default integration algorithm
+  GaussKronrod gkr;
+  gkr.setRule(static_cast<GaussKronrodRule::GaussKronrodPair>(ResourceMap::GetAsUnsignedInteger("IndividualChanceMeasure-GaussKronrodRule")));
+  integrationAlgorithm_ = IteratedQuadrature(gkr);
 }
 
 /* Virtual constructor method */
@@ -132,12 +139,9 @@ Point IndividualChanceMeasure::operator()(const Point & inP) const
   Point outP(outputDimension);
   if (getDistribution().isContinuous())
   {
-    GaussKronrod gkr;
-    gkr.setRule(static_cast<GaussKronrodRule::GaussKronrodPair>(ResourceMap::GetAsUnsignedInteger("IndividualChanceMeasure-GaussKronrodRule")));
-    const IteratedQuadrature algo(gkr);
     Pointer<FunctionImplementation> p_wrapper(new IndividualChanceMeasureParametricFunctionWrapper(inP, function, getDistribution()));
     const Function G(p_wrapper);
-    outP = algo.integrate(G, getDistribution().getRange());
+    outP = integrationAlgorithm_.integrate(G, getDistribution().getRange());
   }
   else
   {

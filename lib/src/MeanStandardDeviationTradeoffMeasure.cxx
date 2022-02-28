@@ -38,7 +38,10 @@ static Factory<MeanStandardDeviationTradeoffMeasure> Factory_MeanStandardDeviati
 MeanStandardDeviationTradeoffMeasure::MeanStandardDeviationTradeoffMeasure()
   : MeasureEvaluationImplementation()
 {
-  // Nothing to do
+  // Set the default integration algorithm
+  GaussKronrod gkr;
+  gkr.setRule(static_cast<GaussKronrodRule::GaussKronrodPair>(ResourceMap::GetAsUnsignedInteger("MeanStandardDeviationTradeoffMeasure-GaussKronrodRule")));
+  integrationAlgorithm_ = IteratedQuadrature(gkr);
 }
 
 /* Parameter constructor */
@@ -48,6 +51,10 @@ MeanStandardDeviationTradeoffMeasure::MeanStandardDeviationTradeoffMeasure (cons
   : MeasureEvaluationImplementation(function, distribution)
 {
   setAlpha(alpha);
+  // Set the default integration algorithm
+  GaussKronrod gkr;
+  gkr.setRule(static_cast<GaussKronrodRule::GaussKronrodPair>(ResourceMap::GetAsUnsignedInteger("MeanStandardDeviationTradeoffMeasure-GaussKronrodRule")));
+  integrationAlgorithm_ = IteratedQuadrature(gkr);
 }
 
 /* Virtual constructor method */
@@ -150,13 +157,10 @@ Point MeanStandardDeviationTradeoffMeasure::operator()(const Point & inP) const
   Point outP(outputDimension);
   if (getDistribution().isContinuous())
   {
-    GaussKronrod gkr;
-    gkr.setRule(static_cast<GaussKronrodRule::GaussKronrodPair>(ResourceMap::GetAsUnsignedInteger("MeanStandardDeviationTradeoffMeasure-GaussKronrodRule")));
-    const IteratedQuadrature algo(gkr);
     Pointer<FunctionImplementation> p_wrapper(new MeanStandardDeviationTradeoffMeasureParametricFunctionWrapper(inP, function, getDistribution()));
     const Function G(p_wrapper);
     // integrate (f_1(x), ...., f_d(x), f_1^2(x), ..., f_d^2(x))
-    const Point integral(algo.integrate(G, getDistribution().getRange()));
+    const Point integral(integrationAlgorithm_.integrate(G, getDistribution().getRange()));
     for (UnsignedInteger j = 0; j < outputDimension; ++ j)
     {
       const Scalar mean = integral[j];

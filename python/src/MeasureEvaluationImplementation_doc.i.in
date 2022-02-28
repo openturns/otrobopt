@@ -64,3 +64,29 @@ function : :py:class:`openturns.Function`
 %enddef
 %feature("docstring") OTROBOPT::MeasureEvaluationImplementation::getFunction
 OTROBOPT_MeasureEvaluation_getFunction_doc
+// ---------------------------------------------------------------------
+
+%define OTROBOPT_MeasureEvaluation_setIntegrationAlgorithm_doc
+"Integration algorithm accessor.
+
+Parameters
+----------
+algorithm : :py:class:`openturns.IntegrationAlgorithm`
+    Algorithm used to compute the exact value of the measure."
+%enddef
+%feature("docstring") OTROBOPT::MeasureEvaluationImplementation::setIntegrationAlgorithm
+OTROBOPT_MeasureEvaluation_setIntegrationAlgorithm_doc
+
+// ---------------------------------------------------------------------
+
+%define OTROBOPT_MeasureEvaluation_getIntegrationAlgorithm_doc
+"Integration algorithm accessor.
+
+Returns
+-------
+algorithm : :py:class:`openturns.IntegrationAlgorithm`
+    Algorithm used to compute the exact value of the measure."
+%enddef
+%feature("docstring") OTROBOPT::MeasureEvaluationImplementation::getIntegrationAlgorithm
+OTROBOPT_MeasureEvaluation_getIntegrationAlgorithm_doc
+

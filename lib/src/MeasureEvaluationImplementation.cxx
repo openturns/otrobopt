@@ -20,6 +20,7 @@
  */
 #include "otrobopt/MeasureEvaluationImplementation.hxx"
 #include <openturns/PersistentObjectFactory.hxx>
+#include <openturns/IteratedQuadrature.hxx>
 
 using namespace OT;
 
@@ -43,6 +44,7 @@ MeasureEvaluationImplementation::MeasureEvaluationImplementation (const Function
   : EvaluationImplementation()
   , function_(function)
   , distribution_(distribution)
+  , integrationAlgorithm_(IteratedQuadrature())
 {
   if (distribution.getDimension() != function.getParameter().getDimension())
     throw InvalidDimensionException(HERE) << "Function parameter dimension (" << function.getParameter().getDimension()
@@ -119,12 +121,25 @@ UnsignedInteger MeasureEvaluationImplementation::getOutputDimension() const
   return function_.getOutputDimension();
 }
 
+/* Integration algorithm$ accessor */
+void MeasureEvaluationImplementation::setIntegrationAlgorithm(const IntegrationAlgorithm & algorithm)
+{
+  integrationAlgorithm_ = algorithm;
+}
+
+IntegrationAlgorithm MeasureEvaluationImplementation::getIntegrationAlgorithm() const
+{
+  return integrationAlgorithm_;
+}
+
+
 /* Method save() stores the object through the StorageManager */
 void MeasureEvaluationImplementation::save(Advocate & adv) const
 {
   EvaluationImplementation::save(adv);
   adv.saveAttribute("distribution_", distribution_);
   adv.saveAttribute("function_", function_);
+  adv.saveAttribute("integrationAlgorithm_", integrationAlgorithm_);
 }
 
 /* Method load() reloads the object from the StorageManager */
@@ -133,6 +148,7 @@ void MeasureEvaluationImplementation::load(Advocate & adv)
   EvaluationImplementation::load(adv);
   adv.loadAttribute("distribution_", distribution_);
   adv.loadAttribute("function_", function_);
+  adv.loadAttribute("integrationAlgorithm_", integrationAlgorithm_);
 }
 
 

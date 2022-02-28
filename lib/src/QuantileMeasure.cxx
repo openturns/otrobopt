@@ -41,7 +41,10 @@ QuantileMeasure::QuantileMeasure()
   : MeasureEvaluationImplementation()
   , alpha_(0.0)
 {
-  // Nothing to do
+  // Set the default integration algorithm
+  GaussKronrod gkr;
+  gkr.setRule(static_cast<GaussKronrodRule::GaussKronrodPair>(ResourceMap::GetAsUnsignedInteger("QuantileMeasure-GaussKronrodRule")));
+  integrationAlgorithm_ = IteratedQuadrature(gkr);
 }
 
 /* Parameter constructor */
@@ -53,6 +56,10 @@ QuantileMeasure::QuantileMeasure (const Function & function,
   setAlpha(alpha);
   if (function.getOutputDimension() > 1) throw InvalidArgumentException(HERE) << "Quantile are only computed for 1-d functions.";
   setOutputDescription(Description(1, "P"));
+  // Set the default integration algorithm
+  GaussKronrod gkr;
+  gkr.setRule(static_cast<GaussKronrodRule::GaussKronrodPair>(ResourceMap::GetAsUnsignedInteger("QuantileMeasure-GaussKronrodRule")));
+  integrationAlgorithm_ = IteratedQuadrature(gkr);
 }
 
 /* Virtual constructor method */
@@ -138,11 +145,13 @@ class QuantileMeasureParametricFunctionWrapper2 : public FunctionImplementation
 public:
   QuantileMeasureParametricFunctionWrapper2(const Point & x,
       const Function & function,
-      const Distribution & distribution)
+      const Distribution & distribution,
+      const IntegrationAlgorithm & algorithm)
     : FunctionImplementation()
     , x_(x)
     , function_(function)
     , distribution_(distribution)
+    , integrationAlgorithm_(algorithm)
   {
     // Nothing to do
   }
@@ -154,12 +163,9 @@ public:
 
   Point operator()(const Point & s) const
   {
-    GaussKronrod gkr;
-    gkr.setRule(static_cast<GaussKronrodRule::GaussKronrodPair>(ResourceMap::GetAsUnsignedInteger("QuantileMeasure-GaussKronrodRule")));
-    const IteratedQuadrature algo(gkr);
     Pointer<FunctionImplementation> p_wrapper(new QuantileMeasureParametricFunctionWrapper(x_, function_, distribution_, s[0]));
     const Function G(p_wrapper);
-    return algo.integrate(G, distribution_.getRange());
+    return integrationAlgorithm_.integrate(G, distribution_.getRange());
   }
 
   Sample operator()(const Sample & s) const
@@ -195,6 +201,7 @@ protected:
   Point x_;
   Function function_;
   Distribution distribution_;
+  IntegrationAlgorithm integrationAlgorithm_;
 };
 
 
@@ -207,7 +214,7 @@ Point QuantileMeasure::operator()(const Point & inP) const
   Point outP(outputDimension);
   if (getDistribution().isContinuous())
   {
-    Pointer<FunctionImplementation> p_wrapper(new QuantileMeasureParametricFunctionWrapper2(inP, function, getDistribution()));
+    Pointer<FunctionImplementation> p_wrapper(new QuantileMeasureParametricFunctionWrapper2(inP, function, getDistribution(), integrationAlgorithm_));
     Function G(p_wrapper);
 
     Scalar lower = 0.0;

@@ -38,7 +38,10 @@ JointChanceMeasure::JointChanceMeasure()
   : MeasureEvaluationImplementation()
   , alpha_(0.0)
 {
-  // Nothing to do
+  // Set the default integration algorithm
+  GaussKronrod gkr;
+  gkr.setRule(static_cast<GaussKronrodRule::GaussKronrodPair>(ResourceMap::GetAsUnsignedInteger("JointChanceMeasure-GaussKronrodRule")));
+  integrationAlgorithm_ = IteratedQuadrature(gkr);
 }
 
 /* Parameter constructor */
@@ -52,6 +55,10 @@ JointChanceMeasure::JointChanceMeasure (const Function & function,
 {
   setAlpha(alpha);
   setOutputDescription(Description(1, "P"));
+  // Set the default integration algorithm
+  GaussKronrod gkr;
+  gkr.setRule(static_cast<GaussKronrodRule::GaussKronrodPair>(ResourceMap::GetAsUnsignedInteger("JointChanceMeasure-GaussKronrodRule")));
+  integrationAlgorithm_ = IteratedQuadrature(gkr);
 }
 
 /* Virtual constructor method */
@@ -164,12 +171,9 @@ Point JointChanceMeasure::operator()(const Point & inP) const
   Point outP(1);
   if (getDistribution().isContinuous())
   {
-    GaussKronrod gkr;
-    gkr.setRule(static_cast<GaussKronrodRule::GaussKronrodPair>(ResourceMap::GetAsUnsignedInteger("JointChanceMeasure-GaussKronrodRule")));
-    const IteratedQuadrature algo(gkr);
     Pointer<FunctionImplementation> p_wrapper(new JointChanceMeasureParametricFunctionWrapper(inP, function, getDistribution()));
     const Function G(p_wrapper);
-    outP = algo.integrate(G, getDistribution().getRange());
+    outP = integrationAlgorithm_.integrate(G, getDistribution().getRange());
   }
   else
   {

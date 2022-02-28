@@ -36,17 +36,24 @@ static Factory<MeanMeasure> Factory_MeanMeasure;
 /* Default constructor */
 MeanMeasure::MeanMeasure()
   : MeasureEvaluationImplementation()
+  , pdfThreshold_(SpecFunc::Precision)
 {
-  // Nothing to do
+  // Set the default integration algorithm
+  GaussKronrod gkr;
+  gkr.setRule(static_cast<GaussKronrodRule::GaussKronrodPair>(ResourceMap::GetAsUnsignedInteger("MeanMeasure-GaussKronrodRule")));
+  integrationAlgorithm_ = IteratedQuadrature(gkr);
 }
 
 /* Parameter constructor */
 MeanMeasure::MeanMeasure (const Function & function,
                           const Distribution & distribution)
   : MeasureEvaluationImplementation(function, distribution)
-
+  , pdfThreshold_(SpecFunc::Precision)
 {
-  // Nothing to do
+  // Set the default integration algorithm
+  GaussKronrod gkr;
+  gkr.setRule(static_cast<GaussKronrodRule::GaussKronrodPair>(ResourceMap::GetAsUnsignedInteger("MeanMeasure-GaussKronrodRule")));
+  integrationAlgorithm_ = IteratedQuadrature(gkr);
 }
 
 /* Virtual constructor method */
@@ -61,11 +68,13 @@ class MeanMeasureParametricFunctionWrapper : public FunctionImplementation
 public:
   MeanMeasureParametricFunctionWrapper (const Point & x,
                                         const Function & function,
-                                        const Distribution & distribution)
+                                        const Distribution & distribution,
+                                        const Scalar pdfThreshold)
     : FunctionImplementation()
     , x_(x)
     , function_(function)
     , distribution_(distribution)
+    , pdfThreshold_(pdfThreshold)
   {
     // Nothing to do
   }
@@ -88,12 +97,15 @@ public:
     const UnsignedInteger outputDimension = function.getOutputDimension();
     const UnsignedInteger size = theta.getSize();
     Sample outS(size, outputDimension);
-    const Sample pdfS(distribution_.computePDF(theta));
+    const Point pdfS(distribution_.computePDF(theta).asPoint());
     for (UnsignedInteger i = 0; i < size; ++i)
     {
-      function.setParameter(theta[i]);
-      outS[i] = function(x_) * pdfS(i, 0);
-    }
+      if (pdfS[i] > pdfThreshold_)
+      {
+        function.setParameter(theta[i]);
+        outS[i] = function(x_) * pdfS[i];
+      }
+    } // for
     return outS;
   }
 
@@ -121,6 +133,7 @@ protected:
   Point x_;
   Function function_;
   Distribution distribution_;
+  Scalar pdfThreshold_;
 };
 
 
@@ -132,26 +145,39 @@ Point MeanMeasure::operator()(const Point & inP) const
   Point outP(outputDimension);
   if (getDistribution().isContinuous())
   {
-    GaussKronrod gkr;
-    gkr.setRule(static_cast<GaussKronrodRule::GaussKronrodPair>(ResourceMap::GetAsUnsignedInteger("MeanMeasure-GaussKronrodRule")));
-    const IteratedQuadrature algo(gkr);
-    Pointer<FunctionImplementation> p_wrapper(new MeanMeasureParametricFunctionWrapper(inP, function, getDistribution()));
+    Pointer<FunctionImplementation> p_wrapper(new MeanMeasureParametricFunctionWrapper(inP, function, getDistribution(), pdfThreshold_));
     const Function G(p_wrapper);
-    outP = algo.integrate(G, getDistribution().getRange());
+    outP = integrationAlgorithm_.integrate(G, getDistribution().getRange());
   }
   else
   {
-    const Point weights(getDistribution().getProbabilities());
+    const Point pdfS(getDistribution().getProbabilities());
     const Sample parameters(getDistribution().getSupport());
     const UnsignedInteger size = parameters.getSize();
     for (UnsignedInteger i = 0; i < size; ++i)
     {
-      function.setParameter(parameters[i]);
-      outP += function(inP) * weights[i];
-    }
-  }
+      if (pdfS[i] > pdfThreshold_)
+      {
+        function.setParameter(parameters[i]);
+        outP += function(inP) * pdfS[i];
+      }
+    } // for
+  } // !isContinuous
   return outP;
 }
+
+/* PDF threshold accessor */
+Scalar MeanMeasure::getPDFThreshold() const
+{
+  return pdfThreshold_;
+}
+
+void MeanMeasure::setPDFThreshold(const Scalar threshold)
+{
+  pdfThreshold_ = threshold;
+}
+
+
 
 /* String converter */
 String MeanMeasure::__repr__() const
@@ -165,12 +191,14 @@ String MeanMeasure::__repr__() const
 void MeanMeasure::save(Advocate & adv) const
 {
   MeasureEvaluationImplementation::save(adv);
+  adv.saveAttribute("pdfThreshold_", pdfThreshold_);
 }
 
 /* Method load() reloads the object from the StorageManager */
 void MeanMeasure::load(Advocate & adv)
 {
   MeasureEvaluationImplementation::load(adv);
+  adv.loadAttribute("pdfThreshold_", pdfThreshold_);
 }
 
 

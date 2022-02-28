@@ -25,6 +25,7 @@
 #include "otrobopt/OTRobOptprivate.hxx"
 
 #include <openturns/Distribution.hxx>
+#include <openturns/IntegrationAlgorithm.hxx>
 
 namespace OTROBOPT
 {
@@ -65,6 +66,10 @@ public:
   OT::UnsignedInteger getInputDimension() const override;
   OT::UnsignedInteger getOutputDimension() const override;
 
+  /** Integration algorithm accessor */
+  virtual void setIntegrationAlgorithm(const OT::IntegrationAlgorithm & algorithm);
+  virtual OT::IntegrationAlgorithm getIntegrationAlgorithm() const;
+
   /** String converter */
   OT::String __repr__() const override;
   OT::String __str__(const OT::String & offset = "") const override;
@@ -75,10 +80,10 @@ public:
   /** Method load() reloads the object from the StorageManager */
   void load(OT::Advocate & adv) override;
 
-private:
+protected:
   OT::Function function_;
   OT::Distribution distribution_;
-
+  OT::IntegrationAlgorithm integrationAlgorithm_;
 }; /* class MeasureEvaluationImplementation */
 
 } /* namespace OTROBOPT */
