@@ -15,4 +15,4 @@ if sys.platform.startswith('win'):
 
 from .otrobopt import *
 
-__version__ = '0.10'
+__version__ = '0.11'

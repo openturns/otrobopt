@@ -1,3 +1,7 @@
+= 0.11 release (2022-04-14)
+
+ * Fix SMRA optimal point storage
+
 = 0.10 release (2021-11-10)
 
  * Maintenance
