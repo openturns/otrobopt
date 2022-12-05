@@ -177,7 +177,7 @@ Point VarianceMeasure::operator()(const Point & inP) const
     // Here we use a UserDefined distribution because the algorithm
     // to compute a centered moment is quite involved in the case of
     // nonuniform weights
-    outP = UserDefined(values, weights).getCenteredMoment(2);
+    outP = UserDefined(values, weights).getCentralMoment(2);
   } // discrete
   return outP;
 }
