@@ -12,7 +12,6 @@ jobs:
       - name: Upload
         if: ${{ github.ref == 'refs/heads/master' }}
         run: |
-          exit 0
           git clone --depth 1 https://${{ secrets.GH_TOKEN }}@github.com/openturns/openturns.github.io.git /tmp/io
           mkdir -p /tmp/io/otrobopt/master
           cp -r html/* /tmp/io/otrobopt/master
