@@ -9,7 +9,6 @@
 
 # Use the following variables to compile and link against OTRobOpt:
 #  OTROBOPT_FOUND          - True if OTRobOpt was found on your system
-#  OTROBOPT_USE_FILE       - The file making OTRobOpt usable
 #  OTROBOPT_DEFINITIONS    - Definitions needed to build with OTRobOpt
 #  OTROBOPT_INCLUDE_DIRS   - List of directories where OTRobOpt' header file are
 #  OTROBOPT_LIBRARY        - Library name
@@ -22,7 +21,6 @@
 #  OTROBOPT_VERSION_PATCH  - The patch version of OTRobOpt
 
 set ( OTROBOPT_FOUND 1 )
-set ( OTROBOPT_USE_FILE     "@OTROBOPT_USE_FILE@" )
 
 set ( OTROBOPT_DEFINITIONS  "@OTROBOPT_DEFINITIONS@" )
 set ( OTROBOPT_INCLUDE_DIR  "@OTROBOPT_INCLUDE_DIR@" )
@@ -37,11 +35,7 @@ set ( OTROBOPT_VERSION_MAJOR  "@OTROBOPT_VERSION_MAJOR@" )
 set ( OTROBOPT_VERSION_MINOR  "@OTROBOPT_VERSION_MINOR@" )
 set ( OTROBOPT_VERSION_PATCH  "@OTROBOPT_VERSION_PATCH@" )
 
-set (OTROBOPT_PYTHON@PYTHON_VERSION_MAJOR@_MODULE_PATH "@PYTHON_MODULE_PATH@")
+set (OTROBOPT_PYTHON_MODULE_PATH "@PYTHON_MODULE_PATH@")
 
-# CMAKE_CURRENT_LIST_DIR defined since 2.8.3
-if (CMAKE_VERSION VERSION_LESS 2.8.3)
-  get_filename_component (CMAKE_CURRENT_LIST_DIR ${CMAKE_CURRENT_LIST_FILE} PATH)
-endif ()
 # Our library dependencies (contains definitions for IMPORTED targets)
 include (${CMAKE_CURRENT_LIST_DIR}/OTRobOpt-Targets.cmake)
