@@ -20,7 +20,7 @@ jobs:
           git config user.email "support@gh.com"
           git config user.name "GitHub Actions"
           git add -A .
-          git commit -a -m "GitHub Actions build ${GITHUB_REPOSITORY} ${GITHUB_RUN_ID}"
+          git commit -a -m "GitHub Actions build ${GITHUB_REPOSITORY} ${GITHUB_RUN_ID}" || exit 0
           git push --quiet origin master > /dev/null 2>&1
 
   mingw:
