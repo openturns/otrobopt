@@ -58,11 +58,7 @@ Robustness problem with deterministic constraint:
 >>> algo.setStartingPoint([0.0]*robustnessMeasure.getInputDimension())
 >>> algo.run()
 >>> x_et = algo.getResult().getOptimalPoint()
->>> print(x_et)
-[0]
 >>> J_et = algo.getResult().getOptimalValue()
->>> print(J_et)
-[0]
 
 Pure reliability problem:
 
