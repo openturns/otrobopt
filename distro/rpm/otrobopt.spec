@@ -20,7 +20,7 @@ FFLAGS="${FFLAGS:-%optflags}" ; export FFLAGS ; \
 -DBUILD_SHARED_LIBS:BOOL=ON
 
 Name:           otrobopt
-Version:        0.11
+Version:        0.12
 Release:        0%{?dist}
 Summary:        OpenTURNS module
 Group:          System Environment/Libraries
@@ -66,7 +66,6 @@ Python textual interface to OTRobOpt uncertainty library
 %build
 %cmake -DINSTALL_DESTDIR:PATH=%{buildroot} \
        -DCMAKE_SKIP_INSTALL_RPATH:BOOL=ON \
-       -DPYTHON_EXECUTABLE=%{__python} \
        -DUSE_SPHINX=OFF .
 make %{?_smp_mflags}
 

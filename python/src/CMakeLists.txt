@@ -100,11 +100,6 @@ install ( FILES __init__.py
           DESTINATION ${OTROBOPT_PYTHON_MODULE_PATH}/${PACKAGE_NAME}
         )
 
-install ( FILES ${SWIGFILES}
-          DESTINATION ${OTROBOPT_SWIG_INCLUDE_DIRS}
-        )
-
-
 if (SPHINX_FOUND)
 
   # create a build site-package from which sphinx can import

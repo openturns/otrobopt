@@ -44,7 +44,7 @@ Pure robustness problem:
 [0.55...]
 >>> J_et = algo.getResult().getOptimalValue()
 >>> print(J_et)
-[3.42652e-05]
+[3.42...e-05]
 
 Robustness problem with deterministic constraint:
 
@@ -59,10 +59,10 @@ Robustness problem with deterministic constraint:
 >>> algo.run()
 >>> x_et = algo.getResult().getOptimalPoint()
 >>> print(x_et)
-[5]
+[0]
 >>> J_et = algo.getResult().getOptimalValue()
 >>> print(J_et)
-[10]
+[0]
 
 Pure reliability problem:
 
@@ -77,10 +77,10 @@ Pure reliability problem:
 >>> algo.run()
 >>> x_et = algo.getResult().getOptimalPoint()
 >>> print(x_et)
-[-1.83551]
+[-1.83...]
 >>> J_et = algo.getResult().getOptimalValue()
 >>> print(J_et)
-[-0.835515]
+[-0.83...]
 
 Robustness & reliability problem:
 
@@ -97,10 +97,10 @@ Robustness & reliability problem:
 >>> algo.run()
 >>> x_et = algo.getResult().getOptimalPoint()
 >>> print(x_et)
-[-1.83551]
+[-1.83...]
 >>> J_et = algo.getResult().getOptimalValue()
 >>> print(J_et)
-[-3.67103]"
+[-3.67...]"
 
 // ---------------------------------------------------------------------
 

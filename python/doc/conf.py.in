@@ -67,6 +67,13 @@ imgmath_embed = True
 
 extensions.append('matplotlib.sphinxext.plot_directive')
 
+extensions.append('sphinx_gallery.gen_gallery')
+sphinx_gallery_conf = {
+     'examples_dirs': ['examples'], # path to example scripts
+     'gallery_dirs': ['auto_examples'], # path to where to save gallery gen. output
+     'show_signature': False,
+}
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 

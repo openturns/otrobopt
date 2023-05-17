@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
 import otrobopt
-import openturns as ot
-import sys
 import os
 import shutil
 from glob import glob

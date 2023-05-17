@@ -66,7 +66,7 @@ algo.setMaximumAbsoluteError(1e-6)
 algo.setInitialSamplingSize(
     2)  # size of initial xsi discretization, x2 at every iteration
 algo.setInitialSearch(1000)
-                      # number of multi-start tries, uniform law using bounds
+# number of multi-start tries, uniform law using bounds
 myStudy.add('algo', algo)
 
 myStudy.save()

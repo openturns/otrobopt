@@ -2,11 +2,18 @@ Source: otrobopt
 Section: science
 Priority: extra
 Maintainer: Debian Science Maintainers <debian-science-maintainers@lists.alioth.debian.org>
-Uploaders: Christophe Prud'homme <prudhomm@debian.org>, Denis Barbier <barbier@debian.org>
-Build-Depends: debhelper (>= 9), dh-python, quilt, cmake, libopenturns-dev, python3-openturns, python3-dev, swig
-Standards-Version: 4.1.3
+Uploaders: Julien Schueller <schueller@phimeca.com>
+Build-Depends: debhelper-compat (= 12),
+               dh-python,
+               cmake,
+               libfftw3-dev,
+               libopenturns-dev,
+               python3-openturns,
+               python3-dev,
+               swig
+Standards-Version: 4.6.0
 Homepage: http://www.openturns.org/
-X-Python3-Version: current
+Rules-Requires-Root: no
 
 Package: otrobopt
 Section: libs

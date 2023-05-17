@@ -67,12 +67,18 @@ ot_pyinstallcheck_test (MeasureFactory_std)
 ot_pyinstallcheck_test (MeasureFunction_std)
 ot_pyinstallcheck_test (SequentialMonteCarloRobustAlgorithm_std)
 ot_pyinstallcheck_test (docstring)
-if (NOT CMAKE_SIZEOF_VOID_P STREQUAL "4") # cobyla/i686
-  ot_pyinstallcheck_test (example1)
-  ot_pyinstallcheck_test (example2)
-  ot_pyinstallcheck_test (example3)
-  ot_pyinstallcheck_test (example4)
+
+if (MATPLOTLIB_FOUND)
+  file (GLOB_RECURSE PYFILES "${PROJECT_SOURCE_DIR}/python/doc/examples/*.py")
+  foreach (PYF ${PYFILES})
+    if (PYF MATCHES plot)
+      get_filename_component (TESTNAME "${PYF}" NAME_WE)
+      add_test (NAME pyinstallcheck_example_${TESTNAME} COMMAND ${Python_EXECUTABLE} ${PYF})
+      set_tests_properties (pyinstallcheck_example_${TESTNAME} PROPERTIES ENVIRONMENT "${PYINSTALLCHECK_ENVIRONMENT}")
+    endif ()
+  endforeach ()
 endif ()
+
 ot_pyinstallcheck_test (saveload)
 
 add_custom_target ( pyinstallcheck COMMAND ${CMAKE_CTEST_COMMAND} -R "^pyinstallcheck_"

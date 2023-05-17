@@ -13,7 +13,7 @@ User documentation
    :maxdepth: 2
 
    user_manual/user_manual
-   examples/examples
+   ../auto_examples/index.rst
 
 Developer documentation
 -----------------------
