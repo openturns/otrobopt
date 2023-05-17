@@ -6,7 +6,6 @@ Uploaders: Julien Schueller <schueller@phimeca.com>
 Build-Depends: debhelper-compat (= 12),
                dh-python,
                cmake,
-               libfftw3-dev,
                libopenturns-dev,
                python3-openturns,
                python3-dev,
