@@ -16,6 +16,6 @@ CXXFLAGS="-Wall -Wextra -D_GLIBCXX_ASSERTIONS" ${ARCH}-w64-mingw32-cmake \
 make install
 ${ARCH}-w64-mingw32-strip --strip-unneeded ${PREFIX}/bin/*.dll ${PREFIX}/Lib/site-packages/*/*.pyd
 echo lib/test ${PREFIX}/Lib/site-packages/* | xargs -n 1 cp ${PREFIX}/bin/*.dll
-ctest -R pyinstallcheck --output-on-failure --timeout 1000 --schedule-random ${MAKEFLAGS}
+OPENTURNS_NUM_THREADS=2 ctest -R pyinstallcheck --output-on-failure --timeout 1000 --schedule-random ${MAKEFLAGS}
 make tests
-ctest -R cppcheck --output-on-failure --timeout 1000 --schedule-random ${MAKEFLAGS}
+OPENTURNS_NUM_THREADS=2 ctest -R cppcheck --output-on-failure --timeout 1000 --schedule-random ${MAKEFLAGS}
