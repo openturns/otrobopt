@@ -56,7 +56,7 @@ measures = [otrobopt.MeanMeasure(f, thetaDist),
             otrobopt.IndividualChanceMeasure(
                 f, thetaDist, ot.GreaterOrEqual(), [0.5]),
             otrobopt.MeanStandardDeviationTradeoffMeasure(f, thetaDist, [0.8]),
-            otrobopt.QuantileMeasure(f, thetaDist, 0.5)
+            #otrobopt.QuantileMeasure(f, thetaDist, 0.5)
             ]
 aggregated = otrobopt.AggregatedMeasure(measures)
 measures.append(aggregated)

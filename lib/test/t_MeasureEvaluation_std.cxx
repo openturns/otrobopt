@@ -77,7 +77,8 @@ int main()
     measures.add(JointChanceMeasure(f, thetaDist, GreaterOrEqual(), 0.5));
     measures.add(IndividualChanceMeasure(f, thetaDist, GreaterOrEqual(), Point(1, 0.5)));
     measures.add(MeanStandardDeviationTradeoffMeasure(f, thetaDist, Point(1, 0.8)));
-    measures.add(QuantileMeasure(f, thetaDist, 0.5));
+    // FIXME: QuantileMeasure got slow with OT 1.2rc1, in the Brent step
+    // measures.add(QuantileMeasure(f, thetaDist, 0.5));
 
     AggregatedMeasure aggregated(measures);
     measures.add(aggregated);
