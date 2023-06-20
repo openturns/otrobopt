@@ -1,3 +1,8 @@
+= 0.13 release (in progress)
+
+ * Add SubsetInverseSampling
+ * Add InverseFORM
+
 = 0.12 release (2023-05-17)
 
  * Maintenance

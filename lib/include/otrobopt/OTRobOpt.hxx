@@ -32,5 +32,7 @@
 #include "otrobopt/QuantileMeasure.hxx"
 #include "otrobopt/AggregatedMeasure.hxx"
 #include "otrobopt/MeasureFactory.hxx"
+#include "otrobopt/SubsetInverseSampling.hxx"
+#include "otrobopt/InverseFORM.hxx"
 
 #endif /* OTROBOPT_OTROBOPT_HXX */

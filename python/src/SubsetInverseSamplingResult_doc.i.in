@@ -1,0 +1,44 @@
+//%define OTSUBSETINVERSE_SubsetSampling_doc
+//"SubsetSampling class.
+//
+//Examples
+//--------
+//>>> import otsubsetinverse
+//>>> a = otsubsetinverse.SubsetSampling()
+//
+//Notes
+//-----
+//Template module class."
+//%enddef
+//%feature("docstring") OTSUBSETINVERSE::SubsetSamplingResult
+//OTSUBSETINVERSE_SubsetSampling_doc
+//
+//// ---------------------------------------------------------------------
+//
+//%define OTSUBSETINVERSE_SubsetSampling_square_doc
+//"Square of a point.
+//
+//Parameters
+//----------
+//point : sequence of float 
+//    Input point
+//
+//Returns
+//-------
+//square : :py:class:`openturns.NumericalPoint`
+//    Square of point
+//                  
+//Examples
+//--------
+//>>> import openturns as ot
+//>>> import otsubsetinverse
+//>>> a = otsubsetinverse.SubsetSampling()
+//>>> point = ot.NumericalPoint([1.0, 2.0, 3.0])
+//>>> a.square(point)
+//class=NumericalPoint name=Unnamed dimension=3 values=[1,4,9]"
+//%enddef
+//%feature("docstring") OTSUBSETINVERSE::SubsetSamplingResult::square
+//OTSUBSETINVERSE_SubsetSampling_square_doc
+//
+//
+//

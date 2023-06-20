@@ -33,4 +33,7 @@
 %include RobustOptimizationProblem.i
 %include RobustOptimizationAlgorithm.i
 %include SequentialMonteCarloRobustAlgorithm.i
-
+%include SubsetInverseSamplingResult.i
+%include SubsetInverseSampling.i
+%include InverseFORMResult.i
+%include InverseFORM.i
