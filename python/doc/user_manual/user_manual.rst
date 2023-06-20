@@ -117,3 +117,12 @@ Solve a robust optimization problem
 
     RobustOptimizationAlgorithm
     SequentialMonteCarloRobustAlgorithm
+
+Solve an inverse reliability problem
+------------------------------------
+
+.. autosummary::
+    :toctree: _generated/
+    :template: class.rst_t
+
+    SubsetInverseSampling

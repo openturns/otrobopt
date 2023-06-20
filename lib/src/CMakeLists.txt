@@ -17,6 +17,8 @@ ot_add_source_file (MeasureFactory.cxx)
 ot_add_source_file (RobustOptimizationProblem.cxx)
 ot_add_source_file (RobustOptimizationAlgorithm.cxx)
 ot_add_source_file (SequentialMonteCarloRobustAlgorithm.cxx)
+ot_add_source_file (SubsetInverseSamplingResult.cxx)
+ot_add_source_file (SubsetInverseSampling.cxx)
 
 ot_install_header_file (MeasureEvaluation.hxx)
 ot_install_header_file (MeasureEvaluationImplementation.hxx)
@@ -33,7 +35,8 @@ ot_install_header_file (MeasureFactory.hxx)
 ot_install_header_file (RobustOptimizationProblem.hxx)
 ot_install_header_file (RobustOptimizationAlgorithm.hxx)
 ot_install_header_file (SequentialMonteCarloRobustAlgorithm.hxx)
-
+ot_install_header_file (SubsetInverseSamplingResult.hxx)
+ot_install_header_file (SubsetInverseSampling.hxx)
 
 include_directories ( ${INTERNAL_INCLUDE_DIRS} )
 
