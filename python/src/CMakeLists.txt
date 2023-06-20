@@ -95,6 +95,8 @@ ot_add_python_module( ${PACKAGE_NAME} ${PACKAGE_NAME}_module.i
                       SequentialMonteCarloRobustAlgorithm.i SequentialMonteCarloRobustAlgorithm_doc.i.in
                       SubsetInverseSampling.i SubsetInverseSampling_doc.i.in
                       SubsetInverseSamplingResult.i SubsetInverseSamplingResult_doc.i.in
+                      InverseFORMResult.i InverseFORMResult_doc.i.in
+                      InverseFORM.i InverseFORM_doc.i.in
                     )
 
 

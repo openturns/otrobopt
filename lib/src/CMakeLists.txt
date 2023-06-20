@@ -19,6 +19,8 @@ ot_add_source_file (RobustOptimizationAlgorithm.cxx)
 ot_add_source_file (SequentialMonteCarloRobustAlgorithm.cxx)
 ot_add_source_file (SubsetInverseSamplingResult.cxx)
 ot_add_source_file (SubsetInverseSampling.cxx)
+ot_add_source_file (InverseFORMResult.cxx)
+ot_add_source_file (InverseFORM.cxx)
 
 ot_install_header_file (MeasureEvaluation.hxx)
 ot_install_header_file (MeasureEvaluationImplementation.hxx)
@@ -37,6 +39,8 @@ ot_install_header_file (RobustOptimizationAlgorithm.hxx)
 ot_install_header_file (SequentialMonteCarloRobustAlgorithm.hxx)
 ot_install_header_file (SubsetInverseSamplingResult.hxx)
 ot_install_header_file (SubsetInverseSampling.hxx)
+ot_install_header_file (InverseFORMResult.hxx)
+ot_install_header_file (InverseFORM.hxx)
 
 include_directories ( ${INTERNAL_INCLUDE_DIRS} )
 

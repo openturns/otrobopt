@@ -117,6 +117,7 @@ class sequentialRobustOptimisationSolver:
             0, self.J_.getInputDimension() - self.distributionXi_.getDimension())
         currentSampleXi = ot.Sample(0, distributionXi.getDimension())
         currentN = self.N0_
+        currentPoint = None
         for iteration in range(self.robustIteration_):
             if self.verbose_:
                 print("start iteration", iteration)

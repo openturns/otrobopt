@@ -68,6 +68,7 @@ ot_pyinstallcheck_test (MeasureFunction_std)
 ot_pyinstallcheck_test (SequentialMonteCarloRobustAlgorithm_std)
 ot_pyinstallcheck_test (SubsetInverseSampling_R-S)
 ot_pyinstallcheck_test (SubsetInverseSampling_Waarts_system_series)
+ot_pyinstallcheck_test (InverseFORM_std IGNOREOUT)
 ot_pyinstallcheck_test (docstring)
 
 if (MATPLOTLIB_FOUND)

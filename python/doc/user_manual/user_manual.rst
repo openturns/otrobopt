@@ -118,6 +118,10 @@ Solve a robust optimization problem
     RobustOptimizationAlgorithm
     SequentialMonteCarloRobustAlgorithm
 
+.. FIXME: sphinx.errors.SphinxWarning: .../otrobopt.py:docstring of openturns.analytical.AnalyticalResult.getHasoferReliabilityIndexSensitivity:4:undefined label: sensitivity_form
+.. _sensitivity_form:
+.. _importance_form:
+    
 Solve an inverse reliability problem
 ------------------------------------
 
@@ -126,3 +130,6 @@ Solve an inverse reliability problem
     :template: class.rst_t
 
     SubsetInverseSampling
+    SubsetInverseSamplingResult
+    InverseFORM
+    InverseFORMResult

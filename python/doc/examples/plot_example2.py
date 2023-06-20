@@ -5,7 +5,7 @@ Example 2
 
 # %%
 # Problem statement:
-# 
+#
 # .. math::
 #
 #     \begin{aligned}
@@ -15,7 +15,7 @@ Example 2
 #     & & 2x_1 + 4x_0 - 120 \leq 0 \\
 #     & & & \Theta \thicksim \cN(1, 3)
 #     \end{aligned}
-#     
+#
 # Solution: :math:`\hat{x} = [15, 30]`
 
 # %%
@@ -49,8 +49,8 @@ algo.setInitialSamplingSize(10)
 algo.setInitialSearch(100)
 algo.run()
 result = algo.getResult()
-#openturns.testing.assert_almost_equal(
-    #result.getOptimalPoint(), [46.2957, 46.634], 1e-3)
+# openturns.testing.assert_almost_equal(
+# result.getOptimalPoint(), [46.2957, 46.634], 1e-3)
 print('x*=', result.getOptimalPoint(),
       'J(x*)=', result.getOptimalValue(),
       'iteration=', result.getIterationNumber())

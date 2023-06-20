@@ -74,6 +74,7 @@ if (NOT WIN32)
 ot_check_test (SequentialMonteCarloRobustAlgorithm_std)
 endif()
 ot_check_test (SubsetInverseSampling_std)
+ot_check_test (InverseFORM_std IGNOREOUT)
 
 add_custom_target ( cppcheck COMMAND ${CMAKE_CTEST_COMMAND} -R "^cppcheck_"
                     DEPENDS ${CHECK_TO_BE_RUN}
