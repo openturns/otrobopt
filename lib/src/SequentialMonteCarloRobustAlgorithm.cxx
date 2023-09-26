@@ -28,6 +28,7 @@
 #include <openturns/LHSExperiment.hxx>
 #include <openturns/SpecFunc.hxx>
 #include <openturns/Uniform.hxx>
+#include <openturns/MultiStart.hxx>
 
 
 using namespace OT;
@@ -144,35 +145,15 @@ void SequentialMonteCarloRobustAlgorithm::run()
 
       ComposedDistribution::DistributionCollection coll(dimension);
       for (UnsignedInteger j = 0; j < dimension; ++ j)
-      {
         coll[j] = Uniform(getProblem().getBounds().getLowerBound()[j], getProblem().getBounds().getUpperBound()[j]);
-      }
-      Distribution initialDistribution = ComposedDistribution(coll);
+      LHSExperiment initialExperiment(ComposedDistribution(coll), initialSearch_);
+      initialStartingPoints_ = initialExperiment.generate();
 
-      LHSExperiment initialExperiment(initialDistribution, initialSearch_);
-      Sample startingPoints(initialExperiment.generate());
-      initialStartingPoints_ = startingPoints;
-
-      Scalar bestValue = getProblem().isMinimization() ? SpecFunc::MaxScalar : -SpecFunc::MaxScalar;
-      for (UnsignedInteger i = 0; i < initialSearch_; ++ i)
-      {
-        solver.setStartingPoint(startingPoints[i]);
-        solver.run();
-        OptimizationResult result(solver.getResult());
-        initialResultCollection_.add(result);
-        Scalar currentValue0 = result.getOptimalValue()[0];
-
-        // FIXME: Cobyla can return infeasible point: sweep evaluations to return the best with null constraint error
-        if (!getProblem().hasBounds() || (getProblem().hasBounds() && getProblem().getBounds().contains(result.getOptimalPoint())))
-          if ((getProblem().isMinimization() && (currentValue0 < bestValue))
-              || (!getProblem().isMinimization() && (currentValue0 > bestValue)))
-          {
-            bestValue = currentValue0;
-            newPoint = result.getOptimalPoint();
-            newValue = result.getOptimalValue();
-            LOGINFO(OSS() << "Best initial point so far=" << newPoint << " value=" << bestValue);
-          }
-      }
+      MultiStart multiStart(solver, initialStartingPoints_);
+      multiStart.run();
+      const OptimizationResult result(multiStart.getResult());
+      newPoint = result.getOptimalPoint();
+      newValue = result.getOptimalValue();
     }
     else
     {
