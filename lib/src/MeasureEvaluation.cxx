@@ -23,40 +23,20 @@
 #include <openturns/PersistentObjectFactory.hxx>
 #include <openturns/ResourceMap.hxx>
 #include <openturns/GaussKronrodRule.hxx>
+#include <mutex>
 
 using namespace OT;
 
 namespace OTROBOPT
 {
 
-
-static pthread_mutex_t OTRobOptResourceMap_InstanceMutex_;
-static UnsignedInteger OTRobOptResourceMap_initialized_ = 0;
-
-class OTRobOptResourceMap_init
+struct OTRobOptResourceMap_init
 {
-public:
   OTRobOptResourceMap_init()
   {
-
-    if (!OTRobOptResourceMap_initialized_)
+    static std::once_flag flag;
+    std::call_once(flag, [&]()
     {
-#ifndef OT_MUTEXINIT_NOCHECK
-      pthread_mutexattr_t attr;
-      pthread_mutexattr_init( &attr );
-      pthread_mutexattr_settype( &attr, PTHREAD_MUTEX_RECURSIVE );
-      pthread_mutex_init(&OTRobOptResourceMap_InstanceMutex_, &attr);
-#else
-      pthread_mutex_init(&OTRobOptResourceMap_InstanceMutex_, NULL);
-#endif
-      // openturns<1.15
-#ifndef OPENTURNS_VERSION
-#define AddAsScalar SetAsScalar
-#define AddAsUnsignedInteger SetAsUnsignedInteger
-#define AddAsBool SetAsBool
-#define AddAsScalar SetAsScalar
-#endif
-      // SequentialMonteCarloRobustAlgorithm
       ResourceMap::AddAsScalar("SequentialMonteCarloRobustAlgorithm-ConvergenceFactor", 1e-2);
       ResourceMap::AddAsUnsignedInteger("SequentialMonteCarloRobustAlgorithm-DefaultInitialSamplingSize", 10);
 
@@ -67,21 +47,11 @@ public:
 
       ResourceMap::AddAsUnsignedInteger("IndividualChanceMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
       ResourceMap::AddAsUnsignedInteger("JointChanceMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
-      OTRobOptResourceMap_initialized_ = 1;
-    }
-    assert(OTRobOptResourceMap_initialized_);
+    });
   }
-
-  ~OTRobOptResourceMap_init()
-  {
-    if (OTRobOptResourceMap_initialized_)
-      pthread_mutex_destroy(&OTRobOptResourceMap_InstanceMutex_);
-    OTRobOptResourceMap_initialized_ = 0;
-  }
-
 };
 
-static const OTRobOptResourceMap_init static_initializer_OTRobOptResourceMap;
+static const OTRobOptResourceMap_init __OTRobOptResourceMap_initializer;
 
 CLASSNAMEINIT(MeasureEvaluation)
 
