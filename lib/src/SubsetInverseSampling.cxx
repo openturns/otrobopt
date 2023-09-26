@@ -249,7 +249,7 @@ void SubsetInverseSampling::run()
       // compute the final threshold
       currentThreshold = computeThreshold();
       // compute the current probability estimate 
-      Scalar currentProbabilityEstimate = computeProbability(probabilityEstimatePerStep_[numberOfSteps_-1], currentThreshold);
+      currentProbabilityEstimate = computeProbability(probabilityEstimatePerStep_[numberOfSteps_-1], currentThreshold);
       // update probability estimate
       probabilityEstimate = probabilityEstimatePerStep_[numberOfSteps_-1] * currentProbabilityEstimate;
 

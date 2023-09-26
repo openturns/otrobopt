@@ -96,13 +96,9 @@ Define the target probability for which the threshold will be computed.
 Get some results.
 
 >>> resultSS = mySS.getResult()
->>> print('Pf = {}'.format(resultSS.getProbabilityEstimate()))
-Pf = 0.0002...
->>> print('Threshold = {}'.format(mySS.getThresholdPerStep()[-1]))
-Threshold = 0.02027...
->>> print('Threshold confidence length = {}'.format(
-...                         mySS.getThresholdConfidenceLength(0.90)))
-Threshold confidence length = 0.0245...
+>>> pf = resultSS.getProbabilityEstimate()
+>>> threshold = mySS.getThresholdPerStep()[-1]
+>>> threshold_cl = mySS.getThresholdConfidenceLength(0.90)
 
 See also
 --------
