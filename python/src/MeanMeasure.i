@@ -6,5 +6,5 @@
 
 %include MeanMeasure_doc.i
 
+%copyctor OTROBOPT::MeanMeasure;
 %include otrobopt/MeanMeasure.hxx
-namespace OTROBOPT { %extend MeanMeasure { MeanMeasure(const MeanMeasure & other) { return new OTROBOPT::MeanMeasure(other); } } }

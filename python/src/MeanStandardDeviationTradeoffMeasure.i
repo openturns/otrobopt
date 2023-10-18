@@ -6,5 +6,5 @@
 
 %include MeanStandardDeviationTradeoffMeasure_doc.i
 
+%copyctor OTROBOPT::MeanStandardDeviationTradeoffMeasure;
 %include otrobopt/MeanStandardDeviationTradeoffMeasure.hxx
-namespace OTROBOPT { %extend MeanStandardDeviationTradeoffMeasure { MeanStandardDeviationTradeoffMeasure(const MeanStandardDeviationTradeoffMeasure & other) { return new OTROBOPT::MeanStandardDeviationTradeoffMeasure(other); } } }

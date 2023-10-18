@@ -6,5 +6,5 @@
 
 %include JointChanceMeasure_doc.i
 
+%copyctor OTROBOPT::JointChanceMeasure;
 %include otrobopt/JointChanceMeasure.hxx
-namespace OTROBOPT { %extend JointChanceMeasure { JointChanceMeasure(const JointChanceMeasure & other) { return new OTROBOPT::JointChanceMeasure(other); } } }

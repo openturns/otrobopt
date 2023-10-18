@@ -6,5 +6,5 @@
 
 %include WorstCaseMeasure_doc.i
 
+%copyctor OTROBOPT::WorstCaseMeasure;
 %include otrobopt/WorstCaseMeasure.hxx
-namespace OTROBOPT { %extend WorstCaseMeasure { WorstCaseMeasure(const WorstCaseMeasure & other) { return new OTROBOPT::WorstCaseMeasure(other); } } }

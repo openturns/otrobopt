@@ -6,5 +6,5 @@
 
 %include RobustOptimizationProblem_doc.i
 
+%copyctor OTROBOPT::RobustOptimizationProblem;
 %include otrobopt/RobustOptimizationProblem.hxx
-namespace OTROBOPT { %extend RobustOptimizationProblem { RobustOptimizationProblem(const RobustOptimizationProblem & other) { return new OTROBOPT::RobustOptimizationProblem(other); } } }

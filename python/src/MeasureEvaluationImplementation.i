@@ -6,5 +6,5 @@
 
 %include MeasureEvaluationImplementation_doc.i
 
+%copyctor OTROBOPT::MeasureEvaluationImplementation;
 %include otrobopt/MeasureEvaluationImplementation.hxx
-namespace OTROBOPT { %extend MeasureEvaluationImplementation { MeasureEvaluationImplementation(const MeasureEvaluationImplementation & other) { return new OTROBOPT::MeasureEvaluationImplementation(other); } } }

@@ -6,5 +6,5 @@
 
 %include MeasureFactory_doc.i
 
+%copyctor OTROBOPT::MeasureFactory;
 %include otrobopt/MeasureFactory.hxx
-namespace OTROBOPT { %extend MeasureFactory { MeasureFactory(const MeasureFactory & other) { return new OTROBOPT::MeasureFactory(other); } } }

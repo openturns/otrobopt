@@ -8,5 +8,5 @@
 
 TypedCollectionInterfaceObjectMisnamedHelper(OTROBOPT, MeasureEvaluation, MeasureEvaluationCollection)
 
+%copyctor OTROBOPT::AggregatedMeasure;
 %include otrobopt/AggregatedMeasure.hxx
-namespace OTROBOPT { %extend AggregatedMeasure { AggregatedMeasure(const AggregatedMeasure & other) { return new OTROBOPT::AggregatedMeasure(other); } } }

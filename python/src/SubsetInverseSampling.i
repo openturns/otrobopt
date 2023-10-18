@@ -6,5 +6,5 @@
 
 %include SubsetInverseSampling_doc.i
 
+%copyctor OTROBOPT::SubsetInverseSampling;
 %include otrobopt/SubsetInverseSampling.hxx
-namespace OTROBOPT { %extend SubsetInverseSampling { SubsetInverseSampling(const SubsetInverseSampling & other) { return new OTROBOPT::SubsetInverseSampling(other); } } }

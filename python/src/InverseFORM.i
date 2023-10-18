@@ -6,7 +6,6 @@
 
 %include InverseFORM_doc.i
 
+%copyctor OTROBOPT::InverseFORM;
 %include otrobopt/InverseFORM.hxx
-
-namespace OTROBOPT { %extend InverseFORM { InverseFORM(const InverseFORM & other) { return new OTROBOPT::InverseFORM(other); } } }
 

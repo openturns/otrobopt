@@ -60,5 +60,5 @@ canConvert< _PyObject_, OTROBOPT::MeasureEvaluation >(PyObject * pyObj)
 
 TypedInterfaceObjectImplementationHelper(OTROBOPT, MeasureEvaluation, MeasureEvaluationImplementation)
 
+%copyctor OTROBOPT::MeasureEvaluation;
 %include otrobopt/MeasureEvaluation.hxx
-namespace OTROBOPT { %extend MeasureEvaluation { MeasureEvaluation(const MeasureEvaluation & other) { return new OTROBOPT::MeasureEvaluation(other); } } }

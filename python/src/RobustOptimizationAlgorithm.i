@@ -6,5 +6,5 @@
 
 %include RobustOptimizationAlgorithm_doc.i
 
+%copyctor OTROBOPT::RobustOptimizationAlgorithm;
 %include otrobopt/RobustOptimizationAlgorithm.hxx
-namespace OTROBOPT { %extend RobustOptimizationAlgorithm { RobustOptimizationAlgorithm(const RobustOptimizationAlgorithm & other) { return new OTROBOPT::RobustOptimizationAlgorithm(other); } } }

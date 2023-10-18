@@ -6,5 +6,5 @@
 
 %include QuantileMeasure_doc.i
 
+%copyctor OTROBOPT::QuantileMeasure;
 %include otrobopt/QuantileMeasure.hxx
-namespace OTROBOPT { %extend QuantileMeasure { QuantileMeasure(const QuantileMeasure & other) { return new OTROBOPT::QuantileMeasure(other); } } }
