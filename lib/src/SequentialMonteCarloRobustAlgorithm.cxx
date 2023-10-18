@@ -236,13 +236,6 @@ SequentialMonteCarloRobustAlgorithm::OptimizationResultCollection SequentialMont
   return resultCollection_;
 }
 
-/* Initial results accessor */
-SequentialMonteCarloRobustAlgorithm::OptimizationResultCollection SequentialMonteCarloRobustAlgorithm::getInitialResultCollection() const
-{
-  return initialResultCollection_;
-}
-
-
 Sample SequentialMonteCarloRobustAlgorithm::getInitialStartingPoints() const
 {
   return initialStartingPoints_;
@@ -256,8 +249,7 @@ String SequentialMonteCarloRobustAlgorithm::__repr__() const
       << ", initialSamplingSize=" << initialSamplingSize_
       << ", initialSearch=" << initialSearch_
       << ", resultCollection=" << resultCollection_
-      << ", initialStartingPoints=" << initialStartingPoints_
-      << ", initialResultCollection=" << initialResultCollection_;
+      << ", initialStartingPoints=" << initialStartingPoints_;
   return oss;
 }
 
@@ -269,7 +261,6 @@ void SequentialMonteCarloRobustAlgorithm::save(Advocate & adv) const
   adv.saveAttribute("initialSearch_", initialSearch_);
   adv.saveAttribute("resultCollection_", resultCollection_);
   adv.saveAttribute("initialStartingPoints_", initialStartingPoints_);
-  adv.saveAttribute("initialResultCollection_", initialResultCollection_);
 }
 
 /* Method load() reloads the object from the StorageManager */
@@ -280,7 +271,6 @@ void SequentialMonteCarloRobustAlgorithm::load(Advocate & adv)
   adv.loadAttribute("initialSearch_", initialSearch_);
   adv.loadAttribute("resultCollection_", resultCollection_);
   adv.loadAttribute("initialStartingPoints_", initialStartingPoints_);
-  adv.loadAttribute("initialResultCollection_", initialResultCollection_);
 }
 
 

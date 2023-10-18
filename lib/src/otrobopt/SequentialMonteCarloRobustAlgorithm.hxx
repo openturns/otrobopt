@@ -73,9 +73,6 @@ public:
   /** Initial starting points accessor */
   OT::Sample getInitialStartingPoints() const;
 
-  /** Initial optimization results accessor */
-  OptimizationResultCollection getInitialResultCollection() const;
-
   /** String converter */
   OT::String __repr__() const override;
 
@@ -98,9 +95,6 @@ private:
 
   // Initial starting points
   OT::Sample initialStartingPoints_;
-
-  // Initial problem results
-  OptimizationResultPersistentCollection initialResultCollection_;
 
 }; /* class SequentialMonteCarloRobustAlgorithm */
 

@@ -105,18 +105,6 @@ initialSearch : int, 0 by default (no multi-start)
 
 // ---------------------------------------------------------------------
 
-%feature("docstring") OTROBOPT::SequentialMonteCarloRobustAlgorithm::getInitialResultCollection
-"Multi-start optimization results accessor.
-
-Optimization results during the initial search phase.
-
-Returns
--------
-resultColl : sequence of :class:`openturns.OptimizationResult`
-    List of optimization results"
-
-// ---------------------------------------------------------------------
-
 %feature("docstring") OTROBOPT::SequentialMonteCarloRobustAlgorithm::getInitialStartingPoints
 "Multi-start optimization starting points accessor.
 
