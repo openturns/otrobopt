@@ -30,7 +30,7 @@ namespace OTROBOPT
 class OTROBOPT_API SubsetInverseSamplingResult
 : public OT::ProbabilitySimulationResult
 {
-  CLASSNAME;
+  CLASSNAME
 public:
   
   /** Constructor with parameters */

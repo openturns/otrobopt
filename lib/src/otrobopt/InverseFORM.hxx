@@ -38,7 +38,7 @@ class OTROBOPT_API InverseFORM
   : public OT::PersistentObject
 {
 
-  CLASSNAME;
+  CLASSNAME
 public:
 
   /** Default constructor */

@@ -33,7 +33,7 @@ namespace OTROBOPT {
 class OTROBOPT_API InverseFORMResult:
   public OT::FORMResult
 {
-  CLASSNAME;
+  CLASSNAME
 public:
 
   /** Standard constructor */
