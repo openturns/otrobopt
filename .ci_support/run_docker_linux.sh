@@ -18,6 +18,6 @@ uid=$1
 gid=$2
 if test -n "${uid}" -a -n "${gid}"
 then
-  sudo cp -r ~/.local/share/*/doc/html /io
+  sudo cp -r ~/.local/share/doc/*/html /io
   sudo chown -R ${uid}:${gid} /io/html
 fi

@@ -7,7 +7,7 @@ option (BUILD_SHARED_LIBS            "Build shared libraries"                   
 # By default, build in Release mode. Must appear before project() command
 set( CMAKE_BUILD_TYPE Release CACHE STRING "Build type")
 
-project (OTRobOpt)
+project (otrobopt)
 
 string (TOLOWER ${CMAKE_PROJECT_NAME} PACKAGE_NAME)
 
@@ -47,12 +47,14 @@ if (NOT DEFINED CMAKE_INSTALL_LIBDIR)
   set (CMAKE_INSTALL_LIBDIR lib${LIB_SUFFIX})
 endif ()
 
+include (GNUInstallDirs)
+
 set (OTROBOPT_LIBRARY_PATH ${CMAKE_INSTALL_LIBDIR})
-set (OTROBOPT_INCLUDE_PATH include)
+set (OTROBOPT_INCLUDE_PATH ${CMAKE_INSTALL_INCLUDEDIR})
 set (OTROBOPT_SWIG_INCLUDE_DIRS ${OTROBOPT_INCLUDE_PATH}/${PACKAGE_NAME}/swig)
-set (OTROBOPT_DATA_PATH share)
+set (OTROBOPT_DATA_PATH ${CMAKE_INSTALL_DATAROOTDIR})
 set (OTROBOPT_CONFIG_CMAKE_PATH ${CMAKE_INSTALL_LIBDIR}/cmake/otrobopt)
-set (OTROBOPT_DOC_PATH share/${PACKAGE_NAME}/doc)
+set (OTROBOPT_DOC_PATH ${CMAKE_INSTALL_DOCDIR})
 
 set (CMAKE_CXX_STANDARD 11)
 
