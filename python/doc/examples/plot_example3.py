@@ -5,7 +5,7 @@ Example 3
 
 # %%
 # Problem statement:
-# 
+#
 # .. math::
 #
 #     \begin{aligned}
@@ -15,7 +15,7 @@ Example 3
 #     & & \mathbb{P}_{\cD}(x + \Theta - 2 \leq 0) \geq 0.9 \\
 #     & & & \Theta \thicksim \cE(2)
 #     \end{aligned}
-#     
+#
 # Solution: :math:`\hat{x} = -1`
 
 # %%

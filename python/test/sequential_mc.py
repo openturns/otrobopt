@@ -62,9 +62,8 @@ def discretizeExpectation(J, sampleXi):
         currentContributor.setParameter(ot.PointWithDescription(sampleXi[i]))
         # Augment the collection
         functionCollection.append(currentContributor)
-    # The resulting discretized expectation is the linear combination of all the parametric functions with a uniform weight of 1/size
-    # Here we have a bug when using the combination: AnalyticalFunction+several clones using ParametricFunction into LinearCombinationFunction, due to a race condition in the initialization of the underlying AnalyticalFunction and the parallel evaluation of the LinearCombination. It is solved by reimplementing a sequential evaluation in Python.
-    # return Function(functionCollection, [1.0 / size]*size)
+    # The resulting discretized expectation is the linear combination of
+    # all the parametric functions with a uniform weight of 1/size
     return LinearCombinationFunction(functionCollection, [1.0 / size] * size)
 
 # The reliability measure is the joint chance constraint of level alpha
@@ -81,11 +80,10 @@ def discretizeJointChance(g, sampleXi, alpha):
         currentContributor = ot.ParametricFunction(g, [2, 3], sampleXi[i])
         # Augment the collection
         functionCollection.append(ot.ComposedFunction(test, currentContributor))
-    # The resulting discretized probability is the linear combination of all the test functions with a uniform weight of 1/size
-    # Here we have a bug when using the combination: AnalyticalFunction+several clones using ParametricFunction into LinearCombinationFunction, due to a race condition in the initialization of the underlying AnalyticalFunction and the parallel evaluation of the LinearCombination. It is solved by reimplementing a sequential evaluation in Python.
-    # return Function(Function("t", str(alpha) + " - t"),
-    # Function(functionCollection, [1.0 / size]*size))
-    return ot.ComposedFunction(ot.SymbolicFunction("t", str(alpha) + " - t"), LinearCombinationFunction(functionCollection, [1.0 / size] * size))
+    # The resulting discretized probability is the linear combination of
+    # all the test functions with a uniform weight of 1/size
+    return ot.ComposedFunction(ot.SymbolicFunction("t", str(alpha) + " - t"),
+                               LinearCombinationFunction(functionCollection, [1.0 / size] * size))
 
 #
 # Here we solve the robust optimization problem using the sequential algorithm #
@@ -94,7 +92,8 @@ def discretizeJointChance(g, sampleXi, alpha):
 
 class sequentialRobustOptimisationSolver:
 
-    def __init__(self, J, g, distributionXi, alpha, bounds, solver, N0, maximumIteration, robustIteration, initialSearch=100, epsilon=1e-10, drawFlag=False, verbose=False, directory="."):
+    def __init__(self, J, g, distributionXi, alpha, bounds, solver, N0, maximumIteration, robustIteration,
+                 initialSearch=100, epsilon=1e-10, drawFlag=False, verbose=False, directory="."):
         self.J_ = J
         self.g_ = g
         self.distributionXi_ = distributionXi
@@ -180,7 +179,8 @@ class sequentialRobustOptimisationSolver:
                 bestValue = self.solver_.getResult().getOptimalValue()[0]
             else:
                 startingPoints = ot.LHSExperiment(ot.ComposedDistribution(
-                    [ot.Uniform(self.bounds_.getLowerBound()[i], self.bounds_.getUpperBound()[i]) for i in range(self.bounds_.getDimension())]), self.initialSearch_).generate()
+                    [ot.Uniform(self.bounds_.getLowerBound()[i], self.bounds_.getUpperBound()[i])
+                        for i in range(self.bounds_.getDimension())]), self.initialSearch_).generate()
                 bestValue = ot.SpecFunc.MaxScalar
                 newPoint = startingPoints[0]
                 for i in range(startingPoints.getSize()):
@@ -255,7 +255,8 @@ for i in range(len(all_sigma)):
     # maximumIteration, robustIteration, initialSearch = 100, epsilon = 1e-10,
     # drawFlag = False, verbose = False
     robustAlgorithm = sequentialRobustOptimisationSolver(
-        J, g, distributionXi, alpha, bounds, solver, N0, localIterations, robustIterations, initialSearch, epsilon, drawFlag, verboseFlag)
+        J, g, distributionXi, alpha, bounds, solver, N0, localIterations,
+        robustIterations, initialSearch, epsilon, drawFlag, verboseFlag)
     solution = robustAlgorithm.solve()
 
     print("solution=", solution)

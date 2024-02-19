@@ -5,7 +5,7 @@ Example 1
 
 # %%
 # Problem statement:
-# 
+#
 # .. math::
 #
 #     \begin{aligned}
@@ -15,7 +15,7 @@ Example 1
 #     & & \mathbb{P}_{\cD}(-x_0 + 4x_1 + \Theta -3 \leq 0) \geq 0.9 \\
 #     & & & \Theta \thicksim \cU(1, 3)
 #     \end{aligned}
-#     
+#
 # Solution: :math:`\hat{x} = [2.2, 0.6]`
 
 

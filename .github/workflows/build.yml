@@ -4,7 +4,7 @@ jobs:
   linux:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Build
         run: |
           docker pull openturns/archlinux-module
@@ -26,7 +26,7 @@ jobs:
   mingw:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Build
         run: |
           docker pull openturns/archlinux-module-mingw

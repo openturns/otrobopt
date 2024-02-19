@@ -5,7 +5,7 @@ Example 4
 
 # %%
 # Problem statement:
-# 
+#
 # .. math::
 #
 #     \begin{aligned}
@@ -16,7 +16,7 @@ Example 4
 #     & & & x - 4 \leq 0 \\
 #     & & & \Theta \thicksim \cU(0, 2)
 #     \end{aligned}
-#     
+#
 # Solution: :math:`\hat{x} = \pi`
 
 # %%
