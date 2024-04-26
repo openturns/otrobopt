@@ -77,9 +77,7 @@ int main()
   {
     // sphere under pressure
     UnsignedInteger dim = 3;
-
     SymbolicFunction function(Description({"R", "e", "mulog_e", "p"}), Description({"700.0-p*R/(2.*e)"}));
-    Indices set = {2};
 
     const Scalar L0 = -4.715;
     ParametricFunction parametric(function, Indices({2}), Point({L0}));

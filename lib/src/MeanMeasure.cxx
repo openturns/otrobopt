@@ -98,7 +98,6 @@ public:
     const UnsignedInteger size = theta.getSize();
     const UnsignedInteger outputDimension = function_.getOutputDimension();
     Sample outS(size, outputDimension);
-    const Point pdfS(distribution_.computePDF(theta).asPoint());
     for (UnsignedInteger i = 0; i < size; ++i)
       if (pdfs[i] > pdfThreshold_) significant.add(i);
     // Early exit to avoid the copy of function_
