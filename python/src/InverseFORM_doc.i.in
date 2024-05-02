@@ -5,7 +5,7 @@ Parameters
 ----------
 event : :class:`~openturns.RandomVector`
     Event we are computing the probability of.
-parameterName : string
+parameterName : str
     The optimized parameter
 physicalStartingPoint : sequence of float
     Optimization starting point

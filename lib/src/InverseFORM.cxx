@@ -228,43 +228,44 @@ Function InverseFORM::getG(const Scalar p)
   newFunction.setParameter(params);
   RandomVector antecedent(event_.getImplementation()->getAntecedent().getImplementation()->clone());
   const Distribution distribution(antecedent.getDistribution());
-  if(distribution.getImplementation()->getClassName() == "ComposedDistribution")
+#if OPENTURNS_VERSION >= 102300
+  const JointDistribution * p_joint = dynamic_cast<JointDistribution *>(distribution.getImplementation().get());
+#else
+  const ComposedDistribution * p_joint = dynamic_cast<ComposedDistribution *>(distribution.getImplementation().get());
+#endif
+  if (p_joint)
   {
-    const ComposedDistribution * p_composed = dynamic_cast<ComposedDistribution *>(distribution.getImplementation().get());
-    if (p_composed)
+    ComposedDistribution::DistributionCollection distributionCollection(p_joint->getDistributionCollection());
+    for (UnsignedInteger i = 0; i < distributionCollection.getSize(); ++ i)
     {
-      ComposedDistribution::DistributionCollection distributionCollection(p_composed->getDistributionCollection());
-      for (UnsignedInteger i = 0; i < distributionCollection.getSize(); ++ i)
+      if (distributionCollection[i].getImplementation()->getClassName() == "ConditionalDistribution")
       {
-        if (distributionCollection[i].getImplementation()->getClassName() == "ConditionalDistribution")
+        DistributionImplementation::PointWithDescriptionCollection parametersCollection(distributionCollection[i].getParametersCollection());
+        for (UnsignedInteger j = 0; j < parametersCollection.getSize(); ++ j)
         {
-          DistributionImplementation::PointWithDescriptionCollection parametersCollection(distributionCollection[i].getParametersCollection());
-          for (UnsignedInteger j = 0; j < parametersCollection.getSize(); ++ j)
-          {
-            const String marginalName(parametersCollection[j].getName());
-            const size_t pos = marginalName.find(parameterName_);
-            if (pos != String::npos) {
-              const String endName = marginalName.substr(pos, marginalName.size());
-              if (endName == parameterName_)
-              {
-                parametersCollection[j] = params;
-              }
+          const String marginalName(parametersCollection[j].getName());
+          const size_t pos = marginalName.find(parameterName_);
+          if (pos != String::npos) {
+            const String endName = marginalName.substr(pos, marginalName.size());
+            if (endName == parameterName_)
+            {
+              parametersCollection[j] = params;
             }
           }
-          const ConditionalDistribution * p_conditional = dynamic_cast<ConditionalDistribution *>(distributionCollection[i].getImplementation().get());
-          if (p_conditional)
-          {
-            Distribution conditioning(p_conditional->getConditioningDistribution());
-            conditioning.setParametersCollection(parametersCollection);
-            ConditionalDistribution newConditional(p_conditional->getConditionedDistribution(), conditioning);
-            distributionCollection[i] = newConditional;
-            ComposedDistribution newDistribution(distributionCollection);
-            antecedent = RandomVector(newDistribution);
-          } // if p_conditional
-        } // if conditional
-      } // i
-    } // if p_composed
-  } // if composed
+        }
+        const ConditionalDistribution * p_conditional = dynamic_cast<ConditionalDistribution *>(distributionCollection[i].getImplementation().get());
+        if (p_conditional)
+        {
+          Distribution conditioning(p_conditional->getConditioningDistribution());
+          conditioning.setParametersCollection(parametersCollection);
+          ConditionalDistribution newConditional(p_conditional->getConditionedDistribution(), conditioning);
+          distributionCollection[i] = newConditional;
+          ComposedDistribution newDistribution(distributionCollection);
+          antecedent = RandomVector(newDistribution);
+        } // if p_conditional
+      } // if conditional
+    } // i
+  } // if p_joint
 
   const CompositeRandomVector composite(newFunction, antecedent);
   const ThresholdEvent event(composite, op, threshold);
