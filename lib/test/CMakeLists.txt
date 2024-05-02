@@ -43,7 +43,8 @@ include_directories ( ${INTERNAL_INCLUDE_DIRS} )
 
 
 ot_check_test (MeasureEvaluation_std)
-if (NOT WIN32)
+get_target_property (ot_features OT OPENTURNS_ENABLED_FEATURES)
+if (ot_features MATCHES "nlopt" AND NOT WIN32)
 ot_check_test (SequentialMonteCarloRobustAlgorithm_std)
 endif()
 ot_check_test (SubsetInverseSampling_std)

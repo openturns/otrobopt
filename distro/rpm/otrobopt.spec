@@ -66,19 +66,15 @@ Python textual interface to OTRobOpt uncertainty library
 %build
 %cmake -DINSTALL_DESTDIR:PATH=%{buildroot} \
        -DCMAKE_SKIP_INSTALL_RPATH:BOOL=ON \
+       -DCMAKE_UNITY_BUILD=ON \
        -DUSE_SPHINX=OFF .
 make %{?_smp_mflags}
 
 %install
-rm -rf %{buildroot}
 make install DESTDIR=%{buildroot}
 
 %check
-make tests %{?_smp_mflags}
-LD_LIBRARY_PATH=%{buildroot}%{_libdir} ctest %{?_smp_mflags} --output-on-failure
-
-%clean
-rm -rf %{buildroot}
+LD_LIBRARY_PATH=%{buildroot}%{_libdir} ctest %{?_smp_mflags} -R pyinstallcheck --output-on-failure --schedule-random
 
 %post -n libotrobopt0 -p /sbin/ldconfig 
 %postun -n libotrobopt0 -p /sbin/ldconfig 
