@@ -2,7 +2,7 @@ Metadata-Version: 1.2
 Name: @PACKAGE_NAME@
 Version: @PACKAGE_VERSION@
 Summary: Robust optimization module
-Home-page:  http://www.openturns.org
+Home-page: http://www.openturns.org
 Author: OpenTURNS Developers
 Author-email: users@openturns.org
 License: LGPL
