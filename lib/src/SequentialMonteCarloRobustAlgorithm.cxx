@@ -24,7 +24,7 @@
 #include <openturns/PersistentObjectFactory.hxx>
 #include <openturns/FixedExperiment.hxx>
 #include <openturns/IdentityFunction.hxx>
-#include <openturns/ComposedDistribution.hxx>
+#include <openturns/JointDistribution.hxx>
 #include <openturns/LHSExperiment.hxx>
 #include <openturns/SpecFunc.hxx>
 #include <openturns/Uniform.hxx>
@@ -143,10 +143,10 @@ void SequentialMonteCarloRobustAlgorithm::run()
       if (!getProblem().hasBounds())
         throw InvalidArgumentException(HERE) << "Cannot perform multi-start without bounds";
 
-      ComposedDistribution::DistributionCollection coll(dimension);
+      JointDistribution::DistributionCollection coll(dimension);
       for (UnsignedInteger j = 0; j < dimension; ++ j)
         coll[j] = Uniform(getProblem().getBounds().getLowerBound()[j], getProblem().getBounds().getUpperBound()[j]);
-      LHSExperiment initialExperiment(ComposedDistribution(coll), initialSearch_);
+      LHSExperiment initialExperiment(JointDistribution(coll), initialSearch_);
       initialStartingPoints_ = initialExperiment.generate();
 
       MultiStart multiStart(solver, initialStartingPoints_);

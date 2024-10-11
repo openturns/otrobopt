@@ -25,7 +25,7 @@
 #include <openturns/KernelSmoothing.hxx>
 #include <openturns/Normal.hxx>
 #include <openturns/ChiSquare.hxx>
-#include <openturns/ComposedDistribution.hxx>
+#include <openturns/JointDistribution.hxx>
 #include <openturns/SpecFunc.hxx>
 #include <openturns/DistFunc.hxx>
 #include <openturns/Uniform.hxx>
@@ -449,7 +449,7 @@ void SubsetInverseSampling::generatePoints(Scalar threshold)
 {  
   UnsignedInteger maximumOuterSampling = getMaximumOuterSampling();
   UnsignedInteger blockSize = getBlockSize();
-  Distribution randomWalk(ComposedDistribution(ComposedDistribution::DistributionCollection(dimension_, Uniform(-0.5*proposalRange_, 0.5*proposalRange_))));
+  Distribution randomWalk(JointDistribution(JointDistribution::DistributionCollection(dimension_, Uniform(-0.5*proposalRange_, 0.5*proposalRange_))));
   UnsignedInteger N = currentPointSample_.getSize(); // total sample size
   UnsignedInteger Nc = conditionalProbability_ * N; //number of seeds (also = maximumOuterSampling*blockSize)
   

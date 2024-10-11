@@ -24,10 +24,10 @@ int main()
 
     Dirac mulog_eDist(L0);
     mulog_eDist.setDescription(Description(1, "mulog_e"));
-    ComposedDistribution::DistributionCollection eColl; eColl.add(mulog_eDist); eColl.add(Dirac(0.1));  eColl.add(Dirac(0.));
-    ComposedDistribution eParams(eColl);
+    JointDistribution::DistributionCollection eColl; eColl.add(mulog_eDist); eColl.add(Dirac(0.1));  eColl.add(Dirac(0.));
+    JointDistribution eParams(eColl);
 
-    ComposedDistribution::DistributionCollection coll;
+    JointDistribution::DistributionCollection coll;
     coll.add(Beta(0.117284, 0.117284, 2.9, 3.1));//R
 #if OPENTURNS_VERSION >= 102400
     DeconditionedDistribution eDist(LogNormal(L0, 0.1, 0.), eParams);
@@ -36,7 +36,7 @@ int main()
 #endif
     coll.add(eDist);//e
     coll.add(WeibullMin(3.16471, 9.21097, 0.0));//p
-    ComposedDistribution myDistribution(coll);
+    JointDistribution myDistribution(coll);
 
     Point median(dim);
     for(UnsignedInteger i = 0; i < dim; ++ i)
@@ -64,14 +64,14 @@ int main()
 
     // FORM must yield the same probability on the limit state with parameter set to the optimum
     eColl[0] = Dirac(result.getParameter()[0]);
-    eParams = ComposedDistribution(eColl);
+    eParams = JointDistribution(eColl);
 #if OPENTURNS_VERSION >= 102400
     eDist = DeconditionedDistribution(LogNormal(result.getParameter()[0], 0.1, 0.0), eParams);
 #else
     eDist = ConditionalDistribution(LogNormal(result.getParameter()[0], 0.1, 0.0), eParams);
 #endif
     coll[1] = eDist;
-    myDistribution = ComposedDistribution(coll);
+    myDistribution = JointDistribution(coll);
     vect = RandomVector(myDistribution);
     parametric.setParameter(result.getParameter());
     output = CompositeRandomVector(parametric, vect);

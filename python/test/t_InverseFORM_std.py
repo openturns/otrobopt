@@ -16,7 +16,7 @@ coll.append(ot.LogNormalMuSigmaOverMu(0.1, 0.2, 0.).getDistribution())  # F
 coll.append(ot.LogNormalMuSigmaOverMu(0.2, 0.05, 0.).getDistribution())  # b
 coll.append(ot.LogNormalMuSigmaOverMu(0.4, 0.05, 0.).getDistribution())  # h
 
-distribution = ot.ComposedDistribution(coll)
+distribution = ot.JointDistribution(coll)
 
 x0 = [coll[i].computeQuantile(0.5)[0] for i in range(len(coll))]
 

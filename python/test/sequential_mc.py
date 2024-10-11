@@ -178,7 +178,7 @@ class sequentialRobustOptimisationSolver:
                 newPoint = self.solver_.getResult().getOptimalPoint()
                 bestValue = self.solver_.getResult().getOptimalValue()[0]
             else:
-                startingPoints = ot.LHSExperiment(ot.ComposedDistribution(
+                startingPoints = ot.LHSExperiment(ot.JointDistribution(
                     [ot.Uniform(self.bounds_.getLowerBound()[i], self.bounds_.getUpperBound()[i])
                         for i in range(self.bounds_.getDimension())]), self.initialSearch_).generate()
                 bestValue = ot.SpecFunc.MaxScalar

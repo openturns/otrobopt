@@ -23,7 +23,7 @@
 #include <openturns/Normal.hxx>
 #include <openturns/StandardEvent.hxx>
 #include <openturns/LinearFunction.hxx>
-#include <openturns/ComposedDistribution.hxx>
+#include <openturns/JointDistribution.hxx>
 #include <openturns/CompositeRandomVector.hxx>
 #include <openturns/ThresholdEvent.hxx>
 #include <openturns/ComposedFunction.hxx>
@@ -237,11 +237,11 @@ Function InverseFORM::getG(const Scalar p)
 #if OPENTURNS_VERSION >= 102300
   const JointDistribution * p_joint = dynamic_cast<JointDistribution *>(distribution.getImplementation().get());
 #else
-  const ComposedDistribution * p_joint = dynamic_cast<ComposedDistribution *>(distribution.getImplementation().get());
+  const JointDistribution * p_joint = dynamic_cast<JointDistribution *>(distribution.getImplementation().get());
 #endif
   if (p_joint)
   {
-    ComposedDistribution::DistributionCollection distributionCollection(p_joint->getDistributionCollection());
+    JointDistribution::DistributionCollection distributionCollection(p_joint->getDistributionCollection());
     for (UnsignedInteger i = 0; i < distributionCollection.getSize(); ++ i)
     {
 #if OPENTURNS_VERSION >= 102400
@@ -280,7 +280,7 @@ Function InverseFORM::getG(const Scalar p)
           ConditionalDistribution newConditional(p_conditional->getConditionedDistribution(), conditioning);
 #endif
           distributionCollection[i] = newConditional;
-          ComposedDistribution newDistribution(distributionCollection);
+          JointDistribution newDistribution(distributionCollection);
           antecedent = RandomVector(newDistribution);
         } // if p_conditional
       } // if conditional
