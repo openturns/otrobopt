@@ -33,6 +33,7 @@
 #include <openturns/DeconditionedDistribution.hxx>
 #else
 #include <openturns/ConditionalDistribution.hxx>
+#define DeconditionedDistribution ConditionalDistribution
 #endif
 
 
@@ -234,21 +235,13 @@ Function InverseFORM::getG(const Scalar p)
   newFunction.setParameter(params);
   RandomVector antecedent(event_.getImplementation()->getAntecedent().getImplementation()->clone());
   const Distribution distribution(antecedent.getDistribution());
-#if OPENTURNS_VERSION >= 102300
   const JointDistribution * p_joint = dynamic_cast<JointDistribution *>(distribution.getImplementation().get());
-#else
-  const JointDistribution * p_joint = dynamic_cast<JointDistribution *>(distribution.getImplementation().get());
-#endif
   if (p_joint)
   {
     JointDistribution::DistributionCollection distributionCollection(p_joint->getDistributionCollection());
     for (UnsignedInteger i = 0; i < distributionCollection.getSize(); ++ i)
     {
-#if OPENTURNS_VERSION >= 102400
-      if (distributionCollection[i].getImplementation()->getClassName() == "DeconditionedDistribution")
-#else
-      if (distributionCollection[i].getImplementation()->getClassName() == "ConditionalDistribution")
-#endif
+      if (Description({"DeconditionedDistribution", "ConditionalDistribution"}).contains(distributionCollection[i].getImplementation()->getClassName()))
       {
         DistributionImplementation::PointWithDescriptionCollection parametersCollection(distributionCollection[i].getParametersCollection());
         for (UnsignedInteger j = 0; j < parametersCollection.getSize(); ++ j)
@@ -263,22 +256,13 @@ Function InverseFORM::getG(const Scalar p)
             }
           }
         }
-#if OPENTURNS_VERSION >= 102400
         const DeconditionedDistribution * p_conditional = dynamic_cast<DeconditionedDistribution
         *>(distributionCollection[i].getImplementation().get());
-#else
-        const ConditionalDistribution * p_conditional = dynamic_cast<ConditionalDistribution
-        *>(distributionCollection[i].getImplementation().get());
-#endif
         if (p_conditional)
         {
           Distribution conditioning(p_conditional->getConditioningDistribution());
           conditioning.setParametersCollection(parametersCollection);
-#if OPENTURNS_VERSION >= 102400
           DeconditionedDistribution newConditional(p_conditional->getConditionedDistribution(), conditioning);
-#else
-          ConditionalDistribution newConditional(p_conditional->getConditionedDistribution(), conditioning);
-#endif
           distributionCollection[i] = newConditional;
           JointDistribution newDistribution(distributionCollection);
           antecedent = RandomVector(newDistribution);
