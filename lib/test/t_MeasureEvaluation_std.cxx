@@ -72,8 +72,8 @@ int main()
     Collection <MeasureEvaluation> measures;
     measures.add(MeanMeasure(f, thetaDist));
     measures.add(VarianceMeasure(f, thetaDist));
-    measures.add(WorstCaseMeasure(f, ComposedDistribution(Collection<Distribution>(2, Uniform(-1.0, 4.0)))));
-    measures.add(WorstCaseMeasure(f, ComposedDistribution(Collection<Distribution>(2, Uniform(-1.0, 4.0))), false));
+    measures.add(WorstCaseMeasure(f, JointDistribution(Collection<Distribution>(2, Uniform(-1.0, 4.0)))));
+    measures.add(WorstCaseMeasure(f, JointDistribution(Collection<Distribution>(2, Uniform(-1.0, 4.0))), false));
     measures.add(JointChanceMeasure(f, thetaDist, GreaterOrEqual(), 0.5));
     measures.add(IndividualChanceMeasure(f, thetaDist, GreaterOrEqual(), Point(1, 0.5)));
     measures.add(MeanStandardDeviationTradeoffMeasure(f, thetaDist, Point(1, 0.8)));

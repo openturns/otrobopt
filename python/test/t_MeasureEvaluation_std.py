@@ -47,9 +47,9 @@ x = [1.0]
 measures = [otrobopt.MeanMeasure(f, thetaDist),
             otrobopt.VarianceMeasure(f, thetaDist),
             otrobopt.WorstCaseMeasure(
-                f, ot.ComposedDistribution([ot.Uniform(-1.0, 4.0)] * 2)),
+                f, ot.JointDistribution([ot.Uniform(-1.0, 4.0)] * 2)),
             otrobopt.WorstCaseMeasure(
-                f, ot.ComposedDistribution(
+                f, ot.JointDistribution(
                     [ot.Uniform(-1.0, 4.0)] * 2), False),
             otrobopt.JointChanceMeasure(
                 f, thetaDist, ot.GreaterOrEqual(), 0.95),

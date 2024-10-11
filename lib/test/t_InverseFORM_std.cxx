@@ -21,13 +21,13 @@ int main()
     const SymbolicFunction function(Description({"E", "F", "L", "b", "h"}), Description({"F*L^3/(48.*E*b*h^3/12.)"}));
     ParametricFunction parametric(function, Indices({2}), Point({5.0}));
 
-    ComposedDistribution::DistributionCollection coll;
+    JointDistribution::DistributionCollection coll;
     coll.add(LogNormalMuSigmaOverMu(30000., 0.12, 0.).getDistribution());//E
     coll.add(LogNormalMuSigmaOverMu(0.1, 0.2, 0.).getDistribution());//F
     coll.add(LogNormalMuSigmaOverMu(0.2, 0.05, 0.).getDistribution());//b
     coll.add(LogNormalMuSigmaOverMu(0.4, 0.05, 0.).getDistribution());//h
 
-    const ComposedDistribution myDistribution(coll);
+    const JointDistribution myDistribution(coll);
 
     Point median(dim);
     for(UnsignedInteger i = 0; i < dim; ++ i)
