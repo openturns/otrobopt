@@ -29,8 +29,11 @@ int main()
 
     ComposedDistribution::DistributionCollection coll;
     coll.add(Beta(0.117284, 0.117284, 2.9, 3.1));//R
+#if OPENTURNS_VERSION >= 102400
+    DeconditionedDistribution eDist(LogNormal(L0, 0.1, 0.), eParams);
+#else
     ConditionalDistribution eDist(LogNormal(L0, 0.1, 0.), eParams);
-
+#endif
     coll.add(eDist);//e
     coll.add(WeibullMin(3.16471, 9.21097, 0.0));//p
     ComposedDistribution myDistribution(coll);
@@ -62,7 +65,11 @@ int main()
     // FORM must yield the same probability on the limit state with parameter set to the optimum
     eColl[0] = Dirac(result.getParameter()[0]);
     eParams = ComposedDistribution(eColl);
+#if OPENTURNS_VERSION >= 102400
+    eDist = DeconditionedDistribution(LogNormal(result.getParameter()[0], 0.1, 0.0), eParams);
+#else
     eDist = ConditionalDistribution(LogNormal(result.getParameter()[0], 0.1, 0.0), eParams);
+#endif
     coll[1] = eDist;
     myDistribution = ComposedDistribution(coll);
     vect = RandomVector(myDistribution);

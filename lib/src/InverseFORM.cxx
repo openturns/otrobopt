@@ -24,11 +24,17 @@
 #include <openturns/StandardEvent.hxx>
 #include <openturns/LinearFunction.hxx>
 #include <openturns/ComposedDistribution.hxx>
-#include <openturns/ConditionalDistribution.hxx>
 #include <openturns/CompositeRandomVector.hxx>
 #include <openturns/ThresholdEvent.hxx>
 #include <openturns/ComposedFunction.hxx>
 #include <openturns/SpecFunc.hxx>
+
+#if OPENTURNS_VERSION >= 102400
+#include <openturns/DeconditionedDistribution.hxx>
+#else
+#include <openturns/ConditionalDistribution.hxx>
+#endif
+
 
 using namespace OT;
 
@@ -238,7 +244,11 @@ Function InverseFORM::getG(const Scalar p)
     ComposedDistribution::DistributionCollection distributionCollection(p_joint->getDistributionCollection());
     for (UnsignedInteger i = 0; i < distributionCollection.getSize(); ++ i)
     {
+#if OPENTURNS_VERSION >= 102400
+      if (distributionCollection[i].getImplementation()->getClassName() == "DeconditionedDistribution")
+#else
       if (distributionCollection[i].getImplementation()->getClassName() == "ConditionalDistribution")
+#endif
       {
         DistributionImplementation::PointWithDescriptionCollection parametersCollection(distributionCollection[i].getParametersCollection());
         for (UnsignedInteger j = 0; j < parametersCollection.getSize(); ++ j)
@@ -253,12 +263,22 @@ Function InverseFORM::getG(const Scalar p)
             }
           }
         }
-        const ConditionalDistribution * p_conditional = dynamic_cast<ConditionalDistribution *>(distributionCollection[i].getImplementation().get());
+#if OPENTURNS_VERSION >= 102400
+        const DeconditionedDistribution * p_conditional = dynamic_cast<DeconditionedDistribution
+        *>(distributionCollection[i].getImplementation().get());
+#else
+        const ConditionalDistribution * p_conditional = dynamic_cast<ConditionalDistribution
+        *>(distributionCollection[i].getImplementation().get());
+#endif
         if (p_conditional)
         {
           Distribution conditioning(p_conditional->getConditioningDistribution());
           conditioning.setParametersCollection(parametersCollection);
+#if OPENTURNS_VERSION >= 102400
+          DeconditionedDistribution newConditional(p_conditional->getConditionedDistribution(), conditioning);
+#else
           ConditionalDistribution newConditional(p_conditional->getConditionedDistribution(), conditioning);
+#endif
           distributionCollection[i] = newConditional;
           ComposedDistribution newDistribution(distributionCollection);
           antecedent = RandomVector(newDistribution);
