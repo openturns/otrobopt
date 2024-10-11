@@ -170,7 +170,7 @@ void InverseFORM::run()
     // direction
     du = -(betaC / dgdunorm) * dgdu - u;
     dp = (fabs(dgdp) < (SpecFunc::ScalarEpsilon * SpecFunc::ScalarEpsilon)) ? 0.0 : (u.dot(dgdu) - g + betaC * dgdunorm) / dgdp;
-    LOGINFO(OSS() << "InverseFORM::run i=" << iteration << " u="<<u.__str__() <<" dgdu="<<dgdu.__str__()<<" du="<<du<<" dgdp="<< dgdp<< " dp="<<dp);
+    LOGTRACE(OSS() << "InverseFORM::run i=" << iteration << " u="<<u.__str__() <<" dgdu="<<dgdu.__str__()<<" du="<<du<<" dgdp="<< dgdp<< " dp="<<dp);
     
     // update according to the step
     Scalar step = fixedStep_ ? fixedStepValue_ : 1.0;
@@ -185,7 +185,7 @@ void InverseFORM::run()
       mnew = meritFunction(unew, gnew);
       step *= 0.5;
       ++ stepIteration;
-      LOGINFO(OSS() << "InverseFORM::run i=" << iteration << " step=" << step<< "pnew="<<pnew<<" unew="<<unew);
+      LOGTRACE(OSS() << "InverseFORM::run i=" << iteration << " step=" << step<< "pnew="<<pnew<<" unew="<<unew);
     }
     while ((!fixedStep_) && (mnew > m) && (stepIteration < variableStepMaxIterations_));
 
@@ -194,10 +194,10 @@ void InverseFORM::run()
                 &&( fabs(gnew) < limitStateConvergence_)
                 &&( fabs(unew.norm()-fabs(betaC)) < betaConvergence_);
 
-    LOGINFO(OSS() << "InverseFORM::run i=" << iteration << " var=" << p <<" beta="<<beta<<" g/go="<<g/g0);
-    LOGINFO(OSS() << "InverseFORM::run i=" << iteration << " convergence.var=" << fabs(pnew - p) <<" <? "<<variableConvergence_);
-    LOGINFO(OSS() << "InverseFORM::run i=" << iteration << " convergence.g=" << fabs(gnew) <<" <? "<<limitStateConvergence_);
-    LOGINFO(OSS() << "InverseFORM::run i=" << iteration << " convergence.beta=" <<fabs(unew.norm()-fabs(betaC)) <<" <? "<<betaConvergence_);
+    LOGTRACE(OSS() << "InverseFORM::run i=" << iteration << " var=" << p <<" beta="<<beta<<" g/go="<<g/g0);
+    LOGTRACE(OSS() << "InverseFORM::run i=" << iteration << " convergence.var=" << fabs(pnew - p) <<" <? "<<variableConvergence_);
+    LOGTRACE(OSS() << "InverseFORM::run i=" << iteration << " convergence.g=" << fabs(gnew) <<" <? "<<limitStateConvergence_);
+    LOGTRACE(OSS() << "InverseFORM::run i=" << iteration << " convergence.beta=" <<fabs(unew.norm()-fabs(betaC)) <<" <? "<<betaConvergence_);
 
     // for next iteration
     m = mnew;
@@ -206,7 +206,7 @@ void InverseFORM::run()
     g = gnew;
 
     beta = signBetaT*u.norm();
-    LOGINFO(OSS() << "InverseFORM::run i="<<iteration<<" g="<<g<<" du="<<du<<" u="<<u<<" beta="<<betaC<<" dp="<<dp<<" p="<<p<< "m="<<m<<" dgdp="<<dgdp<<" dgdu="<<dgdu<<" dgdunorm="<<dgdunorm<<" rel="<<rel<<" delta="<<delta);
+    LOGTRACE(OSS() << "InverseFORM::run i="<<iteration<<" g="<<g<<" du="<<du<<" u="<<u<<" beta="<<betaC<<" dp="<<dp<<" p="<<p<< "m="<<m<<" dgdp="<<dgdp<<" dgdu="<<dgdu<<" dgdunorm="<<dgdunorm<<" rel="<<rel<<" delta="<<delta);
 
     ++ iteration;
   }
@@ -226,10 +226,7 @@ void InverseFORM::run()
 
 Function InverseFORM::getG(const Scalar p)
 {
-  const Scalar threshold = event_.getThreshold();
-  const ComparisonOperator op(event_.getOperator());
   Function newFunction(event_.getImplementation()->getFunction());
-
   PointWithDescription params(event_.getImplementation()->getFunction().getParameter());
   params[parameterIndex_] = p;
   newFunction.setParameter(params);
@@ -238,12 +235,14 @@ Function InverseFORM::getG(const Scalar p)
   const JointDistribution * p_joint = dynamic_cast<JointDistribution *>(distribution.getImplementation().get());
   if (p_joint)
   {
-    JointDistribution::DistributionCollection distributionCollection(p_joint->getDistributionCollection());
-    for (UnsignedInteger i = 0; i < distributionCollection.getSize(); ++ i)
+    JointDistribution::DistributionCollection coll(p_joint->getDistributionCollection());
+    for (UnsignedInteger i = 0; i < coll.getSize(); ++ i)
     {
-      if (Description({"DeconditionedDistribution", "ConditionalDistribution"}).contains(distributionCollection[i].getImplementation()->getClassName()))
+      const DeconditionedDistribution * p_conditional = dynamic_cast<DeconditionedDistribution
+        *>(coll[i].getImplementation().get());
+      if (p_conditional)
       {
-        DistributionImplementation::PointWithDescriptionCollection parametersCollection(distributionCollection[i].getParametersCollection());
+        DistributionImplementation::PointWithDescriptionCollection parametersCollection(coll[i].getParametersCollection());
         for (UnsignedInteger j = 0; j < parametersCollection.getSize(); ++ j)
         {
           const String marginalName(parametersCollection[j].getName());
@@ -256,22 +255,17 @@ Function InverseFORM::getG(const Scalar p)
             }
           }
         }
-        const DeconditionedDistribution * p_conditional = dynamic_cast<DeconditionedDistribution
-        *>(distributionCollection[i].getImplementation().get());
-        if (p_conditional)
-        {
-          Distribution conditioning(p_conditional->getConditioningDistribution());
-          conditioning.setParametersCollection(parametersCollection);
-          DeconditionedDistribution newConditional(p_conditional->getConditionedDistribution(), conditioning);
-          distributionCollection[i] = newConditional;
-          JointDistribution newDistribution(distributionCollection);
-          antecedent = RandomVector(newDistribution);
-        } // if p_conditional
+        Distribution conditioning(p_conditional->getConditioningDistribution());
+        conditioning.setParametersCollection(parametersCollection);
+        coll[i] = DeconditionedDistribution(p_conditional->getConditionedDistribution(), conditioning);
       } // if conditional
     } // i
+    antecedent = RandomVector(JointDistribution(coll));
   } // if p_joint
 
   const CompositeRandomVector composite(newFunction, antecedent);
+  const Scalar threshold = event_.getThreshold();
+  const ComparisonOperator op(event_.getOperator());
   const ThresholdEvent event(composite, op, threshold);
   const StandardEvent standardEvent(event);
   const Scalar gsign = op(1.0, 2.0) ? 1.0 : -1.0;
