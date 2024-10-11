@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 3.13)
 
 option (BUILD_PYTHON                 "Build the python module for the library"                               ON)
-option (USE_SPHINX                   "Use sphinx for documentation"                                          ON)
+option (USE_SPHINX                   "Use sphinx for documentation"                                          OFF)
 option (BUILD_SHARED_LIBS            "Build shared libraries"                                                ON)
 
 # By default, build in Release mode. Must appear before project() command
@@ -29,9 +29,6 @@ endif()
 
 find_package (OpenTURNS CONFIG REQUIRED)
 message (STATUS "Found OpenTURNS: ${OPENTURNS_ROOT_DIR} (found version \"${OPENTURNS_VERSION_STRING}\")")
-if (NOT DEFINED OPENTURNS_PYTHON_MODULE_PATH)
-  set (OPENTURNS_PYTHON_MODULE_PATH ${OPENTURNS_PYTHON3_MODULE_PATH})
-endif ()
 
 if (NOT BUILD_SHARED_LIBS)
   list ( APPEND OTROBOPT_DEFINITIONS "-DOTROBOPT_STATIC" )
@@ -52,16 +49,14 @@ set (OTROBOPT_DATA_PATH ${CMAKE_INSTALL_DATAROOTDIR})
 set (OTROBOPT_CONFIG_CMAKE_PATH ${CMAKE_INSTALL_LIBDIR}/cmake/otrobopt)
 set (OTROBOPT_DOC_PATH ${CMAKE_INSTALL_DOCDIR})
 
-set (CMAKE_CXX_STANDARD 11)
-
 if (BUILD_PYTHON)
   find_package (SWIG 3)
   include (${SWIG_USE_FILE})
 
-  if (CMAKE_VERSION VERSION_LESS 3.24)
-    find_package (Python 3.5 COMPONENTS Interpreter Development)
+  if (CMAKE_VERSION VERSION_LESS 3.28)
+    find_package (Python 3.6 COMPONENTS Interpreter Development)
   else ()
-    find_package (Python 3.5 COMPONENTS Interpreter Development.Module)
+    find_package (Python 3.6 COMPONENTS Interpreter Development.Module Development.SABIModule)
   endif ()
 
   if (Python_FOUND)
@@ -75,7 +70,8 @@ if (BUILD_PYTHON)
       find_program (SPHINX_EXECUTABLE NAMES sphinx-build DOC "Sphinx Documentation Builder (sphinx-doc.org)")
       find_python_module (numpydoc)
       find_python_module (sphinx_gallery)
-      if (SPHINX_EXECUTABLE AND NUMPYDOC_FOUND AND SPHINX_GALLERY_FOUND AND MATPLOTLIB_FOUND)
+      find_python_module (sphinx_copybutton)
+      if (SPHINX_EXECUTABLE AND NUMPYDOC_FOUND AND SPHINX_GALLERY_FOUND AND SPHINX_COPYBUTTON_FOUND AND MATPLOTLIB_FOUND)
         find_python_module (sphinx)
       endif ()
       if (NOT SPHINX_FOUND)
@@ -132,7 +128,7 @@ endmacro ( ot_add_current_dir_to_include_dirs )
 
 set ( CPACK_PACKAGE_NAME          ${PACKAGE_NAME} )
 set ( CPACK_PACKAGE_VERSION_MAJOR 0              )
-set ( CPACK_PACKAGE_VERSION_MINOR 14              )
+set ( CPACK_PACKAGE_VERSION_MINOR 15              )
 set ( CPACK_PACKAGE_VERSION_PATCH                )
 set ( CPACK_SOURCE_GENERATOR      "TGZ;TBZ2"     )
 set (CPACK_BINARY_STGZ    OFF CACHE BOOL "STGZ")

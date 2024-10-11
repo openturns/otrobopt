@@ -72,6 +72,7 @@
 .. currentmodule:: {{ module }}
 
 .. autoclass:: {{ objname }}
+   :exclude-members: __call__, thisown
 
    {% block methods %}
    .. automethod:: __init__

@@ -67,6 +67,9 @@ imgmath_embed = True
 
 extensions.append('matplotlib.sphinxext.plot_directive')
 
+extensions.append('sphinx_copybutton')
+copybutton_prompt_text = ">>> "
+
 extensions.append('sphinx_gallery.gen_gallery')
 sphinx_gallery_conf = {
      'examples_dirs': ['examples'], # path to example scripts
@@ -88,7 +91,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'OTRobOpt'
-copyright = u'2015-2018 Airbus-EDF-IMACS-Phimeca'
+copyright = u'2015-2024 Airbus-EDF-IMACS-Phimeca'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -287,3 +290,6 @@ texinfo_documents = [
 
 # How to display URL addresses: 'footnote', 'no', or 'inline'.
 #texinfo_show_urls = 'footnote'
+
+# If true, Sphinx will warn about all references where the target cannot be found.
+nitpicky = True

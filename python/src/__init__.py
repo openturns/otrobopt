@@ -15,4 +15,4 @@ import openturns as _ot
 
 from .otrobopt import *
 
-__version__ = '0.14'
+__version__ = '0.15'

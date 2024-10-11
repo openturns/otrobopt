@@ -3,9 +3,8 @@
 
 Parameters
 ----------
-event : :class:`~openturns.Event`
-    Event we are computing the probability of. The threshold of the event is
-    not used.
+event : :class:`~openturns.RandomVector`
+    Event we are computing the probability of. The threshold of the event is not used.
 targetProbability : float
     The wanted final probability.
 proposalRange : float, optional
@@ -78,31 +77,31 @@ Create a performance function with an associated distribution.
 >>> mean = ot.Point([7., 2.])
 >>> sigma = ot.Point(dim, 1.0)
 >>> R = ot.IdentityMatrix(dim)
->>> myDistribution = ot.Normal(mean, sigma, R)
->>> vect = ot.RandomVector(myDistribution)
+>>> distribution = ot.Normal(mean, sigma, R)
+>>> vect = ot.RandomVector(distribution)
 >>> output = ot.CompositeRandomVector(limitState, vect)
 
 Create an event with a fictional threshold value which will not be used.
 
->>> myEvent = ot.ThresholdEvent(output, ot.Less(), 0.)
+>>> event = ot.ThresholdEvent(output, ot.Less(), 0.)
 
 Define the target probability for which the threshold will be computed.
 
 >>> targetProbability = 0.0002
->>> mySS = otrobopt.SubsetInverseSampling(myEvent, targetProbability)
->>> mySS.setMaximumOuterSampling(10000)
->>> mySS.run()
+>>> algo = otrobopt.SubsetInverseSampling(event, targetProbability)
+>>> algo.setMaximumOuterSampling(10000)
+>>> algo.run()
 
 Get some results.
 
->>> resultSS = mySS.getResult()
->>> pf = resultSS.getProbabilityEstimate()
->>> threshold = mySS.getThresholdPerStep()[-1]
->>> threshold_cl = mySS.getThresholdConfidenceLength(0.90)
+>>> result = algo.getResult()
+>>> pf = result.getProbabilityEstimate()
+>>> threshold = algo.getThresholdPerStep()[-1]
+>>> threshold_cl = algo.getThresholdConfidenceLength(0.90)
 
 See also
 --------
-openturns.Simulation"
+openturns.EventSimulation"
 
 // ---------------------------------------------------------------------------
 
