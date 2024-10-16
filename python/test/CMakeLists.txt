@@ -47,7 +47,9 @@ endif ()
 ot_pyinstallcheck_test (SubsetInverseSampling_R-S)
 ot_pyinstallcheck_test (SubsetInverseSampling_Waarts_system_series)
 ot_pyinstallcheck_test (InverseFORM_std IGNOREOUT)
+ot_pyinstallcheck_test (InverseFORM_sphere IGNOREOUT)
 ot_pyinstallcheck_test (docstring)
+
 
 if (MATPLOTLIB_FOUND)
   file (GLOB_RECURSE PYFILES "${PROJECT_SOURCE_DIR}/python/doc/examples/*.py")

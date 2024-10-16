@@ -19,10 +19,10 @@ int main()
     const UnsignedInteger dim = 3;
     const SymbolicFunction function(Description({"R", "e", "mulog_e", "p"}), Description({"700.0-p*R/(2.*e)"}));
 
-    const Scalar L0 = -4.715;
-    ParametricFunction parametric(function, Indices({2}), Point({L0}));
+    const Scalar mulog_e_0 = -4.715;
+    ParametricFunction parametric(function, Indices({2}), Point({mulog_e_0}));
 
-    Dirac mulog_eDist(L0);
+    Dirac mulog_eDist(mulog_e_0);
     mulog_eDist.setDescription(Description(1, "mulog_e"));
     JointDistribution::DistributionCollection eColl; eColl.add(mulog_eDist); eColl.add(Dirac(0.1));  eColl.add(Dirac(0.));
     JointDistribution eParams(eColl);
@@ -30,9 +30,9 @@ int main()
     JointDistribution::DistributionCollection coll;
     coll.add(Beta(0.117284, 0.117284, 2.9, 3.1));//R
 #if OPENTURNS_VERSION >= 102400
-    DeconditionedDistribution eDist(LogNormal(L0, 0.1, 0.), eParams);
+    DeconditionedDistribution eDist(LogNormal(mulog_e_0, 0.1, 0.), eParams);
 #else
-    ConditionalDistribution eDist(LogNormal(L0, 0.1, 0.), eParams);
+    ConditionalDistribution eDist(LogNormal(mulog_e_0, 0.1, 0.), eParams);
 #endif
     coll.add(eDist);//e
     coll.add(WeibullMin(3.16471, 9.21097, 0.0));//p
