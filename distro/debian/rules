@@ -7,19 +7,17 @@ CXXFLAGS+=$(CPPFLAGS)
 DPKG_EXPORT_BUILDFLAGS = 1
 DEB_HOST_MULTIARCH ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
 
-PY3VER = $(shell py3versions -d)
-
 %:
 	dh $@ --buildsystem=cmake --with python3
 
 override_dh_auto_configure:
 	dh_auto_configure -Bbuild -- \
-            -DUSE_SPHINX=OFF \
             -DCMAKE_SKIP_INSTALL_RPATH:BOOL=ON \
             -DCMAKE_INSTALL_PREFIX:PATH=/usr \
-            -DCMAKE_INSTALL_LIBDIR:PATH="lib/$(DEB_HOST_MULTIARCH)" \
+            -DCMAKE_INSTALL_LIBDIR:PATH=lib/$(DEB_HOST_MULTIARCH) \
             -DINSTALL_DESTDIR:PATH=$(CURDIR)/debian/otrobopt \
-            -DPYTHON_SITE_PACKAGES:PATH="lib/$(PY3VER)/site-packages"
+            -DOTROBOPT_PYTHON_MODULE_PATH=lib/python3/dist-packages \
+            -DCMAKE_UNITY_BUILD=ON
 
 override_dh_auto_build:
 	$(MAKE) -C build -j4
