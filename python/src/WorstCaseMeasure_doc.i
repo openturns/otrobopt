@@ -1,5 +1,5 @@
 %feature("docstring") OTROBOPT::WorstCaseMeasure
-"Worst case measure function.
+R"RAW(Worst case measure function.
 
 It is built from a parametric function :math:`f` and a distribution :math:`\cD` of density function :math:`p`.
 
@@ -35,7 +35,7 @@ Examples
 >>> measure = otrobopt.WorstCaseMeasure(f, thetaDist, False)
 >>> x = [1.0]
 >>> print(measure(x))
-[4]"
+[4])RAW"
 
 // ---------------------------------------------------------------------
 

@@ -1,5 +1,5 @@
 %feature("docstring") OTROBOPT::SubsetInverseSampling
-"Subset inverse simulation.
+R"RAW(Subset inverse simulation.
 
 Parameters
 ----------
@@ -101,7 +101,7 @@ Get some results.
 
 See also
 --------
-openturns.EventSimulation"
+openturns.EventSimulation)RAW"
 
 // ---------------------------------------------------------------------------
 
@@ -161,7 +161,7 @@ prob : float
 // ---------------------------------------------------------------------------
 
 %feature("docstring") OTROBOPT::SubsetInverseSampling::getThresholdConfidenceLength
-"Accessor to the confidence length of the threshold.
+R"RAW(Accessor to the confidence length of the threshold.
 
 Parameters
 ----------
@@ -171,7 +171,7 @@ level : float, :math:`level \in ]0, 1[`
 Returns
 -------
 confidenceLength : float
-    Length of the confidence interval at the confidence level *level*."
+    Length of the confidence interval at the confidence level *level*.)RAW"
 
 // ---------------------------------------------------------------------------
 

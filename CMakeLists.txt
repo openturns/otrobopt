@@ -50,7 +50,7 @@ set (OTROBOPT_CONFIG_CMAKE_PATH ${CMAKE_INSTALL_LIBDIR}/cmake/otrobopt)
 set (OTROBOPT_DOC_PATH ${CMAKE_INSTALL_DOCDIR})
 
 if (BUILD_PYTHON)
-  find_package (SWIG 3)
+  find_package (SWIG 4)
   include (${SWIG_USE_FILE})
 
   if (CMAKE_VERSION VERSION_LESS 3.28)

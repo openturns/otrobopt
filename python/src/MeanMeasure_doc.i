@@ -1,5 +1,5 @@
 %feature("docstring") OTROBOPT::MeanMeasure
-"Mean measure function.
+R"RAW(Mean measure function.
 
 It is built from a parametric function :math:`f` and a distribution :math:`\cD` of density function :math:`p`.
 
@@ -34,5 +34,5 @@ Examples
 >>> measure = otrobopt.MeanMeasure(f, thetaDist)
 >>> x = [1.0]
 >>> print(measure(x))
-[2]"
+[2])RAW"
 

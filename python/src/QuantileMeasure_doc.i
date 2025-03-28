@@ -1,5 +1,5 @@
 %feature("docstring") OTROBOPT::QuantileMeasure
-"Quantile measure function.
+R"RAW(Quantile measure function.
 
 It is built from a parametric function :math:`f` and a distribution :math:`\cD` of density function :math:`p`.
 
@@ -26,7 +26,7 @@ Examples
 >>> measure = otrobopt.QuantileMeasure(f, thetaDist, 0.99)
 >>> x = [1.0]
 >>> print(measure(x))
-[2.23264]"
+[2.23264])RAW"
 
 // ---------------------------------------------------------------------
 

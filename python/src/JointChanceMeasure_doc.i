@@ -1,5 +1,5 @@
 %feature("docstring") OTROBOPT::JointChanceMeasure
-"Joint chance measure function.
+R"RAW(Joint chance measure function.
 
 It is built from a parametric function :math:`f` and a distribution :math:`\cD` of density function :math:`p`.
 
@@ -42,7 +42,7 @@ Examples
 >>> measure = otrobopt.JointChanceMeasure(f, thetaDist, ot.GreaterOrEqual(), 0.95)
 >>> x = [1.0]
 >>> print(measure(x))
-[-0.108655]"
+[-0.108655])RAW"
 
 // ---------------------------------------------------------------------
 

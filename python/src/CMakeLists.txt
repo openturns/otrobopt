@@ -16,37 +16,14 @@ macro (ot_add_python_module MODULENAME SOURCEFILE)
   endif ()
 
   set (swig_other_sources)
-  set (docstring_sources)
   foreach (it ${ARGN})
     if (${it} MATCHES ".*\\.i$")
       ot_install_swig_file (${it})
-    elseif (${it} MATCHES ".*_doc\\.i\\.in$")
-      list (APPEND docstring_sources ${it})
-
-      get_filename_component (DOCSTRING_FILE_BASENAME ${it} NAME_WE)
-      ot_install_swig_file (${CMAKE_CURRENT_BINARY_DIR}/${DOCSTRING_FILE_BASENAME}.i)
     else ()
       list (APPEND swig_other_sources "${it}")
     endif ()
   endforeach ()
 
-  # https://github.com/swig/swig/issues/1273
-  option (SWIG_FORCE_DOUBLE_ESCAPE_BACKSLASH "Force double escaping of backslashes" OFF)
-  mark_as_advanced (SWIG_FORCE_DOUBLE_ESCAPE_BACKSLASH)
-  set (TIMES x1)
-  if ((SWIG_VERSION VERSION_LESS 4) OR SWIG_FORCE_DOUBLE_ESCAPE_BACKSLASH)
-    set (TIMES x2)
-  endif ()
-
-  # handle docstring generation
-  add_custom_target (generate_${MODULENAME}_docstrings
-                      COMMAND ${CMAKE_COMMAND} -DDOCSTRING_SOURCES="${docstring_sources}"
-                      -DCURRENT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR} -DTIMES=${TIMES}
-                      -P ${CMAKE_SOURCE_DIR}/cmake/escape_backslash.cmake
-                      DEPENDS ${docstring_sources})
-  list (APPEND SWIG_MODULE_${MODULENAME}_python_EXTRA_DEPS generate_${MODULENAME}_docstrings)
-
-  # swig_add_module is deprecated
   swig_add_library (${MODULENAME}_python LANGUAGE python SOURCES ${SOURCEFILE} ${swig_other_sources})
 
   # UseSWIG generates now standard target names
@@ -78,25 +55,25 @@ endmacro ()
 
 
 ot_add_python_module( ${PACKAGE_NAME} ${PACKAGE_NAME}_module.i 
-                      MeasureEvaluation.i MeasureEvaluation_doc.i.in
-                      MeasureEvaluationImplementation.i MeasureEvaluationImplementation_doc.i.in
-                      MeanMeasure.i MeanMeasure_doc.i.in
-                      VarianceMeasure.i VarianceMeasure_doc.i.in
-                      MeanStandardDeviationTradeoffMeasure.i MeanStandardDeviationTradeoffMeasure_doc.i.in
-                      QuantileMeasure.i QuantileMeasure_doc.i.in
-                      WorstCaseMeasure.i WorstCaseMeasure_doc.i.in
-                      AggregatedMeasure.i AggregatedMeasure_doc.i.in
-                      JointChanceMeasure.i JointChanceMeasure_doc.i.in
-                      IndividualChanceMeasure.i IndividualChanceMeasure_doc.i.in
-                      MeasureFunction.i MeasureFunction_doc.i.in
-                      MeasureFactory.i MeasureFactory_doc.i.in
-                      RobustOptimizationProblem.i RobustOptimizationProblem_doc.i.in
-                      RobustOptimizationAlgorithm.i RobustOptimizationAlgorithm_doc.i.in
-                      SequentialMonteCarloRobustAlgorithm.i SequentialMonteCarloRobustAlgorithm_doc.i.in
-                      SubsetInverseSampling.i SubsetInverseSampling_doc.i.in
-                      SubsetInverseSamplingResult.i SubsetInverseSamplingResult_doc.i.in
-                      InverseFORMResult.i InverseFORMResult_doc.i.in
-                      InverseFORM.i InverseFORM_doc.i.in
+                      MeasureEvaluation.i MeasureEvaluation_doc.i
+                      MeasureEvaluationImplementation.i MeasureEvaluationImplementation_doc.i
+                      MeanMeasure.i MeanMeasure_doc.i
+                      VarianceMeasure.i VarianceMeasure_doc.i
+                      MeanStandardDeviationTradeoffMeasure.i MeanStandardDeviationTradeoffMeasure_doc.i
+                      QuantileMeasure.i QuantileMeasure_doc.i
+                      WorstCaseMeasure.i WorstCaseMeasure_doc.i
+                      AggregatedMeasure.i AggregatedMeasure_doc.i
+                      JointChanceMeasure.i JointChanceMeasure_doc.i
+                      IndividualChanceMeasure.i IndividualChanceMeasure_doc.i
+                      MeasureFunction.i MeasureFunction_doc.i
+                      MeasureFactory.i MeasureFactory_doc.i
+                      RobustOptimizationProblem.i RobustOptimizationProblem_doc.i
+                      RobustOptimizationAlgorithm.i RobustOptimizationAlgorithm_doc.i
+                      SequentialMonteCarloRobustAlgorithm.i SequentialMonteCarloRobustAlgorithm_doc.i
+                      SubsetInverseSampling.i SubsetInverseSampling_doc.i
+                      SubsetInverseSamplingResult.i SubsetInverseSamplingResult_doc.i
+                      InverseFORMResult.i InverseFORMResult_doc.i
+                      InverseFORM.i InverseFORM_doc.i
                     )
 
 

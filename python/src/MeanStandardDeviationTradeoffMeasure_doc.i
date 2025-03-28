@@ -1,5 +1,5 @@
 %feature("docstring") OTROBOPT::MeanStandardDeviationTradeoffMeasure
-"Mean/variance tradeoff measure function.
+R"RAW(Mean/variance tradeoff measure function.
 
 
 It is built from a parametric function :math:`f` and a distribution :math:`\cD` of density function :math:`p`.
@@ -44,7 +44,7 @@ Examples
 >>> measure = otrobopt.MeanStandardDeviationTradeoffMeasure(f, thetaDist, [0.4])
 >>> x = [1.0]
 >>> print(measure(x))
-[1.24]"
+[1.24])RAW"
 
 // ---------------------------------------------------------------------
 

@@ -1,5 +1,5 @@
 %feature("docstring") OTROBOPT::VarianceMeasure
-"Variance measure function.
+R"RAW(Variance measure function.
 
 It is built from a parametric function :math:`f` and a distribution :math:`\cD` of density function :math:`p`.
 
@@ -37,6 +37,6 @@ Examples
 >>> measure = otrobopt.VarianceMeasure(f, thetaDist)
 >>> x = [1.0]
 >>> print(measure(x))
-[0.01]"
+[0.01])RAW"
 
 // ---------------------------------------------------------------------

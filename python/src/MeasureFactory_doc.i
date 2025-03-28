@@ -1,5 +1,5 @@
 %feature("docstring") OTROBOPT::MeasureFactory
-"Discretize a measure function.
+R"RAW(Discretize a measure function.
 
 It consists in replacing the distribution :math:`\cD` of the measure by a discrete
 approximation.
@@ -40,7 +40,8 @@ Discretize several measures at once:
 
 >>> coll = [otrobopt.MeanMeasure(f, thetaDist),
 ...         otrobopt.VarianceMeasure(f, thetaDist)]
->>> discretizedMeasures = factory.buildCollection(coll)"
+>>> discretizedMeasures = factory.buildCollection(coll)
+)RAW"
 
 // ---------------------------------------------------------------------
 

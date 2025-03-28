@@ -26,31 +26,31 @@ solver : :py:class:`openturns.OptimizationAlgorithm`
 // ---------------------------------------------------------------------
 
 %feature("docstring") OTROBOPT::SequentialMonteCarloRobustAlgorithm::setInitialSamplingSize
-"Initial sampling size accessor.
+R"RAW(Initial sampling size accessor.
 
 Initial size of the discretization of :math:`\theta`.
 
 Parameters
 ----------
 initialSamplingSize : int
-    Initial sampling size"
+    Initial sampling size)RAW"
 
 // ---------------------------------------------------------------------
 
 %feature("docstring") OTROBOPT::SequentialMonteCarloRobustAlgorithm::getInitialSamplingSize
-"Initial sampling size accessor.
+R"RAW(Initial sampling size accessor.
 
 Initial size of the discretization of :math:`\theta`.
 
 Returns
 -------
 initialSamplingSize : int
-    Initial sampling size"
+    Initial sampling size)RAW"
 
 // ---------------------------------------------------------------------
 
 %feature("docstring") OTROBOPT::SequentialMonteCarloRobustAlgorithm::setSamplingSizeIncrement
-"Sampling size increment accessor.
+R"RAW(Sampling size increment accessor.
 
 Sampling size increment of :math:`\theta` as a function of the total size at
 the previous iteration.
@@ -58,12 +58,12 @@ the previous iteration.
 Parameters
 ----------
 samplingSizeIncrement : :py:class:`openturns.Function`
-    Sampling size increment"
+    Sampling size increment)RAW"
 
 // ---------------------------------------------------------------------
 
 %feature("docstring") OTROBOPT::SequentialMonteCarloRobustAlgorithm::getSamplingSizeIncrement
-"Sampling size increment accessor.
+R"RAW(Sampling size increment accessor.
 
 Sampling size increment of :math:`\theta` as a function of the total size at
 the previous iteration.
@@ -71,7 +71,7 @@ the previous iteration.
 Returns
 -------
 samplingSizeIncrement : :py:class:`openturns.Function`
-    Sampling size increment"
+    Sampling size increment)RAW"
 
 // ---------------------------------------------------------------------
 
