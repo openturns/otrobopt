@@ -1,8 +1,5 @@
 
-include_directories (${OPENTURNS_INCLUDE_DIRS})
-include_directories (${OPENTURNS_SWIG_INCLUDE_DIRS})
 add_definitions (${OPENTURNS_SWIG_DEFINITIONS})
-include_directories (${INTERNAL_INCLUDE_DIRS})
 
 # allows one to pass compile flags like -O1 to reduce memory usage
 set (SWIG_COMPILE_FLAGS "" CACHE STRING "C++ compiler flags used for wrapper code")
@@ -10,6 +7,8 @@ set (SWIG_COMPILE_FLAGS "" CACHE STRING "C++ compiler flags used for wrapper cod
 macro (ot_add_python_module MODULENAME SOURCEFILE)
   set_source_files_properties (${SOURCEFILE} PROPERTIES CPLUSPLUS ON)
   set_source_files_properties (${SOURCEFILE} PROPERTIES SWIG_MODULE_NAME ${MODULENAME})
+  set_source_files_properties (${SOURCEFILE} PROPERTIES INCLUDE_DIRECTORIES "${INTERNAL_INCLUDE_DIRS};${OPENTURNS_INCLUDE_DIRS};${OPENTURNS_SWIG_INCLUDE_DIRS}")
+
   ot_install_swig_file (${SOURCEFILE})
   if (${ARGC} GREATER 2)
     set (SWIG_MODULE_${MODULENAME}_python_EXTRA_DEPS ${ARGN})
@@ -24,24 +23,17 @@ macro (ot_add_python_module MODULENAME SOURCEFILE)
     endif ()
   endforeach ()
 
-  swig_add_library (${MODULENAME}_python LANGUAGE python SOURCES ${SOURCEFILE} ${swig_other_sources})
-
-  # UseSWIG generates now standard target names
   set (module_target ${MODULENAME}_python)
 
-  swig_link_libraries (${MODULENAME}_python otrobopt)
-  target_include_directories (${MODULENAME}_python PRIVATE ${Python_INCLUDE_DIRS})
+  swig_add_library (${module_target} LANGUAGE python SOURCES ${SOURCEFILE} ${swig_other_sources})
 
-  if (TARGET Python::Module)
-    target_link_libraries (${module_target} Python::Module)
-  else ()
-    target_link_libraries_with_dynamic_lookup (${module_target} ${Python_LIBRARIES})
-  endif ()
+  target_include_directories(${module_target} PRIVATE ${INTERNAL_INCLUDE_DIRS})
+
+  target_link_libraries (${module_target} otrobopt)
+  target_link_libraries (${module_target} Python::Module)
 
   set_target_properties (${module_target} PROPERTIES OUTPUT_NAME ${MODULENAME})
-
   set_target_properties (${module_target} PROPERTIES COMPILE_FLAGS "${SWIG_COMPILE_FLAGS}")
-
   set_target_properties (${module_target} PROPERTIES UNITY_BUILD OFF)
 
   install (FILES ${CMAKE_CURRENT_BINARY_DIR}/${MODULENAME}.py
@@ -80,6 +72,7 @@ ot_add_python_module( ${PACKAGE_NAME} ${PACKAGE_NAME}_module.i
 install ( FILES __init__.py
           DESTINATION ${OTROBOPT_PYTHON_MODULE_PATH}/${PACKAGE_NAME}
         )
+
 
 if (SPHINX_FOUND)
 
@@ -145,22 +138,6 @@ if (SPHINX_FOUND)
     endif ()
   endforeach ()
 
-  # copy python tests in root
-  file (GLOB_RECURSE python_tests
-    ${CMAKE_SOURCE_DIR}/python/test/t_example*.py
-  )
-  foreach (file ${python_tests})
-    if (EXISTS ${file})
-      get_filename_component (name ${file} NAME)
-      set (sphinx_clone ${SPHINX_BINARY_DIR}/${name})
-      add_custom_command (OUTPUT ${sphinx_clone}
-        COMMAND ${CMAKE_COMMAND} -E copy ${file} ${sphinx_clone}
-        DEPENDS ${file}
-      )
-      list (APPEND sphinx_clones ${sphinx_clone})
-    endif ()
-  endforeach()
-  
   set (SPHINX_FLAGS "-W -T" CACHE STRING "sphinx flags")
   separate_arguments (SPHINX_FLAGS)
 
