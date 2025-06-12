@@ -14,7 +14,7 @@ FFLAGS="${FFLAGS:-%optflags}" ; export FFLAGS ; \
 %__cmake -DCMAKE_INSTALL_PREFIX:PATH=%{_prefix}
 
 Name:           otrobopt
-Version:        0.15
+Version:        0.16
 Release:        0%{?dist}
 Summary:        OpenTURNS module
 Group:          System Environment/Libraries
