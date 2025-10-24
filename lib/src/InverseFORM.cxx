@@ -29,11 +29,11 @@
 #include <openturns/ComposedFunction.hxx>
 #include <openturns/SpecFunc.hxx>
 
-#if OPENTURNS_VERSION >= 102400
-#include <openturns/DeconditionedDistribution.hxx>
+#if OPENTURNS_VERSION >= 102600
+#include <openturns/CompoundDistribution.hxx>
 #else
-#include <openturns/ConditionalDistribution.hxx>
-#define DeconditionedDistribution ConditionalDistribution
+#include <openturns/DeconditionedDistribution.hxx>
+#define CompoundDistribution DeconditionedDistribution
 #endif
 
 
@@ -238,7 +238,7 @@ Function InverseFORM::getG(const Scalar p)
     JointDistribution::DistributionCollection coll(p_joint->getDistributionCollection());
     for (UnsignedInteger i = 0; i < coll.getSize(); ++ i)
     {
-      const DeconditionedDistribution * p_conditional = dynamic_cast<DeconditionedDistribution
+      const CompoundDistribution * p_conditional = dynamic_cast<CompoundDistribution
         *>(coll[i].getImplementation().get());
       if (p_conditional)
       {
@@ -257,7 +257,7 @@ Function InverseFORM::getG(const Scalar p)
         }
         Distribution conditioning(p_conditional->getConditioningDistribution());
         conditioning.setParametersCollection(parametersCollection);
-        coll[i] = DeconditionedDistribution(p_conditional->getConditionedDistribution(), conditioning);
+        coll[i] = CompoundDistribution(p_conditional->getConditionedDistribution(), conditioning);
       } // if conditional
     } // i
     antecedent = RandomVector(JointDistribution(coll));

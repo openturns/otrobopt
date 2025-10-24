@@ -16,9 +16,10 @@ mulog_eDist.setDescription(["mulog_e"])
 eColl = [mulog_eDist, ot.Dirac(0.1), ot.Dirac(0.0)]
 eParams = ot.JointDistribution(eColl)
 try:
-    eDist = ot.DeconditionedDistribution(ot.LogNormal(mulog_e_0, 0.1, 0.), eParams)
+    eDist = ot.CompoundDistribution(ot.LogNormal(mulog_e_0, 0.1, 0.), eParams)
 except AttributeError:
-    eDist = ot.ConditionalDistribution(ot.LogNormal(mulog_e_0, 0.1, 0.), eParams)
+    # OT <1.26
+    eDist = ot.DeconditionedDistribution(ot.LogNormal(mulog_e_0, 0.1, 0.), eParams)
 
 coll = [ot.Beta(0.117284, 0.117284, 2.9, 3.1),
         eDist,
