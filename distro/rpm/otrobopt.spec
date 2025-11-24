@@ -1,20 +1,8 @@
 # norootforbuild
-%{?__python3: %global __python %{__python3}}
-%if 0%{?suse_version}
-%global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")
-%else
-%{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
-%endif
-
-%define __cmake %{_bindir}/cmake
-%define cmake \
-CFLAGS="${CFLAGS:-%optflags}" ; export CFLAGS ; \
-CXXFLAGS="${CXXFLAGS:-%optflags}" ; export CXXFLAGS ; \
-FFLAGS="${FFLAGS:-%optflags}" ; export FFLAGS ; \
-%__cmake -DCMAKE_INSTALL_PREFIX:PATH=%{_prefix}
+%global python_sitearch %{_libdir}/python%(python3 -c "import sysconfig; print(sysconfig.get_python_version())")/site-packages
 
 Name:           otrobopt
-Version:        0.16
+Version:        0.17
 Release:        0%{?dist}
 Summary:        OpenTURNS module
 Group:          System Environment/Libraries
@@ -61,13 +49,14 @@ Python textual interface to OTRobOpt uncertainty library
 %cmake -DINSTALL_DESTDIR:PATH=%{buildroot} \
        -DCMAKE_SKIP_INSTALL_RPATH:BOOL=ON \
        -DCMAKE_UNITY_BUILD=ON .
-make %{?_smp_mflags}
+%cmake_build
 
 %install
-make install DESTDIR=%{buildroot}
+%cmake_install
 
 %check
-LD_LIBRARY_PATH=%{buildroot}%{_libdir} ctest %{?_smp_mflags} -R pyinstallcheck --output-on-failure --schedule-random
+export LD_LIBRARY_PATH=%{buildroot}%{_libdir}
+%ctest --tests-regex pyinstallcheck --schedule-random
 
 %post -n libotrobopt0 -p /sbin/ldconfig 
 %postun -n libotrobopt0 -p /sbin/ldconfig 
