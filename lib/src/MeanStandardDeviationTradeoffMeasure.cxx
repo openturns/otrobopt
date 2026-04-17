@@ -22,7 +22,7 @@
 #include <openturns/PersistentObjectFactory.hxx>
 #include <openturns/GaussKronrod.hxx>
 #include <openturns/IteratedQuadrature.hxx>
-#include <openturns/UserDefined.hxx>
+#include <openturns/FiniteDiscreteDistribution.hxx>
 
 using namespace OT;
 
@@ -201,10 +201,10 @@ Point MeanStandardDeviationTradeoffMeasure::operator()(const Point & inP) const
         }
     } // for
 
-    // Here we use a UserDefined distribution because the algorithm
+    // Here we use a FiniteDiscreteDistribution distribution because the algorithm
     // to compute a central moment is quite involved in the case of
     // nonuniform weights
-    const UserDefined discrete(values, weights);
+    const FiniteDiscreteDistribution discrete(values, weights);
     const Point mean(discrete.getMean());
     const Point standardDeviation(discrete.getStandardDeviation());
     for (UnsignedInteger j = 0; j < outputDimension; ++ j)

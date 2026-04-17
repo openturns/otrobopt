@@ -168,7 +168,7 @@ Point JointChanceMeasure::operator()(const Point & inP) const
         }
     }
     // Here we compute the marginal complementary CDF locally to avoid
-    // the creation cost of the UserDefined distributions
+    // the creation cost of the FiniteDiscreteDistribution distributions
     for (UnsignedInteger i = 0; i < weights.getSize(); ++ i)
     {
       Bool allOk = true;

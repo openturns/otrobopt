@@ -21,7 +21,7 @@
 #include "otrobopt/RobustOptimizationAlgorithm.hxx"
 #include <otrobopt/MeasureEvaluationImplementation.hxx>
 #include <openturns/PersistentObjectFactory.hxx>
-#include <openturns/UserDefined.hxx>
+#include <openturns/FiniteDiscreteDistribution.hxx>
 #include <openturns/LHSExperiment.hxx>
 
 using namespace OT;

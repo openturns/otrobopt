@@ -23,7 +23,7 @@
 #include <openturns/GaussKronrod.hxx>
 #include <openturns/IteratedQuadrature.hxx>
 #include <openturns/Brent.hxx>
-#include <openturns/UserDefined.hxx>
+#include <openturns/FiniteDiscreteDistribution.hxx>
 
 
 using namespace OT;
@@ -282,10 +282,10 @@ Point QuantileMeasure::operator()(const Point & inP) const
         }
     } // for
 
-    // Here we use a UserDefined distribution because the algorithm
+    // Here we use a FiniteDiscreteDistribution distribution because the algorithm
     // to compute a central moment is quite involved in the case of
     // nonuniform weights
-    outP = UserDefined(values, weights).computeQuantile(alpha_);
+    outP = FiniteDiscreteDistribution(values, weights).computeQuantile(alpha_);
   }
   return outP;
 }

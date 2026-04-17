@@ -22,7 +22,7 @@
 #include <openturns/PersistentObjectFactory.hxx>
 #include <openturns/GaussKronrod.hxx>
 #include <openturns/IteratedQuadrature.hxx>
-#include <openturns/UserDefined.hxx>
+#include <openturns/FiniteDiscreteDistribution.hxx>
 
 using namespace OT;
 
@@ -167,7 +167,7 @@ Point IndividualChanceMeasure::operator()(const Point & inP) const
         }
     }
     // Here we compute the marginal complementary CDF locally to avoid
-    // the creation cost of the marginal UserDefined distributions
+    // the creation cost of the marginal FiniteDiscreteDistribution distributions
     for (UnsignedInteger i = 0; i < weights.getSize(); ++ i)
     {
       for (UnsignedInteger j = 0; j < outputDimension; ++ j)

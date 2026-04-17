@@ -22,7 +22,7 @@
 #include <openturns/PersistentObjectFactory.hxx>
 #include <openturns/GaussKronrod.hxx>
 #include <openturns/IteratedQuadrature.hxx>
-#include <openturns/UserDefined.hxx>
+#include <openturns/FiniteDiscreteDistribution.hxx>
 
 using namespace OT;
 
@@ -197,10 +197,10 @@ Point VarianceMeasure::operator()(const Point & inP) const
         }
     } // for
 
-    // Here we use a UserDefined distribution because the algorithm
+    // Here we use a FiniteDiscreteDistribution distribution because the algorithm
     // to compute a central moment is quite involved in the case of
     // nonuniform weights
-    outP = UserDefined(values, weights).getCentralMoment(2);
+    outP = FiniteDiscreteDistribution(values, weights).getCentralMoment(2);
   } // discrete
   return outP;
 }
