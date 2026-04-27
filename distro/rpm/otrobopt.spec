@@ -2,7 +2,7 @@
 %global python_sitearch %{_libdir}/python%(python3 -c "import sysconfig; print(sysconfig.get_python_version())")/site-packages
 
 Name:           otrobopt
-Version:        0.17
+Version:        0.18
 Release:        0%{?dist}
 Summary:        OpenTURNS module
 Group:          System Environment/Libraries
