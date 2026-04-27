@@ -22,7 +22,6 @@
 #include "otrobopt/MeanMeasure.hxx"
 #include <openturns/PersistentObjectFactory.hxx>
 #include <openturns/ResourceMap.hxx>
-#include <openturns/GaussKronrodRule.hxx>
 
 using namespace OT;
 

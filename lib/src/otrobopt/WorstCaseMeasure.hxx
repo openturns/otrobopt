@@ -57,7 +57,7 @@ public:
   OT::OptimizationAlgorithm getOptimizationAlgorithm() const;
 
   /** Minimization accessor */
-  void setMinimization(OT::Bool minimization);
+  void setMinimization(const OT::Bool minimization);
   OT::Bool isMinimization() const;
 
   /** String converter */
@@ -70,7 +70,7 @@ public:
   virtual void load(OT::Advocate & adv) override;
 
 private:
-  OT::Bool isMinimization_;
+  OT::Bool isMinimization_ = true;
   OT::OptimizationAlgorithm solver_;
 
 }; /* class WorstCaseMeasure */

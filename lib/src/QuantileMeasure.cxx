@@ -23,8 +23,13 @@
 #include <openturns/GaussKronrod.hxx>
 #include <openturns/IteratedQuadrature.hxx>
 #include <openturns/Brent.hxx>
-#include <openturns/FiniteDiscreteDistribution.hxx>
 
+#if OPENTURNS_VERSION >= 102700
+#include <openturns/FiniteDiscreteDistribution.hxx>
+#else
+#include <openturns/UserDefined.hxx>
+#define FiniteDiscreteDistribution UserDefined
+#endif
 
 using namespace OT;
 
@@ -39,7 +44,6 @@ static Factory<QuantileMeasure> Factory_QuantileMeasure;
 /* Default constructor */
 QuantileMeasure::QuantileMeasure()
   : MeasureEvaluationImplementation()
-  , alpha_(0.0)
 {
   // Set the default integration algorithm
   GaussKronrod gkr;

@@ -1,14 +1,17 @@
 name: Build
-on: [push, pull_request]
+on:
+  push:
+    branches: [ master ]
+  pull_request:
 jobs:
   linux:
     runs-on: ubuntu-latest
+    env:
+      MAKEFLAGS: -j4
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Build
-        run: |
-          docker pull openturns/archlinux-module
-          docker run -e MAKEFLAGS='-j2' -v `pwd`:/io openturns/archlinux-module /io/.ci_support/run_docker_linux.sh `id -u` `id -g`
+        run: ./utils/build_locally.sh linux
       - name: Upload
         if: ${{ github.ref == 'refs/heads/master' }}
         run: |
@@ -25,9 +28,9 @@ jobs:
 
   mingw:
     runs-on: ubuntu-latest
+    env:
+      MAKEFLAGS: -j4
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Build
-        run: |
-          docker pull openturns/archlinux-module-mingw
-          docker run -e MAKEFLAGS='-j2' -v `pwd`:/io openturns/archlinux-module-mingw /io/.ci_support/run_docker_mingw.sh
+        run: ./utils/build_locally.sh mingw

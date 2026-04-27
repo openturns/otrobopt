@@ -70,7 +70,7 @@ public:
 
 private:
   OT::ComparisonOperator operator_;
-  OT::Scalar alpha_;
+  OT::Scalar alpha_ = 0.0;
 
 }; /* class JointChanceMeasure */
 

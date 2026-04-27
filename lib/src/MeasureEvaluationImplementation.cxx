@@ -167,5 +167,4 @@ void MeasureEvaluationImplementation::load(Advocate & adv)
   adv.loadAttribute("pdfThreshold_", pdfThreshold_);
 }
 
-
 } /* namespace OTROBOPT */

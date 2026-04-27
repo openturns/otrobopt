@@ -36,7 +36,6 @@ static Factory<WorstCaseMeasure> Factory_WorstCaseMeasure;
 /* Default constructor */
 WorstCaseMeasure::WorstCaseMeasure()
   : MeasureEvaluationImplementation()
-  , isMinimization_(true)
 {
   // Nothing to do
 }
@@ -254,7 +253,7 @@ OptimizationAlgorithm WorstCaseMeasure::getOptimizationAlgorithm() const
 
 
 /* Minimization accessor */
-void WorstCaseMeasure::setMinimization(Bool minimization)
+void WorstCaseMeasure::setMinimization(const Bool minimization)
 {
   isMinimization_ = minimization;
 }

@@ -23,35 +23,30 @@
 #include <openturns/PersistentObjectFactory.hxx>
 #include <openturns/ResourceMap.hxx>
 #include <openturns/GaussKronrodRule.hxx>
-#include <mutex>
 
 using namespace OT;
 
 namespace OTROBOPT
 {
 
-struct OTRobOptResourceMap_init
+struct MeasureEvaluation_init
 {
-  OTRobOptResourceMap_init()
+  MeasureEvaluation_init()
   {
-    static std::once_flag flag;
-    std::call_once(flag, [&]()
-    {
-      ResourceMap::AddAsScalar("SequentialMonteCarloRobustAlgorithm-ConvergenceFactor", 1e-2);
-      ResourceMap::AddAsUnsignedInteger("SequentialMonteCarloRobustAlgorithm-DefaultInitialSamplingSize", 10);
+    ResourceMap::AddAsScalar("SequentialMonteCarloRobustAlgorithm-ConvergenceFactor", 1e-2);
+    ResourceMap::AddAsUnsignedInteger("SequentialMonteCarloRobustAlgorithm-DefaultInitialSamplingSize", 10);
 
-      ResourceMap::AddAsUnsignedInteger("MeanMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
-      ResourceMap::AddAsUnsignedInteger("VarianceMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
-      ResourceMap::AddAsUnsignedInteger("MeanStandardDeviationTradeoffMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
-      ResourceMap::AddAsUnsignedInteger("QuantileMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
+    ResourceMap::AddAsUnsignedInteger("MeanMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
+    ResourceMap::AddAsUnsignedInteger("VarianceMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
+    ResourceMap::AddAsUnsignedInteger("MeanStandardDeviationTradeoffMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
+    ResourceMap::AddAsUnsignedInteger("QuantileMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
 
-      ResourceMap::AddAsUnsignedInteger("IndividualChanceMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
-      ResourceMap::AddAsUnsignedInteger("JointChanceMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
-    });
+    ResourceMap::AddAsUnsignedInteger("IndividualChanceMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
+    ResourceMap::AddAsUnsignedInteger("JointChanceMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
   }
 };
 
-static const OTRobOptResourceMap_init __OTRobOptResourceMap_initializer;
+static const MeasureEvaluation_init __MeasureEvaluation_initializer;
 
 CLASSNAMEINIT(MeasureEvaluation)
 

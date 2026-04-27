@@ -21,8 +21,13 @@
 #include "otrobopt/MeasureFactory.hxx"
 #include <otrobopt/MeasureEvaluationImplementation.hxx>
 #include <openturns/PersistentObjectFactory.hxx>
+
+#if OPENTURNS_VERSION >= 102700
 #include <openturns/FiniteDiscreteDistribution.hxx>
-#include <openturns/LHSExperiment.hxx>
+#else
+#include <openturns/UserDefined.hxx>
+#define FiniteDiscreteDistribution UserDefined
+#endif
 
 using namespace OT;
 

@@ -65,7 +65,7 @@ public:
   virtual void load(OT::Advocate & adv) override;
 
 private:
-  OT::Scalar alpha_;
+  OT::Scalar alpha_ = 0.0;
 
 }; /* class QuantileMeasure */
 

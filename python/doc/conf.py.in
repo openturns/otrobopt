@@ -11,13 +11,16 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys, os
+from packaging.version import Version
+from pathlib import Path
+import sphinx_gallery
+import sys
 import subprocess
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-sys.path.insert(0, os.path.abspath('sphinxext'))
+sys.path.insert(0, Path("sphinxext").resolve().as_posix())
 sys.path.insert(0, '@OTROBOPT_PYTHON_BUILD_MODULE_PATH@')
 sys.path.insert(0, '@OPENTURNS_PYTHON_MODULE_PATH@')
 
@@ -36,6 +39,7 @@ extensions = ['sphinx.ext.autodoc']
 extensions.append('sphinx.ext.autodoc')
 
 autodoc_default_options = {'members': None, 'inherited-members': None, 'exclude-members': 'thisown'}
+autodoc_use_legacy_class_based = True
 
 extensions.append('sphinx.ext.autosummary')
 autosummary_generate = True
@@ -54,28 +58,46 @@ extensions.append('sphinx.ext.coverage')
 extensions.append('sphinx.ext.intersphinx')
 # try to download inventory else fallback to local inventory
 inventory = (None, 'openturns-objects.inv')
-intersphinx_mapping = {'openturns': ('http://openturns.github.io/openturns/latest', inventory)}
+intersphinx_mapping = {'openturns': ('https://openturns.github.io/openturns/latest', inventory)}
 
 extensions.append('sphinx.ext.imgmath')
-imgmath_latex_preamble = r'\usepackage{{{0}math_notations}}'.format(
-    os.path.dirname(__file__) + os.sep)
+mnpkg = Path(__file__).resolve().parent / "math_notations"
+imgmath_latex_preamble = rf"\usepackage{{{mnpkg.as_posix()}}}"
 imgmath_use_preview = True
 if subprocess.run(['dvisvgm', '-V'], shell=True, capture_output=True).returncode == 0:
     imgmath_image_format = 'svg'
 # embed image files inside html
 imgmath_embed = True
 
-extensions.append('matplotlib.sphinxext.plot_directive')
+extensions.append("matplotlib.sphinxext.plot_directive")
+plot_formats = ["svg"]
+plot_rcparams = {"svg.hashsalt": "nacl"}
+plot_pre_code = "import openturns as ot; #ot.ResourceMap.Reset(); ot.RandomGenerator.Reset()"
 
 extensions.append('sphinx_copybutton')
 copybutton_prompt_text = ">>> "
 
 extensions.append('sphinx_gallery.gen_gallery')
 sphinx_gallery_conf = {
-     'examples_dirs': ['examples'], # path to example scripts
-     'gallery_dirs': ['auto_examples'], # path to where to save gallery gen. output
-     'show_signature': False,
+    'examples_dirs': ['examples'], # path to example scripts
+    'gallery_dirs': ['auto_examples'], # path to where to save gallery gen. output
+    'show_signature': False,
+    "download_all_examples": False,
+    # directory where function/class granular galleries are stored
+    "backreferences_dir": "gen_modules/backreferences",
+    # Modules for which function/class level galleries are created.
+    'doc_module'          : ('ottemplate'),
+    # objects to exclude from implicit backreferences. The default option
+    # is an empty set, i.e. exclude nothing.
+    'exclude_implicit_doc': {},
+    # The duration of scripts that ran faster than that amount will not be
+    # logged nor embedded in the html output
+    "min_reported_time": 1e6,
 }
+
+if Version(sphinx_gallery.__version__) >= Version("0.18.0"):
+    # omit computation times from all gallery outputs
+    sphinx_gallery_conf["write_computation_times"] = False
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

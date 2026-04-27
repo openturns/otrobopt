@@ -22,7 +22,13 @@
 #include <openturns/PersistentObjectFactory.hxx>
 #include <openturns/GaussKronrod.hxx>
 #include <openturns/IteratedQuadrature.hxx>
+
+#if OPENTURNS_VERSION >= 102700
 #include <openturns/FiniteDiscreteDistribution.hxx>
+#else
+#include <openturns/UserDefined.hxx>
+#define FiniteDiscreteDistribution UserDefined
+#endif
 
 using namespace OT;
 

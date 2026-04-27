@@ -36,7 +36,6 @@ static Factory<JointChanceMeasure> Factory_JointChanceMeasure;
 /* Default constructor */
 JointChanceMeasure::JointChanceMeasure()
   : MeasureEvaluationImplementation()
-  , alpha_(0.0)
 {
   // Set the default integration algorithm
   GaussKronrod gkr;
@@ -51,7 +50,6 @@ JointChanceMeasure::JointChanceMeasure (const Function & function,
                                         const Scalar alpha)
   : MeasureEvaluationImplementation(function, distribution)
   , operator_(op)
-  , alpha_(0.0)
 {
   setAlpha(alpha);
   setOutputDescription(Description(1, "P"));
