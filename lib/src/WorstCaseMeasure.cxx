@@ -70,19 +70,19 @@ public:
     // Nothing to do
   }
 
-  virtual WorstCaseMeasureParametricFunctionWrapper * clone() const
+  virtual WorstCaseMeasureParametricFunctionWrapper * clone() const override
   {
     return new WorstCaseMeasureParametricFunctionWrapper(*this);
   }
 
-  Point operator()(const Point & theta) const
+  Point operator()(const Point & theta) const override
   {
     Function function(function_);
     function.setParameter(theta);
     return function(x_);
   }
 
-  Sample operator()(const Sample & theta) const
+  Sample operator()(const Sample & theta) const override
   {
     Function function(function_);
     const UnsignedInteger size = theta.getSize();
@@ -96,29 +96,29 @@ public:
     return values;
   }
 
-  Matrix gradient(const Point & theta) const
+  Matrix gradient(const Point & theta) const override
   {
     Function function(function_);
     function.setParameter(theta);
     return function.parameterGradient(x_);
   }
 
-  UnsignedInteger getInputDimension() const
+  UnsignedInteger getInputDimension() const override
   {
     return function_.getParameterDimension();
   }
 
-  UnsignedInteger getOutputDimension() const
+  UnsignedInteger getOutputDimension() const override
   {
     return 1;
   }
 
-  Description getInputDescription() const
+  Description getInputDescription() const override
   {
     return function_.getParameterDescription();
   }
 
-  Description getOutputDescription() const
+  Description getOutputDescription() const override
   {
     return function_.getOutputDescription();
   }
@@ -141,22 +141,22 @@ public:
     // Nothing to do
   }
 
-  virtual WorstCaseMeasureLogPDFWrapper * clone() const
+  virtual WorstCaseMeasureLogPDFWrapper * clone() const override
   {
     return new WorstCaseMeasureLogPDFWrapper(*this);
   }
 
-  Point operator()(const Point & theta) const
+  Point operator()(const Point & theta) const override
   {
     return Point(1, distribution_.computeLogPDF(theta));
   }
 
-  Sample operator()(const Sample & theta) const
+  Sample operator()(const Sample & theta) const override
   {
     return distribution_.computeLogPDF(theta);
   }
 
-  Matrix gradient(const Point & theta) const
+  Matrix gradient(const Point & theta) const override
   {
     const Scalar logPDF(distribution_.computeLogPDF(theta));
     const UnsignedInteger dimension = distribution_.getDimension();
@@ -165,22 +165,22 @@ public:
     return Matrix(dimension, 1, result);
   }
 
-  UnsignedInteger getInputDimension() const
+  UnsignedInteger getInputDimension() const override
   {
     return distribution_.getDimension();
   }
 
-  UnsignedInteger getOutputDimension() const
+  UnsignedInteger getOutputDimension() const override
   {
     return 1;
   }
 
-  Description getInputDescription() const
+  Description getInputDescription() const override
   {
     return distribution_.getDescription();
   }
 
-  Description getOutputDescription() const
+  Description getOutputDescription() const override
   {
     return Description(1, "logPDF");
   }

@@ -77,12 +77,12 @@ public:
     // Nothing to do
   }
 
-  virtual MeanMeasureParametricFunctionWrapper * clone() const
+  virtual MeanMeasureParametricFunctionWrapper * clone() const override
   {
     return new MeanMeasureParametricFunctionWrapper(*this);
   }
 
-  Point operator()(const Point & theta) const
+  Point operator()(const Point & theta) const override
   {
     const Scalar pdf = distribution_.computePDF(theta);
     if (pdf <= pdfThreshold_) return Point(function_.getOutputDimension(), 0.0);
@@ -91,7 +91,7 @@ public:
     return function(x_) * pdf;
   }
 
-  Sample operator()(const Sample & theta) const
+  Sample operator()(const Sample & theta) const override
   {
     const Point pdfs(distribution_.computePDF(theta).asPoint());
     Indices significant(0);
@@ -112,22 +112,22 @@ public:
     return outS;
   }
 
-  UnsignedInteger getInputDimension() const
+  UnsignedInteger getInputDimension() const override
   {
     return function_.getParameterDimension();
   }
 
-  UnsignedInteger getOutputDimension() const
+  UnsignedInteger getOutputDimension() const override
   {
     return function_.getOutputDimension();
   }
 
-  Description getInputDescription() const
+  Description getInputDescription() const override
   {
     return function_.getParameterDescription();
   }
 
-  Description getOutputDescription() const
+  Description getOutputDescription() const override
   {
     return function_.getOutputDescription();
   }

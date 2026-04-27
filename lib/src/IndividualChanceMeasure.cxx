@@ -88,12 +88,12 @@ public:
     // Nothing to do
   }
 
-  virtual IndividualChanceMeasureParametricFunctionWrapper * clone() const
+  virtual IndividualChanceMeasureParametricFunctionWrapper * clone() const override
   {
     return new IndividualChanceMeasureParametricFunctionWrapper(*this);
   }
 
-  Point operator()(const Point & theta) const
+  Point operator()(const Point & theta) const override
   {
     const Scalar pdf = distribution_.computePDF(theta);
     const UnsignedInteger outputDimension = function_.getOutputDimension();
@@ -107,7 +107,7 @@ public:
     return outP;
   }
 
-  Sample operator()(const Sample & theta) const
+  Sample operator()(const Sample & theta) const override
   {
     const UnsignedInteger size = theta.getSize();
     Sample outS(size, function_.getOutputDimension());
@@ -116,22 +116,22 @@ public:
     return outS;
   }
 
-  UnsignedInteger getInputDimension() const
+  UnsignedInteger getInputDimension() const override
   {
     return function_.getParameterDimension();
   }
 
-  UnsignedInteger getOutputDimension() const
+  UnsignedInteger getOutputDimension() const override
   {
     return function_.getOutputDimension();
   }
 
-  Description getInputDescription() const
+  Description getInputDescription() const override
   {
     return function_.getParameterDescription();
   }
 
-  Description getOutputDescription() const
+  Description getOutputDescription() const override
   {
     return function_.getOutputDescription();
   }

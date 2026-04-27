@@ -91,12 +91,12 @@ public:
     , pdfThreshold_(pdfThreshold)
   {}
 
-  virtual QuantileMeasureParametricFunctionWrapper * clone() const
+  virtual QuantileMeasureParametricFunctionWrapper * clone() const override
   {
     return new QuantileMeasureParametricFunctionWrapper(*this);
   }
 
-  Point operator()(const Point & theta) const
+  Point operator()(const Point & theta) const override
   {
     const Scalar pdf = distribution_.computePDF(theta);
     if (pdf <= pdfThreshold_) return Point(1, 0.0);
@@ -107,7 +107,7 @@ public:
     return Point(1, p);
   }
 
-  Sample operator()(const Sample & theta) const
+  Sample operator()(const Sample & theta) const override
   {
     const Point pdfs(distribution_.computePDF(theta).asPoint());
     Indices significant(0);
@@ -128,22 +128,22 @@ public:
     return outS;
   }
 
-  UnsignedInteger getInputDimension() const
+  UnsignedInteger getInputDimension() const override
   {
     return function_.getParameterDimension();
   }
 
-  UnsignedInteger getOutputDimension() const
+  UnsignedInteger getOutputDimension() const override
   {
     return 1;
   }
 
-  Description getInputDescription() const
+  Description getInputDescription() const override
   {
     return function_.getParameterDescription();
   }
 
-  Description getOutputDescription() const
+  Description getOutputDescription() const override
   {
     return Description(1, "P");
   }
@@ -152,8 +152,8 @@ protected:
   Point x_;
   Function function_;
   Distribution distribution_;
-  Scalar s_;
-  Scalar pdfThreshold_;
+  Scalar s_ = 0.0;
+  Scalar pdfThreshold_ = 0.0;
 };
 
 class QuantileMeasureParametricFunctionWrapper2 : public FunctionImplementation
@@ -174,19 +174,19 @@ public:
     // Nothing to do
   }
 
-  virtual QuantileMeasureParametricFunctionWrapper2 * clone() const
+  virtual QuantileMeasureParametricFunctionWrapper2 * clone() const override
   {
     return new QuantileMeasureParametricFunctionWrapper2(*this);
   }
 
-  Point operator()(const Point & s) const
+  Point operator()(const Point & s) const override
   {
     Pointer<FunctionImplementation> p_wrapper(new QuantileMeasureParametricFunctionWrapper(x_, function_, distribution_, s[0], pdfThreshold_));
     const Function G(p_wrapper);
     return integrationAlgorithm_.integrate(G, distribution_.getRange());
   }
 
-  Sample operator()(const Sample & s) const
+  Sample operator()(const Sample & s) const override
   {
     const UnsignedInteger size = s.getSize();
     Sample outS(size, getOutputDimension());
@@ -195,22 +195,22 @@ public:
     return outS;
   }
 
-  UnsignedInteger getInputDimension() const
+  UnsignedInteger getInputDimension() const override
   {
     return 1;
   }
 
-  UnsignedInteger getOutputDimension() const
+  UnsignedInteger getOutputDimension() const override
   {
     return 1;
   }
 
-  Description getInputDescription() const
+  Description getInputDescription() const override
   {
     return Description(1, "s");
   }
 
-  Description getOutputDescription() const
+  Description getOutputDescription() const override
   {
     return Description(1, "P");
   }
@@ -220,7 +220,7 @@ protected:
   Function function_;
   Distribution distribution_;
   IntegrationAlgorithm integrationAlgorithm_;
-  Scalar pdfThreshold_;
+  Scalar pdfThreshold_ = 0.0;
 };
 
 

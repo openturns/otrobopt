@@ -87,12 +87,12 @@ public:
     // Nothing to do
   }
 
-  virtual MeanStandardDeviationTradeoffMeasureParametricFunctionWrapper * clone() const
+  virtual MeanStandardDeviationTradeoffMeasureParametricFunctionWrapper * clone() const override
   {
     return new MeanStandardDeviationTradeoffMeasureParametricFunctionWrapper(*this);
   }
 
-  Point operator()(const Point & theta) const
+  Point operator()(const Point & theta) const override
   {
     const Scalar pdf = distribution_.computePDF(theta);
     // (f_1(x), ...., f_d(x), f_1^2(x), ..., f_d^2(x))
@@ -111,7 +111,7 @@ public:
     return outP;
   }
 
-  Sample operator()(const Sample & theta) const
+  Sample operator()(const Sample & theta) const override
   {
     const Point pdfs(distribution_.computePDF(theta).asPoint());
     Indices significant(0);
@@ -140,22 +140,22 @@ public:
     return outS;
   }
 
-  UnsignedInteger getInputDimension() const
+  UnsignedInteger getInputDimension() const override
   {
     return function_.getParameterDimension();
   }
 
-  UnsignedInteger getOutputDimension() const
+  UnsignedInteger getOutputDimension() const override
   {
     return 2 * function_.getOutputDimension();
   }
 
-  Description getInputDescription() const
+  Description getInputDescription() const override
   {
     return function_.getParameterDescription();
   }
 
-  Description getOutputDescription() const
+  Description getOutputDescription() const override
   {
     Description outputDescription(function_.getOutputDescription());
     outputDescription.add(outputDescription);
@@ -166,7 +166,7 @@ protected:
   Point x_;
   Function function_;
   Distribution distribution_;
-  Scalar pdfThreshold_;
+  Scalar pdfThreshold_ = 0.0;
 };
 
 
