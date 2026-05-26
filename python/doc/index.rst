@@ -12,6 +12,7 @@ User documentation
 .. toctree::
    :maxdepth: 2
 
+   theory/robust_optimization
    user_manual/user_manual
    ../auto_examples/index.rst
 
