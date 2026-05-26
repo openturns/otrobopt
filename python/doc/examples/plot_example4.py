@@ -1,6 +1,6 @@
 """
-Example 4
-=========
+Robust optimization with trigonometric cost and a joint chance constraint
+==========================================================================
 """
 
 # %%

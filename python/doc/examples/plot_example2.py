@@ -1,6 +1,6 @@
 """
-Example 2
-=========
+Robust optimization with a deterministic constraint
+===================================================
 """
 
 # %%
@@ -9,7 +9,7 @@ Example 2
 # .. math::
 #
 #     \begin{aligned}
-#     & \underset{x}{\text{minimize}}
+#     & \underset{x}{\text{maximize}}
 #     & & \mathbb{E}_{\cD}(\sqrt{x_0} \sqrt{x_1} \Theta) \\
 #     & \text{subject to}
 #     & & 2x_1 + 4x_0 - 120 \leq 0 \\

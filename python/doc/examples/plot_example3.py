@@ -1,6 +1,6 @@
 """
-Example 3
-=========
+Robust optimization with an exponential uncertainty
+===================================================
 """
 
 # %%
@@ -9,7 +9,7 @@ Example 3
 # .. math::
 #
 #     \begin{aligned}
-#     & \underset{x}{\text{minimize}}
+#     & \underset{x}{\text{maximize}}
 #     & & \mathbb{E}_{\cD}(x^3 - x + \Theta) \\
 #     & \text{subject to}
 #     & & \mathbb{P}_{\cD}(x + \Theta - 2 \leq 0) \geq 0.9 \\

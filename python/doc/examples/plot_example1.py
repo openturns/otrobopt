@@ -1,6 +1,6 @@
 """
-Example 1
-=========
+Robust optimization with a quadratic cost and a joint chance constraint
+========================================================================
 """
 
 # %%

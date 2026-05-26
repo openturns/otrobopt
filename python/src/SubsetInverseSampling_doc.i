@@ -1,19 +1,6 @@
 %feature("docstring") OTROBOPT::SubsetInverseSampling
 R"RAW(Subset inverse simulation.
 
-Parameters
-----------
-event : :class:`~openturns.RandomVector`
-    Event we are computing the probability of. The threshold of the event is not used.
-targetProbability : float
-    The wanted final probability.
-proposalRange : float, optional
-    Proposal range length
-conditionalProbability : float, optional
-    Value of :math:`P(F_i|F_{i-1})` between successive steps
-
-Notes
------
 The goal is to estimate the threshold of the following target probability :
 
 .. math::
@@ -63,6 +50,17 @@ autocorrelation between Markov chain samples.
 The first event :math:`F_1` not being conditional, :math:`\delta^2_1`
 expresses as the classic Monte Carlo c.o.v.
 
+Parameters
+----------
+event : :class:`~openturns.RandomVector`
+    Event we are computing the probability of. The threshold of the event is not used.
+targetProbability : float
+    The wanted final probability.
+proposalRange : float, optional
+    Proposal range length
+conditionalProbability : float, optional
+    Value of :math:`P(F_i|F_{i-1})` between successive steps
+
 Examples
 --------
 >>> import openturns as ot
@@ -102,6 +100,14 @@ Get some results.
 See also
 --------
 openturns.EventSimulation)RAW"
+
+// ---------------------------------------------------------------------------
+
+%feature("docstring") OTROBOPT::SubsetInverseSampling::run
+"Run the algorithm.
+
+Launches the subset inverse simulation. The result can be retrieved
+with :meth:`getResult`."
 
 // ---------------------------------------------------------------------------
 
@@ -252,8 +258,8 @@ threshold : :py:class:`openturns.Point`
 
 Returns
 -------
-prob : :py:class:`openturns.Point`
-    Autocorrelation values."
+gamma : :py:class:`openturns.Point`
+    Autocorrelation values at each subset step."
 
 // ---------------------------------------------------------------------------
 
@@ -298,20 +304,29 @@ range : float
 // ---------------------------------------------------------------------------
 
 %feature("docstring") OTROBOPT::SubsetInverseSampling::setBetaMin
-"Radius of the hypershere accessor.
+"Exclusion hypersphere radius accessor.
 
 Parameters
 ----------
 beta : float
-    Radius value of the exclusion hypershere when the conditional simulation is activated."
+    Radius of the exclusion hypersphere when the conditional simulation is activated."
+
+// ---------------------------------------------------------------------------
+
+%feature("docstring") OTROBOPT::SubsetInverseSampling::getBetaMin
+"Exclusion hypersphere radius accessor.
+
+Returns
+-------
+beta : float
+    Radius of the exclusion hypersphere."
 
 // ---------------------------------------------------------------------------
 
 %feature("docstring") OTROBOPT::SubsetInverseSampling::setISubset
-"Conditonal simulation activation accessor.
+"Conditional simulation activation accessor.
 
 Parameters
 ----------
 isubset : bool
-    Activate or not the conditional simulation for the first step of the 
-    simulation."
+    Whether to activate the conditional simulation for the first step."
