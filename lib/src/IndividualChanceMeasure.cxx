@@ -179,7 +179,7 @@ Point IndividualChanceMeasure::operator()(const Point & inP) const
       for (UnsignedInteger j = 0; j < outputDimension; ++ j)
       {
         if (values(i, j) >= 0.0)
-          outP[j] += weights[j];
+          outP[j] += weights[i];
       } // for j
     } // for i
   } // discrete
