@@ -49,6 +49,7 @@ ot_pyinstallcheck_test (SubsetInverseSampling_Waarts_system_series)
 ot_pyinstallcheck_test (InverseFORM_std IGNOREOUT)
 ot_pyinstallcheck_test (InverseFORM_sphere IGNOREOUT)
 ot_pyinstallcheck_test (docstring)
+ot_pyinstallcheck_test (MeasureEvaluation_edge IGNOREOUT)
 
 
 if (MATPLOTLIB_FOUND)
