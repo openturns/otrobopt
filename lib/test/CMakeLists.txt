@@ -43,6 +43,9 @@ endif()
 ot_check_test (SubsetInverseSampling_std)
 ot_check_test (InverseFORM_std IGNOREOUT)
 ot_check_test (InverseFORM_sphere IGNOREOUT)
+ot_check_test (MeasureFunction_std IGNOREOUT)
+ot_check_test (MeasureFactory_std IGNOREOUT)
+ot_check_test (MeasureEvaluation_edge IGNOREOUT)
 
 add_custom_target ( cppcheck COMMAND ${CMAKE_CTEST_COMMAND} -R "^cppcheck_"
                     DEPENDS ${CHECK_TO_BE_RUN}
