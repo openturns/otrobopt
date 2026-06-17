@@ -33,7 +33,10 @@ macro (ot_add_python_module MODULENAME SOURCEFILE)
   target_link_libraries (${module_target} Python::Module)
 
   set_target_properties (${module_target} PROPERTIES OUTPUT_NAME ${MODULENAME})
-  set_target_properties (${module_target} PROPERTIES COMPILE_FLAGS "${SWIG_COMPILE_FLAGS}")
+  if(SWIG_COMPILE_FLAGS)
+    string(REPLACE " " ";" SWIG_COMPILE_FLAGS_LIST "${SWIG_COMPILE_FLAGS}")
+    target_compile_options(${module_target} PRIVATE ${SWIG_COMPILE_FLAGS_LIST})
+  endif()
   set_target_properties (${module_target} PROPERTIES UNITY_BUILD OFF)
 
   install (FILES ${CMAKE_CURRENT_BINARY_DIR}/${MODULENAME}.py

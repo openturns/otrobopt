@@ -24,7 +24,7 @@ int main()
 
       Point x(1, 2.0);
 
-      // UserDefined discrete distribution with 5 points
+      // FiniteDiscreteDistribution discrete distribution with 5 points
       Sample discretePoints(5, 1);
       discretePoints(0, 0) = 0.0;
       discretePoints(1, 0) = 0.5;
@@ -32,14 +32,14 @@ int main()
       discretePoints(3, 0) = 1.5;
       discretePoints(4, 0) = 2.0;
       Point probas(5, 0.2);
-      UserDefined discreteDist(discretePoints, probas);
+      FiniteDiscreteDistribution discreteDist(discretePoints, probas);
 
       IndividualChanceMeasure icm(f, discreteDist, Greater(), Point(1, 0.5));
       Point val(icm(x));
       fullprint << "IndividualChance (discrete)=" << val << std::endl;
       // theta values >= 0: all 5 points have f=2*theta >=0 => prob=1.0
-      // operator >= means: g >= 0 is failure, P(f>=0)=1, so result = alpha - P = 0.5 - 1 = -0.5
-      assert_almost_equal(val, Point(1, -0.5), 1e-4, 1e-4);
+      // Greater operator: result = P(f>=0) - alpha = 1.0 - 0.5 = 0.5
+      assert_almost_equal(val, Point(1, 0.5), 1e-4, 1e-4);
     }
 
     // ---------------------------------------------------------------
@@ -56,7 +56,7 @@ int main()
       discretePoints(1, 0) = 0.0;
       discretePoints(2, 0) = 1.0;
       Point probas(3, 1.0 / 3.0);
-      UserDefined discreteDist(discretePoints, probas);
+      FiniteDiscreteDistribution discreteDist(discretePoints, probas);
 
       IndividualChanceMeasure icm(f, discreteDist, Greater(), Point(2, 0.5));
       Point val(icm(x));
@@ -78,7 +78,7 @@ int main()
       discretePoints(1, 0) = 0.0;
       discretePoints(2, 0) = 1.0;
       Point probas(3, 1.0 / 3.0);
-      UserDefined discreteDist(discretePoints, probas);
+      FiniteDiscreteDistribution discreteDist(discretePoints, probas);
 
       JointChanceMeasure jcm(f, discreteDist, Greater(), 0.9);
       Point val(jcm(x));
@@ -100,7 +100,7 @@ int main()
       discretePoints(1, 0) = 1.0;
       discretePoints(2, 0) = 2.0;
       Point probas(3, 1.0 / 3.0);
-      UserDefined discreteDist(discretePoints, probas);
+      FiniteDiscreteDistribution discreteDist(discretePoints, probas);
 
       QuantileMeasure qm(f, discreteDist, 0.5);
       Point val(qm(x));
@@ -122,7 +122,7 @@ int main()
       discretePoints(1, 0) = 1.0;
       discretePoints(2, 0) = 2.0;
       Point probas(3, 1.0 / 3.0);
-      UserDefined discreteDist(discretePoints, probas);
+      FiniteDiscreteDistribution discreteDist(discretePoints, probas);
 
       MeanStandardDeviationTradeoffMeasure mstd(f, discreteDist, Point(1, 0.5));
       Point val(mstd(x));
@@ -144,7 +144,7 @@ int main()
       discretePoints(1, 0) = 1.0;
       discretePoints(2, 0) = 2.0;
       Point probas(3, 1.0 / 3.0);
-      UserDefined discreteDist(discretePoints, probas);
+      FiniteDiscreteDistribution discreteDist(discretePoints, probas);
 
       VarianceMeasure vm(f, discreteDist);
       Point val(vm(x));
@@ -166,7 +166,7 @@ int main()
       discretePoints(1, 0) = 1.0;
       discretePoints(2, 0) = 2.0;
       Point probas(3, 1.0 / 3.0);
-      UserDefined discreteDist(discretePoints, probas);
+      FiniteDiscreteDistribution discreteDist(discretePoints, probas);
 
       Collection<MeasureEvaluation> measures;
       measures.add(MeanMeasure(f, discreteDist));
