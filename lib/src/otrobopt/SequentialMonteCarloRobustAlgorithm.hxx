@@ -83,6 +83,9 @@ public:
   virtual void load(OT::Advocate & adv) override;
 
 private:
+  // Solve an optimization problem using a local multistart
+  OT::OptimizationResult doMultiStart(const OT::OptimizationAlgorithm & solver, const OT::Interval & bounds, OT::Sample & initialStartingPoints) const;
+
   // initial sampling size
   OT::UnsignedInteger initialSamplingSize_;
   OT::Function samplingSizeIncrement_;
