@@ -660,6 +660,7 @@ void SubsetInverseSampling::save(Advocate & adv) const
   adv.saveAttribute("gammaPerStep_", gammaPerStep_);
   adv.saveAttribute("coefficientOfVariationPerStep_", coefficientOfVariationPerStep_);
   adv.saveAttribute("probabilityEstimatePerStep_", probabilityEstimatePerStep_);
+  adv.saveAttribute("thresholdDistribution_", thresholdDistribution_);
 }
 
 
@@ -679,6 +680,7 @@ void SubsetInverseSampling::load(Advocate & adv)
   adv.loadAttribute("gammaPerStep_", gammaPerStep_);
   adv.loadAttribute("coefficientOfVariationPerStep_", coefficientOfVariationPerStep_);
   adv.loadAttribute("probabilityEstimatePerStep_", probabilityEstimatePerStep_);
+  adv.loadAttribute("thresholdDistribution_", thresholdDistribution_);
 }
 
 
