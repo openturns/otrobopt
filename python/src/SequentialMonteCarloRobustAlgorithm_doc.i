@@ -81,7 +81,7 @@ samplingSizeIncrement : :py:class:`openturns.Function`
 Initial number of start points used.
 
 Problem bounds must be specified when multi-start is used as start points are
-drawn uniformly into the bounding box using an LHS experiment.
+drawn uniformly into the bounding box using a Sobol' sequence.
 
 Parameters
 ----------
@@ -96,7 +96,7 @@ initialSearch : int, 0 by default (no multi-start)
 Initial number of start points used.
 
 Problem bounds must be specified when multi-start is used as start points are
-drawn uniformly into the bounding box.
+drawn uniformly into the bounding box using a Sobol' sequence.
 
 Returns
 -------
