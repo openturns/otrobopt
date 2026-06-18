@@ -25,7 +25,6 @@
 #include <openturns/FixedExperiment.hxx>
 #include <openturns/IdentityFunction.hxx>
 #include <openturns/JointDistribution.hxx>
-#include <openturns/LHSExperiment.hxx>
 #include <openturns/LowDiscrepancyExperiment.hxx>
 #include <openturns/SobolSequence.hxx>
 #include <openturns/SpecFunc.hxx>
@@ -115,8 +114,10 @@ void SequentialMonteCarloRobustAlgorithm::run()
 
   Bool convergence = false;
 
-  // reset result
+  // reset attributes
   setResult(OptimizationResult(robustProblem));
+  resultCollection_.clear();
+  initialStartingPoints_ = Sample(0, getProblem().getObjective().getInputDimension());
 
   UnsignedInteger iterationNumber = 0;
   LOGINFO("Start main loop");

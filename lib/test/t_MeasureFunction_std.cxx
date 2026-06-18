@@ -45,7 +45,7 @@ int main()
     assert_almost_equal(outS(2, 0), 4.0, 1e-4, 1e-4);
 
     // clone
-    MeasureFunction cloned(*func.clone());
+    MeasureFunction cloned(func);
     Point y2(cloned(x));
     assert_almost_equal(y2, y);
   }

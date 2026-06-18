@@ -4,6 +4,7 @@
 # with R~N, S~N
 
 import openturns as ot
+import openturns.testing as ott
 import otrobopt
 
 ot.TESTPREAMBLE()
@@ -94,38 +95,4 @@ thLengthSS = mySS.getThresholdConfidenceLength(0.90)
 
 ###########################################################################
 
-print("")
-print("*******************************************************************")
-print("***************************** MONTE CARLO *************************")
-print("*******************************************************************")
-print("Pf estimation = %.5e" % PFMC)
-print("Pf Variance estimation = %.5e" % Variance_PF_MC)
-print("CoV = %.5f" % CVMC)
-print("90% Confidence Interval =", "%.5e" % length90MC)
-print(
-    "CI at 90% =[",
-    "%.5e" % (PFMC - 0.5 * length90MC),
-    "; %.5e" % (PFMC + 0.5 * length90MC),
-    "]",
-)
-print("Threshold = %.5e" % threshold)
-print("Limit state calls =", N_MC)
-print("*******************************************************************")
-print("")
-print("*******************************************************************")
-print("************************** SUBSET SAMPLING ************************")
-print("*******************************************************************")
-print("Pf estimation = %.5e" % PFSS)
-print("Pf Variance estimation = %.5e" % Variance_PF_SS)
-print("CoV = %.5f" % CVSS)
-print("90% Confidence Interval =", "%.5e" % length90SS)
-print(
-    "CI at 90% =[",
-    "%.5e" % (PFSS - 0.5 * length90SS),
-    "; %.5e" % (PFSS + 0.5 * length90SS),
-    "]",
-)
-print("Threshold = %.5e" % thresholdSS)
-print("Limit state calls =", N_SS)
-print("*******************************************************************")
-print("")
+ott.assert_almost_equal(len(mySS.getThresholdPerStep()), 4)

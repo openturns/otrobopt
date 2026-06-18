@@ -270,7 +270,7 @@ Key aspects:
   the accuracy of the discretisation. The increment function can be
   configured (default: add :math:`N` new samples each iteration).
 * **Multi-start**: On the first iteration, an optional multi-start search
-  (using LHS over the bounds) helps find a promising starting point.
+  (using a Sobol' low-discrepancy sequence over the bounds) helps find a promising starting point.
 * **Convergence**: The algorithm stops when the design point change falls
   below the absolute error tolerance.
 * **Solver tolerance**: The inner deterministic solver tolerance is
