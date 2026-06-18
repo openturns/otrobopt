@@ -1,7 +1,8 @@
-
 import openturns as ot
+import openturns.testing as ott
 import otrobopt
-full_fun = ot.SymbolicFunction(['x', 'theta'], ['theta*x'])
+
+full_fun = ot.SymbolicFunction(["x", "theta"], ["theta*x"])
 param_fun = ot.ParametricFunction(full_fun, [1], [1.0])
 
 # Normal distribution associated to parameter theta
@@ -18,7 +19,7 @@ discretized_mean_measure_evaluation = factory.build(mean_measure)
 
 coll = [mean_measure, variance_measure]
 discretizedColl = factory.buildCollection(coll)
-print(coll)
+ott.assert_almost_equal(len(coll), 2)
 
 x = [1.0]
-print(otrobopt.AggregatedMeasure(coll)(x))
+ott.assert_almost_equal(otrobopt.AggregatedMeasure(coll)(x), [2.0, 0.01])

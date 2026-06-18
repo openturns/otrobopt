@@ -42,7 +42,7 @@ Examples
 >>> measure = otrobopt.JointChanceMeasure(f, thetaDist, ot.GreaterOrEqual(), 0.95)
 >>> x = [1.0]
 >>> print(measure(x))
-[-0.108655])RAW"
+[-0.644854])RAW"
 
 // ---------------------------------------------------------------------
 

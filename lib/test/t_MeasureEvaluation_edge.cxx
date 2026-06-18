@@ -38,8 +38,8 @@ int main()
       Point val(icm(x));
       fullprint << "IndividualChance (discrete)=" << val << std::endl;
       // theta values >= 0: all 5 points have f=2*theta >=0 => prob=1.0
-      // Greater operator: result = P(f>=0) - alpha = 1.0 - 0.5 = 0.5
-      assert_almost_equal(val, Point(1, 0.5), 1e-4, 1e-4);
+      // Greater operator: result = qNormal(P(f>=0)) - qNormal(alpha)
+      assert_almost_equal(val, Point(1, 8.12589), 1e-4, 1e-4);
     }
 
     // ---------------------------------------------------------------
