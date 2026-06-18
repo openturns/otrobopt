@@ -85,8 +85,9 @@ int main()
     cobyla.setMaximumRelativeError(1.0e-10);
     cobyla.setMaximumResidualError(1.0e-10);
     cobyla.setMaximumConstraintError(1.0e-10);
+    cobyla.setStartingPoint(median);
     
-    FORM form(cobyla, event, median);
+    FORM form(cobyla, event);
     form.run();
     const FORMResult resultFORM(form.getResult());
     fullprint << "result FORM="<<resultFORM << std::endl;
