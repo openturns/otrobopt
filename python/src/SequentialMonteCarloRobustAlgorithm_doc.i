@@ -8,8 +8,9 @@ Measures are discretized using an initial size that can be set with
 :py:meth:`setInitialSamplingSize` and a size increment that is set with
 :py:meth:`setSamplingSizeIncrement`.
 
-The optimization problems relies on a Multi-Start algorithm from an initial LHS
-experiment and an internal solver that can be set by :py:meth:`setOptimizationAlgorithm`.
+On the first iteration a multi-start from a Sobol' low-discrepancy sequence
+can be used to find a promising starting point.
+The internal solver can be set by :py:meth:`setOptimizationAlgorithm`.
 The ResourceMap key `SequentialMonteCarloRobustAlgorithm-ConvergenceFactor`
 can be used to control the convergence criteria of the inner solver.
 
@@ -81,7 +82,7 @@ samplingSizeIncrement : :py:class:`openturns.Function`
 Initial number of start points used.
 
 Problem bounds must be specified when multi-start is used as start points are
-drawn uniformly into the bounding box using an LHS experiment.
+drawn uniformly into the bounding box using a Sobol' sequence.
 
 Parameters
 ----------
@@ -96,7 +97,7 @@ initialSearch : int, 0 by default (no multi-start)
 Initial number of start points used.
 
 Problem bounds must be specified when multi-start is used as start points are
-drawn uniformly into the bounding box.
+drawn uniformly into the bounding box using a Sobol' sequence.
 
 Returns
 -------

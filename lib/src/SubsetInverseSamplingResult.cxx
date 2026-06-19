@@ -85,6 +85,7 @@ void SubsetInverseSamplingResult::save(Advocate & adv) const
 {
   ProbabilitySimulationResult::save(adv);
   adv.saveAttribute("coefficientOfVariation_", coefficientOfVariation_);
+  adv.saveAttribute("threshold_", threshold_);
 }
 
 
@@ -93,6 +94,7 @@ void SubsetInverseSamplingResult::load(Advocate & adv)
 {
   ProbabilitySimulationResult::load(adv);
   adv.loadAttribute("coefficientOfVariation_", coefficientOfVariation_);
+  adv.loadAttribute("threshold_", threshold_);
 }
 
 

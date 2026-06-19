@@ -25,7 +25,8 @@
 #include <openturns/FixedExperiment.hxx>
 #include <openturns/IdentityFunction.hxx>
 #include <openturns/JointDistribution.hxx>
-#include <openturns/LHSExperiment.hxx>
+#include <openturns/LowDiscrepancyExperiment.hxx>
+#include <openturns/SobolSequence.hxx>
 #include <openturns/SpecFunc.hxx>
 #include <openturns/Uniform.hxx>
 #include <openturns/MultiStart.hxx>
@@ -77,6 +78,22 @@ SequentialMonteCarloRobustAlgorithm * SequentialMonteCarloRobustAlgorithm::clone
   return new SequentialMonteCarloRobustAlgorithm(*this);
 }
 
+/* Solve an optimization problem using a local multistart */
+OptimizationResult SequentialMonteCarloRobustAlgorithm::doMultiStart(const OptimizationAlgorithm & solver, const Interval & bounds, Sample & initialStartingPoints) const
+{
+  LOGINFO("Start multistart search");
+  LOGINFO(OSS() << "Generate Sobol' experiment with " << initialSearch_ << " points in bounds=" << bounds);
+  const UnsignedInteger dimension = bounds.getDimension();
+  JointDistribution::DistributionCollection coll(dimension);
+  for (UnsignedInteger j = 0; j < dimension; ++ j)
+    coll[j] = Uniform(bounds.getLowerBound()[j], bounds.getUpperBound()[j]);
+  LowDiscrepancyExperiment initialExperiment(SobolSequence(), JointDistribution(coll), initialSearch_);
+  initialStartingPoints = initialExperiment.generate();
+  
+  MultiStart multiStart(solver, initialStartingPoints);
+  multiStart.run();
+  return multiStart.getResult();
+}
 
 /* Evaluation */
 void SequentialMonteCarloRobustAlgorithm::run()
@@ -97,21 +114,26 @@ void SequentialMonteCarloRobustAlgorithm::run()
 
   Bool convergence = false;
 
-  // reset result
+  // reset attributes
   setResult(OptimizationResult(robustProblem));
+  resultCollection_.clear();
+  initialStartingPoints_ = Sample(0, getProblem().getObjective().getInputDimension());
 
   UnsignedInteger iterationNumber = 0;
+  LOGINFO("Start main loop");
   while ((!convergence) && (iterationNumber <= getMaximumIterationNumber()))
   {
     const UnsignedInteger increment = samplingSizeIncrement_(Point(1, N))[0];
     if (increment == 0) throw InvalidArgumentException(HERE) << "Increment must be positive";
     currentSampleXi.add(distributionXi.getSample(increment));
     N = currentSampleXi.getSize();
+    LOGINFO(OSS() << "Iteration=" << iterationNumber << ", current increment=" << increment << ", current sample size=" << N);
 
     OptimizationProblem problem(getProblem());
 
     if (robustProblem.hasRobustnessMeasure())
     {
+      LOGINFO(OSS() << "Discretize robustness measure=" << robustProblem.getRobustnessMeasure());
       // discretize the robustness measure
       const FixedExperiment experiment(currentSampleXi);
       const MeasureFactory robustnessFactory(experiment);
@@ -121,6 +143,7 @@ void SequentialMonteCarloRobustAlgorithm::run()
 
     if (robustProblem.hasReliabilityMeasure())
     {
+      LOGINFO(OSS() << "Discretize reliability measure=" << robustProblem.getReliabilityMeasure());
       // discretize the reliability measure
       const FixedExperiment experiment(currentSampleXi);
       const MeasureFactory reliabilityFactory(experiment);
@@ -138,22 +161,12 @@ void SequentialMonteCarloRobustAlgorithm::run()
 
     Point newPoint;
     Point newValue;
+    OptimizationResult result;
     if ((iterationNumber == 0) && (initialSearch_ > 0)) // multi-start
     {
       if (!getProblem().hasBounds())
         throw InvalidArgumentException(HERE) << "Cannot perform multi-start without bounds";
-
-      JointDistribution::DistributionCollection coll(dimension);
-      for (UnsignedInteger j = 0; j < dimension; ++ j)
-        coll[j] = Uniform(getProblem().getBounds().getLowerBound()[j], getProblem().getBounds().getUpperBound()[j]);
-      LHSExperiment initialExperiment(JointDistribution(coll), initialSearch_);
-      initialStartingPoints_ = initialExperiment.generate();
-
-      MultiStart multiStart(solver, initialStartingPoints_);
-      multiStart.run();
-      const OptimizationResult result(multiStart.getResult());
-      newPoint = result.getOptimalPoint();
-      newValue = result.getOptimalValue();
+      result = doMultiStart(solver, problem.getBounds(), initialStartingPoints_);
     }
     else
     {
@@ -162,17 +175,41 @@ void SequentialMonteCarloRobustAlgorithm::run()
         currentPoint = solver_.getStartingPoint();
       }
       solver.setStartingPoint(currentPoint);
-      solver.run();
-      OptimizationResult result(solver.getResult());
-      resultCollection_.add(result);
-      newPoint = result.getOptimalPoint();
-      newValue = result.getOptimalValue();
-    }
+      try
+      {
+	solver.run();
+	result = solver.getResult();
+	if (result.getOptimalPoint().getDimension() == 0) throw InvalidArgumentException(HERE) << "Local optimization failed, try multistart if allowed";
+      }
+      catch (const InvalidArgumentException & ex)
+      {
+	if (initialSearch_ > 0) // multi-start
+	{
+	  // Create tight neigbourhood of the current optimal point
+	  Point lowerBound(currentPoint);
+	  Point upperBound(currentPoint);
+	  const Scalar delta = 3.0 / std::sqrt(N);
+	  for (UnsignedInteger i = 0; i < dimension; ++i)
+	  {
+	    lowerBound[i] -= delta;
+	    upperBound[i] += delta;
+	  }
+	  const Interval bounds(Interval(lowerBound, upperBound).intersect(problem.getBounds()));
+	  Sample initialStartingPoints;
+	  result = doMultiStart(solver, bounds, initialStartingPoints);
+	} // initialSearch_ > 0
+	// If no cure possible, rethrow the exception
+	else throw;
+      } // InvalidArgumentException
+    } // (iterationNumber > 0) || (initialSearch_ == 0)
+    resultCollection_.add(result);
+    newPoint = result.getOptimalPoint();
+    newValue = result.getOptimalValue();	
 
     LOGINFO(OSS() << "current optimum=" << newPoint);
 
     const Scalar absoluteError = (newPoint - currentPoint).norm();
-    convergence = (iterationNumber > 0) && ((absoluteError < getMaximumAbsoluteError()) || (epsilon < getMaximumAbsoluteError()));
+    convergence = (iterationNumber > 0) && (absoluteError < getMaximumAbsoluteError());
 
     currentPoint = newPoint;
     currentValue = newValue;
@@ -214,7 +251,7 @@ void SequentialMonteCarloRobustAlgorithm::setSamplingSizeIncrement(const Functio
   samplingSizeIncrement_ = samplingSizeIncrement;
 }
 
-OT::Function SequentialMonteCarloRobustAlgorithm::getSamplingSizeIncrement() const
+Function SequentialMonteCarloRobustAlgorithm::getSamplingSizeIncrement() const
 {
   return samplingSizeIncrement_;
 }

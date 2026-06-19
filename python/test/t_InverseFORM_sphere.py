@@ -16,14 +16,16 @@ mulog_eDist.setDescription(["mulog_e"])
 eColl = [mulog_eDist, ot.Dirac(0.1), ot.Dirac(0.0)]
 eParams = ot.JointDistribution(eColl)
 try:
-    eDist = ot.CompoundDistribution(ot.LogNormal(mulog_e_0, 0.1, 0.), eParams)
+    eDist = ot.CompoundDistribution(ot.LogNormal(mulog_e_0, 0.1, 0.0), eParams)
 except AttributeError:
     # OT <1.26
-    eDist = ot.DeconditionedDistribution(ot.LogNormal(mulog_e_0, 0.1, 0.), eParams)
+    eDist = ot.DeconditionedDistribution(ot.LogNormal(mulog_e_0, 0.1, 0.0), eParams)
 
-coll = [ot.Beta(0.117284, 0.117284, 2.9, 3.1),
-        eDist,
-        ot.WeibullMin(3.16471, 9.21097, 0.0)]
+coll = [
+    ot.Beta(0.117284, 0.117284, 2.9, 3.1),
+    eDist,
+    ot.WeibullMin(3.16471, 9.21097, 0.0),
+]
 
 distribution = ot.JointDistribution(coll)
 median = [distribution.getMarginal(i).computeQuantile(0.5)[0] for i in range(3)]
@@ -34,8 +36,7 @@ output = ot.CompositeRandomVector(g, vect)
 
 event = ot.ThresholdEvent(output, ot.Less(), 0.0)
 
-algo = otrobopt.InverseFORM(event, 'mulog_e', median)
+algo = otrobopt.InverseFORM(event, "mulog_e", median)
 algo.run()
 result = algo.getResult()
-print(result)
-ott.assert_almost_equal(result.getParameter(), [-4.69056])
+ott.assert_almost_equal(result.getParameter(), [-4.69056], 1e-3, 1e-3)

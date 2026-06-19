@@ -22,6 +22,7 @@
 #include <openturns/PersistentObjectFactory.hxx>
 #include <openturns/GaussKronrod.hxx>
 #include <openturns/IteratedQuadrature.hxx>
+#include <openturns/DistFunc.hxx>
 
 #if OPENTURNS_VERSION >= 102700
 #include <openturns/FiniteDiscreteDistribution.hxx>
@@ -179,11 +180,18 @@ Point IndividualChanceMeasure::operator()(const Point & inP) const
       for (UnsignedInteger j = 0; j < outputDimension; ++ j)
       {
         if (values(i, j) >= 0.0)
-          outP[j] += weights[j];
+          outP[j] += weights[i];
       } // for j
     } // for i
   } // discrete
-  return operator_.operator()(1.0, 2.0) ? alpha_ - outP : outP - alpha_;
+  Point result(outP.getDimension());
+  const Scalar eps = getPDFThreshold();
+  for (UnsignedInteger i = 0; i < result.getDimension(); ++ i)
+  {
+    const Scalar p = std::min(std::max(outP[i], eps), 1.0 - eps);
+    result[i] = operator_.operator()(1.0, 2.0) ? DistFunc::qNormal(alpha_[i]) - DistFunc::qNormal(p) : DistFunc::qNormal(p) - DistFunc::qNormal(alpha_[i]);
+  }
+  return result;
 }
 
 /* Alpha coefficient accessor */

@@ -6,7 +6,8 @@ class LinearCombinationFunction(ot.OpenTURNSPythonFunction):
 
     def __init__(self, coll, weights):
         super(LinearCombinationFunction, self).__init__(
-            coll[0].getInputDimension(), coll[0].getOutputDimension())
+            coll[0].getInputDimension(), coll[0].getOutputDimension()
+        )
         self.coll_ = coll
         self.weights_ = weights
 
@@ -21,11 +22,14 @@ class LinearCombinationFunction(ot.OpenTURNSPythonFunction):
 
 # This is calligraphic J, the non-robust objective function
 calJ = ot.SymbolicFunction(
-    ["x1", "x2"], ["15.0 * (x1^2 + x2^2) - 100.0 * exp(-5. * ((x1 + 1.6)^2+(x2 + 1.6)^2))"])
+    ["x1", "x2"],
+    ["15.0 * (x1^2 + x2^2) - 100.0 * exp(-5. * ((x1 + 1.6)^2+(x2 + 1.6)^2))"],
+)
 
 # This is calligraphic G, the non-robust inequality constraints function
 calG = ot.SymbolicFunction(
-    ["x1", "x2"], ["(x1 - 0.5)^2 + x2^2 - 4.0", "(x1 + 0.5)^2 + x2^2 - 4.0"])
+    ["x1", "x2"], ["(x1 - 0.5)^2 + x2^2 - 4.0", "(x1 + 0.5)^2 + x2^2 - 4.0"]
+)
 
 #
 # Here we define the parametric optimization problem #
@@ -66,6 +70,7 @@ def discretizeExpectation(J, sampleXi):
     # all the parametric functions with a uniform weight of 1/size
     return LinearCombinationFunction(functionCollection, [1.0 / size] * size)
 
+
 # The reliability measure is the joint chance constraint of level alpha
 
 
@@ -82,8 +87,11 @@ def discretizeJointChance(g, sampleXi, alpha):
         functionCollection.append(ot.ComposedFunction(test, currentContributor))
     # The resulting discretized probability is the linear combination of
     # all the test functions with a uniform weight of 1/size
-    return ot.ComposedFunction(ot.SymbolicFunction("t", str(alpha) + " - t"),
-                               LinearCombinationFunction(functionCollection, [1.0 / size] * size))
+    return ot.ComposedFunction(
+        ot.SymbolicFunction("t", str(alpha) + " - t"),
+        LinearCombinationFunction(functionCollection, [1.0 / size] * size),
+    )
+
 
 #
 # Here we solve the robust optimization problem using the sequential algorithm #
@@ -92,8 +100,23 @@ def discretizeJointChance(g, sampleXi, alpha):
 
 class sequentialRobustOptimisationSolver:
 
-    def __init__(self, J, g, distributionXi, alpha, bounds, solver, N0, maximumIteration, robustIteration,
-                 initialSearch=100, epsilon=1e-10, drawFlag=False, verbose=False, directory="."):
+    def __init__(
+        self,
+        J,
+        g,
+        distributionXi,
+        alpha,
+        bounds,
+        solver,
+        N0,
+        maximumIteration,
+        robustIteration,
+        initialSearch=100,
+        epsilon=1e-10,
+        drawFlag=False,
+        verbose=False,
+        directory=".",
+    ):
         self.J_ = J
         self.g_ = g
         self.distributionXi_ = distributionXi
@@ -107,13 +130,13 @@ class sequentialRobustOptimisationSolver:
         self.epsilon_ = epsilon
         self.drawFlag_ = drawFlag
         self.verbose_ = verbose
-        self.path_ = ot.Sample(
-            0, J.getInputDimension() - distributionXi.getDimension())
+        self.path_ = ot.Sample(0, J.getInputDimension() - distributionXi.getDimension())
         self.directory_ = directory
 
     def solve(self):
         self.path_ = ot.Sample(
-            0, self.J_.getInputDimension() - self.distributionXi_.getDimension())
+            0, self.J_.getInputDimension() - self.distributionXi_.getDimension()
+        )
         currentSampleXi = ot.Sample(0, distributionXi.getDimension())
         currentN = self.N0_
         currentPoint = None
@@ -132,19 +155,23 @@ class sequentialRobustOptimisationSolver:
             rhoJ = discretizeExpectation(self.J_, currentSampleXi)
             if self.drawFlag_:
                 print("draw rhoJ")
-                ot.ResourceMap.SetAsUnsignedInteger(
-                    "Contour-DefaultLevelsNumber", 10)
+                ot.ResourceMap.SetAsUnsignedInteger("Contour-DefaultLevelsNumber", 10)
                 gRhoJ = rhoJ.draw(
-                    self.bounds_.getLowerBound(), self.bounds_.getUpperBound(), [100] * 2)
+                    self.bounds_.getLowerBound(),
+                    self.bounds_.getUpperBound(),
+                    [100] * 2,
+                )
             if self.verbose_:
                 print("discretize pG")
             pG = discretizeJointChance(self.g_, currentSampleXi, self.alpha_)
             if self.drawFlag_:
                 print("draw pG")
-                ot.ResourceMap.SetAsUnsignedInteger(
-                    "Contour-DefaultLevelsNumber", 1)
+                ot.ResourceMap.SetAsUnsignedInteger("Contour-DefaultLevelsNumber", 1)
                 gPG = pG.draw(
-                    self.bounds_.getLowerBound(), self.bounds_.getUpperBound(), [200] * 2)
+                    self.bounds_.getLowerBound(),
+                    self.bounds_.getUpperBound(),
+                    [200] * 2,
+                )
                 c = gPG.getDrawable(0)
                 c.setLevels([alpha])
                 c.setLabels([str(alpha)])
@@ -178,9 +205,18 @@ class sequentialRobustOptimisationSolver:
                 newPoint = self.solver_.getResult().getOptimalPoint()
                 bestValue = self.solver_.getResult().getOptimalValue()[0]
             else:
-                startingPoints = ot.LHSExperiment(ot.JointDistribution(
-                    [ot.Uniform(self.bounds_.getLowerBound()[i], self.bounds_.getUpperBound()[i])
-                        for i in range(self.bounds_.getDimension())]), self.initialSearch_).generate()
+                startingPoints = ot.LHSExperiment(
+                    ot.JointDistribution(
+                        [
+                            ot.Uniform(
+                                self.bounds_.getLowerBound()[i],
+                                self.bounds_.getUpperBound()[i],
+                            )
+                            for i in range(self.bounds_.getDimension())
+                        ]
+                    ),
+                    self.initialSearch_,
+                ).generate()
                 bestValue = ot.SpecFunc.MaxScalar
                 newPoint = startingPoints[0]
                 for i in range(startingPoints.getSize()):
@@ -195,7 +231,9 @@ class sequentialRobustOptimisationSolver:
                     if currentValue < bestValue:
                         bestValue = currentValue
                         newPoint = result.getOptimalPoint()
-                        print("Best initial point so far=", newPoint, "value=", bestValue)
+                        print(
+                            "Best initial point so far=", newPoint, "value=", bestValue
+                        )
             if self.verbose_:
                 print("current optimum=", newPoint)
             self.path_.add(newPoint)
@@ -215,12 +253,33 @@ class sequentialRobustOptimisationSolver:
                 c.setPointStyle("star")
                 c.setColor("cyan")
                 g.add(c)
-                g.setTitle("sigma=" + str(sigma_xi) + ", rhoJ_N, pG_N for N=" + str(
-                    currentN) + "\nx^*=" + str(newPoint) + ", rhoJ^*=" + str(bestValue))
+                g.setTitle(
+                    "sigma="
+                    + str(sigma_xi)
+                    + ", rhoJ_N, pG_N for N="
+                    + str(currentN)
+                    + "\nx^*="
+                    + str(newPoint)
+                    + ", rhoJ^*="
+                    + str(bestValue)
+                )
                 print("draw convergence")
-                g.draw(self.directory_ + "/convergence_iteration_" + str(iteration) + "_N_" + str(
-                    currentN).zfill(2) + "_sigma_" + str(sigma_xi).zfill(4) + ".png", 800, 820)
-            if iteration > 0 and ((newPoint - currentPoint).norm() < self.epsilon_ or currentEpsilon < self.epsilon_):
+                g.draw(
+                    self.directory_
+                    + "/convergence_iteration_"
+                    + str(iteration)
+                    + "_N_"
+                    + str(currentN).zfill(2)
+                    + "_sigma_"
+                    + str(sigma_xi).zfill(4)
+                    + ".png",
+                    800,
+                    820,
+                )
+            if iteration > 0 and (
+                (newPoint - currentPoint).norm() < self.epsilon_
+                or currentEpsilon < self.epsilon_
+            ):
                 break
             currentPoint = newPoint
         return newPoint
@@ -255,8 +314,20 @@ for i in range(len(all_sigma)):
     # maximumIteration, robustIteration, initialSearch = 100, epsilon = 1e-10,
     # drawFlag = False, verbose = False
     robustAlgorithm = sequentialRobustOptimisationSolver(
-        J, g, distributionXi, alpha, bounds, solver, N0, localIterations,
-        robustIterations, initialSearch, epsilon, drawFlag, verboseFlag)
+        J,
+        g,
+        distributionXi,
+        alpha,
+        bounds,
+        solver,
+        N0,
+        localIterations,
+        robustIterations,
+        initialSearch,
+        epsilon,
+        drawFlag,
+        verboseFlag,
+    )
     solution = robustAlgorithm.solve()
 
     print("solution=", solution)

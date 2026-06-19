@@ -22,6 +22,7 @@
 #include <openturns/PersistentObjectFactory.hxx>
 #include <openturns/GaussKronrod.hxx>
 #include <openturns/IteratedQuadrature.hxx>
+#include <openturns/DistFunc.hxx>
 
 using namespace OT;
 
@@ -36,6 +37,7 @@ static Factory<JointChanceMeasure> Factory_JointChanceMeasure;
 /* Default constructor */
 JointChanceMeasure::JointChanceMeasure()
   : MeasureEvaluationImplementation()
+  , alpha_(0.0)
 {
   // Set the default integration algorithm
   GaussKronrod gkr;
@@ -50,6 +52,7 @@ JointChanceMeasure::JointChanceMeasure (const Function & function,
                                         const Scalar alpha)
   : MeasureEvaluationImplementation(function, distribution)
   , operator_(op)
+  , alpha_(0.0)
 {
   setAlpha(alpha);
   setOutputDescription(Description(1, "P"));
@@ -179,7 +182,8 @@ Point JointChanceMeasure::operator()(const Point & inP) const
       if (allOk) outP[0] += weights[i];
     } // for i
   }
-  outP[0] = operator_.operator()(1.0, 2.0) ? alpha_ - outP[0] : outP[0] - alpha_;
+  const Scalar p = std::min(std::max(outP[0], getPDFThreshold()), 1.0 - getPDFThreshold());
+  outP[0] = operator_.operator()(1.0, 2.0) ? DistFunc::qNormal(alpha_) - DistFunc::qNormal(p) : DistFunc::qNormal(p) - DistFunc::qNormal(alpha_);
   return outP;
 }
 

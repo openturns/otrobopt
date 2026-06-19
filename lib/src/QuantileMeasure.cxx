@@ -123,7 +123,7 @@ public:
       const UnsignedInteger j = significant[i];
       function.setParameter(theta[j]);
       const Scalar y = function(x_)[0];
-      outS(i, 0) = (y <= s_ ? pdfs[j] : 0.0);
+      outS(j, 0) = (y <= s_ ? pdfs[j] : 0.0);
     }
     return outS;
   }
