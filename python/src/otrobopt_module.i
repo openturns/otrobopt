@@ -37,3 +37,7 @@
 %include SubsetInverseSampling.i
 %include InverseFORMResult.i
 %include InverseFORM.i
+%include RBDOProblem.i
+%include RIAAlgorithm.i
+%include PMAAlgorithm.i
+%include SORAAlgorithm.i

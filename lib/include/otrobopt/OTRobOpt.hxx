@@ -34,5 +34,9 @@
 #include "otrobopt/MeasureFactory.hxx"
 #include "otrobopt/SubsetInverseSampling.hxx"
 #include "otrobopt/InverseFORM.hxx"
+#include "otrobopt/RBDOProblem.hxx"
+#include "otrobopt/RIAAlgorithm.hxx"
+#include "otrobopt/PMAAlgorithm.hxx"
+#include "otrobopt/SORAAlgorithm.hxx"
 
 #endif /* OTROBOPT_OTROBOPT_HXX */

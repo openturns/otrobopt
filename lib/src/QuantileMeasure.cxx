@@ -94,9 +94,9 @@ public:
   {
     const Scalar pdf = distribution_.computePDF(theta);
     if (pdf <= pdfThreshold_) return Point(1, 0.0);
-    Function function(function_);
-    function.setParameter(theta);
-    const Scalar y = function(x_)[0];
+    Function func(function_);
+    func.setParameter(theta);
+    const Scalar y = func(x_)[0];
     const Scalar p = (y <= s_ ? pdf : 0.0);
     return Point(1, p);
   }
@@ -111,12 +111,12 @@ public:
     Sample outS(size, 1);
     // Early exit to avoid the copy of function_
     if (significant.getSize() == 0) return outS;
-    Function function(function_);
+    Function func(function_);
     for (UnsignedInteger i = 0; i < significant.getSize(); ++ i)
     {
       const UnsignedInteger j = significant[i];
-      function.setParameter(theta[j]);
-      const Scalar y = function(x_)[0];
+      func.setParameter(theta[j]);
+      const Scalar y = func(x_)[0];
       outS(j, 0) = (y <= s_ ? pdfs[j] : 0.0);
     }
     return outS;
@@ -222,12 +222,12 @@ protected:
 /* Evaluation */
 Point QuantileMeasure::operator()(const Point & inP) const
 {
-  Function function(getFunction());
-  const UnsignedInteger outputDimension = function.getOutputDimension();
+  Function func(getFunction());
+  const UnsignedInteger outputDimension = func.getOutputDimension();
   Point outP(outputDimension);
   if (getDistribution().isContinuous())
   {
-    Pointer<FunctionImplementation> p_wrapper(new QuantileMeasureParametricFunctionWrapper2(inP, function, getDistribution(), integrationAlgorithm_, pdfThreshold_));
+    Pointer<FunctionImplementation> p_wrapper(new QuantileMeasureParametricFunctionWrapper2(inP, func, getDistribution(), integrationAlgorithm_, pdfThreshold_));
     Function G(p_wrapper);
 
     Scalar lower = 0.0;
@@ -274,8 +274,8 @@ Point QuantileMeasure::operator()(const Point & inP) const
     {
       if (pdfs[i] > pdfThreshold_)
         {
-          function.setParameter(parameters[i]);
-          values.add(function(inP));
+          func.setParameter(parameters[i]);
+          values.add(func(inP));
           weights.add(pdfs[i]);
         }
     } // for

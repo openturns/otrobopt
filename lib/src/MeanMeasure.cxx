@@ -86,9 +86,9 @@ public:
   {
     const Scalar pdf = distribution_.computePDF(theta);
     if (pdf <= pdfThreshold_) return Point(function_.getOutputDimension(), 0.0);
-    Function function(function_);
-    function.setParameter(theta);
-    return function(x_) * pdf;
+    Function func(function_);
+    func.setParameter(theta);
+    return func(x_) * pdf;
   }
 
   Sample operator()(const Sample & theta) const override
@@ -102,12 +102,12 @@ public:
       if (pdfs[i] > pdfThreshold_) significant.add(i);
     // Early exit to avoid the copy of function_
     if (significant.getSize() == 0) return outS;
-    Function function(function_);
+    Function func(function_);
     for (UnsignedInteger i = 0; i < significant.getSize(); ++i)
     {
       const UnsignedInteger j = significant[i];
-      function.setParameter(theta[j]);
-      outS[j] = function(x_) * pdfs[j];
+      func.setParameter(theta[j]);
+      outS[j] = func(x_) * pdfs[j];
     } // for
     return outS;
   }
@@ -143,12 +143,12 @@ protected:
 /* Evaluation */
 Point MeanMeasure::operator()(const Point & inP) const
 {
-  Function function(getFunction());
-  const UnsignedInteger outputDimension = function.getOutputDimension();
+  Function func(getFunction());
+  const UnsignedInteger outputDimension = func.getOutputDimension();
   Point outP(outputDimension);
   if (getDistribution().isContinuous())
   {
-    Pointer<FunctionImplementation> p_wrapper(new MeanMeasureParametricFunctionWrapper(inP, function, getDistribution(), pdfThreshold_));
+    Pointer<FunctionImplementation> p_wrapper(new MeanMeasureParametricFunctionWrapper(inP, func, getDistribution(), pdfThreshold_));
     const Function G(p_wrapper);
     outP = integrationAlgorithm_.integrate(G, getDistribution().getRange());
   }
@@ -161,8 +161,8 @@ Point MeanMeasure::operator()(const Point & inP) const
     {
       if (pdfs[i] > pdfThreshold_)
       {
-        function.setParameter(parameters[i]);
-        outP += function(inP) * pdfs[i];
+        func.setParameter(parameters[i]);
+        outP += func(inP) * pdfs[i];
       }
     } // for
   } // !isContinuous

@@ -94,9 +94,9 @@ public:
   {
     const Scalar pdf = distribution_.computePDF(theta);
     if (pdf <= pdfThreshold_) return Point(1, 0.0);
-    Function function(function_);
-    function.setParameter(theta);
-    const Point y(function(x_));
+    Function func(function_);
+    func.setParameter(theta);
+    const Point y(func(x_));
     const UnsignedInteger outputDimension = y.getDimension();
     for (UnsignedInteger j = 0; j < outputDimension; ++ j)
       if (y[j] < 0.0) return Point(1, 0.0);
@@ -143,12 +143,12 @@ protected:
 /* Evaluation */
 Point JointChanceMeasure::operator()(const Point & inP) const
 {
-  Function function(getFunction());
-  const UnsignedInteger outputDimension = function.getOutputDimension();
+  Function func(getFunction());
+  const UnsignedInteger outputDimension = func.getOutputDimension();
   Point outP(1);
   if (getDistribution().isContinuous())
   {
-    Pointer<FunctionImplementation> p_wrapper(new JointChanceMeasureParametricFunctionWrapper(inP, function, getDistribution(), pdfThreshold_));
+    Pointer<FunctionImplementation> p_wrapper(new JointChanceMeasureParametricFunctionWrapper(inP, func, getDistribution(), pdfThreshold_));
     const Function G(p_wrapper);
     outP = integrationAlgorithm_.integrate(G, getDistribution().getRange());
   }
@@ -163,8 +163,8 @@ Point JointChanceMeasure::operator()(const Point & inP) const
     {
       if (pdfs[i] > pdfThreshold_)
         {
-          function.setParameter(parameters[i]);
-          values.add(function(inP));
+          func.setParameter(parameters[i]);
+          values.add(func(inP));
           weights.add(pdfs[i]);
         }
     }

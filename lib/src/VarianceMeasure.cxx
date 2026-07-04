@@ -91,9 +91,9 @@ public:
     // (f_1(x), ...., f_d(x), f_1^2(x), ..., f_d^2(x))
     Point outP(2 * outputDimension, 0.0);
     if (pdf <= pdfThreshold_) return outP;
-    Function function(function_);
-    function.setParameter(theta);
-    const Point outF(function(x_));
+    Function func(function_);
+    func.setParameter(theta);
+    const Point outF(func(x_));
     for (UnsignedInteger j = 0; j < outputDimension; ++ j)
       {
         const Scalar fj = outF[j];
@@ -115,12 +115,12 @@ public:
     Sample outS(size, 2 * outputDimension);
     // Early exit to avoid the copy of function_
     if (significant.getSize() == 0) return outS;
-    Function function(function_);
+    Function func(function_);
     for (UnsignedInteger i = 0; i < significant.getSize(); ++i)
     {
       const UnsignedInteger j = significant[i];
-      function.setParameter(theta[j]);
-      const Point fJ = function(x_);
+      func.setParameter(theta[j]);
+      const Point fJ = func(x_);
       const Scalar pdfJ = pdfs[j];
       for (UnsignedInteger k = 0; k < outputDimension; ++k)
         {
@@ -165,12 +165,12 @@ protected:
 /* Evaluation */
 Point VarianceMeasure::operator()(const Point & inP) const
 {
-  Function function(getFunction());
-  const UnsignedInteger outputDimension = function.getOutputDimension();
+  Function func(getFunction());
+  const UnsignedInteger outputDimension = func.getOutputDimension();
   Point outP(outputDimension);
   if (getDistribution().isContinuous())
   {
-    Pointer<FunctionImplementation> p_wrapper(new VarianceMeasureParametricFunctionWrapper(inP, function, getDistribution(), pdfThreshold_));
+    Pointer<FunctionImplementation> p_wrapper(new VarianceMeasureParametricFunctionWrapper(inP, func, getDistribution(), pdfThreshold_));
     const Function G(p_wrapper);
     Point integral(integrationAlgorithm_.integrate(G, getDistribution().getRange()));
     for (UnsignedInteger j = 0; j < outputDimension; ++ j)
@@ -191,8 +191,8 @@ Point VarianceMeasure::operator()(const Point & inP) const
     {
       if (pdfs[i] > pdfThreshold_)
         {
-          function.setParameter(parameters[i]);
-          values.add(function(inP));
+          func.setParameter(parameters[i]);
+          values.add(func(inP));
           weights.add(pdfs[i]);
         }
     } // for

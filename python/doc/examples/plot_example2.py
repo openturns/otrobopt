@@ -20,7 +20,6 @@ Robust optimization with a deterministic constraint
 
 # %%
 import openturns as ot
-import openturns.testing
 import otrobopt
 
 # ot.Log.Show(ot.Log.Info)

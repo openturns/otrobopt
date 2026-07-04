@@ -37,8 +37,6 @@ sigma = [1.0] * 2
 R = ot.IdentityMatrix(dim)
 myDistribution = ot.Normal(mean, sigma, R)
 
-start = myDistribution.getMean()
-
 ###########################################################################
 # Limit state
 ###########################################################################
@@ -69,10 +67,10 @@ myMC.run()
 
 ResultMC = myMC.getResult()
 PFMC = ResultMC.getProbabilityEstimate()
-CVMC = ResultMC.getCoefficientOfVariation()
-Variance_PF_MC = ResultMC.getVarianceEstimate()
-length90MC = ResultMC.getConfidenceLength(0.90)
-N_MC = ResultMC.getOuterSampling() * ResultMC.getBlockSize()
+_ = ResultMC.getCoefficientOfVariation()
+_ = ResultMC.getVarianceEstimate()
+_ = ResultMC.getConfidenceLength(0.90)
+_ = ResultMC.getOuterSampling() * ResultMC.getBlockSize()
 
 ###########################################################################
 # Computation SubsetSampling
