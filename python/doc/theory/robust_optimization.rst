@@ -139,22 +139,30 @@ Joint chance constraint
 ^^^^^^^^^^^^^^^^^^^^^^^
 
 The **JointChanceMeasure** computes the probability that **all** constraint
-components are satisfied simultaneously, shifted by a target level
-:math:`\alpha`:
+components are satisfied simultaneously, mapped through the probit transform
+:math:`\Phi^{-1}` (standard normal quantile function) and shifted by a target
+level :math:`\alpha`:
 
 .. math::
 
     \lambda_{\mathcal{D}}[G(x, \cdot)]
-    = \mathbb{P}_{\mathcal{D}}
-      \left( \bigcap_{k=1}^{n_g} \{ G_k(x, \theta) \geq 0 \} \right) - \alpha
+    = \Phi^{-1}\left( \mathbb{P}_{\mathcal{D}}
+      \left( \bigcap_{k=1}^{n_g} \{ G_k(x, \theta) \geq 0 \} \right) \right)
+      - \Phi^{-1}(\alpha)
 
+The probit transform stretches the probability scale near 0 and 1,
+improving the conditioning of the measure for gradient-based optimization.
 The integral is:
 
 .. math::
 
-    \lambda = \int \left( \prod_{k=1}^{n_g}
+    P(x) = \int \left( \prod_{k=1}^{n_g}
       \mathbf{1}_{\{ G_k(x, \theta) \geq 0 \}} \right)
-      p(\theta) \, d\theta \; - \; \alpha
+      p(\theta) \, d\theta
+
+.. math::
+
+    \lambda = \Phi^{-1}(P(x)) - \Phi^{-1}(\alpha)
 
 When a comparison operator other than *Greater* is used, the sign is
 adjusted so that the constraint :math:`\lambda \geq 0` corresponds to
@@ -164,13 +172,14 @@ Individual chance constraint
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The **IndividualChanceMeasure** computes the probability that **each**
-constraint component is satisfied **individually**, shifted by per-component
-target levels:
+constraint component is satisfied **individually**, mapped through the probit
+transform :math:`\Phi^{-1}` and shifted by per-component target levels:
 
 .. math::
 
     \lambda_{\mathcal{D}}[G(x, \cdot)]_k
-    = \mathbb{P}_{\mathcal{D}}( G_k(x, \theta) \geq 0 ) - \alpha_k
+    = \Phi^{-1}\left( \mathbb{P}_{\mathcal{D}}( G_k(x, \theta) \geq 0 ) \right)
+      - \Phi^{-1}(\alpha_k)
 
 for :math:`k = 1, \dots, n_g`. The constraint
 :math:`\lambda_{\mathcal{D}} \geq 0` is interpreted component-wise.

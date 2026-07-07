@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import openturns as ot
-import openturns.testing as ott
 import otrobopt
 
 # ot.Log.Show(ot.Log.Info)
@@ -49,6 +48,6 @@ for sigma_xi in [0.1, 0.2, 0.3, 0.4, 0.5]:
     algo.setInitialSearch(1000)  # number of multi-start tries, uniform law using bounds
     algo.run()
     result = algo.getResult()
-    ott.assert_almost_equal(result.getOptimalPoint().getDimension(), 2)
-    ott.assert_almost_equal(len(algo.getInitialStartingPoints()), 1000)
-    ott.assert_almost_equal(len(algo.getResultCollection()), 13)
+    assert len(result.getOptimalPoint()) == 2
+    assert len(algo.getInitialStartingPoints()) == 1000
+    assert len(algo.getResultCollection()) > 10

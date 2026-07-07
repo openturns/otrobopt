@@ -7,19 +7,31 @@ When the constraint considered is :math:`\Pset (f_k(x, \Theta) \ge 0) \geq \alph
 
 .. math::
 
-    M_{f_k, \cD, \alpha_k}(x) = \Pset (f_k(x, \theta) \ge 0) - \alpha_k
+    M_{f_k, \cD, \alpha_k}(x) = \Phi^{-1}(\Pset (f_k(x, \theta) \ge 0)) - \Phi^{-1}(\alpha_k)
+
+where :math:`\Phi^{-1}` is the standard normal quantile function (probit transform).
+The mapping through :math:`\Phi^{-1}` improves the conditioning of the measure for
+gradient-based optimization by stretching the probability scale near 0 and 1.
 
 In case of a continuous distribution:
 
 .. math::
 
-    M_{f_k, \cD, \alpha_k}(x) = \int_{Supp(\cD)} \mathbf{1}_{f_k(x, \theta) \ge 0} p(\theta) d \theta - \alpha_k
+    P_k(x) = \int_{Supp(\cD)} \mathbf{1}_{f_k(x, \theta) \ge 0} p(\theta) d \theta
+
+.. math::
+
+    M_{f_k, \cD, \alpha_k}(x) = \Phi^{-1}(P_k(x)) - \Phi^{-1}(\alpha_k)
 
 In case of a discrete distribution:
 
 .. math::
 
-    M_{f_k, \cD, \alpha_k}(x) = \sum_{\theta_i \in Supp(\cD)} \mathbf{1}_{f_k(x, \theta_i) \ge 0} p_i - \alpha_k
+    P_k(x) = \sum_{\theta_i \in Supp(\cD)} \mathbf{1}_{f_k(x, \theta_i) \ge 0} p_i
+
+.. math::
+
+    M_{f_k, \cD, \alpha_k}(x) = \Phi^{-1}(P_k(x)) - \Phi^{-1}(\alpha_k)
 
 
 Parameters

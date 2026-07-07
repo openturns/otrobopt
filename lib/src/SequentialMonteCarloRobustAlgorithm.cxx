@@ -2,7 +2,7 @@
 /**
  *  @brief Alternating discretization of measures and deterministic optimization steps
  *
- *  Copyright 2005-2024 Airbus-EDF-IMACS-Phimeca
+ *  Copyright 2005-2026 Airbus-EDF-IMACS-ONERA-Phimeca
  *
  *  This library is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -177,34 +177,34 @@ void SequentialMonteCarloRobustAlgorithm::run()
       solver.setStartingPoint(currentPoint);
       try
       {
-	solver.run();
-	result = solver.getResult();
-	if (result.getOptimalPoint().getDimension() == 0) throw InvalidArgumentException(HERE) << "Local optimization failed, try multistart if allowed";
+        solver.run();
+        result = solver.getResult();
+        if (result.getOptimalPoint().getDimension() == 0) throw InvalidArgumentException(HERE) << "Local optimization failed, try multistart if allowed";
       }
       catch (const InvalidArgumentException & ex)
       {
-	if (initialSearch_ > 0) // multi-start
-	{
-	  // Create tight neigbourhood of the current optimal point
-	  Point lowerBound(currentPoint);
-	  Point upperBound(currentPoint);
-	  const Scalar delta = 3.0 / std::sqrt(N);
-	  for (UnsignedInteger i = 0; i < dimension; ++i)
-	  {
-	    lowerBound[i] -= delta;
-	    upperBound[i] += delta;
-	  }
-	  const Interval bounds(Interval(lowerBound, upperBound).intersect(problem.getBounds()));
-	  Sample initialStartingPoints;
-	  result = doMultiStart(solver, bounds, initialStartingPoints);
-	} // initialSearch_ > 0
-	// If no cure possible, rethrow the exception
-	else throw;
+        if (initialSearch_ > 0) // multi-start
+        {
+          // Create tight neigbourhood of the current optimal point
+          Point lowerBound(currentPoint);
+          Point upperBound(currentPoint);
+          const Scalar delta = 3.0 / std::sqrt(N);
+          for (UnsignedInteger i = 0; i < dimension; ++i)
+          {
+            lowerBound[i] -= delta;
+            upperBound[i] += delta;
+          }
+          const Interval bounds(Interval(lowerBound, upperBound).intersect(problem.getBounds()));
+          Sample initialStartingPoints;
+          result = doMultiStart(solver, bounds, initialStartingPoints);
+        } // initialSearch_ > 0
+        // If no cure possible, rethrow the exception
+        else throw;
       } // InvalidArgumentException
     } // (iterationNumber > 0) || (initialSearch_ == 0)
     resultCollection_.add(result);
     newPoint = result.getOptimalPoint();
-    newValue = result.getOptimalValue();	
+    newValue = result.getOptimalValue();
 
     LOGINFO(OSS() << "current optimum=" << newPoint);
 

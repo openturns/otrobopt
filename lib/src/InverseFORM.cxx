@@ -2,7 +2,7 @@
 /**
  *  @brief InverseFORM
  *
- *  Copyright 2005-2024 Airbus-EDF-IMACS-Phimeca
+ *  Copyright 2005-2026 Airbus-EDF-IMACS-ONERA-Phimeca
  *
  *  This library is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -28,13 +28,7 @@
 #include <openturns/ThresholdEvent.hxx>
 #include <openturns/ComposedFunction.hxx>
 #include <openturns/SpecFunc.hxx>
-
-#if OPENTURNS_VERSION >= 102600
 #include <openturns/CompoundDistribution.hxx>
-#else
-#include <openturns/DeconditionedDistribution.hxx>
-#define CompoundDistribution DeconditionedDistribution
-#endif
 
 
 using namespace OT;

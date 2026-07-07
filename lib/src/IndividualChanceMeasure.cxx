@@ -2,7 +2,7 @@
 /**
  *  @brief Individual probability measure
  *
- *  Copyright 2005-2024 Airbus-EDF-IMACS-Phimeca
+ *  Copyright 2005-2026 Airbus-EDF-IMACS-ONERA-Phimeca
  *
  *  This library is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -23,13 +23,7 @@
 #include <openturns/GaussKronrod.hxx>
 #include <openturns/IteratedQuadrature.hxx>
 #include <openturns/DistFunc.hxx>
-
-#if OPENTURNS_VERSION >= 102700
 #include <openturns/FiniteDiscreteDistribution.hxx>
-#else
-#include <openturns/UserDefined.hxx>
-#define FiniteDiscreteDistribution UserDefined
-#endif
 
 using namespace OT;
 
