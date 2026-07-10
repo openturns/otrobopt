@@ -3,18 +3,23 @@ R"RAW(Inverse First Order Reliability Method.
 
 The Inverse FORM algorithm solves the inverse reliability problem:
 given a target reliability index :math:`\beta_t`, find the parameter
-:math:`\theta` of the limit state function :math:`g(\ux, \theta)` such
-that the reliability index of the resulting failure event equals
-:math:`\beta_t`.
+:math:`\theta` to be calibrated of the limit state function
+:math:`g(\ux, \theta)` such that the reliability index of the resulting
+failure event equals :math:`\beta_t`.
 
-Formally, we seek :math:`\theta` such that:
+In this class, :math:`\ux` denotes the stochastic (random) parameters in
+standard space and :math:`\theta` denotes the parameter to be optimized.
+
+Formally, the algorithm seeks a pair :math:`(\ux^*, \theta^*)` such that:
 
 .. math::
 
-    \beta(\theta) = \beta_t
+    \ux^* = \argmin_{\ux\; :\; \|\ux\| = \beta_t} g(\ux, \theta^*), \qquad
+    g(\ux^*, \theta^*) = 0
 
-where :math:`\beta(\theta)` is the Hasofer-Lind reliability index
-associated with the failure event :math:`\{g(\ux, \theta) \leq 0\}`.
+where :math:`\ux^*` is the Most Probable Point (MPP) on the sphere of
+radius :math:`\beta_t` in standard space and :math:`\theta^*` is the
+calibrated parameter value such that :math:`\beta(\theta^*) = \beta_t`.
 
 The algorithm is iterative. At each iteration :math:`k`:
 
