@@ -86,7 +86,7 @@ sphinx_gallery_conf = {
     # directory where function/class granular galleries are stored
     "backreferences_dir": "gen_modules/backreferences",
     # Modules for which function/class level galleries are created.
-    'doc_module'          : ('ottemplate'),
+    'doc_module'          : ('otrobopt'),
     # objects to exclude from implicit backreferences. The default option
     # is an empty set, i.e. exclude nothing.
     'exclude_implicit_doc': {},
