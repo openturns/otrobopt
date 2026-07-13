@@ -1,3 +1,4 @@
+#include <iostream>
 #include "openturns/OT.hxx"
 #include "openturns/OTtestcode.hxx"
 #include "otrobopt/OTRobOpt.hxx"

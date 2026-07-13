@@ -98,6 +98,7 @@ Define a robust optimization problem
     :template: class.rst_t
 
     RobustOptimizationProblem
+    RBDOProblem
 
 Discretize a measure function
 -----------------------------
@@ -117,6 +118,9 @@ Solve a robust optimization problem
 
     RobustOptimizationAlgorithm
     SequentialMonteCarloRobustAlgorithm
+    RIAAlgorithm
+    PMAAlgorithm
+    SORAAlgorithm
 
 .. FIXME: sphinx.errors.SphinxWarning: .../otrobopt.py:docstring of openturns.analytical.AnalyticalResult.getHasoferReliabilityIndexSensitivity:4:undefined label: sensitivity_form
 .. _sensitivity_form:

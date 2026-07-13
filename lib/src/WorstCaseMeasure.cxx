@@ -77,30 +77,30 @@ public:
 
   Point operator()(const Point & theta) const override
   {
-    Function function(function_);
-    function.setParameter(theta);
-    return function(x_);
+    Function func(function_);
+    func.setParameter(theta);
+    return func(x_);
   }
 
   Sample operator()(const Sample & theta) const override
   {
-    Function function(function_);
+    Function func(function_);
     const UnsignedInteger size = theta.getSize();
-    const UnsignedInteger outputDimension = function.getOutputDimension();
+    const UnsignedInteger outputDimension = func.getOutputDimension();
     Sample values(size, outputDimension);
     for (UnsignedInteger i = 0; i < size; ++i)
     {
-      function.setParameter(theta[i]);
-      values[i] = function(x_);
+      func.setParameter(theta[i]);
+      values[i] = func(x_);
     }
     return values;
   }
 
   Matrix gradient(const Point & theta) const override
   {
-    Function function(function_);
-    function.setParameter(theta);
-    return function.parameterGradient(x_);
+    Function func(function_);
+    func.setParameter(theta);
+    return func.parameterGradient(x_);
   }
 
   UnsignedInteger getInputDimension() const override
@@ -196,8 +196,8 @@ protected:
 /* Evaluation */
 Point WorstCaseMeasure::operator()(const Point & inP) const
 {
-  Function function(getFunction());
-  const UnsignedInteger outputDimension = function.getOutputDimension();
+  Function func(getFunction());
+  const UnsignedInteger outputDimension = func.getOutputDimension();
   Point outP(outputDimension);
   if (distribution_.isContinuous())
   {
@@ -209,7 +209,7 @@ Point WorstCaseMeasure::operator()(const Point & inP) const
       }
     for (UnsignedInteger j = 0; j < outputDimension; ++ j)
     {
-      const Pointer<FunctionImplementation> p_wrapper(new WorstCaseMeasureParametricFunctionWrapper(inP, function.getMarginal(j)));
+      const Pointer<FunctionImplementation> p_wrapper(new WorstCaseMeasureParametricFunctionWrapper(inP, func.getMarginal(j)));
       const Function G(p_wrapper);
       OptimizationProblem problem(G, Function(), C, distribution_.getRange());
       problem.setMinimization(isMinimization());
@@ -231,8 +231,8 @@ Point WorstCaseMeasure::operator()(const Point & inP) const
     {
       if (pdfs[i] > pdfThreshold_)
         {
-          function.setParameter(parameters[i]);
-          values.add(function(inP));
+          func.setParameter(parameters[i]);
+          values.add(func(inP));
         }
     } // i
     outP = (isMinimization_ ? values.getMin() : values.getMax());

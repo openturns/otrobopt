@@ -35,6 +35,8 @@ include_directories ( ${INTERNAL_INCLUDE_DIRS} )
 
 
 
+ot_check_test (RobustOptimizationProblem_std IGNOREOUT)
+ot_check_test (RobustOptimizationAlgorithm_std IGNOREOUT)
 ot_check_test (MeasureEvaluation_std)
 get_target_property (ot_features OT OPENTURNS_ENABLED_FEATURES)
 if (ot_features MATCHES "nlopt" AND NOT WIN32)
@@ -46,6 +48,13 @@ ot_check_test (InverseFORM_sphere IGNOREOUT)
 ot_check_test (MeasureFunction_std IGNOREOUT)
 ot_check_test (MeasureFactory_std IGNOREOUT)
 ot_check_test (MeasureEvaluation_edge IGNOREOUT)
+if (ot_features MATCHES "nlopt" AND NOT WIN32)
+ot_check_test (RIAAlgorithm_std IGNOREOUT)
+ot_check_test (PMAAlgorithm_std IGNOREOUT)
+ot_check_test (SORAAlgorithm_std IGNOREOUT)
+endif()
+
+ot_check_test (RBDOProblem_std IGNOREOUT)
 
 add_custom_target ( cppcheck COMMAND ${CMAKE_CTEST_COMMAND} -R "^cppcheck_"
                     DEPENDS ${CHECK_TO_BE_RUN}
