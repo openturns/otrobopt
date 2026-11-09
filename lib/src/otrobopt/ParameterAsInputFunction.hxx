@@ -59,10 +59,6 @@ public:
   /** Virtual constructor */
   ParameterAsInputFunction * clone() const override;
 
-  /** Evaluation */
-  OT::Point operator()(const OT::Point & inP) const override;
-  OT::Sample operator()(const OT::Sample & inS) const override;
-
   /** Gradient against the input coordinates */
   OT::Matrix gradient(const OT::Point & inP) const override;
 
