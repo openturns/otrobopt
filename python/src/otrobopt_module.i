@@ -30,6 +30,7 @@
 %include IndividualChanceMeasure.i
 %include MeasureFunction.i
 %include ParameterAsInputFunction.i
+%include ParametricDistributionTransformation.i
 %include MeasureFactory.i
 %include RobustOptimizationProblem.i
 %include RobustOptimizationAlgorithm.i

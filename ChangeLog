@@ -1,6 +1,7 @@
 = 0.20 release (unreleased)
 
  * Add ParameterAsInputFunction
+ * Add ParametricDistributionTransformation
 
 = 0.19 release (2026-11-18)
 
