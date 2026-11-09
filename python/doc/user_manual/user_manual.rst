@@ -62,6 +62,15 @@ Measure function
 
     MeasureFunction
 
+Parameter as input
+------------------
+
+.. autosummary::
+    :toctree: _generated/
+    :template: class.rst_t
+
+    ParameterAsInputFunction
+
 Measure evaluation
 ------------------
 
