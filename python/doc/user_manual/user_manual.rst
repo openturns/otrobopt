@@ -71,6 +71,15 @@ Parameter as input
 
     ParameterAsInputFunction
 
+Parameter-dependent transformation
+----------------------------------
+
+.. autosummary::
+    :toctree: _generated/
+    :template: class.rst_t
+
+    ParametricDistributionTransformation
+
 Measure evaluation
 ------------------
 
