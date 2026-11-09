@@ -21,13 +21,240 @@
 #include "otrobopt/ParameterAsInputFunction.hxx"
 
 #include <openturns/Description.hxx>
+#include <openturns/EvaluationImplementation.hxx>
 #include <openturns/Exception.hxx>
+#include <openturns/GradientImplementation.hxx>
 #include <openturns/PersistentObjectFactory.hxx>
 
 using namespace OT;
 
 namespace OTROBOPT
 {
+
+namespace
+{
+
+Point evaluateParameterAsInput(const Function & function,
+                               const Point & inP)
+{
+  const UnsignedInteger inputDimension = function.getInputDimension();
+  const UnsignedInteger parameterDimension = function.getParameterDimension();
+  const UnsignedInteger totalDimension = inputDimension + parameterDimension;
+  if (inP.getDimension() != totalDimension)
+    throw InvalidArgumentException(HERE) << "Error: expected a point of dimension "
+                                         << totalDimension << ", got "
+                                         << inP.getDimension();
+  const Point u(inP.begin(), inP.begin() + inputDimension);
+  const Point theta(inP.begin() + inputDimension, inP.end());
+  Function functionCopy(function);
+  functionCopy.setParameter(theta);
+  return functionCopy(u);
+}
+
+Matrix gradientParameterAsInput(const Function & function,
+                                const Point & inP)
+{
+  const UnsignedInteger inputDimension = function.getInputDimension();
+  const UnsignedInteger parameterDimension = function.getParameterDimension();
+  const UnsignedInteger outputDimension = function.getOutputDimension();
+  const UnsignedInteger totalDimension = inputDimension + parameterDimension;
+  if (inP.getDimension() != totalDimension)
+    throw InvalidArgumentException(HERE) << "Error: expected a point of dimension "
+                                         << totalDimension << ", got "
+                                         << inP.getDimension();
+  const Point u(inP.begin(), inP.begin() + inputDimension);
+  const Point theta(inP.begin() + inputDimension, inP.end());
+
+  Function functionCopy(function);
+  functionCopy.setParameter(theta);
+  const Matrix inputGradient(functionCopy.gradient(u));
+  const Matrix parameterGradient(functionCopy.parameterGradient(u));
+
+  Matrix gradient(totalDimension, outputDimension);
+  for (UnsignedInteger i = 0; i < outputDimension; ++i)
+    for (UnsignedInteger j = 0; j < inputDimension; ++j)
+      gradient(j, i) = inputGradient(j, i);
+  for (UnsignedInteger i = 0; i < outputDimension; ++i)
+    for (UnsignedInteger j = 0; j < parameterDimension; ++j)
+      gradient(inputDimension + j, i) = parameterGradient(j, i);
+  return gradient;
+}
+
+Description parameterAsInputDescription(const Function & function)
+{
+  const UnsignedInteger inputDimension = function.getInputDimension();
+  const UnsignedInteger parameterDimension = function.getParameterDimension();
+  Description inputDescription(function.getInputDescription());
+  if (inputDescription.getSize() != inputDimension)
+    inputDescription = Description::BuildDefault(inputDimension, "x");
+  Description parameterDescription(function.getParameterDescription());
+  if (parameterDescription.getSize() != parameterDimension)
+    parameterDescription = Description::BuildDefault(parameterDimension, "theta");
+  inputDescription.add(parameterDescription);
+  return inputDescription;
+}
+
+Description parameterAsInputOutputDescription(const Function & function)
+{
+  const UnsignedInteger outputDimension = function.getOutputDimension();
+  Description outputDescription(function.getOutputDescription());
+  if (outputDescription.getSize() != outputDimension)
+    outputDescription = Description::BuildDefault(outputDimension, "y");
+  return outputDescription;
+}
+
+}
+
+/* Internal evaluation used when this function is composed with another one */
+class ParameterAsInputEvaluation
+  : public EvaluationImplementation
+{
+  CLASSNAME
+
+public:
+  ParameterAsInputEvaluation()
+    : EvaluationImplementation()
+  {
+    // Nothing to do
+  }
+
+  explicit ParameterAsInputEvaluation(const Function & function)
+    : EvaluationImplementation()
+    , function_(function)
+  {
+    // Nothing to do
+  }
+
+  ParameterAsInputEvaluation * clone() const override
+  {
+    return new ParameterAsInputEvaluation(*this);
+  }
+
+  Point operator()(const Point & inP) const override
+  {
+    ++callsNumber_;
+    return evaluateParameterAsInput(function_, inP);
+  }
+
+  Sample operator()(const Sample & inS) const override
+  {
+    const UnsignedInteger size = inS.getSize();
+    Sample outS(size, getOutputDimension());
+    for (UnsignedInteger i = 0; i < size; ++i)
+      outS[i] = operator()(inS[i]);
+    return outS;
+  }
+
+  Matrix parameterGradient(const Point & inP) const override
+  {
+    const UnsignedInteger totalDimension = function_.getInputDimension() + function_.getParameterDimension();
+    if (inP.getDimension() != totalDimension)
+      throw InvalidArgumentException(HERE) << "Error: expected a point of dimension "
+                                           << totalDimension << ", got "
+                                           << inP.getDimension();
+    return Matrix(0, function_.getOutputDimension());
+  }
+
+  UnsignedInteger getInputDimension() const override
+  {
+    return function_.getInputDimension() + function_.getParameterDimension();
+  }
+
+  UnsignedInteger getOutputDimension() const override
+  {
+    return function_.getOutputDimension();
+  }
+
+  Description getInputDescription() const override
+  {
+    return parameterAsInputDescription(function_);
+  }
+
+  Description getOutputDescription() const override
+  {
+    return parameterAsInputOutputDescription(function_);
+  }
+
+  void save(Advocate & adv) const override
+  {
+    EvaluationImplementation::save(adv);
+    adv.saveAttribute("function_", function_);
+  }
+
+  void load(Advocate & adv) override
+  {
+    EvaluationImplementation::load(adv);
+    adv.loadAttribute("function_", function_);
+  }
+
+private:
+  Function function_;
+};
+
+/* Internal gradient used when this function is composed with another one */
+class ParameterAsInputGradient
+  : public GradientImplementation
+{
+  CLASSNAME
+
+public:
+  ParameterAsInputGradient()
+    : GradientImplementation()
+  {
+    // Nothing to do
+  }
+
+  explicit ParameterAsInputGradient(const Function & function)
+    : GradientImplementation()
+    , function_(function)
+  {
+    // Nothing to do
+  }
+
+  ParameterAsInputGradient * clone() const override
+  {
+    return new ParameterAsInputGradient(*this);
+  }
+
+  Matrix gradient(const Point & inP) const override
+  {
+    ++callsNumber_;
+    return gradientParameterAsInput(function_, inP);
+  }
+
+  UnsignedInteger getInputDimension() const override
+  {
+    return function_.getInputDimension() + function_.getParameterDimension();
+  }
+
+  UnsignedInteger getOutputDimension() const override
+  {
+    return function_.getOutputDimension();
+  }
+
+  void save(Advocate & adv) const override
+  {
+    GradientImplementation::save(adv);
+    adv.saveAttribute("function_", function_);
+  }
+
+  void load(Advocate & adv) override
+  {
+    GradientImplementation::load(adv);
+    adv.loadAttribute("function_", function_);
+  }
+
+private:
+  Function function_;
+};
+
+CLASSNAMEINIT(ParameterAsInputEvaluation)
+
+static Factory<ParameterAsInputEvaluation> Factory_ParameterAsInputEvaluation;
+
+CLASSNAMEINIT(ParameterAsInputGradient)
+
+static Factory<ParameterAsInputGradient> Factory_ParameterAsInputGradient;
 
 CLASSNAMEINIT(ParameterAsInputFunction)
 
@@ -46,23 +273,14 @@ ParameterAsInputFunction::ParameterAsInputFunction(const Function & function)
   , function_(function)
 {
   initializeDescriptions();
+  setEvaluation(Evaluation(new ParameterAsInputEvaluation(function_)));
+  setGradient(Gradient(new ParameterAsInputGradient(function_)));
 }
 
 void ParameterAsInputFunction::initializeDescriptions()
 {
-  const UnsignedInteger inputDimension = function_.getInputDimension();
-  const UnsignedInteger parameterDimension = function_.getParameterDimension();
-  const UnsignedInteger outputDimension = function_.getOutputDimension();
-  inputDescription_ = function_.getInputDescription();
-  if (inputDescription_.getSize() != inputDimension)
-    inputDescription_ = Description::BuildDefault(inputDimension, "x");
-  Description parameterDescription(function_.getParameterDescription());
-  if (parameterDescription.getSize() != parameterDimension)
-    parameterDescription = Description::BuildDefault(parameterDimension, "theta");
-  inputDescription_.add(parameterDescription);
-  outputDescription_ = function_.getOutputDescription();
-  if (outputDescription_.getSize() != outputDimension)
-    outputDescription_ = Description::BuildDefault(outputDimension, "y");
+  inputDescription_ = parameterAsInputDescription(function_);
+  outputDescription_ = parameterAsInputOutputDescription(function_);
 }
 
 /* Virtual constructor */
@@ -74,30 +292,12 @@ ParameterAsInputFunction * ParameterAsInputFunction::clone() const
 /* Evaluation */
 Point ParameterAsInputFunction::operator()(const Point & inP) const
 {
-  const UnsignedInteger inputDimension = function_.getInputDimension();
-  const UnsignedInteger parameterDimension = function_.getParameterDimension();
-  const UnsignedInteger totalDimension = inputDimension + parameterDimension;
-  if (inP.getDimension() != totalDimension)
-    throw InvalidArgumentException(HERE) << "Error: expected a point of dimension "
-                                         << totalDimension << ", got "
-                                         << inP.getDimension();
-  const Point u(inP.begin(), inP.begin() + inputDimension);
-  const Point theta(inP.begin() + inputDimension, inP.end());
-  Function function(function_);
-  function.setParameter(theta);
   ++callsNumber_;
-  return function(u);
+  return evaluateParameterAsInput(function_, inP);
 }
 
 Sample ParameterAsInputFunction::operator()(const Sample & inS) const
 {
-  const UnsignedInteger inputDimension = function_.getInputDimension();
-  const UnsignedInteger parameterDimension = function_.getParameterDimension();
-  const UnsignedInteger totalDimension = inputDimension + parameterDimension;
-  if (inS.getDimension() != totalDimension)
-    throw InvalidArgumentException(HERE) << "Error: expected a sample of dimension "
-                                         << totalDimension << ", got "
-                                         << inS.getDimension();
   const UnsignedInteger size = inS.getSize();
   Sample outS(size, getOutputDimension());
   for (UnsignedInteger i = 0; i < size; ++i)
@@ -108,30 +308,7 @@ Sample ParameterAsInputFunction::operator()(const Sample & inS) const
 /* Gradient against the input coordinates */
 Matrix ParameterAsInputFunction::gradient(const Point & inP) const
 {
-  const UnsignedInteger inputDimension = function_.getInputDimension();
-  const UnsignedInteger parameterDimension = function_.getParameterDimension();
-  const UnsignedInteger outputDimension = function_.getOutputDimension();
-  const UnsignedInteger totalDimension = inputDimension + parameterDimension;
-  if (inP.getDimension() != totalDimension)
-    throw InvalidArgumentException(HERE) << "Error: expected a point of dimension "
-                                         << totalDimension << ", got "
-                                         << inP.getDimension();
-  const Point u(inP.begin(), inP.begin() + inputDimension);
-  const Point theta(inP.begin() + inputDimension, inP.end());
-
-  Function function(function_);
-  function.setParameter(theta);
-  const Matrix inputGradient(function.gradient(u));
-  const Matrix parameterGradient(function.parameterGradient(u));
-
-  Matrix gradient(outputDimension, totalDimension);
-  for (UnsignedInteger i = 0; i < outputDimension; ++i)
-    for (UnsignedInteger j = 0; j < inputDimension; ++j)
-      gradient(i, j) = inputGradient(i, j);
-  for (UnsignedInteger i = 0; i < outputDimension; ++i)
-    for (UnsignedInteger j = 0; j < parameterDimension; ++j)
-      gradient(i, inputDimension + j) = parameterGradient(j, i);
-  return gradient;
+  return gradientParameterAsInput(function_, inP);
 }
 
 /* Gradient against the parameter: empty, the parameter is now an input */
@@ -215,6 +392,9 @@ void ParameterAsInputFunction::load(Advocate & adv)
   if (inputDescription_.getSize() != getInputDimension()
       || outputDescription_.getSize() != getOutputDimension())
     initializeDescriptions();
+  // Keep the composition delegates consistent with the reloaded function
+  setEvaluation(Evaluation(new ParameterAsInputEvaluation(function_)));
+  setGradient(Gradient(new ParameterAsInputGradient(function_)));
 }
 
 } /* namespace OTROBOPT */
