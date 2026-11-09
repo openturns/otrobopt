@@ -22,13 +22,14 @@ ott.assert_almost_equal(
     h([[2.0, 3.0, 4.0], [5.0, 6.0, 7.0]]), [[10.0], [37.0]]
 )
 
-# Exact gradient: (theta0, x, 1)
-ott.assert_almost_equal(h.gradient([2.0, 3.0, 4.0]), ot.Matrix([[3.0, 2.0, 1.0]]))
+# Exact gradient in OpenTURNS convention: one row per input, one column per output
+# input = (x, theta0, theta1): (theta0, x, 1)
+ott.assert_almost_equal(h.gradient([2.0, 3.0, 4.0]), ot.Matrix([[3.0], [2.0], [1.0]]))
 hWrap = ot.PythonFunction(h.getInputDimension(), h.getOutputDimension(), h)
 fdGradient = ot.CenteredFiniteDifferenceGradient(
     1.0e-5, hWrap.getEvaluation()
 ).gradient([2.0, 3.0, 4.0])
-ott.assert_almost_equal(h.gradient([2.0, 3.0, 4.0]), fdGradient.transpose())
+ott.assert_almost_equal(h.gradient([2.0, 3.0, 4.0]), fdGradient)
 
 # The parameter is now an input: no parameter gradient remains
 parameterGradient = h.parameterGradient([2.0, 3.0, 4.0])
@@ -53,14 +54,15 @@ h2 = otrobopt.ParameterAsInputFunction(f2)
 ott.assert_almost_equal(h2.getInputDimension(), 3)
 ott.assert_almost_equal(h2.getOutputDimension(), 2)
 ott.assert_almost_equal(h2([1.0, 3.0, 2.0]), [3.0, 6.0])
+# input = (x0, x1, theta), output = (x0 + theta, x1 * theta)
 ott.assert_almost_equal(
-    h2.gradient([1.0, 3.0, 2.0]), ot.Matrix([[1.0, 0.0, 1.0], [0.0, 2.0, 3.0]])
+    h2.gradient([1.0, 3.0, 2.0]), ot.Matrix([[1.0, 0.0], [0.0, 2.0], [1.0, 3.0]])
 )
 h2Wrap = ot.PythonFunction(h2.getInputDimension(), h2.getOutputDimension(), h2)
 fdGradient2 = ot.CenteredFiniteDifferenceGradient(
     1.0e-5, h2Wrap.getEvaluation()
 ).gradient([1.0, 3.0, 2.0])
-ott.assert_almost_equal(h2.gradient([1.0, 3.0, 2.0]), fdGradient2.transpose())
+ott.assert_almost_equal(h2.gradient([1.0, 3.0, 2.0]), fdGradient2)
 
 # Function without parameter
 f3 = ot.SymbolicFunction(["x"], ["x^2"])
@@ -87,6 +89,6 @@ study.fillObject("h", hReloaded)
 ott.assert_almost_equal(hReloaded.getInputDimension(), 3)
 ott.assert_almost_equal(hReloaded([2.0, 3.0, 4.0]), [10.0])
 ott.assert_almost_equal(
-    hReloaded.gradient([2.0, 3.0, 4.0]), ot.Matrix([[3.0, 2.0, 1.0]])
+    hReloaded.gradient([2.0, 3.0, 4.0]), ot.Matrix([[3.0], [2.0], [1.0]])
 )
 os.remove(fileName)
