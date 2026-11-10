@@ -34,6 +34,7 @@
 %include MeasureFactory.i
 %include RobustOptimizationProblem.i
 %include RobustOptimizationProblemCanonicalizer.i
+%include RBDOProblem.i
 %include RobustOptimizationAlgorithm.i
 %include SequentialMonteCarloRobustAlgorithm.i
 %include SubsetInverseSamplingResult.i
