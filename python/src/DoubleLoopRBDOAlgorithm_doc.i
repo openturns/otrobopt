@@ -84,8 +84,19 @@ The algorithm requires the limit-state function to expose a parameter
 gradient when a gradient-based inner solver is used.  The default
 :class:`~openturns.Cobyla` inner solver does not require it.
 
-The result is available through the inherited ``getResult`` method.  The
-reliability analysis at the solution is reported by
+The default inner solver tolerances can be changed with the ResourceMap keys
+``DoubleLoopRBDOAlgorithm-DefaultInnerMaximumCallsNumber``,
+``DoubleLoopRBDOAlgorithm-DefaultInnerMaximumConstraintError`` and
+``DoubleLoopRBDOAlgorithm-DefaultInnerMaximumAbsoluteError``.  The inner
+reliability solves record their evaluations to recover the best iterate when
+OpenTURNS reports no optimal point; the ResourceMap key
+``RBDOAlgorithmTools-InnerEvaluationHistoryMaximumSize`` bounds the number of
+recorded evaluations.
+
+The result is available through the inherited ``getResult`` method.  It is
+associated with the RBDO problem rather than with the internal canonical
+problem, so that a saved algorithm keeps its result across a study round trip.
+The reliability analysis at the solution is reported by
 :meth:`getReliabilityIndex`, :meth:`getPerformanceMeasure`,
 :meth:`getStandardSpaceDesignPoint`, :meth:`getPhysicalSpaceDesignPoint` and
 :meth:`getApproximateProbability`.
