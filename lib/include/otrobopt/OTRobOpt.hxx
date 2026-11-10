@@ -24,6 +24,8 @@
 
 #include "otrobopt/SequentialMonteCarloRobustAlgorithm.hxx"
 #include "otrobopt/RBDOProblem.hxx"
+#include "otrobopt/DoubleLoopRBDOAlgorithm.hxx"
+#include "otrobopt/SampleAverageApproximationAlgorithm.hxx"
 #include "otrobopt/MeanMeasure.hxx"
 #include "otrobopt/VarianceMeasure.hxx"
 #include "otrobopt/MeanStandardDeviationTradeoffMeasure.hxx"
