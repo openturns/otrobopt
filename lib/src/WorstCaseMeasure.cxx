@@ -19,6 +19,8 @@
  *
  */
 #include "otrobopt/WorstCaseMeasure.hxx"
+#include "otrobopt/MeasureEvaluation.hxx"
+#include <algorithm>
 #include <openturns/PersistentObjectFactory.hxx>
 #include <openturns/NLopt.hxx>
 #include <openturns/TNC.hxx>
@@ -55,6 +57,45 @@ WorstCaseMeasure::WorstCaseMeasure (const Function & function,
 WorstCaseMeasure * WorstCaseMeasure::clone() const
 {
   return new WorstCaseMeasure(*this);
+}
+
+/* Rebuild the measure over a new function and distribution */
+MeasureEvaluation WorstCaseMeasure::rebuild(const Function & function,
+    const Distribution & distribution,
+    const Interval & optimizationDomain) const
+{
+  WorstCaseMeasure result(function, distribution, isMinimization_);
+  result.setOptimizationAlgorithm(solver_);
+  result.setIntegrationAlgorithm(getIntegrationAlgorithm());
+  result.setPDFThreshold(getPDFThreshold());
+  if (optimizationDomain.getDimension() != 0)
+    result.setOptimizationDomain(optimizationDomain);
+  else if (distribution == distribution_)
+    result.setOptimizationDomain(optimizationDomain_);
+  return result;
+}
+
+/* Whether rebuilding the measure requires an explicit optimization domain */
+Bool WorstCaseMeasure::requiresOptimizationDomain() const
+{
+  return true;
+}
+
+/* Optimization domain accessor */
+void WorstCaseMeasure::setOptimizationDomain(const Interval & domain)
+{
+  const UnsignedInteger dimension = distribution_.getDimension();
+  if ((domain.getDimension() != 0) && (domain.getDimension() != dimension))
+    throw InvalidDimensionException(HERE) << "The optimization domain dimension ("
+                                          << domain.getDimension()
+                                          << ") must match the distribution dimension ("
+                                          << dimension << ")";
+  optimizationDomain_ = domain;
+}
+
+Interval WorstCaseMeasure::getOptimizationDomain() const
+{
+  return optimizationDomain_;
 }
 
 
@@ -211,10 +252,26 @@ Point WorstCaseMeasure::operator()(const Point & inP) const
     {
       const Pointer<FunctionImplementation> p_wrapper(new WorstCaseMeasureParametricFunctionWrapper(inP, function.getMarginal(j)));
       const Function G(p_wrapper);
-      OptimizationProblem problem(G, Function(), C, distribution_.getRange());
+      Interval domain(optimizationDomain_);
+      if (domain.getDimension() == 0)
+        domain = distribution_.getRange();
+      OptimizationProblem problem(G, Function(), C, domain);
       problem.setMinimization(isMinimization());
       OptimizationAlgorithm solver(solver_);
-      solver.setStartingPoint(distribution_.getMean());
+      Point startingPoint(distribution_.getMean());
+      if (optimizationDomain_.getDimension() != 0)
+      {
+        const Point lower(optimizationDomain_.getLowerBound());
+        const Point upper(optimizationDomain_.getUpperBound());
+        const Interval::BoolCollection finiteLower(optimizationDomain_.getFiniteLowerBound());
+        const Interval::BoolCollection finiteUpper(optimizationDomain_.getFiniteUpperBound());
+        for (UnsignedInteger i = 0; i < startingPoint.getDimension(); ++i)
+        {
+          if (finiteLower[i]) startingPoint[i] = std::max(startingPoint[i], lower[i]);
+          if (finiteUpper[i]) startingPoint[i] = std::min(startingPoint[i], upper[i]);
+        }
+      }
+      solver.setStartingPoint(startingPoint);
       solver.setProblem(problem);
       solver.run();
       const Point optimalValue(solver.getResult().getOptimalValue());
@@ -269,6 +326,8 @@ String WorstCaseMeasure::__repr__() const
   OSS oss;
   oss << "class=" << WorstCaseMeasure::GetClassName()
       << " minimization=" << isMinimization_;
+  if (optimizationDomain_.getDimension() != 0)
+    oss << " optimizationDomain=" << optimizationDomain_;
   return oss;
 }
 
@@ -278,6 +337,7 @@ void WorstCaseMeasure::save(Advocate & adv) const
   MeasureEvaluationImplementation::save(adv);
   adv.saveAttribute("isMinimization_", isMinimization_);
   adv.saveAttribute("solver_", solver_);
+  adv.saveAttribute("optimizationDomain_", optimizationDomain_);
 }
 
 /* Method load() reloads the object from the StorageManager */
@@ -286,6 +346,8 @@ void WorstCaseMeasure::load(Advocate & adv)
   MeasureEvaluationImplementation::load(adv);
   adv.loadAttribute("isMinimization_", isMinimization_);
   adv.loadAttribute("solver_", solver_);
+  if (adv.hasAttribute("optimizationDomain_"))
+    adv.loadAttribute("optimizationDomain_", optimizationDomain_);
 }
 
 

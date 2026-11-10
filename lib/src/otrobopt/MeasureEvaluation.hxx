@@ -27,6 +27,8 @@
 
 #include "otrobopt/OTRobOptprivate.hxx"
 
+#include <openturns/Interval.hxx>
+
 namespace OTROBOPT
 {
 
@@ -57,6 +59,16 @@ public:
   /** Function accessor */
   void setFunction(const OT::Function & function);
   OT::Function getFunction() const;
+
+  /** Rebuild the measure over a new function and distribution */
+  MeasureEvaluation rebuild(const OT::Function & function,
+                            const OT::Distribution & distribution) const;
+  MeasureEvaluation rebuild(const OT::Function & function,
+                            const OT::Distribution & distribution,
+                            const OT::Interval & optimizationDomain) const;
+
+  /** Whether rebuilding the measure requires an explicit optimization domain */
+  OT::Bool requiresOptimizationDomain() const;
 
   /** Evaluation */
   OT::Point operator()(const OT::Point & inP) const;

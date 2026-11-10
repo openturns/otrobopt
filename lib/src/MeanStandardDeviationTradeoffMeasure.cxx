@@ -19,6 +19,7 @@
  *
  */
 #include "otrobopt/MeanStandardDeviationTradeoffMeasure.hxx"
+#include "otrobopt/MeasureEvaluation.hxx"
 #include <openturns/PersistentObjectFactory.hxx>
 #include <openturns/GaussKronrod.hxx>
 #include <openturns/IteratedQuadrature.hxx>
@@ -61,6 +62,17 @@ MeanStandardDeviationTradeoffMeasure::MeanStandardDeviationTradeoffMeasure (cons
 MeanStandardDeviationTradeoffMeasure * MeanStandardDeviationTradeoffMeasure::clone() const
 {
   return new MeanStandardDeviationTradeoffMeasure(*this);
+}
+
+/* Rebuild the measure over a new function and distribution */
+MeasureEvaluation MeanStandardDeviationTradeoffMeasure::rebuild(const Function & function,
+    const Distribution & distribution,
+    const Interval & /*optimizationDomain*/) const
+{
+  MeanStandardDeviationTradeoffMeasure result(function, distribution, alpha_);
+  result.setIntegrationAlgorithm(getIntegrationAlgorithm());
+  result.setPDFThreshold(getPDFThreshold());
+  return result;
 }
 
 
