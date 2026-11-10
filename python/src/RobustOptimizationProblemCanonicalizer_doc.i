@@ -22,12 +22,22 @@ Attributes
 reference : :class:`~openturns.Distribution`
     Reference distribution, empty for the automatic policy.
 parameterBounds : :class:`~openturns.Interval`
-    Bounds on the distribution parameter, empty for no bounds.
+    Bounds on the active distribution parameter, empty for no bounds.  A
+    full-dimensional interval is also accepted and filtered to the active
+    coordinates.
 parameterStart : :class:`~openturns.Point`
-    Initial distribution parameter, empty for the current parameter.
+    Initial active distribution parameter, empty for the current parameter.
+    A full-dimensional point is also accepted and filtered to the active
+    coordinates.
+activeParameter : :class:`~openturns.Indices`
+    Active parameter indices in the full distribution parameter.  When it is
+    not set, the default policy of
+    :class:`~otrobopt.ParametricDistributionTransformation` is used: the
+    trailing dependence or copula block is inactive.
 optimizeParameter : bool
     Whether the distribution parameter is part of the decision vector.
-    Default is True.
+    Default is True.  When the active parameter is empty, the parameter is
+    frozen and the decision vector is reduced to the design variables.
 worstCasePolicy : int
     Worst-case policy. Default is ``CanonicalizationOptions.AUTO``.
 worstCaseDomain : :class:`~openturns.Interval`
@@ -35,10 +45,11 @@ worstCaseDomain : :class:`~openturns.Interval`
     range of the reference distribution.
 
 The attributes can also be set with the ``setReference``,
-``setParameterBounds``, ``setParameterStart``, ``setOptimizeParameter``,
-``setWorstCasePolicy`` and ``setWorstCaseDomain`` methods, which accept the
-usual Python arguments. Use ``setReference`` to select explicitly the default
-``Uniform(-1, 1)`` distribution as reference.
+``setParameterBounds``, ``setParameterStart``, ``setActiveParameter``,
+``setOptimizeParameter``, ``setWorstCasePolicy`` and
+``setWorstCaseDomain`` methods, which accept the usual Python arguments. Use
+``setReference`` to select explicitly the default ``Uniform(-1, 1)``
+distribution as reference.
 
 Examples
 --------
@@ -55,7 +66,7 @@ R"RAW(Canonicalize a robust optimization problem over a fixed reference distribu
 This class is experimental and may change in future releases.
 
 The canonical decision vector is :math:`y=(x,s)` where :math:`x` is the
-design vector and :math:`s` is the parameter of the distribution
+design vector and :math:`s` is the active parameter of the distribution
 :math:`D_s`. The measure distribution becomes a fixed reference distribution
 :math:`\Xi` and the parametric functions are rebuilt as
 
@@ -65,9 +76,16 @@ design vector and :math:`s` is the parameter of the distribution
 
 where :math:`T_s` transports :math:`\Xi` to :math:`D_s`.
 
-When ``options.optimizeParameter`` is false, the distribution parameter is
-frozen at ``options.parameterStart`` and the canonical decision vector is
-:math:`x` only.
+The active parameter is selected by ``options.activeParameter`` when it is
+set, otherwise by the default policy of
+:class:`~otrobopt.ParametricDistributionTransformation`: all parameters are
+active except the trailing dependence or copula block.  The parameter bounds
+and the starting point are expressed in the active coordinates, with the full
+parameter vector accepted as a compatibility fallback.
+
+When ``options.optimizeParameter`` is false, or when the active parameter is
+empty, the distribution parameter is frozen at ``options.parameterStart`` and
+the canonical decision vector is :math:`x` only.
 
 Parameters
 ----------
@@ -138,8 +156,18 @@ R"RAW(Whether the distribution parameter is optimized.
 Returns
 -------
 optimizeParameter : bool
-    True when the canonical decision vector contains the distribution
-    parameter.)RAW"
+    True when the canonical decision vector contains the active distribution
+    parameter.  It is False when ``optimizeParameter`` was disabled or when
+    the active parameter is empty.)RAW"
+
+%feature("docstring") OTROBOPT::RobustOptimizationProblemCanonicalizer::getActiveParameter
+R"RAW(Accessor to the active distribution parameter indices.
+
+Returns
+-------
+active : :class:`~openturns.Indices`
+    The indices of the active coordinates in the full distribution parameter,
+    as used by the canonical problem.)RAW"
 
 %feature("docstring") OTROBOPT::RobustOptimizationProblemCanonicalizer::usesStandardSpace
 R"RAW(Whether the standard fast path is used.

@@ -28,6 +28,12 @@ def _CanonicalizationOptions_parameterStart_get(self):
 def _CanonicalizationOptions_parameterStart_set(self, value):
     self.setParameterStart(value)
 
+def _CanonicalizationOptions_activeParameter_get(self):
+    return self.getActiveParameter()
+
+def _CanonicalizationOptions_activeParameter_set(self, value):
+    self.setActiveParameter(value)
+
 def _CanonicalizationOptions_optimizeParameter_get(self):
     return self.getOptimizeParameter()
 
@@ -52,6 +58,8 @@ CanonicalizationOptions.parameterBounds = property(_CanonicalizationOptions_para
                                                    _CanonicalizationOptions_parameterBounds_set)
 CanonicalizationOptions.parameterStart = property(_CanonicalizationOptions_parameterStart_get,
                                                   _CanonicalizationOptions_parameterStart_set)
+CanonicalizationOptions.activeParameter = property(_CanonicalizationOptions_activeParameter_get,
+                                                   _CanonicalizationOptions_activeParameter_set)
 CanonicalizationOptions.optimizeParameter = property(_CanonicalizationOptions_optimizeParameter_get,
                                                      _CanonicalizationOptions_optimizeParameter_set)
 CanonicalizationOptions.worstCasePolicy = property(_CanonicalizationOptions_worstCasePolicy_get,

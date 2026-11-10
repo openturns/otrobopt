@@ -321,7 +321,17 @@ with the same dimension.  The constraint
 Parameter-dependent distributions and canonicalization
 ------------------------------------------------------
 
-The parameter of the family is :math:`s = \cD_s.\texttt{getParameter()}`.
+The parameter of the family is the *active* distribution parameter
+:math:`s = \cD_s.\texttt{getParameter()}`.  The full parameter vector
+:math:`\cD_s.\texttt{getFullParameter()}` also contains fixed or qualified
+coordinates, typically the dependence or copula block.  The active indices are
+available through :math:`\cD_s.\texttt{getActiveParameter()}`; the default
+policy keeps every parameter active except the trailing dependence block
+exposed by ``Distribution.getParametersCollection``, because OpenTURNS does
+not provide an analytic parameter derivative for that block.  The user can
+override the selection with ``setActiveParameter`` on the transformation or
+with ``CanonicalizationOptions.activeParameter`` on the canonicalizer.
+
 The canonical decision vector is :math:`y=(x,s)`.  The canonicalizer
 :class:`~otrobopt.RobustOptimizationProblemCanonicalizer` builds the canonical
 function
@@ -330,11 +340,14 @@ function
 
     F(x,s;\xi) = J\bigl(x;T_s(\xi)\bigr)
 
-and rebuilds every measure with the fixed reference :math:`\Xi`.  The
+and rebuilds every measure with the fixed reference :math:`\Xi`.  The active
 distribution parameter is exposed as an input of the canonical objective and
 of the canonical constraints.  The class
-:class:`~otrobopt.CanonicalizationOptions` controls the reference, the
-parameter bounds, the parameter starting point and the worst-case domain.
+:class:`~otrobopt.CanonicalizationOptions` controls the reference, the active
+parameter, the parameter bounds, the parameter starting point and the
+worst-case domain.  Bounds and starting points are expressed in active
+coordinates; a full-dimensional value is accepted as a compatibility fallback
+and is filtered to the active coordinates.
 
 The reference selection follows these rules.
 
@@ -347,13 +360,14 @@ The reference selection follows these rules.
 * ``USER_DOMAIN`` uses the automatic reference policy and requires a
   worst-case domain.
 
-When ``optimizeParameter`` is false, the parameter is frozen and the
-distribution :math:`\cD_{s_0}` is used directly as the reference.  The
-canonical decision vector is :math:`x` only and the canonicalization is exact
-without inventing a worst-case domain.  When it is true, a worst-case measure
-fails closed unless the standard fast path, a bounded user reference or an
-explicit domain is available.  The policies ``STANDARD``, ``NORMAL``,
-``USER_REFERENCE`` and ``USER_DOMAIN`` make the choice explicit.
+When ``optimizeParameter`` is false, or when the active parameter is empty,
+the parameter is frozen and the distribution :math:`\cD_{s_0}` is used
+directly as the reference.  The canonical decision vector is :math:`x` only
+and the canonicalization is exact without inventing a worst-case domain.  When
+it is true, a worst-case measure fails closed unless the standard fast path, a
+bounded user reference or an explicit domain is available.  The policies
+``STANDARD``, ``NORMAL``, ``USER_REFERENCE`` and ``USER_DOMAIN`` make the
+choice explicit.
 
 The canonical function is assembled from the original function and the
 transport.  For a measure function :math:`J`, the composition is

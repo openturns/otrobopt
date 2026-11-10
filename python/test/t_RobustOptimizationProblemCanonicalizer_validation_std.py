@@ -61,14 +61,17 @@ def assert_measure_close(actual, expected, tolerance):
         )
 
 
-def check_measure(factory, distribution, parameter, xValues, tolerance):
+def check_measure(factory, distribution, parameter, xValues, tolerance, options=None):
     measure = factory(distribution)
-    canonicalizer = canonicalize(measure)
+    canonicalizer = canonicalize(measure, options)
     canonicalMeasure = canonicalizer.getCanonicalProblem().getRobustnessMeasure()
     freshMeasure = factory(with_parameter(distribution, parameter))
+    activeParameter = [
+        parameter[index] for index in canonicalizer.getActiveParameter()
+    ]
     for x in xValues:
         assert_measure_close(
-            canonicalMeasure([x] + list(parameter)),
+            canonicalMeasure([x] + activeParameter),
             freshMeasure([x]),
             tolerance,
         )
@@ -147,7 +150,9 @@ fNormal2 = ot.ParametricFunction(
     [1, 2],
     normal2.getMean(),
 )
-normal2Parameter = [2.0, 1.5, 3.0, 0.7, -0.3]
+# The default active parameter excludes the correlation, so the correlation
+# of the fresh distribution must remain the original one for an exact match.
+normal2Parameter = [2.0, 1.5, 3.0, 0.7, 0.4]
 for label, factory in [
     ("mean", lambda d: otrobopt.MeanMeasure(fNormal2, d)),
     ("variance", lambda d: otrobopt.VarianceMeasure(fNormal2, d)),
@@ -155,8 +160,28 @@ for label, factory in [
     canonicalizer = check_measure(
         factory, normal2, normal2Parameter, [1.0], 1.0e-6
     )
+    assert canonicalizer.getActiveParameter() == [0, 1, 2, 3], label
     assert canonicalizer.usesStandardSpace(), label
     assert canonicalizer.getReferenceDistribution() == ot.Normal(2), label
+
+# Activating the full parameter exposes the correlation as a decision
+# coordinate and the canonicalization remains exact.
+fullActiveOptions = otrobopt.CanonicalizationOptions()
+fullActiveOptions.setActiveParameter([0, 1, 2, 3, 4])
+normal2FullParameter = [2.0, 1.5, 3.0, 0.7, -0.3]
+for label, factory in [
+    ("mean", lambda d: otrobopt.MeanMeasure(fNormal2, d)),
+    ("variance", lambda d: otrobopt.VarianceMeasure(fNormal2, d)),
+]:
+    canonicalizer = check_measure(
+        factory,
+        normal2,
+        normal2FullParameter,
+        [1.0],
+        1.0e-6,
+        fullActiveOptions,
+    )
+    assert canonicalizer.getActiveParameter() == [0, 1, 2, 3, 4], label
 
 # ------------------------------------------------- uniform worst-case values
 # The standard fast path maps the standard normal reference to the uniform
@@ -246,6 +271,8 @@ fStudent2 = ot.ParametricFunction(
     [0.0, 1.0],
 )
 student2Parameter = [8.0, 1.0, 1.0, 1.5, 2.0, 0.2]
+student2Options = otrobopt.CanonicalizationOptions()
+student2Options.setActiveParameter(list(range(len(student2Parameter))))
 
 
 def student2Variance(distribution):
@@ -268,6 +295,7 @@ check_generic_path(
         student2Parameter,
         [1.0],
         1.0e-2,
+        student2Options,
     ),
 )
 
@@ -403,6 +431,88 @@ ott.assert_almost_equal(
 )
 assert boundedOptimum[2] >= 0.2
 assert boundedOptimum[2] <= 0.5
+
+# ------------------------------------------------- active parameter reduction
+# A correlated normal distribution has a full parameter vector with the two
+# means, the two standard deviations and the correlation.  The correlation is
+# inactive by default, so the canonical parameter has four coordinates.  The
+# user can select the mean coordinates only, and full-dimensional bounds and
+# starting points remain accepted as a compatibility fallback.
+corr2 = ot.CorrelationMatrix(2)
+corr2[0, 1] = 0.4
+theta2 = ot.Normal([0.0, 0.0], [1.0, 1.0], corr2)
+fBase2 = ot.SymbolicFunction(
+    ["x", "theta0", "theta1"], ["x + theta0 + theta1"]
+)
+f2 = ot.ParametricFunction(fBase2, [1, 2], [0.0, 0.0])
+mean2 = otrobopt.MeanMeasure(f2, theta2)
+chance2 = otrobopt.JointChanceMeasure(f2, theta2, ot.GreaterOrEqual(), 0.9)
+problem2 = otrobopt.RobustOptimizationProblem(mean2, chance2)
+problem2.setBounds(ot.Interval([-5.0], [5.0]))
+
+activeOptions = otrobopt.CanonicalizationOptions()
+activeCanonicalizer = otrobopt.RobustOptimizationProblemCanonicalizer(
+    problem2, activeOptions
+)
+assert activeCanonicalizer.getActiveParameter() == [0, 1, 2, 3]
+assert activeCanonicalizer.getOptimizeParameter()
+activeProblem = activeCanonicalizer.getCanonicalProblem()
+ott.assert_almost_equal(activeProblem.getDimension(), 5)
+ott.assert_almost_equal(
+    activeCanonicalizer.getCanonicalStartingPoint(), [0.0, 0.0, 1.0, 0.0, 1.0]
+)
+activeObjective = activeProblem.getObjective()
+ott.assert_almost_equal(
+    activeObjective([1.0, 0.1, 1.2, 0.2, 1.3]), [1.3], 1.0e-12, 1.0e-12
+)
+
+meanOnlyOptions = otrobopt.CanonicalizationOptions()
+meanOnlyOptions.setActiveParameter([0, 2])
+meanOnlyOptions.setParameterBounds(ot.Interval([-1.0] * 5, [1.0] * 5))
+meanOnlyOptions.setParameterStart([0.1, 1.2, 0.2, 1.3, 0.4])
+meanOnlyCanonicalizer = otrobopt.RobustOptimizationProblemCanonicalizer(
+    problem2, meanOnlyOptions
+)
+assert meanOnlyCanonicalizer.getActiveParameter() == [0, 2]
+assert meanOnlyCanonicalizer.getOptimizeParameter()
+meanOnlyProblem = meanOnlyCanonicalizer.getCanonicalProblem()
+ott.assert_almost_equal(meanOnlyProblem.getDimension(), 3)
+ott.assert_almost_equal(
+    meanOnlyCanonicalizer.getCanonicalStartingPoint(), [0.0, 0.1, 0.2]
+)
+ott.assert_almost_equal(
+    meanOnlyProblem.getBounds().getLowerBound(), [-5.0, -1.0, -1.0]
+)
+ott.assert_almost_equal(
+    meanOnlyProblem.getBounds().getUpperBound(), [5.0, 1.0, 1.0]
+)
+meanOnlyObjective = meanOnlyProblem.getObjective()
+ott.assert_almost_equal(
+    meanOnlyObjective([1.0, 0.1, 0.2]), [1.3], 1.0e-12, 1.0e-12
+)
+
+# An empty active parameter freezes the distribution parameter and reduces
+# the canonical decision vector to the design variables.
+emptyActiveOptions = otrobopt.CanonicalizationOptions()
+emptyActiveOptions.setActiveParameter([])
+emptyActiveCanonicalizer = otrobopt.RobustOptimizationProblemCanonicalizer(
+    problem2, emptyActiveOptions
+)
+assert emptyActiveCanonicalizer.getActiveParameter() == []
+assert not emptyActiveCanonicalizer.getOptimizeParameter()
+ott.assert_almost_equal(
+    emptyActiveCanonicalizer.getCanonicalProblem().getDimension(), 1
+)
+
+# Invalid active indices are rejected by the canonicalizer
+with ott.assert_raises(TypeError):
+    invalidActiveOptions = otrobopt.CanonicalizationOptions()
+    invalidActiveOptions.setActiveParameter([0, 0])
+    otrobopt.RobustOptimizationProblemCanonicalizer(problem2, invalidActiveOptions)
+with ott.assert_raises(TypeError):
+    outOfRangeOptions = otrobopt.CanonicalizationOptions()
+    outOfRangeOptions.setActiveParameter([0, 99])
+    otrobopt.RobustOptimizationProblemCanonicalizer(problem2, outOfRangeOptions)
 
 # ------------------------------------------------------- transformation cache
 # Rebuilding T_s for every new parameter is more expensive than reusing the

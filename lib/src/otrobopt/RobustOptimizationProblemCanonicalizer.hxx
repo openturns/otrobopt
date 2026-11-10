@@ -24,6 +24,7 @@
 
 #include <openturns/Distribution.hxx>
 #include <openturns/Function.hxx>
+#include <openturns/Indices.hxx>
 #include <openturns/Interval.hxx>
 #include <openturns/Point.hxx>
 
@@ -76,6 +77,10 @@ public:
   /** Initial distribution parameter, empty for the current parameter */
   OT::Point parameterStart;
 
+  /** Active distribution parameter indices in the full parameter vector,
+      empty with hasActiveParameter false to use the default policy */
+  OT::Indices activeParameter;
+
   /** Whether the distribution parameter is part of the decision vector */
   OT::Bool optimizeParameter = true;
 
@@ -100,6 +105,12 @@ public:
   void setParameterStart(const OT::Point & start);
   OT::Point getParameterStart() const;
 
+  /** Active parameter accessors */
+  void setActiveParameter(const OT::Indices & active);
+  OT::Indices getActiveParameter() const;
+  void clearActiveParameter();
+  OT::Bool hasActiveParameter() const;
+
   /** Parameter optimization accessors */
   void setOptimizeParameter(OT::Bool optimizeParameter);
   OT::Bool getOptimizeParameter() const;
@@ -117,6 +128,7 @@ public:
 
 private:
   OT::Bool hasReference_ = false;
+  OT::Bool hasActiveParameter_ = false;
 }; /* class CanonicalizationOptions */
 
 /**
@@ -157,6 +169,9 @@ public:
 
   /** Whether the distribution parameter is optimized */
   OT::Bool getOptimizeParameter() const;
+
+  /** Active distribution parameter indices used by the canonical problem */
+  OT::Indices getActiveParameter() const;
 
   /** Whether the standard fast path is used */
   OT::Bool usesStandardSpace() const;
@@ -215,6 +230,7 @@ private:
   RobustOptimizationProblem canonicalProblem_;
   OT::Distribution reference_;
   OT::Point startingPoint_;
+  OT::Indices activeParameter_;
   OT::Bool optimizeParameter_ = true;
   OT::Bool usesStandardSpace_ = false;
 }; /* class RobustOptimizationProblemCanonicalizer */
