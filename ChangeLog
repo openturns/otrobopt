@@ -1,5 +1,6 @@
 = 0.19 release (unreleased)
 
+ * Add RBDOProblem
  * Add ParameterAsInputFunction
  * Add ParametricDistributionTransformation
  * Add full and active distribution parameters to ParametricDistributionTransformation
