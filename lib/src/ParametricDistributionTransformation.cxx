@@ -21,16 +21,97 @@
  */
 #include "otrobopt/ParametricDistributionTransformation.hxx"
 
+#include <openturns/Description.hxx>
 #include <openturns/DistributionTransformation.hxx>
 #include <openturns/Exception.hxx>
 #include <openturns/Normal.hxx>
 #include <openturns/PersistentObjectFactory.hxx>
 #include <openturns/ResourceMap.hxx>
 
+#include <algorithm>
+
 using namespace OT;
 
 namespace OTROBOPT
 {
+
+namespace
+{
+
+Bool isIdentity(const Indices & indices, const UnsignedInteger dimension)
+{
+  if (indices.getSize() != dimension)
+    return false;
+  for (UnsignedInteger i = 0; i < dimension; ++i)
+    if (indices[i] != i)
+      return false;
+  return true;
+}
+
+Bool startsWith(const String & text, const String & prefix)
+{
+  return (text.size() >= prefix.size())
+         && (text.compare(0, prefix.size(), prefix) == 0);
+}
+
+Indices defaultActiveParameter(const Distribution & distribution)
+{
+  const UnsignedInteger fullDimension = distribution.getParameterDimension();
+  if (fullDimension == 0)
+    return Indices();
+  // There is no generic derivative with respect to the dependence
+  // parameters, so they are inactive by default.  The other parameters of
+  // composite, elliptical and copula-based distributions are active.
+  std::vector<Bool> active(fullDimension, true);
+  try
+  {
+    const Description parameterDescription(distribution.getParameterDescription());
+    // The correlation coefficients of the elliptical and normal copula
+    // parametrizations are named R_i_j wherever they appear in the full
+    // parameter vector.  A mixture of elliptical atoms, for instance,
+    // concatenates one correlation block per atom.
+    for (UnsignedInteger i = 0; i < fullDimension; ++i)
+      if ((i < parameterDescription.getSize())
+          && startsWith(parameterDescription[i], "R_"))
+        active[i] = false;
+
+    // The other dependence parameters, for instance the parameter of a
+    // copula, form the trailing block of the parameter collection.  Remove
+    // it only when its description is really the trailing part of the full
+    // parameter vector: some distributions, Student for example, prepend
+    // their scalar parameters to every block of the collection.
+    const Distribution::PointWithDescriptionCollection parameters(distribution.getParametersCollection());
+    const UnsignedInteger size = parameters.getSize();
+    if ((size > 1) && (parameterDescription.getSize() == fullDimension))
+    {
+      const PointWithDescription dependence(parameters[size - 1]);
+      const UnsignedInteger dependenceDimension = dependence.getDimension();
+      if ((dependenceDimension > 0) && (dependenceDimension < fullDimension))
+      {
+        const Description dependenceDescription(dependence.getDescription());
+        Bool isTrailing = (dependenceDescription.getSize() == dependenceDimension);
+        for (UnsignedInteger j = 0; isTrailing && (j < dependenceDimension); ++j)
+          isTrailing = (dependenceDescription[j]
+                        == parameterDescription[fullDimension - dependenceDimension + j]);
+        if (isTrailing)
+          for (UnsignedInteger j = 0; j < dependenceDimension; ++j)
+            active[fullDimension - dependenceDimension + j] = false;
+      }
+    }
+  }
+  catch (const Exception &)
+  {
+    // Keep all parameters active when the distribution does not decompose
+    // its parameter vector.
+  }
+  Indices result(0);
+  for (UnsignedInteger i = 0; i < fullDimension; ++i)
+    if (active[i])
+      result.add(i);
+  return result;
+}
+
+} /* anonymous namespace */
 
 CLASSNAMEINIT(ParametricDistributionTransformation)
 
@@ -70,7 +151,8 @@ void ParametricDistributionTransformation::initialize(const Distribution & distr
                                          << distribution.getImplementation()->getClassName();
   distribution_ = cloneDistribution(distribution);
   configureReference(reference, hasReference);
-  FunctionImplementation::setParameter(distribution_.getParameter());
+  activeParameter_ = GetDefaultActiveParameter(distribution_);
+  FunctionImplementation::setParameter(getParameter());
   invalidateCache();
 }
 
@@ -129,14 +211,14 @@ void ParametricDistributionTransformation::invalidateCache() const
 /* Build the transformation for the current parameter */
 void ParametricDistributionTransformation::updateTransformation() const
 {
-  if (cacheValid_ && (cachedParameter_ == getParameter()))
+  if (cacheValid_ && (cachedParameter_ == getFullParameter()))
     return;
   const Distribution distribution(cloneDistribution(distribution_));
   if (usesStandardSpace_)
     transformation_ = distribution.getInverseIsoProbabilisticTransformation();
   else
     transformation_ = DistributionTransformation(reference_, distribution);
-  cachedParameter_ = getParameter();
+  cachedParameter_ = getFullParameter();
   cacheValid_ = true;
 }
 
@@ -199,30 +281,105 @@ Bool ParametricDistributionTransformation::usesStandardSpace() const
   return usesStandardSpace_;
 }
 
-/* Parameter accessors */
+/* Active parameter accessors */
 Point ParametricDistributionTransformation::getParameter() const
 {
-  return distribution_.getParameter();
+  const Point fullParameter(distribution_.getParameter());
+  if (isIdentity(activeParameter_, fullParameter.getDimension()))
+    return fullParameter;
+  Point parameter(activeParameter_.getSize());
+  for (UnsignedInteger i = 0; i < activeParameter_.getSize(); ++i)
+    parameter[i] = fullParameter[activeParameter_[i]];
+  return parameter;
 }
 
 void ParametricDistributionTransformation::setParameter(const Point & parameter)
 {
-  const UnsignedInteger parameterDimension = distribution_.getParameterDimension();
-  if (parameter.getDimension() != parameterDimension)
+  const UnsignedInteger activeDimension = activeParameter_.getSize();
+  if (parameter.getDimension() != activeDimension)
     throw InvalidDimensionException(HERE) << "The parameter dimension ("
                                           << parameter.getDimension()
-                                          << ") must match the distribution parameter dimension ("
-                                          << parameterDimension << ")";
-  Distribution candidate(cloneDistribution(distribution_));
-  candidate.setParameter(parameter);
-  distribution_ = candidate;
-  FunctionImplementation::setParameter(distribution_.getParameter());
-  invalidateCache();
+                                          << ") must match the active parameter dimension ("
+                                          << activeDimension << ")";
+  if (activeDimension == 0)
+    return;
+  Point fullParameter(distribution_.getParameter());
+  for (UnsignedInteger i = 0; i < activeDimension; ++i)
+    fullParameter[activeParameter_[i]] = parameter[i];
+  setFullParameter(fullParameter);
 }
 
 Description ParametricDistributionTransformation::getParameterDescription() const
 {
+  const Description fullDescription(distribution_.getParameterDescription());
+  const UnsignedInteger fullDimension = distribution_.getParameterDimension();
+  if (fullDescription.getSize() != fullDimension)
+    return Description::BuildDefault(activeParameter_.getSize(), "s");
+  if (isIdentity(activeParameter_, fullDimension))
+    return fullDescription;
+  Description description(activeParameter_.getSize());
+  for (UnsignedInteger i = 0; i < activeParameter_.getSize(); ++i)
+    description[i] = fullDescription[activeParameter_[i]];
+  return description;
+}
+
+UnsignedInteger ParametricDistributionTransformation::getParameterDimension() const
+{
+  return activeParameter_.getSize();
+}
+
+/* Full parameter accessors */
+Point ParametricDistributionTransformation::getFullParameter() const
+{
+  return distribution_.getParameter();
+}
+
+void ParametricDistributionTransformation::setFullParameter(const Point & parameter)
+{
+  const UnsignedInteger fullDimension = distribution_.getParameterDimension();
+  if (parameter.getDimension() != fullDimension)
+    throw InvalidDimensionException(HERE) << "The full parameter dimension ("
+                                          << parameter.getDimension()
+                                          << ") must match the distribution parameter dimension ("
+                                          << fullDimension << ")";
+  Distribution candidate(cloneDistribution(distribution_));
+  candidate.setParameter(parameter);
+  distribution_ = candidate;
+  FunctionImplementation::setParameter(getParameter());
+  invalidateCache();
+}
+
+Description ParametricDistributionTransformation::getFullParameterDescription() const
+{
   return distribution_.getParameterDescription();
+}
+
+/* Active parameter indices */
+Indices ParametricDistributionTransformation::getActiveParameter() const
+{
+  return activeParameter_;
+}
+
+void ParametricDistributionTransformation::setActiveParameter(const Indices & active)
+{
+  Indices sorted(active);
+  std::sort(sorted.begin(), sorted.end());
+  const auto last = std::unique(sorted.begin(), sorted.end());
+  if (last != sorted.end())
+    throw InvalidArgumentException(HERE) << "Active parameter indices must be unique";
+  const UnsignedInteger fullDimension = distribution_.getParameterDimension();
+  for (UnsignedInteger i = 0; i < active.getSize(); ++i)
+    if (active[i] >= fullDimension)
+      throw InvalidArgumentException(HERE) << "Active parameter index " << active[i]
+                                           << " is out of range [0, " << fullDimension << ")";
+  activeParameter_ = active;
+  FunctionImplementation::setParameter(getParameter());
+}
+
+/* Default active parameter indices for a distribution */
+Indices ParametricDistributionTransformation::GetDefaultActiveParameter(const Distribution & distribution)
+{
+  return defaultActiveParameter(distribution);
 }
 
 /* Dimension accessors */
@@ -276,6 +433,7 @@ void ParametricDistributionTransformation::save(Advocate & adv) const
   adv.saveAttribute("distribution_", distribution_);
   adv.saveAttribute("reference_", reference_);
   adv.saveAttribute("usesStandardSpace_", usesStandardSpace_);
+  adv.saveAttribute("activeParameter_", activeParameter_);
 }
 
 /* Method load() reloads the object from the StorageManager */
@@ -285,7 +443,18 @@ void ParametricDistributionTransformation::load(Advocate & adv)
   adv.loadAttribute("distribution_", distribution_);
   adv.loadAttribute("reference_", reference_);
   adv.loadAttribute("usesStandardSpace_", usesStandardSpace_);
-  FunctionImplementation::setParameter(distribution_.getParameter());
+  if (adv.hasAttribute("activeParameter_"))
+    adv.loadAttribute("activeParameter_", activeParameter_);
+  else
+    activeParameter_ = GetDefaultActiveParameter(distribution_);
+  const UnsignedInteger fullDimension = distribution_.getParameterDimension();
+  Bool valid = true;
+  for (UnsignedInteger i = 0; i < activeParameter_.getSize(); ++i)
+    if (activeParameter_[i] >= fullDimension)
+      valid = false;
+  if (!valid)
+    activeParameter_ = GetDefaultActiveParameter(distribution_);
+  FunctionImplementation::setParameter(getParameter());
   invalidateCache();
 }
 

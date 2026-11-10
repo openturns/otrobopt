@@ -74,16 +74,58 @@ corr[0, 1] = 0.4
 normal2 = ot.Normal([2.0, 3.0], [1.0, 2.0], corr)
 T2 = otrobopt.ParametricDistributionTransformation(normal2)
 assert T2.usesStandardSpace()
-ott.assert_almost_equal(T2.getParameter(), [2.0, 1.0, 3.0, 2.0, 0.4])
+ott.assert_almost_equal(T2.getFullParameter(), [2.0, 1.0, 3.0, 2.0, 0.4])
+ott.assert_almost_equal(T2.getParameter(), [2.0, 1.0, 3.0, 2.0])
+assert T2.getActiveParameter() == [0, 1, 2, 3]
+assert T2.getParameterDescription() == ["mu_0", "sigma_0", "mu_1", "sigma_1"]
+assert T2.getFullParameterDescription() == [
+    "mu_0",
+    "sigma_0",
+    "mu_1",
+    "sigma_1",
+    "R_1_0",
+]
 ott.assert_almost_equal(T2([0.0, 0.0]), [2.0, 3.0])
-T2.setParameter([5.0, 7.0, 6.0, 8.0, 0.7])
+T2.setFullParameter([5.0, 7.0, 6.0, 8.0, 0.7])
 ott.assert_almost_equal(T2([0.0, 0.0]), [5.0, 6.0])
+ott.assert_almost_equal(T2.getParameter(), [5.0, 7.0, 6.0, 8.0])
 theta2 = T2(T2.getReferenceDistribution().getSample(20000))
 ott.assert_almost_equal(theta2.computeMean(), [5.0, 6.0], 0.1, 0.1)
 covariance = theta2.computeCovariance()
 ott.assert_almost_equal(covariance[0, 0], 49.0, 1.5, 1.5)
 ott.assert_almost_equal(covariance[1, 1], 64.0, 2.0, 2.0)
 ott.assert_almost_equal(covariance[0, 1] / (7.0 * 8.0), 0.7, 0.03, 0.03)
+
+# Active parameter: the dependence block is inactive by default, and the
+# user can select an arbitrary subset of the full parameter.
+T2.setActiveParameter([0, 1, 2, 3])
+ott.assert_almost_equal(T2.getParameter(), [5.0, 7.0, 6.0, 8.0])
+T2.setParameter([9.0, 10.0, 11.0, 12.0])
+ott.assert_almost_equal(T2.getFullParameter(), [9.0, 10.0, 11.0, 12.0, 0.7])
+ott.assert_almost_equal(T2([0.0, 0.0]), [9.0, 11.0])
+T2.setActiveParameter([0, 2])
+assert T2.getParameterDimension() == 2
+assert T2.getParameterDescription() == ["mu_0", "mu_1"]
+ott.assert_almost_equal(T2.getParameter(), [9.0, 11.0])
+T2.setParameter([13.0, 14.0])
+ott.assert_almost_equal(T2.getFullParameter(), [13.0, 10.0, 14.0, 12.0, 0.7])
+ott.assert_almost_equal(T2([0.0, 0.0]), [13.0, 14.0])
+
+# Reactivating the full vector restores the covariance parameter
+T2.setActiveParameter([0, 1, 2, 3, 4])
+assert T2.getParameterDimension() == 5
+assert T2.getParameterDescription()[-1] == "R_1_0"
+T2.setParameter([1.0, 2.0, 3.0, 4.0, 0.2])
+ott.assert_almost_equal(T2.getFullParameter(), [1.0, 2.0, 3.0, 4.0, 0.2])
+ott.assert_almost_equal(
+    T2.getDistribution().getCorrelation()[0, 1], 0.2, 1.0e-12, 1.0e-12
+)
+
+# A parameter gradient has the active dimension
+T2.setActiveParameter([0, 2])
+gradient = T2.parameterGradient([0.0, 0.0])
+assert gradient.getNbRows() == 2
+assert gradient.getNbColumns() == 2
 
 # Uniform: automatic standard reference pushes a normal sample to the uniform
 uniform = ot.Uniform(1.0, 3.0)
@@ -102,10 +144,68 @@ Texplicit = otrobopt.ParametricDistributionTransformation(
 assert Texplicit.usesStandardSpace()
 ott.assert_almost_equal(Texplicit([0.0]), [2.0])
 
+# Default active policy: the trailing copula block of a joint distribution
+# is inactive, and the static helper exposes the same policy.
+copula = ot.NormalCopula(ot.CorrelationMatrix([[1.0, 0.3], [0.3, 1.0]]))
+joint = ot.JointDistribution([ot.Normal(0.0, 1.0), ot.Uniform(1.0, 2.0)], copula)
+Tj = otrobopt.ParametricDistributionTransformation(joint)
+assert Tj.getActiveParameter() == [0, 1, 2, 3]
+assert Tj.getParameterDimension() == 4
+assert Tj.getFullParameter().getDimension() > 4
+assert (
+    otrobopt.ParametricDistributionTransformation.GetDefaultActiveParameter(joint)
+    == Tj.getActiveParameter()
+)
+# The dependence policy follows the parameter names: a mixture of elliptical
+# atoms concatenates one correlation block per atom, and Student prepends nu
+# to every block of the collection, so a trailing suffix is not a reliable
+# rule.  Only the correlation coefficients are inactive.
+mixture = ot.Mixture([ot.Normal(2), ot.Normal(2)])
+assert (
+    otrobopt.ParametricDistributionTransformation.GetDefaultActiveParameter(mixture)
+    == [0, 1, 2, 3, 5, 6, 7, 8]
+)
+student2 = ot.Student(5.0, [0.0] * 2, [1.0] * 2, ot.CorrelationMatrix(2))
+assert (
+    otrobopt.ParametricDistributionTransformation.GetDefaultActiveParameter(student2)
+    == [0, 1, 2, 3, 4]
+)
+Tj.setActiveParameter([0, 1, 2])
+assert Tj.getParameterDimension() == 3
+assert Tj.getParameterDescription().getSize() == 3
+ott.assert_almost_equal(Tj.getParameter(), Tj.getFullParameter()[:3])
+
+# An empty active parameter freezes the parameter
+Tj.setActiveParameter([])
+assert Tj.getParameterDimension() == 0
+assert Tj.getParameter().getDimension() == 0
+assert Tj.getParameterDescription().getSize() == 0
+Tj.setParameter([])
+assert Tj.getParameterDimension() == 0
+functionAsInput = otrobopt.ParameterAsInputFunction(Tj)
+assert functionAsInput.getInputDimension() == Tj.getInputDimension()
+
+# Invalid active parameter indices are rejected
+with ott.assert_raises(TypeError):
+    Tj.setActiveParameter([0, 0])
+with ott.assert_raises(TypeError):
+    Tj.setActiveParameter([0, 100])
+with ott.assert_raises(RuntimeError):
+    Tj.setFullParameter([1.0])
+
+# Any one-dimensional continuous distribution is a valid reference
+uniformReference = otrobopt.ParametricDistributionTransformation(
+    ot.Normal(2.0, 3.0), ot.Uniform(0.0, 1.0)
+)
+assert not uniformReference.usesStandardSpace()
+assert uniformReference.getReferenceDistribution() == ot.Uniform(0.0, 1.0)
+
 # Invalid arguments
-with ott.assert_raises(Exception):
-    otrobopt.ParametricDistributionTransformation(ot.Normal(2.0, 3.0), ot.Uniform(0.0, 1.0))
-with ott.assert_raises(Exception):
+with ott.assert_raises(RuntimeError):
+    otrobopt.ParametricDistributionTransformation(
+        ot.Normal(2.0, 3.0), ot.JointDistribution([ot.Uniform(0.0, 1.0)] * 2)
+    )
+with ott.assert_raises(RuntimeError):
     T.setParameter([1.0])
 
 # Serialization round-trip

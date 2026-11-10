@@ -22,8 +22,11 @@
 #ifndef OTROBOPT_PARAMETRICDISTRIBUTIONTRANSFORMATION_HXX
 #define OTROBOPT_PARAMETRICDISTRIBUTIONTRANSFORMATION_HXX
 
+#include <openturns/Description.hxx>
 #include <openturns/Distribution.hxx>
 #include <openturns/FunctionImplementation.hxx>
+#include <openturns/Indices.hxx>
+#include <openturns/Point.hxx>
 
 #include "otrobopt/OTRobOptprivate.hxx"
 
@@ -84,10 +87,30 @@ public:
   /** Gradient against the distribution parameter */
   OT::Matrix parameterGradient(const OT::Point & xi) const override;
 
-  /** Parameter accessors */
+  /** Active parameter accessors: the parameter exposed to the optimizer */
   OT::Point getParameter() const override;
   void setParameter(const OT::Point & parameter) override;
   OT::Description getParameterDescription() const override;
+  OT::UnsignedInteger getParameterDimension() const override;
+
+  /** Full parameter accessors: active parameters and fixed or qualified ones */
+  OT::Point getFullParameter() const;
+  void setFullParameter(const OT::Point & parameter);
+  OT::Description getFullParameterDescription() const;
+
+  /** Active parameter indices in the full parameter vector */
+  OT::Indices getActiveParameter() const;
+  void setActiveParameter(const OT::Indices & active);
+
+  /**
+   * Default active parameter indices for a distribution.
+   *
+   * All parameters are active except the trailing dependence or copula
+   * block when the distribution exposes it through
+   * Distribution::getParametersCollection().  This is the policy used by the
+   * default constructor; users can override it with setActiveParameter().
+   */
+  static OT::Indices GetDefaultActiveParameter(const OT::Distribution & distribution);
 
   /** Dimension accessors */
   OT::UnsignedInteger getInputDimension() const override;
@@ -123,6 +146,7 @@ private:
   OT::Distribution distribution_;
   OT::Distribution reference_;
   OT::Bool usesStandardSpace_ = false;
+  OT::Indices activeParameter_;
 
   mutable OT::Function transformation_;
   mutable OT::Point cachedParameter_;
