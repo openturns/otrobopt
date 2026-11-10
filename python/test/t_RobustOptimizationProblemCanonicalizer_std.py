@@ -211,15 +211,32 @@ objective = ot.SymbolicFunction(["x"], ["x^2"])
 problem = otrobopt.RobustOptimizationProblem(objective, aggregate)
 canonicalizer = otrobopt.RobustOptimizationProblemCanonicalizer(problem)
 canonicalAggregate = canonicalizer.getCanonicalProblem().getReliabilityMeasure()
-ott.assert_almost_equal(canonicalizer.getCanonicalProblem().getDimension(), 6)
-ott.assert_almost_equal(canonicalizer.getCanonicalConstraintFunction().getInputDimension(), 6)
+# The correlation block is inactive by default, so the canonical vector is
+# x plus the two means and the two standard deviations.
+assert canonicalizer.getActiveParameter() == [0, 1, 2, 3]
+ott.assert_almost_equal(canonicalizer.getCanonicalProblem().getDimension(), 5)
+ott.assert_almost_equal(canonicalizer.getCanonicalConstraintFunction().getInputDimension(), 5)
 ott.assert_almost_equal(canonicalizer.getCanonicalConstraintFunction().getOutputDimension(), 4)
-parameter2 = [2.0, 0.1, 3.0, 0.2, 0.0]
+parameter2 = [2.0, 0.1, 3.0, 0.2]
 ott.assert_almost_equal(
     canonicalAggregate([1.0] + parameter2), aggregate([1.0]), 1.0e-6, 1.0e-6
 )
 ott.assert_almost_equal(
     canonicalAggregate([2.0] + parameter2), aggregate([2.0]), 1.0e-6, 1.0e-6
+)
+
+# Activating the full parameter adds the correlation coordinate.
+fullOptions = otrobopt.CanonicalizationOptions()
+fullOptions.setActiveParameter([0, 1, 2, 3, 4])
+fullCanonicalizer = otrobopt.RobustOptimizationProblemCanonicalizer(
+    problem, fullOptions
+)
+assert fullCanonicalizer.getActiveParameter() == [0, 1, 2, 3, 4]
+ott.assert_almost_equal(fullCanonicalizer.getCanonicalProblem().getDimension(), 6)
+fullAggregate = fullCanonicalizer.getCanonicalProblem().getReliabilityMeasure()
+parameter2Full = [2.0, 0.1, 3.0, 0.2, 0.0]
+ott.assert_almost_equal(
+    fullAggregate([1.0] + parameter2Full), aggregate([1.0]), 1.0e-6, 1.0e-6
 )
 
 # ------------------------------------------------- frozen parameter

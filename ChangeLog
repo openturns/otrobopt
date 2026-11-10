@@ -2,6 +2,7 @@
 
  * Add ParameterAsInputFunction
  * Add ParametricDistributionTransformation
+ * Add full and active distribution parameters to ParametricDistributionTransformation
  * Add CanonicalizationOptions and RobustOptimizationProblemCanonicalizer
  * Add MeasureEvaluation.rebuild and WorstCaseMeasure optimization domains
  * Enforce scalar robust objectives and homogeneous measure distributions
