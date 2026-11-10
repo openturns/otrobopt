@@ -36,6 +36,13 @@ struct MeasureEvaluation_init
     ResourceMap::AddAsScalar("SequentialMonteCarloRobustAlgorithm-ConvergenceFactor", 1e-2);
     ResourceMap::AddAsUnsignedInteger("SequentialMonteCarloRobustAlgorithm-DefaultInitialSamplingSize", 10);
 
+    ResourceMap::AddAsUnsignedInteger("DoubleLoopRBDOAlgorithm-DefaultInnerMaximumIterationNumber", 1000);
+    ResourceMap::AddAsScalar("DoubleLoopRBDOAlgorithm-DefaultInnerMaximumConstraintError", 1e-8);
+    ResourceMap::AddAsScalar("DoubleLoopRBDOAlgorithm-DefaultInnerMaximumAbsoluteError", 1e-8);
+
+    ResourceMap::AddAsUnsignedInteger("SampleAverageApproximationAlgorithm-DefaultSampleSize", 1000);
+    ResourceMap::AddAsUnsignedInteger("SampleAverageApproximationAlgorithm-DefaultValidationSampleSize", 10000);
+
     ResourceMap::AddAsUnsignedInteger("MeanMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
     ResourceMap::AddAsUnsignedInteger("VarianceMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
     ResourceMap::AddAsUnsignedInteger("MeanStandardDeviationTradeoffMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
