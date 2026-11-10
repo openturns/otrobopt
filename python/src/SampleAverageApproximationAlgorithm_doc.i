@@ -48,6 +48,8 @@ solver : :py:class:`openturns.OptimizationAlgorithm`
 sampleSize : int
     Size of the calibration sample.  The default is controlled by the
     ResourceMap key ``SampleAverageApproximationAlgorithm-DefaultSampleSize``.
+    The validation sample size is controlled by
+    ``SampleAverageApproximationAlgorithm-DefaultValidationSampleSize``.
 
 Notes
 -----
