@@ -33,6 +33,7 @@
 %include ParametricDistributionTransformation.i
 %include MeasureFactory.i
 %include RobustOptimizationProblem.i
+%include RobustOptimizationProblemCanonicalizer.i
 %include RobustOptimizationAlgorithm.i
 %include SequentialMonteCarloRobustAlgorithm.i
 %include SubsetInverseSamplingResult.i

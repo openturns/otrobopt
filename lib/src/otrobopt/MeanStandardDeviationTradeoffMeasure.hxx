@@ -48,6 +48,12 @@ public:
   /** Virtual constructor method */
   MeanStandardDeviationTradeoffMeasure * clone() const override;
 
+  /** Rebuild the measure over a new function and distribution */
+  using MeasureEvaluationImplementation::rebuild;
+  MeasureEvaluation rebuild(const OT::Function & function,
+                            const OT::Distribution & distribution,
+                            const OT::Interval & optimizationDomain) const override;
+
   /** Evaluation */
   OT::Point operator()(const OT::Point & inP) const override;
 
