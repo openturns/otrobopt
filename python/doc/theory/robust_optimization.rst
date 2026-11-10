@@ -1,291 +1,353 @@
-.. _robust_optimization_theory:
+.. _robust-optimization-measures:
 
-Robust optimization
-===================
+Robust optimization measures
+============================
 
-This section describes the theoretical framework behind the robust
-optimisation features of the platform.
+.. currentmodule:: otrobopt
+
+This page is the catalogue of the robustness and reliability measures
+provided by otrobopt.  It states the definition, the output dimension and the
+intended use of each measure, together with the discretization and solver
+interfaces.  The mathematical contract, the invariance theorem and the
+canonical transformation are stated in :doc:`theory`; this page complements it
+with the measure-by-measure reference.
 
 General formulation
 -------------------
 
-Let :math:`J(x, \theta)` be a cost function that depends on
-a design variable :math:`x \in \mathbb{R}^{n_x}` and a random parameter
-:math:`\theta \sim \mathcal{D}` with known distribution.
-Let :math:`G(x, \theta)` be a constraint function.
-
-The robust optimization problem reads:
+Let :math:`J(x, \theta)` be a cost function that depends on a design vector
+:math:`x \in \Rset^{n_x}` and on a realization :math:`\theta` of the random
+vector :math:`\Theta \in \Rset^{n_\theta}` with distribution :math:`\cD`.  Let
+:math:`G(x, \theta)` be a constraint function.  The robust optimization
+problem reads
 
 .. math::
 
     \begin{aligned}
-    & \underset{x}{\text{minimize}}
-    & & \rho_{\mathcal{D}}[J(x, \cdot)]
-    \\
+    & \min_{x \in \mathcal{X}}
+    & & \rho_{\cD}\bigl[J(x, \cdot)\bigr] \\
     & \text{subject to}
-    & & \lambda_{\mathcal{D}}[G(x, \cdot)] \geq 0
+    & & \lambda_{\cD}\bigl[G(x, \cdot)\bigr] \ge 0,
     \end{aligned}
 
-where :math:`\rho_{\mathcal{D}}` is a *robustness measure* on the objective
-and :math:`\lambda_{\mathcal{D}}` a *reliability measure* on the constraint.
-Both are statistical functionals evaluated over the random parameter
-:math:`\theta`.
+where :math:`\rho_{\cD}` is a *robustness measure* on the objective and
+:math:`\lambda_{\cD}` is a *reliability measure* on the constraint.  Both are
+statistical functionals of the random variable obtained by freezing
+:math:`x`.  The feasible set :math:`\mathcal{X}` carries the deterministic
+bounds and constraints of the problem.
 
+The measures are implemented as subclasses of
+:class:`~otrobopt.MeasureEvaluation`.  A measure evaluates its function at the
+design point and integrates, samples or optimizes over the parameter
+:math:`\theta`, which is the OpenTURNS *parameter* of the function.  The
+design vector :math:`x` is the measure input.
 
 Robustness measures
 -------------------
 
-These measures quantify the *performance* of a design :math:`x` in
-the presence of uncertainty. They are used as the optimisation objective.
+Robustness measures quantify the performance of a design under uncertainty.
+They are used as the objective, and therefore must be scalar-valued.
+:class:`~otrobopt.RobustOptimizationProblem` rejects a vector-valued robust
+objective.
 
 Mean
 ^^^^
 
-The **MeanMeasure** computes the expectation of the objective:
+:class:`~otrobopt.MeanMeasure` computes the expectation of the objective,
 
 .. math::
 
-    \rho_{\mathcal{D}}[J(x, \cdot)]
-    = \mathbb{E}_{\mathcal{D}}[J(x, \theta)]
-    = \int J(x, \theta) \, p(\theta) \, d\theta
+    \rho_{\cD}\bigl[J(x, \cdot)\bigr]
+    = \Expect{J(x, \Theta)}
+    = \int_{\Rset^{n_\theta}} J(x, \theta)\, \cD(\mathrm{d}\theta).
 
-where :math:`p` is the probability density function of :math:`\theta`.
-This is the standard *risk-neutral* approach.
-
-For discrete distributions, the integral reduces to a weighted sum:
+This is the risk-neutral approach.  For a discrete distribution the integral
+reduces to a weighted sum,
 
 .. math::
 
-    \rho_{\mathcal{D}}[J(x, \cdot)]
-    = \sum_{i=1}^n J(x, \theta_i) \, p_i
+    \rho_{\cD}\bigl[J(x, \cdot)\bigr]
+    = \sum_{i=1}^{N} J(x, \theta_i)\, p_i,
+
+where :math:`p_i` is the probability of the atom :math:`\theta_i`.  The mean
+is defined for a vector-valued function as well; the scalar restriction comes
+from the robust problem, not from the measure.
 
 Variance
 ^^^^^^^^
 
-The **VarianceMeasure** computes the variance of each output component:
+:class:`~otrobopt.VarianceMeasure` computes the variance of every output
+component,
 
 .. math::
 
-    \rho_{\mathcal{D}}[J(x, \cdot)]
-    = \mathbb{V}_{\mathcal{D}}[J(x, \theta)]
-    = \mathbb{E}_{\mathcal{D}}[J(x, \theta)^2]
-      - \mathbb{E}_{\mathcal{D}}[J(x, \theta)]^2
+    \rho_{\cD}\bigl[J(x, \cdot)\bigr]
+    = \Var{J(x, \Theta)}
+    = \Expect{J(x, \Theta)^2} - \Expect{J(x, \Theta)}^2.
 
-This measure can be used for *risk-averse* optimisation.
+It is used for risk-averse optimization.  The variance is a scalar only when
+the function is scalar-valued.
 
-Mean-Standard deviation tradeoff
+Mean-standard deviation tradeoff
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The **MeanStandardDeviationTradeoffMeasure** computes a convex combination
-of the mean and the standard deviation for each output component:
+:class:`~otrobopt.MeanStandardDeviationTradeoffMeasure` computes a convex
+combination of the mean and the standard deviation,
 
 .. math::
 
-    \rho_{\mathcal{D}}[J(x, \cdot)]_k
-    = (1 - \alpha_k) \, \mu_k(x) + \alpha_k \, \sigma_k(x)
+    \rho_{\cD}\bigl[J(x, \cdot)\bigr]_k
+    = (1 - \alpha_k)\, \mu_k(x) + \alpha_k\, \sigma_k(x),
 
-where :math:`\mu_k = \mathbb{E}[J_k]`, :math:`\sigma_k = \sqrt{\mathbb{V}[J_k]}`
-and :math:`\alpha_k \in [0, 1]` is a trade-off coefficient.
+where :math:`\mu_k = \Expect{J_k(x, \Theta)}`,
+:math:`\sigma_k = \sqrt{\Var{J_k(x, \Theta)}}` and
+:math:`\alpha_k \in [0,1]` is a trade-off coefficient.  The special values are
+:math:`\alpha_k = 0` for the pure mean, :math:`\alpha_k = 1` for the pure
+standard deviation and :math:`\alpha_k = 1/2` for equal weights.
 
-Special cases:
-
-* :math:`\alpha_k = 0` gives the pure mean (risk-neutral),
-* :math:`\alpha_k = 1` gives the pure standard deviation,
-* :math:`\alpha_k = 0.5` gives equal weight to both.
-
-Worst-case
+Worst case
 ^^^^^^^^^^
 
-The **WorstCaseMeasure** computes the extremal value of the function over
-the support of the distribution:
+:class:`~otrobopt.WorstCaseMeasure` computes the extremal value of the
+function over the support of the distribution,
 
 .. math::
 
-    \rho_{\mathcal{D}}[J(x, \cdot)]
-    = \inf_{\theta \in \operatorname{Supp}(\mathcal{D})} J(x, \theta)
+    \rho_{\cD}\bigl[J(x, \cdot)\bigr]
+    = \inf_{\theta \in \supp{\cD}} J(x, \theta)
 
-for minimization, or the supremum for maximisation.
-
-For continuous distributions, this is a nested optimisation problem
-solved with an inner solver (default: TNC). For discrete distributions,
-the support is scanned exhaustively.
+for minimization, and the supremum for maximization.  When the support is
+unbounded or when the user restricts the domain, the extremum is taken over an
+explicit optimization domain instead; the domain policy is described in
+:doc:`theory`.  For continuous distributions the inner problem is solved by a
+nested optimizer (default: TNC); for discrete distributions the support is
+scanned exhaustively.
 
 Quantile
 ^^^^^^^^
 
-The **QuantileMeasure** computes the :math:`\alpha`-quantile of the
-output distribution:
+:class:`~otrobopt.QuantileMeasure` computes the :math:`\alpha`-quantile of the
+output distribution,
 
 .. math::
 
-    \rho_{\mathcal{D}}[J(x, \cdot)]
-    = \inf \left\{ s \in \mathbb{R} \;
-      : \; \mathbb{P}_{\mathcal{D}}(J(x, \theta) \leq s) \geq \alpha \right\}
+    \rho_{\cD}\bigl[J(x, \cdot)\bigr]
+    = \inf\Bigl\{ t \in \Rset :
+      \Prob{J(x, \Theta) \le t} \ge \alpha \Bigr\}.
 
-This requires solving :math:`F(s) = \alpha` where
-:math:`F(s) = \mathbb{P}(J(x, \theta) \leq s)` is the cumulative distribution
-function of the output. A Brent root-finding algorithm is used.
-
-This measure is restricted to scalar (single-output) functions.
-
+The implementation solves :math:`F(t) = \alpha` by Brent root finding, where
+:math:`F` is the distribution function of :math:`J(x, \Theta)`.  The measure is
+restricted to scalar functions.
 
 Reliability measures
 --------------------
 
-These measures quantify the *feasibility* of a design :math:`x` under
-uncertainty. They are used as constraints in the optimisation problem.
+Reliability measures quantify the feasibility of a design under uncertainty.
+They are used as constraints.  The otrobopt convention is
+:math:`g(x) \ge 0` for an inequality constraint, so a reliability requirement
+:math:`\Prob{G(x, \Theta) \ge 0} \ge \alpha` must be expressed with
+:class:`~openturns.GreaterOrEqual`.
 
 Joint chance constraint
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-The **JointChanceMeasure** computes the probability that **all** constraint
-components are satisfied simultaneously, mapped through the probit transform
-:math:`\Phi^{-1}` (standard normal quantile function) and shifted by a target
-level :math:`\alpha`:
+:class:`~otrobopt.JointChanceMeasure` computes the probability that **all**
+constraint components are satisfied simultaneously, mapped through the probit
+transform :math:`\Phi^{-1}` and shifted by the target level :math:`\alpha`:
 
 .. math::
 
-    \lambda_{\mathcal{D}}[G(x, \cdot)]
-    = \Phi^{-1}\left( \mathbb{P}_{\mathcal{D}}
-      \left( \bigcap_{k=1}^{n_g} \{ G_k(x, \theta) \geq 0 \} \right) \right)
-      - \Phi^{-1}(\alpha)
+    \lambda_{\cD}\bigl[G(x, \cdot)\bigr]
+    = \Phi^{-1}\!\left(
+      \Prob{\bigcap_{k=1}^{n_g} \{G_k(x, \Theta) \ge 0\}}
+      \right) - \Phi^{-1}(\alpha).
 
-The probit transform stretches the probability scale near 0 and 1,
-improving the conditioning of the measure for gradient-based optimization.
-The integral is:
+The probability is evaluated as
 
 .. math::
 
-    P(x) = \int \left( \prod_{k=1}^{n_g}
-      \mathbf{1}_{\{ G_k(x, \theta) \geq 0 \}} \right)
-      p(\theta) \, d\theta
+    P(x) = \int_{\Rset^{n_\theta}}
+      \left(\prod_{k=1}^{n_g}
+      \mathbf{1}_{\{G_k(x, \theta) \ge 0\}}\right)
+      \cD(\mathrm{d}\theta).
+
+The measure always integrates the event :math:`G(x, \Theta) \ge 0`; the
+comparison operator only selects the sign of the returned scalar.  With
+:class:`~openturns.GreaterOrEqual` the value is
 
 .. math::
 
-    \lambda = \Phi^{-1}(P(x)) - \Phi^{-1}(\alpha)
+    \lambda = \Phi^{-1}\bigl(P(x)\bigr) - \Phi^{-1}(\alpha),
 
-When a comparison operator other than *Greater* is used, the sign is
-adjusted so that the constraint :math:`\lambda \geq 0` corresponds to
-the desired reliability level.
+so the constraint :math:`\lambda \ge 0` is equivalent to
+:math:`P(x) \ge \alpha`.  With :class:`~openturns.Less` the value is
+
+.. math::
+
+    \lambda = \Phi^{-1}(\alpha) - \Phi^{-1}\bigl(P(x)\bigr),
+
+which represents :math:`P(x) \le \alpha`, equivalently
+:math:`\Prob{G(x, \Theta) < 0} \ge 1 - \alpha`.  The ``Less`` form is therefore
+the complement form, not a different event.  A reliability requirement
+:math:`\Prob{G(x, \Theta) \ge 0} \ge \alpha` uses ``GreaterOrEqual``.
+
+The probit transform stretches the probability scale near zero and one, which
+improves the conditioning of the measure for gradient-based optimization.  The
+measure is scalar-valued even when the limit state is vector-valued.
 
 Individual chance constraint
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The **IndividualChanceMeasure** computes the probability that **each**
-constraint component is satisfied **individually**, mapped through the probit
-transform :math:`\Phi^{-1}` and shifted by per-component target levels:
+:class:`~otrobopt.IndividualChanceMeasure` computes the probability that
+**each** constraint component is satisfied **individually**, mapped through
+the probit transform and shifted by per-component target levels,
 
 .. math::
 
-    \lambda_{\mathcal{D}}[G(x, \cdot)]_k
-    = \Phi^{-1}\left( \mathbb{P}_{\mathcal{D}}( G_k(x, \theta) \geq 0 ) \right)
-      - \Phi^{-1}(\alpha_k)
+    \lambda_{\cD}\bigl[G(x, \cdot)\bigr]_k
+    = \Phi^{-1}\!\left(
+      \Prob{G_k(x, \Theta) \ge 0}
+      \right) - \Phi^{-1}(\alpha_k),
 
-for :math:`k = 1, \dots, n_g`. The constraint
-:math:`\lambda_{\mathcal{D}} \geq 0` is interpreted component-wise.
-
+for :math:`k = 1, \dots, n_g`.  The output is a vector with one entry per
+constraint component and the constraint :math:`\lambda_{\cD} \ge 0` is
+interpreted componentwise.  As for the joint measure, the operator selects the
+sign of each component and the integrated event remains
+:math:`G_k(x, \Theta) \ge 0`.
 
 Aggregated measure
 ------------------
 
-The **AggregatedMeasure** concatenates the outputs of several measures
-into a single vector-valued measure:
+:class:`~otrobopt.AggregatedMeasure` concatenates the outputs of several
+measures into a single vector-valued measure,
 
 .. math::
 
-    \mathcal{M}(x) = \left[ \rho_1(x), \rho_2(x), \dots, \rho_m(x) \right]
+    \mathcal{M}(x) = \bigl[\rho_1(x), \rho_2(x), \dots, \rho_m(x)\bigr].
 
-This makes it possible to combine, for instance, a robustness measure on
-the objective with a reliability measure on the constraint into a single
-measure evaluation. It is used internally by the
-:class:`~otrobopt.RobustOptimizationProblem`.
-
+It is used internally by :class:`~otrobopt.RobustOptimizationProblem` to
+assemble the objective and the constraints into one evaluation.  The children
+share the same distribution and the same parameter vector.  A mixed set of
+distributions is rejected by the problem and by the canonicalizer, including
+inside an aggregate.
 
 Robust optimization problem
 ---------------------------
 
-The :class:`~otrobopt.RobustOptimizationProblem` class assembles the
-robustness and reliability measures into a mathematical program:
+:class:`~otrobopt.RobustOptimizationProblem` assembles the robustness and
+reliability measures into the mathematical program
 
 .. math::
 
     \begin{aligned}
-    & \underset{x}{\text{minimize}}
-    & & \rho_{\mathcal{D}}[J(x, \cdot)]
-    \\
+    & \min_{x \in \mathcal{X}}
+    & & \rho_{\cD}\bigl[J(x, \cdot)\bigr] \\
     & \text{subject to}
-    & & \lambda_{\mathcal{D}}[G(x, \cdot)] \geq 0
+    & & \lambda_{\cD}\bigl[G(x, \cdot)\bigr] \ge 0.
     \end{aligned}
 
-Either the robustness measure or the reliability measure (or both) can
-be omitted, in which case the corresponding component remains
-deterministic. Concretely:
+Either measure can be omitted.  If :math:`\rho` is omitted, the original
+deterministic objective is used; if :math:`\lambda` is omitted, the original
+deterministic constraint is used.  When both are provided they must share the
+same distribution.  Deterministic bounds are attached with
+:meth:`~otrobopt.RobustOptimizationProblem.setBounds`.  The class also rejects
+a vector-valued robust objective; a reliability constraint may remain
+vector-valued because its components are interpreted componentwise.
 
-* If :math:`\rho` is omitted, the original deterministic objective is used.
-* If :math:`\lambda` is omitted, the original deterministic constraint is used.
-* If both are provided, they must share the same uncertainty distribution.
-
-The problem may also include deterministic bound constraints via
-:meth:`~otrobopt.RobustOptimizationProblem.setBounds`.
-
-
-Discretisation of measures
+Discretization of measures
 --------------------------
 
-**MeasureFactory** converts a measure with a continuous distribution into
-a measure with a discrete (empirical) distribution:
+:class:`~otrobopt.MeasureFactory` converts a measure with a continuous
+distribution into a measure with an empirical distribution,
 
 .. math::
 
-    \mathcal{D} \;\longrightarrow\; \sum_{i=1}^N \omega_i \, \delta_{\theta_i}
+    \cD \;\longrightarrow\; \sum_{i=1}^{N} \omega_i\, \delta_{\theta_i},
 
 where :math:`\{\theta_i\}` and :math:`\{\omega_i\}` are generated by a
-:class:`~openturns.WeightedExperiment` (e.g. Monte Carlo, LHS,
-Sobol' sequence). The discrete measure then replaces the integral by a
-finite sum, making the optimisation problem tractable via standard
-deterministic solvers.
-
+:class:`~openturns.WeightedExperiment`, for example Monte Carlo, Latin
+hypercube sampling or a Sobol sequence.  The discrete measure replaces the
+integral by a finite sum, which makes the problem tractable with deterministic
+solvers.
 
 Sequential Monte Carlo algorithm
 --------------------------------
 
-The :class:`~otrobopt.SequentialMonteCarloRobustAlgorithm` is the
-principal solver. It iteratively refines the discretisation and re-optimises
-until convergence.
-
-Algorithm
-^^^^^^^^^
+:class:`~otrobopt.SequentialMonteCarloRobustAlgorithm` iteratively refines the
+discretization and re-optimizes until convergence.  The algorithm is
 
 .. math::
 
     \begin{array}{l}
-    \textbf{Given: } N_0 \text{ (initial sample size)}, \; \varepsilon
-    \text{ (convergence tolerance)} \\
+    \textbf{Given: } N_0 \text{ (initial sample size)}, \;
+      \varepsilon \text{ (convergence tolerance)} \\
     \textbf{Initialize: } N \leftarrow N_0 \\
     \textbf{Repeat:} \\
     \qquad \Delta N \leftarrow \text{samplingSizeIncrement}(N) \\
-    \qquad \text{Draw } \Delta N \text{ new samples } \{\theta_i\}
-    \text{ from } \mathcal{D} \\
-    \qquad \text{Append to existing sample set; } N \leftarrow N + \Delta N \\
-    \qquad \text{Discretise the measures via MeasureFactory} \\
-    \qquad \text{Solve the resulting deterministic problem from } x_{k-1} \\
+    \qquad \text{Draw } \Delta N \text{ new samples }
+      \{\theta_i\} \text{ from } \cD \\
+    \qquad \text{Append to the existing sample; } N \leftarrow N + \Delta N \\
+    \qquad \text{Discretize the measures with }
+      \texttt{MeasureFactory} \\
+    \qquad \text{Solve the deterministic problem from } x_{k-1} \\
     \qquad \text{Let } x_k \text{ be the new optimum} \\
-    \qquad \text{If } \|x_k - x_{k-1}\| < \varepsilon \text{, stop}
+    \qquad \text{Stop when } \|x_k - x_{k-1}\| < \varepsilon
     \end{array}
 
-Key aspects:
+The main aspects are the following.
 
-* **Sample size**: At each iteration, new samples are added to improve
-  the accuracy of the discretisation. The increment function can be
-  configured (default: add :math:`N` new samples each iteration).
-* **Multi-start**: On the first iteration, an optional multi-start search
-  (using a Sobol' low-discrepancy sequence over the bounds) helps find a promising starting point.
-* **Convergence**: The algorithm stops when the design point change falls
-  below the absolute error tolerance.
-* **Solver tolerance**: The inner deterministic solver tolerance is
-  tightened as :math:`\varepsilon_k = C / \sqrt{N}` where :math:`C` is a
+* **Sample size.**  New samples are added at each iteration to improve the
+  accuracy of the discretization.  The increment is configurable; the default
+  adds :math:`N` new samples.
+* **Multi-start.**  On the first iteration an optional multi-start search over
+  the bounds, driven by a Sobol low-discrepancy sequence, provides a promising
+  starting point.
+* **Convergence.**  The algorithm stops when the change of the design point
+  falls below the absolute error tolerance.
+* **Solver tolerance.**  The tolerance of the inner deterministic solver is
+  tightened as :math:`\varepsilon_k = C/\sqrt{N}`, where :math:`C` is a
   configurable factor.
 
-This sequential approach avoids committing to a fixed discretisation
-level *a priori*: the approximation improves as the optimisation
-progresses, leading to efficient and robust convergence.
+The sequential approach avoids committing to a fixed discretization level
+*before* the optimization: the approximation improves as the optimization
+progresses, which yields efficient and robust convergence.
+
+Measure summary
+---------------
+
+.. list-table:: Outputs and intended use of the measures.
+   :header-rows: 1
+
+   * - Measure
+     - Output
+     - Use
+   * - :class:`~otrobopt.MeanMeasure`
+     - scalar or vector
+     - objective, risk-neutral
+   * - :class:`~otrobopt.VarianceMeasure`
+     - scalar or vector
+     - objective, risk-averse
+   * - :class:`~otrobopt.MeanStandardDeviationTradeoffMeasure`
+     - scalar or vector
+     - objective, risk-averse
+   * - :class:`~otrobopt.QuantileMeasure`
+     - scalar
+     - objective, risk-averse
+   * - :class:`~otrobopt.WorstCaseMeasure`
+     - scalar or vector
+     - objective, worst case
+   * - :class:`~otrobopt.JointChanceMeasure`
+     - scalar
+     - constraint, joint reliability
+   * - :class:`~otrobopt.IndividualChanceMeasure`
+     - vector
+     - constraint, componentwise reliability
+   * - :class:`~otrobopt.AggregatedMeasure`
+     - concatenation
+     - assembly of several measures
+
+The scalar-objective restriction of
+:class:`~otrobopt.RobustOptimizationProblem` applies to the assembled
+objective, not to the individual measure: the variance and the tradeoff
+measure accept vector-valued functions, but their output must be scalar when
+they define the robust objective.

@@ -13,9 +13,9 @@ treatment of the worst-case optimization domain:
   bounded range.
 - ``STANDARD``: require the standard fast path.
 - ``NORMAL``: force the standard normal reference.
-- ``USER_REFERENCE``: require :attr:`reference`.
+- ``USER_REFERENCE``: require ``reference``.
 - ``USER_DOMAIN``: use the automatic reference policy and require
-  :attr:`worstCaseDomain`.
+  ``worstCaseDomain``.
 
 Attributes
 ----------

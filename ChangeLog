@@ -5,6 +5,7 @@
  * Add CanonicalizationOptions and RobustOptimizationProblemCanonicalizer
  * Add MeasureEvaluation.rebuild and WorstCaseMeasure optimization domains
  * Enforce scalar robust objectives and homogeneous measure distributions
+ * Add robust optimization theory documentation
 
 = 0.18 release (2026-04-27)
 
