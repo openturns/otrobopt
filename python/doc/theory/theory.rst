@@ -522,14 +522,119 @@ ecosystem supplies building blocks [Mullen2011]_.  This is why the extension
 makes the joint-chance treatment explicit and keeps a documented Bonferroni
 fallback instead of switching silently between estimators.
 
-The algorithms are added incrementally: the double-loop RIA/PMA baseline and
-the sample-average reference come first, then SORA with an explicit
-joint-chance mode.  Single-loop, scenario/cutting-plane and bilevel worst-case
-methods follow in a second phase, and the alternating parameter heuristic in
-a third phase.  The applicability conditions are the continuity of the limit
-state, the availability of a standard space for the reliability index, and the
-convexity or smoothness assumptions required by the deterministic solver.
-Problems outside the documented class are rejected with an explicit message.
+The algorithms are added incrementally.  The double-loop RIA/PMA baseline and
+the sample-average reference are implemented; SORA with an explicit
+joint-chance mode follows.  Single-loop, scenario/cutting-plane and bilevel
+worst-case methods follow in a second phase, and the alternating parameter
+heuristic in a third phase.  The applicability conditions are the continuity
+of the limit state, the availability of a standard space for the reliability
+index, and the convexity or smoothness assumptions required by the
+deterministic solver.  Problems outside the documented class are rejected with
+an explicit message.
+
+Double-loop RIA and PMA
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Both implementations start from the same safe-event convention.  Let
+:math:`\sigma=+1` for a ``Greater`` operator and :math:`\sigma=-1` for a
+``Less`` operator, and let :math:`G_j(x;T(\xi))` be the limit-state components
+written in the standard space.  The scalarized limit state is
+
+.. math::
+
+    s(x;\xi) = \sigma \min_{1 \le j \le n_g} G_j(x;T(\xi)).
+
+For a ``Greater`` operator the safe event is the intersection
+:math:`\{s(x;\Xi) \ge 0\}` and the safe target is :math:`p_s=\alpha`.  For a
+``Less`` operator the measure integrates the event
+:math:`\{G(x;\Theta) \ge 0\}` and the safe event is its complement, the union
+:math:`\{\exists j : G_j(x;\Theta) < 0\}`, so :math:`\sigma=-1` and
+:math:`p_s=1-\alpha`.  The scalarization is applied before the sign change,
+which is why :math:`s` is not :math:`\min_j \sigma G_j` for a ``Less``
+operator.
+
+Write :math:`\beta_t=\Phi^{-1}(p_s)`.  The double-loop algorithm requires
+:math:`0.5 < p_s < 1` so that :math:`\beta_t` is positive.
+
+In the reliability index approach (RIA), the inner problem finds the design
+point
+
+.. math::
+
+    u^*(x) \in \arg\min_{\{u : s(x;u)=0\}} \|u\|,
+
+and the signed reliability index is
+:math:`\beta(x)=\operatorname{sign}(s(x;0))\,\|u^*(x)\|`.  A negative index
+means that the origin of the standard space already belongs to the failure
+domain.  The outer problem is
+
+.. math::
+
+    \min_x f(x) \quad \text{subject to} \quad \beta(x)-\beta_t \ge 0.
+
+In the performance measure approach (PMA), the inner problem minimizes the
+scalarized limit state on the target sphere,
+
+.. math::
+
+    u^*(x) \in \arg\min_{\{u : \|u\|=\beta_t\}} s(x;u),
+
+and the outer constraint is :math:`s(x;u^*(x)) \ge 0`.  The outer constraint
+reported by the algorithm is the performance measure at that point.  Both
+inner problems are solved with the configured inner solver, by default
+:class:`~openturns.Cobyla`, because the min-scalarization of a vector limit
+state is nonsmooth.
+
+The joint-chance treatment is explicit.  With
+``DoubleLoopRBDOAlgorithm.EXACT`` the algorithm uses the single scalarized
+limit state above.  This is a first-order reliability approximation of the
+joint event: it is not an exact system probability, even when the components
+are independent and Gaussian.  With
+``DoubleLoopRBDOAlgorithm.BONFERRONI`` the joint event is replaced by the
+:math:`n_g` component events with the conservative target
+
+.. math::
+
+    \alpha_c = 1 - \frac{1-p_s}{n_g},
+
+so that :math:`\Prob{\cup_j \{G_j < 0\}} \le n_g(1-\alpha_c) = 1-p_s`.  The
+component target must satisfy :math:`\alpha_c > 0.5`; otherwise the algorithm
+rejects the problem and asks for the exact treatment or a sample-based
+algorithm.
+
+Sample-average approximation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The sample-average algorithm keeps a calibration sample
+:math:`\theta_1,\dots,\theta_N` drawn once at the beginning of the run and
+replaces the chance constraint by its exact empirical counterpart,
+
+.. math::
+
+    \widehat p_N(x)
+    = \frac{1}{N} \sum_{i=1}^N
+      \mathbf{1}\bigl\{\theta_i \in \mathcal{S}(x)\bigr\}
+    \ge p_s,
+
+where :math:`\mathcal{S}(x)` is the safe event defined above.  For a
+``Greater`` operator this is :math:`\{G(x;\theta) \ge 0\}`; for a ``Less``
+operator it is :math:`\{\exists j : G_j(x;\theta) < 0\}`.  The empirical
+probability is used without a smooth surrogate, so the constraint is a step
+function and the outer solver must be derivative-free.  Any target
+:math:`p_s \in [0,1]` is accepted, including targets for which the reliability
+index is undefined.
+
+Because the empirical probability is piecewise constant, the solver may fail
+from an infeasible starting point.  The algorithm therefore looks for a
+feasible start along the gradient of the scalarized limit state and along the
+coordinate directions before it calls the outer solver.  The reported solution
+satisfies the empirical constraint exactly.
+
+After the optimization, the safe probability is estimated again on an
+independent validation sample and a Wilson 95% confidence interval is
+reported.  The interval measures the sampling error of the validation
+estimate; it does not measure the bias of the calibration sample or the
+quality of the outer solver.
 
 Worked examples and validation
 ------------------------------

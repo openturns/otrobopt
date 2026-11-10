@@ -155,6 +155,19 @@ Solve a robust optimization problem
     RobustOptimizationAlgorithm
     SequentialMonteCarloRobustAlgorithm
 
+Solve a reliability-based design optimization problem
+-----------------------------------------------------
+
+The specialized algorithms accept an :class:`~otrobopt.RBDOProblem` and read the
+target probability and the comparison operator from its joint chance measure.
+
+.. autosummary::
+    :toctree: _generated/
+    :template: class.rst_t
+
+    DoubleLoopRBDOAlgorithm
+    SampleAverageApproximationAlgorithm
+
 .. FIXME: sphinx.errors.SphinxWarning: .../otrobopt.py:docstring of openturns.analytical.AnalyticalResult.getHasoferReliabilityIndexSensitivity:4:undefined label: sensitivity_form
 .. _sensitivity_form:
 .. _importance_form:

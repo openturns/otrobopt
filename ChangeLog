@@ -1,6 +1,8 @@
 = 0.19 release (unreleased)
 
  * Add RBDOProblem
+ * Add DoubleLoopRBDOAlgorithm with RIA, PMA, exact joint event and Bonferroni treatments
+ * Add SampleAverageApproximationAlgorithm for any joint chance target probability
  * Add ParameterAsInputFunction
  * Add ParametricDistributionTransformation
  * Add full and active distribution parameters to ParametricDistributionTransformation
