@@ -100,6 +100,18 @@ Robustness & reliability problem:
 
 // ---------------------------------------------------------------------
 
+%feature("docstring") OTROBOPT::RobustOptimizationProblem::setObjective
+"Objective function accessor.
+
+The robust objective must be scalar.
+
+Parameters
+----------
+objective : :py:class:`openturns.Function`
+    Objective function"
+
+// ---------------------------------------------------------------------
+
 %feature("docstring") OTROBOPT::RobustOptimizationProblem::setRobustnessMeasure
 "Robustness measure accessor.
 

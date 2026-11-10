@@ -19,6 +19,9 @@
  *
  */
 #include "otrobopt/WorstCaseMeasure.hxx"
+#include "otrobopt/MeasureEvaluation.hxx"
+#include <algorithm>
+#include <cmath>
 #include <openturns/PersistentObjectFactory.hxx>
 #include <openturns/NLopt.hxx>
 #include <openturns/TNC.hxx>
@@ -31,6 +34,60 @@ namespace OTROBOPT
 CLASSNAMEINIT(WorstCaseMeasure)
 
 static Factory<WorstCaseMeasure> Factory_WorstCaseMeasure;
+
+/* Build a finite starting point inside the optimization domain.
+   The mean is the natural starting point, but it does not exist for every
+   distribution and it may be infinite: fall back to the midpoint of the box
+   then, as the canonicalizer does for its reference distribution. */
+static Point buildStartingPoint(const Distribution & distribution,
+                                const Interval & domain)
+{
+  const UnsignedInteger dimension = domain.getDimension();
+  Point startingPoint(dimension);
+  Bool useMean = false;
+  try
+  {
+    const Point mean(distribution.getMean());
+    if (mean.getDimension() == dimension)
+    {
+      useMean = true;
+      for (UnsignedInteger i = 0; i < dimension; ++i)
+        if (!std::isfinite(mean[i]))
+          useMean = false;
+      if (useMean)
+        startingPoint = mean;
+    }
+  }
+  catch (const Exception &)
+  {
+    // The distribution has no mean, use the box instead
+  }
+
+  const Interval::BoolCollection finiteLower(domain.getFiniteLowerBound());
+  const Interval::BoolCollection finiteUpper(domain.getFiniteUpperBound());
+  const Point lowerBound(domain.getLowerBound());
+  const Point upperBound(domain.getUpperBound());
+  for (UnsignedInteger i = 0; i < dimension; ++i)
+  {
+    if (useMean)
+    {
+      // Keep the mean inside the box
+      if (finiteLower[i])
+        startingPoint[i] = std::max(startingPoint[i], lowerBound[i]);
+      if (finiteUpper[i])
+        startingPoint[i] = std::min(startingPoint[i], upperBound[i]);
+    }
+    else if (finiteLower[i] && finiteUpper[i])
+      startingPoint[i] = 0.5 * (lowerBound[i] + upperBound[i]);
+    else if (finiteLower[i])
+      startingPoint[i] = lowerBound[i] + 1.0;
+    else if (finiteUpper[i])
+      startingPoint[i] = upperBound[i] - 1.0;
+    else
+      startingPoint[i] = 0.0;
+  }
+  return startingPoint;
+}
 
 
 /* Default constructor */
@@ -55,6 +112,45 @@ WorstCaseMeasure::WorstCaseMeasure (const Function & function,
 WorstCaseMeasure * WorstCaseMeasure::clone() const
 {
   return new WorstCaseMeasure(*this);
+}
+
+/* Rebuild the measure over a new function and distribution */
+MeasureEvaluation WorstCaseMeasure::rebuild(const Function & function,
+    const Distribution & distribution,
+    const Interval & optimizationDomain) const
+{
+  WorstCaseMeasure result(function, distribution, isMinimization_);
+  result.setOptimizationAlgorithm(solver_);
+  result.setIntegrationAlgorithm(getIntegrationAlgorithm());
+  result.setPDFThreshold(getPDFThreshold());
+  if (optimizationDomain.getDimension() != 0)
+    result.setOptimizationDomain(optimizationDomain);
+  else if (distribution == distribution_)
+    result.setOptimizationDomain(optimizationDomain_);
+  return result;
+}
+
+/* Whether rebuilding the measure requires an explicit optimization domain */
+Bool WorstCaseMeasure::requiresOptimizationDomain() const
+{
+  return true;
+}
+
+/* Optimization domain accessor */
+void WorstCaseMeasure::setOptimizationDomain(const Interval & domain)
+{
+  const UnsignedInteger dimension = distribution_.getDimension();
+  if ((domain.getDimension() != 0) && (domain.getDimension() != dimension))
+    throw InvalidDimensionException(HERE) << "The optimization domain dimension ("
+                                          << domain.getDimension()
+                                          << ") must match the distribution dimension ("
+                                          << dimension << ")";
+  optimizationDomain_ = domain;
+}
+
+Interval WorstCaseMeasure::getOptimizationDomain() const
+{
+  return optimizationDomain_;
 }
 
 
@@ -211,10 +307,13 @@ Point WorstCaseMeasure::operator()(const Point & inP) const
     {
       const Pointer<FunctionImplementation> p_wrapper(new WorstCaseMeasureParametricFunctionWrapper(inP, function.getMarginal(j)));
       const Function G(p_wrapper);
-      OptimizationProblem problem(G, Function(), C, distribution_.getRange());
+      Interval domain(optimizationDomain_);
+      if (domain.getDimension() == 0)
+        domain = distribution_.getRange();
+      OptimizationProblem problem(G, Function(), C, domain);
       problem.setMinimization(isMinimization());
       OptimizationAlgorithm solver(solver_);
-      solver.setStartingPoint(distribution_.getMean());
+      solver.setStartingPoint(buildStartingPoint(distribution_, domain));
       solver.setProblem(problem);
       solver.run();
       const Point optimalValue(solver.getResult().getOptimalValue());
@@ -269,6 +368,8 @@ String WorstCaseMeasure::__repr__() const
   OSS oss;
   oss << "class=" << WorstCaseMeasure::GetClassName()
       << " minimization=" << isMinimization_;
+  if (optimizationDomain_.getDimension() != 0)
+    oss << " optimizationDomain=" << optimizationDomain_;
   return oss;
 }
 
@@ -278,6 +379,7 @@ void WorstCaseMeasure::save(Advocate & adv) const
   MeasureEvaluationImplementation::save(adv);
   adv.saveAttribute("isMinimization_", isMinimization_);
   adv.saveAttribute("solver_", solver_);
+  adv.saveAttribute("optimizationDomain_", optimizationDomain_);
 }
 
 /* Method load() reloads the object from the StorageManager */
@@ -286,6 +388,8 @@ void WorstCaseMeasure::load(Advocate & adv)
   MeasureEvaluationImplementation::load(adv);
   adv.loadAttribute("isMinimization_", isMinimization_);
   adv.loadAttribute("solver_", solver_);
+  if (adv.hasAttribute("optimizationDomain_"))
+    adv.loadAttribute("optimizationDomain_", optimizationDomain_);
 }
 
 
