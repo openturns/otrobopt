@@ -117,6 +117,16 @@ Define a robust optimization problem
 
     RobustOptimizationProblem
 
+Canonicalize a robust optimization problem
+------------------------------------------
+
+.. autosummary::
+    :toctree: _generated/
+    :template: class.rst_t
+
+    CanonicalizationOptions
+    RobustOptimizationProblemCanonicalizer
+
 Discretize a measure function
 -----------------------------
 

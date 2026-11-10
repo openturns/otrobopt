@@ -19,6 +19,7 @@
  *
  */
 #include "otrobopt/QuantileMeasure.hxx"
+#include "otrobopt/MeasureEvaluation.hxx"
 #include <openturns/PersistentObjectFactory.hxx>
 #include <openturns/GaussKronrod.hxx>
 #include <openturns/IteratedQuadrature.hxx>
@@ -64,6 +65,17 @@ QuantileMeasure::QuantileMeasure (const Function & function,
 QuantileMeasure * QuantileMeasure::clone() const
 {
   return new QuantileMeasure(*this);
+}
+
+/* Rebuild the measure over a new function and distribution */
+MeasureEvaluation QuantileMeasure::rebuild(const Function & function,
+    const Distribution & distribution,
+    const Interval & /*optimizationDomain*/) const
+{
+  QuantileMeasure result(function, distribution, alpha_);
+  result.setIntegrationAlgorithm(getIntegrationAlgorithm());
+  result.setPDFThreshold(getPDFThreshold());
+  return result;
 }
 
 /* This function is the kernel of the CDF computation of f(x,\Theta):
