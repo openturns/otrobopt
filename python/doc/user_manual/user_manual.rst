@@ -117,6 +117,15 @@ Define a robust optimization problem
 
     RobustOptimizationProblem
 
+Define a reliability-based design optimization problem
+------------------------------------------------------
+
+.. autosummary::
+    :toctree: _generated/
+    :template: class.rst_t
+
+    RBDOProblem
+
 Canonicalize a robust optimization problem
 ------------------------------------------
 

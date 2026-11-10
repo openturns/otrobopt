@@ -480,32 +480,56 @@ iteration.
 Specialized algorithms
 ----------------------
 
-The theory companion of the algorithm catalogue is the following.  The
-current implementation provides the measure evaluation protocol, the
-canonicalizer and :class:`~otrobopt.SequentialMonteCarloRobustAlgorithm`.
-The specialized algorithms of the implementation plan are:
+The generic :class:`~otrobopt.RobustOptimizationProblem` accepts any robustness
+or reliability measure, and the canonicalizer reduces it to a deterministic
+problem over :math:`(x,s)`.  Some algorithms exploit a narrower structure and
+therefore use the dedicated :class:`~otrobopt.RBDOProblem`:
 
-* **SORA** for a deterministic objective and a joint chance constraint.  It
-  alternates a design optimization with a reliability-index update and uses
-  the fact that the reliability constraint is evaluated in the standard
-  space.
-* **Single-loop methods** that replace the inner reliability problem by a
-  fixed-point update of the most probable point.
-* **Double-loop RBDO**, which solves the inner reliability problem for every
-  candidate design; it is the reference implementation for the other
-  methods.
-* **Sample-average approximation**, which solves the discretized problem of
-  the previous section.
-* **Scenario and cutting-plane methods**, which enforce chance constraints
-  through a finite set of linear or convex cuts.
-* **Bilevel worst-case optimization**, which solves the inner extremum
-  explicitly when the uncertainty set is a box or an ellipsoid.
+* a scalar classical :class:`~openturns.Function` objective;
+* one :class:`~otrobopt.JointChanceMeasure` constraint;
+* deterministic bounds, inequality constraints and equality constraints.
 
-The applicability conditions are the continuity of the limit state, the
-availability of a standard space for the reliability index, and the
+The class keeps the distribution parameter fixed by default.  The canonical
+problem returned by :meth:`~otrobopt.RBDOProblem.getCanonicalProblem` freezes
+it; the overloads that accept
+:class:`~otrobopt.CanonicalizationOptions` expose the active parameter
+:math:`s` in the canonical decision vector.  The canonical inequality
+constraint gathers the joint chance index first and the deterministic
+inequalities afterwards.  The measure itself stays available through
+:meth:`~otrobopt.RBDOProblem.getCanonicalJointChanceMeasure`, so an algorithm
+reads the target probability and the comparison operator from the measure
+instead of inferring them from the index value.
+
+The literature review of RBDO led to the following design choices.  The
+double-loop formulation with RIA or PMA is the reference implementation
+[Aoues2010]_, [Tu1999]_, [Valdebenito2010]_.  SORA decouples the loops through
+a shift of the deterministic constraints [Du2004]_, and the single-loop
+methods replace the inner reliability problem by a fixed-point update
+[Liang2004]_.  The sample-average and scenario approximations are
+distribution-free references [Shapiro2009]_, [Calafiore2006]_,
+[Rocchetta2021]_, while joint chance constraints over finite distributions
+admit exact mixed-integer formulations [Luedtke2010]_, [Ahmed2018]_.
+Analytic approximations and gradients for joint chance constraints are
+available for specific families [Geletu2019]_, [Xie2019]_,
+[VanAckooij2014]_, and sequential convex approaches require additional
+structure [Hong2011]_.
+
+Most existing tools implement component RBDO rather than a single joint chance
+event: DAKOTA provides RIA and PMA and a bi-level workflow [Eldred2007]_,
+UQpy and Fortuna.jl provide reliability primitives [Olivier2020]_,
+[Akchurin2024]_, FERUM is a research code [DerKiureghian2006]_, and the R
+ecosystem supplies building blocks [Mullen2011]_.  This is why the extension
+makes the joint-chance treatment explicit and keeps a documented Bonferroni
+fallback instead of switching silently between estimators.
+
+The algorithms are added incrementally: the double-loop RIA/PMA baseline and
+the sample-average reference come first, then SORA with an explicit
+joint-chance mode.  Single-loop, scenario/cutting-plane and bilevel worst-case
+methods follow in a second phase, and the alternating parameter heuristic in
+a third phase.  The applicability conditions are the continuity of the limit
+state, the availability of a standard space for the reliability index, and the
 convexity or smoothness assumptions required by the deterministic solver.
-The specialized algorithms are not implemented yet; the implementation plan
-tracks them as Stage 7.
+Problems outside the documented class are rejected with an explicit message.
 
 Worked examples and validation
 ------------------------------
@@ -740,3 +764,52 @@ References
    51(5):742--752, 2006.
 
 .. [Billingsley1995] P. Billingsley. *Probability and Measure*. Wiley, 1995.
+
+.. [Ahmed2018] S. Ahmed and W. Xie. Relaxations and approximations of chance
+   constraints under finite distributions. *Mathematical Programming*,
+   170(1):43--65, 2018.
+
+.. [Akchurin2024] D. Akchurin. Fortuna.jl: structural and system reliability
+   analysis in Julia. *Journal of Open Source Software*, 9(100):6967, 2024.
+
+.. [DerKiureghian2006] A. Der Kiureghian, T. Haukaas and K. Fujimura.
+   Structural reliability software at the University of California, Berkeley.
+   *Structural Safety*, 28(1--2):44--67, 2006.
+
+.. [Eldred2007] M. S. Eldred, H. Agarwal, V. M. Perez, S. F. Wojtkiewicz and
+   J. E. Renaud. Investigation of reliability method formulations in
+   DAKOTA/UQ. *Structure and Infrastructure Engineering*, 3(3):199--213, 2007.
+
+.. [Geletu2019] A. Geletu, A. Hoffmann and P. Li. Analytic approximation and
+   differentiability of joint chance constraints. *Optimization*,
+   68(10):1985--2023, 2019.
+
+.. [Hong2011] L. J. Hong, Y. Yang and L. Zhang. Sequential convex
+   approximations to joint chance constrained programs: a Monte Carlo
+   approach. *Operations Research*, 59(3):617--630, 2011.
+
+.. [Luedtke2010] J. Luedtke, S. Ahmed and G. Nemhauser. An integer programming
+   approach for linear programs with probabilistic constraints.
+   *Mathematical Programming*, 122(2):247--272, 2010.
+
+.. [Mullen2011] K. Mullen, D. Ardia, D. Gil, D. Windover and J. Cline.
+   DEoptim: an R package for global optimization by differential evolution.
+   *Journal of Statistical Software*, 40(6):1--26, 2011.
+
+.. [Olivier2020] A. Olivier, D. G. Giovanis, B. S. Aakash, M. Chauhan,
+   L. Vandanapu and M. D. Shields. UQpy: a general purpose Python package and
+   development environment for uncertainty quantification. *Journal of
+   Computational Science*, 47:101204, 2020.
+
+.. [Rocchetta2021] R. Rocchetta and L. G. Crespo. A scenario optimization
+   approach to reliability-based and risk-based design: soft-constrained
+   modulation of failure probability bounds. *Reliability Engineering and
+   System Safety*, 216:107900, 2021.
+
+.. [VanAckooij2014] W. van Ackooij and R. Henrion. Gradient formulae for
+   nonlinear probabilistic constraints with Gaussian and Gaussian-like
+   distributions. *SIAM Journal on Optimization*, 24(4):1864--1889, 2014.
+
+.. [Xie2019] W. Xie, S. Ahmed and R. Jiang. Optimized Bonferroni
+   approximations of distributionally robust joint chance constraints.
+   *Mathematical Programming*, 191(1):79--112, 2022.
