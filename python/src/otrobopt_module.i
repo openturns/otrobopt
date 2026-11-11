@@ -36,6 +36,7 @@
 %include RobustOptimizationProblemCanonicalizer.i
 %include RBDOProblem.i
 %include DoubleLoopRBDOAlgorithm.i
+%include SORARobustOptimizationAlgorithm.i
 %include SampleAverageApproximationAlgorithm.i
 %include RobustOptimizationAlgorithm.i
 %include SequentialMonteCarloRobustAlgorithm.i

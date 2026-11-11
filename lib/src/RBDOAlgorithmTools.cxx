@@ -655,6 +655,7 @@ InnerReport SolveRIA(const Function & function,
     report.constraint = -betaTarget;
     report.beta = 0.0;
     report.standardDesignPoint = Point(dimension);
+    report.safeOrigin = (originValue >= 0.0);
     return report;
   }
   const Collection<Point> starts(BuildStartingPoints(function, betaTarget, warmStart, false));
@@ -747,6 +748,7 @@ InnerReport SolveRIA(const Function & function,
   report.constraint = beta - betaTarget;
   report.beta = beta;
   report.standardDesignPoint = bestPoint;
+  report.safeOrigin = (originValue >= 0.0);
   return report;
 }
 
@@ -788,6 +790,7 @@ InnerReport SolvePMA(const Function & function,
       performance = std::min(performance, originValue);
     report.constraint = performance;
     report.performance = performance;
+    report.safeOrigin = safeOrigin;
     return report;
   }
 
@@ -884,6 +887,7 @@ InnerReport SolvePMA(const Function & function,
   report.constraint = bestValue;
   report.performance = bestValue;
   report.standardDesignPoint = bestPoint;
+  report.safeOrigin = safeOrigin;
   return report;
 }
 

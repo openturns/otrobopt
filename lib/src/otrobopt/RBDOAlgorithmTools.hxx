@@ -49,6 +49,10 @@ struct OTROBOPT_API InnerReport
   OT::Scalar beta = 0.0;
   OT::Scalar performance = 0.0;
   OT::Point standardDesignPoint;
+  // Whether the origin of the standard space belongs to the safe domain, so
+  // that a positive performance measure certifies safety.  PMA caps the
+  // performance by the value at the origin otherwise.
+  OT::Bool safeOrigin = true;
 };
 
 /** Whether a point has only finite coordinates */
