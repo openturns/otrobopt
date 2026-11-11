@@ -166,7 +166,16 @@ target probability and the comparison operator from its joint chance measure.
     :template: class.rst_t
 
     DoubleLoopRBDOAlgorithm
+    SORARobustOptimizationAlgorithm
     SampleAverageApproximationAlgorithm
+
+:class:`~otrobopt.DoubleLoopRBDOAlgorithm` supports RIA and PMA and accepts
+problems where the design and random dimensions differ.
+:class:`~otrobopt.SORARobustOptimizationAlgorithm` uses the physical shift
+:math:`d=x-\theta^*` and therefore requires equal design and random
+dimensions; it rejects a mismatched problem with an explicit error.
+:class:`~otrobopt.SampleAverageApproximationAlgorithm` accepts any target
+probability and is not restricted to a positive reliability index.
 
 .. FIXME: sphinx.errors.SphinxWarning: .../otrobopt.py:docstring of openturns.analytical.AnalyticalResult.getHasoferReliabilityIndexSensitivity:4:undefined label: sensitivity_form
 .. _sensitivity_form:

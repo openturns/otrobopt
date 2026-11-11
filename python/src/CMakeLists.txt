@@ -64,6 +64,7 @@ ot_add_python_module( ${PACKAGE_NAME} ${PACKAGE_NAME}_module.i
                       RobustOptimizationProblem.i RobustOptimizationProblem_doc.i
                       RBDOProblem.i RBDOProblem_doc.i
                       DoubleLoopRBDOAlgorithm.i DoubleLoopRBDOAlgorithm_doc.i
+                      SORARobustOptimizationAlgorithm.i SORARobustOptimizationAlgorithm_doc.i
                       SampleAverageApproximationAlgorithm.i SampleAverageApproximationAlgorithm_doc.i
                       RobustOptimizationProblemCanonicalizer.i RobustOptimizationProblemCanonicalizer_doc.i
                       RobustOptimizationAlgorithm.i RobustOptimizationAlgorithm_doc.i

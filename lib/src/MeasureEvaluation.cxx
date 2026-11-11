@@ -40,6 +40,10 @@ struct MeasureEvaluation_init
     ResourceMap::AddAsScalar("DoubleLoopRBDOAlgorithm-DefaultInnerMaximumConstraintError", 1e-8);
     ResourceMap::AddAsScalar("DoubleLoopRBDOAlgorithm-DefaultInnerMaximumAbsoluteError", 1e-8);
 
+    ResourceMap::AddAsUnsignedInteger("SORARobustOptimizationAlgorithm-DefaultInnerMaximumIterationNumber", 1000);
+    ResourceMap::AddAsScalar("SORARobustOptimizationAlgorithm-DefaultInnerMaximumConstraintError", 1e-8);
+    ResourceMap::AddAsScalar("SORARobustOptimizationAlgorithm-DefaultInnerMaximumAbsoluteError", 1e-8);
+
     ResourceMap::AddAsUnsignedInteger("SampleAverageApproximationAlgorithm-DefaultSampleSize", 1000);
     ResourceMap::AddAsUnsignedInteger("SampleAverageApproximationAlgorithm-DefaultValidationSampleSize", 10000);
 

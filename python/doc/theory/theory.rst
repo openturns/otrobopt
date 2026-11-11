@@ -522,11 +522,11 @@ ecosystem supplies building blocks [Mullen2011]_.  This is why the extension
 makes the joint-chance treatment explicit and keeps a documented Bonferroni
 fallback instead of switching silently between estimators.
 
-The algorithms are added incrementally.  The double-loop RIA/PMA baseline and
-the sample-average reference are implemented; SORA with an explicit
-joint-chance mode follows.  Single-loop, scenario/cutting-plane and bilevel
-worst-case methods follow in a second phase, and the alternating parameter
-heuristic in a third phase.  The applicability conditions are the continuity
+The algorithms are added incrementally.  The double-loop RIA/PMA baseline,
+SORA with an explicit joint-chance mode, and the sample-average reference are
+implemented.  Single-loop, scenario/cutting-plane and bilevel worst-case
+methods follow in a second phase, and the alternating parameter heuristic in a
+third phase.  The applicability conditions are the continuity
 of the limit state, the availability of a standard space for the reliability
 index, and the convexity or smoothness assumptions required by the
 deterministic solver.  Problems outside the documented class are rejected with
@@ -601,6 +601,53 @@ so that :math:`\Prob{\cup_j \{G_j < 0\}} \le n_g(1-\alpha_c) = 1-p_s`.  The
 component target must satisfy :math:`\alpha_c > 0.5`; otherwise the algorithm
 rejects the problem and asks for the exact treatment or a sample-based
 algorithm.
+
+SORA
+^^^^
+
+Sequential optimization and reliability assessment (SORA) decouples the
+design and reliability loops [Du2004]_.  At iteration :math:`k`, let
+:math:`x^{(k)}` be the current design and let
+
+.. math::
+
+    \theta^{*(k)} = T\bigl(u^{*(k)}\bigr)
+
+be the physical image of the target point found by a performance-measure
+analysis at :math:`x^{(k)}`.  The physical shift is
+
+.. math::
+
+    d^{(k)} = x^{(k)} - \theta^{*(k)}.
+
+The next design solves the deterministic problem with the limit-state
+parameter frozen at :math:`\theta^{*(k)}`:
+
+.. math::
+
+    x^{(k+1)} = \argmin_{x \in \mathcal{X}} f(x)
+    \quad \text{subject to} \quad
+    \sigma \min_{1 \le j \le n_g} g_j\bigl(x; x^{(k)} - d^{(k)}\bigr) \ge 0.
+
+The shift is then updated at the new design and the loop continues until both
+the design and the shift change by less than the outer absolute or relative
+error tolerances.
+
+The physical shift requires :math:`\dim(x) = \dim(\Theta)`.  When the design
+and random dimensions differ, the algorithm rejects the problem and points to
+the double-loop or sample-based algorithms.  This is a deliberate restriction:
+projecting the shift onto the design space would silently change the chance
+constraint.
+
+The joint-chance treatment is again explicit.  With
+``SORARobustOptimizationAlgorithm.EXACT`` the reliability analysis uses the
+single scalarized limit state :math:`\sigma\min_j g_j` and maintains one
+shift.  This is a FORM approximation of the system event, not an exact system
+reliability calculation.  With
+``SORARobustOptimizationAlgorithm.BONFERRONI`` each component is analyzed
+with the conservative target :math:`\alpha_c=1-(1-p_s)/n_g` and has its own
+shift.  The Bonferroni mode is more robust but conservative, and it requires
+:math:`\alpha_c > 0.5`.
 
 Sample-average approximation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
