@@ -15,75 +15,114 @@ The problem is
     \mathbb{P}_{\Theta}(\Theta - x \ge 0) \ge 0.9,
     \qquad \Theta \sim \mathcal{N}(0, 1).
 
-All three algorithms should return the same optimal design,
-:math:`x^*=-\Phi^{-1}(0.9)\approx-1.2816`.  The comparison shows that SORA
-reaches the same reliability target as the double-loop baselines with fewer
-reliability analyses.
+The safe event is :math:`\{\Theta \ge x\}`, so its probability is
+:math:`1-\Phi(x)`.  The ground truth is available analytically:
+:math:`x^*=-\Phi^{-1}(0.9)\approx-1.2816` with objective
+:math:`x^{*2}\approx1.6424` and probability :math:`0.9`.
+
+The example reports, for each algorithm, the optimal design, the reliability
+index, the approximate probability, and the number of objective and
+limit-state evaluations.  All algorithms should reproduce the analytic
+solution; the evaluation counts show the cost of the inner reliability loop.
 """
 
 # %%
 import openturns as ot
 import otrobopt
 
-# %%
-limitState = ot.ParametricFunction(
-    ot.SymbolicFunction(["x", "theta"], ["theta - x"]), [1], [0.0]
-)
-measure = otrobopt.JointChanceMeasure(
-    limitState, ot.Normal(), ot.GreaterOrEqual(), 0.9
-)
-problem = otrobopt.RBDOProblem(
-    ot.SymbolicFunction(["x"], ["x^2"]), measure
-)
 
-# %%
-# SORA.
-sora = otrobopt.SORARobustOptimizationAlgorithm(problem, ot.Cobyla())
-sora.setStartingPoint([0.0])
-sora.run()
+def build_problem():
+    """Return a fresh problem and its memoized objective and limit state."""
+    objective = ot.MemoizeFunction(ot.SymbolicFunction(["x"], ["x^2"]))
+    objective.disableCache()
+    limitState = ot.MemoizeFunction(
+        ot.ParametricFunction(
+            ot.SymbolicFunction(["x", "theta"], ["theta - x"]), [1], [0.0]
+        )
+    )
+    limitState.disableCache()
+    measure = otrobopt.JointChanceMeasure(
+        limitState, ot.Normal(), ot.GreaterOrEqual(), 0.9
+    )
+    problem = otrobopt.RBDOProblem(objective, measure)
+    return problem, objective, limitState
 
-# %%
-# Double-loop RIA and PMA.
-doubleLoop = []
-for method in [
-    otrobopt.DoubleLoopRBDOAlgorithm.RIA,
-    otrobopt.DoubleLoopRBDOAlgorithm.PMA,
-]:
+
+def solve_sora():
+    problem, objective, limitState = build_problem()
+    algo = otrobopt.SORARobustOptimizationAlgorithm(problem, ot.Cobyla())
+    algo.setStartingPoint([0.0])
+    algo.run()
+    return algo, objective, limitState
+
+
+def solve_double_loop(method):
+    problem, objective, limitState = build_problem()
     algo = otrobopt.DoubleLoopRBDOAlgorithm(problem, ot.Cobyla())
     algo.setMethod(method)
     algo.setStartingPoint([0.0])
     algo.run()
-    doubleLoop.append(algo)
+    return algo, objective, limitState
+
 
 # %%
-# Collect the results.  The reliability index is the diagnostic index at the
-# optimal design, and the approximate probability is its FORM probability.
-rows = [
-    (
-        "SORA",
-        sora.getResult().getOptimalPoint()[0],
-        sora.getReliabilityIndex(),
-        sora.getApproximateProbability(),
-    ),
+# Solve the problem with SORA and with the double-loop RIA and PMA methods.
+runs = [
+    ("SORA",) + solve_sora(),
     (
         "Double-loop RIA",
-        doubleLoop[0].getResult().getOptimalPoint()[0],
-        doubleLoop[0].getReliabilityIndex(),
-        doubleLoop[0].getApproximateProbability(),
-    ),
+    ) + solve_double_loop(otrobopt.DoubleLoopRBDOAlgorithm.RIA),
     (
         "Double-loop PMA",
-        doubleLoop[1].getResult().getOptimalPoint()[0],
-        doubleLoop[1].getReliabilityIndex(),
-        doubleLoop[1].getApproximateProbability(),
-    ),
+    ) + solve_double_loop(otrobopt.DoubleLoopRBDOAlgorithm.PMA),
 ]
 
-print("Algorithm        | design   | reliability index | probability")
-print("-----------------+----------+-------------------+------------")
-for name, design, index, probability in rows:
-    print(f"{name:16s} | {design:8.5f} | {index:17.5f} | {probability:.5f}")
+# %%
+# Collect the results and the evaluation counts.  The reliability index is the
+# diagnostic index at the optimal design, and the approximate probability is
+# its FORM probability.
+print(
+    "Algorithm        | design   | index   | probability"
+    " | obj. evals | limit-state evals"
+)
+print(
+    "-----------------+----------+---------+-------------"
+    "+------------+------------------"
+)
+for name, algo, objective, limitState in runs:
+    design = algo.getResult().getOptimalPoint()[0]
+    index = algo.getReliabilityIndex()
+    probability = algo.getApproximateProbability()
+    objectiveCalls = objective.getInputHistory().getSize()
+    limitStateCalls = limitState.getInputHistory().getSize()
+    print(
+        f"{name:16s} | {design:8.5f} | {index:7.5f} | {probability:11.5f}"
+        f" | {objectiveCalls:10d} | {limitStateCalls:16d}"
+    )
 
+# %%
+# Analytical ground truth and errors.  The exact design is the 10% quantile of
+# the standard normal distribution, and the exact probability at a design x is
+# ``1 - Phi(x)``.
+normal = ot.Normal()
+exactDesign = normal.computeQuantile(0.1)[0]
+exactObjective = exactDesign**2
+exactProbability = 1.0 - normal.computeCDF(exactDesign)
 print()
-print("Analytic design  :", ot.Normal().computeQuantile(0.1)[0])
-print("Target index     :", ot.DistFunc.qNormal(0.9))
+print("Exact design             :", exactDesign)
+print("Exact objective          :", exactObjective)
+print("Exact probability        :", exactProbability)
+print()
+
+for name, algo, _, _ in runs:
+    design = algo.getResult().getOptimalPoint()[0]
+    trueProbability = 1.0 - normal.computeCDF(design)
+    print("Algorithm                :", name)
+    print("Design error             :", abs(design - exactDesign))
+    print(
+        "Objective error          :",
+        abs(algo.getResult().getOptimalValue()[0] - exactObjective),
+    )
+    print("True probability         :", trueProbability)
+    print("Probability error        :", abs(trueProbability - exactProbability))
+    print()
