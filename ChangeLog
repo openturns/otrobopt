@@ -2,6 +2,7 @@
 
  * Add RBDOProblem
  * Add DoubleLoopRBDOAlgorithm with RIA, PMA, exact joint event and Bonferroni treatments
+ * Add SORARobustOptimizationAlgorithm with physical shift, PMA and exact/Bonferroni treatments
  * Add SampleAverageApproximationAlgorithm for any joint chance target probability
  * Add ParameterAsInputFunction
  * Add ParametricDistributionTransformation
