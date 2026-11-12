@@ -30,6 +30,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <vector>
 
 using namespace OT;
 
@@ -153,8 +154,7 @@ void ParametricDistributionTransformation::initialize(const Distribution & distr
   distribution_ = cloneDistribution(distribution);
   configureReference(reference, hasReference);
   activeParameter_ = GetDefaultActiveParameter(distribution_);
-  FunctionImplementation::setParameter(getParameter());
-  invalidateCache();
+  refreshEvaluationDelegates();
 }
 
 /* Select the reference distribution */
@@ -221,6 +221,20 @@ void ParametricDistributionTransformation::updateTransformation() const
     transformation_ = DistributionTransformation(reference_, distribution);
   cachedParameter_ = getFullParameter();
   cacheValid_ = true;
+}
+
+/* Rebuild the transformation and keep the composition delegates in sync */
+void ParametricDistributionTransformation::refreshEvaluationDelegates()
+{
+  // The evaluation and gradient delegates are what a composed function
+  // evaluates, and updateTransformation() only rebuilds transformation_.
+  // Invalidating here guarantees that every rebuild of transformation_ goes
+  // through this method, so the delegates cannot lag behind the parameter.
+  invalidateCache();
+  updateTransformation();
+  setEvaluation(transformation_.getEvaluation());
+  setGradient(transformation_.getGradient());
+  setHessian(transformation_.getHessian());
 }
 
 /* Evaluation */
@@ -365,8 +379,7 @@ void ParametricDistributionTransformation::setFullParameter(const Point & parame
   Distribution candidate(cloneDistribution(distribution_));
   candidate.setParameter(parameter);
   distribution_ = candidate;
-  FunctionImplementation::setParameter(getParameter());
-  invalidateCache();
+  refreshEvaluationDelegates();
 }
 
 Description ParametricDistributionTransformation::getFullParameterDescription() const
@@ -393,7 +406,6 @@ void ParametricDistributionTransformation::setActiveParameter(const Indices & ac
       throw InvalidArgumentException(HERE) << "Active parameter index " << active[i]
                                            << " is out of range [0, " << fullDimension << ")";
   activeParameter_ = active;
-  FunctionImplementation::setParameter(getParameter());
 }
 
 /* Default active parameter indices for a distribution */
@@ -474,8 +486,7 @@ void ParametricDistributionTransformation::load(Advocate & adv)
       valid = false;
   if (!valid)
     activeParameter_ = GetDefaultActiveParameter(distribution_);
-  FunctionImplementation::setParameter(getParameter());
-  invalidateCache();
+  refreshEvaluationDelegates();
 }
 
 } /* namespace OTROBOPT */

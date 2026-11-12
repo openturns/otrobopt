@@ -142,6 +142,7 @@ private:
                           const OT::Bool hasReference);
   void invalidateCache() const;
   void updateTransformation() const;
+  void refreshEvaluationDelegates();
 
   OT::Distribution distribution_;
   OT::Distribution reference_;
