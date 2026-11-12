@@ -33,6 +33,20 @@
 
 using namespace OT;
 
+// The evaluation, gradient and hessian delegates below persist their state and
+// are rebuilt by the OpenTURNS factory.  A Unity build at -O3 inlines their
+// two-statement load() bodies into the factory, so the coverage data reports
+// executed lines under a function whose entry block is never counted and the
+// coverage job rejects the inconsistency although the tests pass.  Keeping the
+// persistence entry points out of line avoids it.
+#if defined(_MSC_VER)
+#define OTROBOPT_NO_INLINE __declspec(noinline)
+#elif defined(__GNUC__)
+#define OTROBOPT_NO_INLINE __attribute__ ((noinline))
+#else
+#define OTROBOPT_NO_INLINE
+#endif
+
 namespace OTROBOPT
 {
 
@@ -63,7 +77,7 @@ Indices defaultActiveParameter(const Distribution & distribution)
   // There is no generic derivative with respect to the dependence
   // parameters, so they are inactive by default.  The other parameters of
   // composite, elliptical and copula-based distributions are active.
-  std::vector<Bool> active(fullDimension, true);
+  Indices active(fullDimension, 1);
   try
   {
     const Description parameterDescription(distribution.getParameterDescription());
@@ -74,7 +88,7 @@ Indices defaultActiveParameter(const Distribution & distribution)
     for (UnsignedInteger i = 0; i < fullDimension; ++i)
       if ((i < parameterDescription.getSize())
           && startsWith(parameterDescription[i], "R_"))
-        active[i] = false;
+        active[i] = 0;
 
     // The other dependence parameters, for instance the parameter of a
     // copula, form the trailing block of the parameter collection.  Remove
@@ -96,7 +110,7 @@ Indices defaultActiveParameter(const Distribution & distribution)
                         == parameterDescription[fullDimension - dependenceDimension + j]);
         if (isTrailing)
           for (UnsignedInteger j = 0; j < dependenceDimension; ++j)
-            active[fullDimension - dependenceDimension + j] = false;
+            active[fullDimension - dependenceDimension + j] = 0;
       }
     }
   }
@@ -107,10 +121,379 @@ Indices defaultActiveParameter(const Distribution & distribution)
   }
   Indices result(0);
   for (UnsignedInteger i = 0; i < fullDimension; ++i)
-    if (active[i])
+    if (active[i] == 1)
       result.add(i);
   return result;
 }
+
+Point selectActiveParameter(const Distribution & distribution,
+                            const Indices & activeParameter)
+{
+  const Point fullParameter(distribution.getParameter());
+  if (isIdentity(activeParameter, fullParameter.getDimension()))
+    return fullParameter;
+  Point parameter(activeParameter.getSize());
+  for (UnsignedInteger i = 0; i < activeParameter.getSize(); ++i)
+    parameter[i] = fullParameter[activeParameter[i]];
+  return parameter;
+}
+
+Point expandActiveParameter(const Distribution & distribution,
+                            const Indices & activeParameter,
+                            const Point & parameter)
+{
+  const UnsignedInteger activeDimension = activeParameter.getSize();
+  if (parameter.getDimension() != activeDimension)
+    throw InvalidDimensionException(HERE) << "The parameter dimension ("
+                                          << parameter.getDimension()
+                                          << ") must match the active parameter dimension ("
+                                          << activeDimension << ")";
+  Point fullParameter(distribution.getParameter());
+  for (UnsignedInteger i = 0; i < activeDimension; ++i)
+    fullParameter[activeParameter[i]] = parameter[i];
+  return fullParameter;
+}
+
+Description selectActiveParameterDescription(const Distribution & distribution,
+    const Indices & activeParameter)
+{
+  const Description fullDescription(distribution.getParameterDescription());
+  const UnsignedInteger fullDimension = distribution.getParameterDimension();
+  if (fullDescription.getSize() != fullDimension)
+    return Description::BuildDefault(activeParameter.getSize(), "s");
+  if (isIdentity(activeParameter, fullDimension))
+    return fullDescription;
+  Description description(activeParameter.getSize());
+  for (UnsignedInteger i = 0; i < activeParameter.getSize(); ++i)
+    description[i] = fullDescription[activeParameter[i]];
+  return description;
+}
+
+/* State shared by the evaluation, gradient and hessian delegates of a
+   ParametricDistributionTransformation.  Each delegate owns a copy; the
+   transformation rebuilds all three from the same state on every parameter or
+   active-subset update, so a composition sees the same parameter dimension
+   through its evaluation, gradient and hessian delegates as through the
+   function implementation.  The delegates expose the active parameter
+   subset. */
+class ActiveParameterState
+{
+public:
+  ActiveParameterState()
+    : distribution_()
+    , reference_()
+    , usesStandardSpace_(false)
+    , activeParameter_()
+  {
+    // Nothing to do
+  }
+
+  ActiveParameterState(const Distribution & distribution,
+                       const Distribution & reference,
+                       const Bool usesStandardSpace,
+                       const Indices & activeParameter)
+    : distribution_(distribution)
+    , reference_(reference)
+    , usesStandardSpace_(usesStandardSpace)
+    , activeParameter_(activeParameter)
+  {
+    // Nothing to do
+  }
+
+  Point getParameter() const
+  {
+    return selectActiveParameter(distribution_, activeParameter_);
+  }
+
+  void setParameter(const Point & parameter)
+  {
+    const Point fullParameter(expandActiveParameter(distribution_, activeParameter_, parameter));
+    if (fullParameter == distribution_.getParameter())
+      return;
+    Distribution candidate(distribution_.getImplementation()->clone());
+    candidate.setParameter(fullParameter);
+    distribution_ = candidate;
+    cacheValid_ = false;
+  }
+
+  Description getParameterDescription() const
+  {
+    return selectActiveParameterDescription(distribution_, activeParameter_);
+  }
+
+  Point operator()(const Point & xi) const
+  {
+    updateTransformation();
+    return transformation_(xi);
+  }
+
+  Matrix gradient(const Point & xi) const
+  {
+    updateTransformation();
+    return transformation_.gradient(xi);
+  }
+
+  SymmetricTensor hessian(const Point & xi) const
+  {
+    updateTransformation();
+    return transformation_.hessian(xi);
+  }
+
+  UnsignedInteger getInputDimension() const
+  {
+    return reference_.getDimension();
+  }
+
+  UnsignedInteger getOutputDimension() const
+  {
+    return distribution_.getDimension();
+  }
+
+  void save(Advocate & adv) const
+  {
+    adv.saveAttribute("distribution_", distribution_);
+    adv.saveAttribute("reference_", reference_);
+    adv.saveAttribute("usesStandardSpace_", usesStandardSpace_);
+    adv.saveAttribute("activeParameter_", activeParameter_);
+  }
+
+  void load(Advocate & adv)
+  {
+    adv.loadAttribute("distribution_", distribution_);
+    adv.loadAttribute("reference_", reference_);
+    adv.loadAttribute("usesStandardSpace_", usesStandardSpace_);
+    adv.loadAttribute("activeParameter_", activeParameter_);
+    cacheValid_ = false;
+  }
+
+private:
+  void updateTransformation() const
+  {
+    if (cacheValid_)
+      return;
+    if (usesStandardSpace_)
+      transformation_ = distribution_.getInverseIsoProbabilisticTransformation();
+    else
+      transformation_ = DistributionTransformation(reference_, distribution_);
+    cacheValid_ = true;
+  }
+
+  Distribution distribution_;
+  Distribution reference_;
+  Bool usesStandardSpace_ = false;
+  Indices activeParameter_;
+  mutable Function transformation_;
+  mutable Bool cacheValid_ = false;
+};
+
+class ActiveParameterEvaluation
+  : public EvaluationImplementation
+{
+  CLASSNAME
+public:
+  ActiveParameterEvaluation()
+    : EvaluationImplementation()
+  {
+    // Nothing to do
+  }
+
+  explicit ActiveParameterEvaluation(const ActiveParameterState & state)
+    : EvaluationImplementation()
+    , state_(state)
+  {
+    // Nothing to do
+  }
+
+  ActiveParameterEvaluation * clone() const override
+  {
+    return new ActiveParameterEvaluation(*this);
+  }
+
+  Point operator()(const Point & xi) const override
+  {
+    return state_(xi);
+  }
+
+  Point getParameter() const override
+  {
+    return state_.getParameter();
+  }
+
+  void setParameter(const Point & parameter) override
+  {
+    state_.setParameter(parameter);
+  }
+
+  Description getParameterDescription() const override
+  {
+    return state_.getParameterDescription();
+  }
+
+  UnsignedInteger getInputDimension() const override
+  {
+    return state_.getInputDimension();
+  }
+
+  UnsignedInteger getOutputDimension() const override
+  {
+    return state_.getOutputDimension();
+  }
+
+  void save(Advocate & adv) const override
+  {
+    EvaluationImplementation::save(adv);
+    state_.save(adv);
+  }
+
+  OTROBOPT_NO_INLINE void load(Advocate & adv) override
+  {
+    EvaluationImplementation::load(adv);
+    state_.load(adv);
+  }
+
+private:
+  ActiveParameterState state_;
+};
+
+CLASSNAMEINIT(ActiveParameterEvaluation)
+
+static Factory<ActiveParameterEvaluation> Factory_ActiveParameterEvaluation;
+
+class ActiveParameterGradient
+  : public GradientImplementation
+{
+  CLASSNAME
+public:
+  ActiveParameterGradient()
+    : GradientImplementation()
+  {
+    // Nothing to do
+  }
+
+  explicit ActiveParameterGradient(const ActiveParameterState & state)
+    : GradientImplementation()
+    , state_(state)
+  {
+    // Nothing to do
+  }
+
+  ActiveParameterGradient * clone() const override
+  {
+    return new ActiveParameterGradient(*this);
+  }
+
+  Matrix gradient(const Point & xi) const override
+  {
+    return state_.gradient(xi);
+  }
+
+  Point getParameter() const override
+  {
+    return state_.getParameter();
+  }
+
+  void setParameter(const Point & parameter) override
+  {
+    state_.setParameter(parameter);
+  }
+
+  UnsignedInteger getInputDimension() const override
+  {
+    return state_.getInputDimension();
+  }
+
+  UnsignedInteger getOutputDimension() const override
+  {
+    return state_.getOutputDimension();
+  }
+
+  void save(Advocate & adv) const override
+  {
+    GradientImplementation::save(adv);
+    state_.save(adv);
+  }
+
+  OTROBOPT_NO_INLINE void load(Advocate & adv) override
+  {
+    GradientImplementation::load(adv);
+    state_.load(adv);
+  }
+
+private:
+  ActiveParameterState state_;
+};
+
+CLASSNAMEINIT(ActiveParameterGradient)
+
+static Factory<ActiveParameterGradient> Factory_ActiveParameterGradient;
+
+class ActiveParameterHessian
+  : public HessianImplementation
+{
+  CLASSNAME
+public:
+  ActiveParameterHessian()
+    : HessianImplementation()
+  {
+    // Nothing to do
+  }
+
+  explicit ActiveParameterHessian(const ActiveParameterState & state)
+    : HessianImplementation()
+    , state_(state)
+  {
+    // Nothing to do
+  }
+
+  ActiveParameterHessian * clone() const override
+  {
+    return new ActiveParameterHessian(*this);
+  }
+
+  SymmetricTensor hessian(const Point & xi) const override
+  {
+    return state_.hessian(xi);
+  }
+
+  Point getParameter() const override
+  {
+    return state_.getParameter();
+  }
+
+  void setParameter(const Point & parameter) override
+  {
+    state_.setParameter(parameter);
+  }
+
+  UnsignedInteger getInputDimension() const override
+  {
+    return state_.getInputDimension();
+  }
+
+  UnsignedInteger getOutputDimension() const override
+  {
+    return state_.getOutputDimension();
+  }
+
+  void save(Advocate & adv) const override
+  {
+    HessianImplementation::save(adv);
+    state_.save(adv);
+  }
+
+  OTROBOPT_NO_INLINE void load(Advocate & adv) override
+  {
+    HessianImplementation::load(adv);
+    state_.load(adv);
+  }
+
+private:
+  ActiveParameterState state_;
+};
+
+CLASSNAMEINIT(ActiveParameterHessian)
+
+static Factory<ActiveParameterHessian> Factory_ActiveParameterHessian;
 
 } /* anonymous namespace */
 
@@ -153,8 +536,7 @@ void ParametricDistributionTransformation::initialize(const Distribution & distr
   distribution_ = cloneDistribution(distribution);
   configureReference(reference, hasReference);
   activeParameter_ = GetDefaultActiveParameter(distribution_);
-  FunctionImplementation::setParameter(getParameter());
-  invalidateCache();
+  refreshEvaluationDelegates();
 }
 
 /* Select the reference distribution */
@@ -221,6 +603,21 @@ void ParametricDistributionTransformation::updateTransformation() const
     transformation_ = DistributionTransformation(reference_, distribution);
   cachedParameter_ = getFullParameter();
   cacheValid_ = true;
+}
+
+/* Rebuild the transformation and keep the composition delegates in sync */
+void ParametricDistributionTransformation::refreshEvaluationDelegates()
+{
+  // The evaluation and gradient delegates are what a composed function
+  // evaluates, and updateTransformation() only rebuilds transformation_.
+  // Invalidating here guarantees that every rebuild of transformation_ goes
+  // through this method, so the delegates cannot lag behind the parameter.
+  invalidateCache();
+  updateTransformation();
+  const ActiveParameterState state(distribution_, reference_, usesStandardSpace_, activeParameter_);
+  setEvaluation(Evaluation(new ActiveParameterEvaluation(state)));
+  setGradient(Gradient(new ActiveParameterGradient(state)));
+  setHessian(Hessian(new ActiveParameterHessian(state)));
 }
 
 /* Evaluation */
@@ -304,43 +701,17 @@ Bool ParametricDistributionTransformation::usesStandardSpace() const
 /* Active parameter accessors */
 Point ParametricDistributionTransformation::getParameter() const
 {
-  const Point fullParameter(distribution_.getParameter());
-  if (isIdentity(activeParameter_, fullParameter.getDimension()))
-    return fullParameter;
-  Point parameter(activeParameter_.getSize());
-  for (UnsignedInteger i = 0; i < activeParameter_.getSize(); ++i)
-    parameter[i] = fullParameter[activeParameter_[i]];
-  return parameter;
+  return selectActiveParameter(distribution_, activeParameter_);
 }
 
 void ParametricDistributionTransformation::setParameter(const Point & parameter)
 {
-  const UnsignedInteger activeDimension = activeParameter_.getSize();
-  if (parameter.getDimension() != activeDimension)
-    throw InvalidDimensionException(HERE) << "The parameter dimension ("
-                                          << parameter.getDimension()
-                                          << ") must match the active parameter dimension ("
-                                          << activeDimension << ")";
-  if (activeDimension == 0)
-    return;
-  Point fullParameter(distribution_.getParameter());
-  for (UnsignedInteger i = 0; i < activeDimension; ++i)
-    fullParameter[activeParameter_[i]] = parameter[i];
-  setFullParameter(fullParameter);
+  setFullParameter(expandActiveParameter(distribution_, activeParameter_, parameter));
 }
 
 Description ParametricDistributionTransformation::getParameterDescription() const
 {
-  const Description fullDescription(distribution_.getParameterDescription());
-  const UnsignedInteger fullDimension = distribution_.getParameterDimension();
-  if (fullDescription.getSize() != fullDimension)
-    return Description::BuildDefault(activeParameter_.getSize(), "s");
-  if (isIdentity(activeParameter_, fullDimension))
-    return fullDescription;
-  Description description(activeParameter_.getSize());
-  for (UnsignedInteger i = 0; i < activeParameter_.getSize(); ++i)
-    description[i] = fullDescription[activeParameter_[i]];
-  return description;
+  return selectActiveParameterDescription(distribution_, activeParameter_);
 }
 
 UnsignedInteger ParametricDistributionTransformation::getParameterDimension() const
@@ -365,8 +736,7 @@ void ParametricDistributionTransformation::setFullParameter(const Point & parame
   Distribution candidate(cloneDistribution(distribution_));
   candidate.setParameter(parameter);
   distribution_ = candidate;
-  FunctionImplementation::setParameter(getParameter());
-  invalidateCache();
+  refreshEvaluationDelegates();
 }
 
 Description ParametricDistributionTransformation::getFullParameterDescription() const
@@ -393,7 +763,7 @@ void ParametricDistributionTransformation::setActiveParameter(const Indices & ac
       throw InvalidArgumentException(HERE) << "Active parameter index " << active[i]
                                            << " is out of range [0, " << fullDimension << ")";
   activeParameter_ = active;
-  FunctionImplementation::setParameter(getParameter());
+  refreshEvaluationDelegates();
 }
 
 /* Default active parameter indices for a distribution */
@@ -474,8 +844,7 @@ void ParametricDistributionTransformation::load(Advocate & adv)
       valid = false;
   if (!valid)
     activeParameter_ = GetDefaultActiveParameter(distribution_);
-  FunctionImplementation::setParameter(getParameter());
-  invalidateCache();
+  refreshEvaluationDelegates();
 }
 
 } /* namespace OTROBOPT */
