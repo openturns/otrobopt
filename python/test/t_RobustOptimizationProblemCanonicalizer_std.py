@@ -58,7 +58,7 @@ explicitDefault.setReference(ot.Uniform(-1.0, 1.0))
 assert explicitDefault.hasReference()
 explicitDefault.clearReference()
 assert not explicitDefault.hasReference()
-with ott.assert_raises(Exception):
+with ott.assert_raises(TypeError):
     explicitDefault.setWorstCasePolicy(99)
 assert "CanonicalizationOptions" in repr(explicitDefault)
 
@@ -105,10 +105,10 @@ options = otrobopt.CanonicalizationOptions()
 options.setWorstCasePolicy(otrobopt.CanonicalizationOptions.STANDARD)
 canonicalizer = canonicalize(otrobopt.MeanMeasure(f, normal), options)
 assert canonicalizer.usesStandardSpace()
-with ott.assert_raises(Exception):
+with ott.assert_raises(TypeError):
     canonicalize(studentMeasure, options)
 options.setReference(ot.Normal(1))
-with ott.assert_raises(Exception):
+with ott.assert_raises(TypeError):
     canonicalize(otrobopt.MeanMeasure(f, normal), options)
 
 # NORMAL forces the standard normal reference
@@ -118,13 +118,13 @@ canonicalizer = canonicalize(otrobopt.MeanMeasure(f, normal), options)
 assert not canonicalizer.usesStandardSpace()
 assert canonicalizer.getReferenceDistribution() == ot.Normal(1)
 options.setReference(ot.Normal(1))
-with ott.assert_raises(Exception):
+with ott.assert_raises(TypeError):
     canonicalize(otrobopt.MeanMeasure(f, normal), options)
 
 # USER_REFERENCE requires a reference
 options = otrobopt.CanonicalizationOptions()
 options.setWorstCasePolicy(otrobopt.CanonicalizationOptions.USER_REFERENCE)
-with ott.assert_raises(Exception):
+with ott.assert_raises(TypeError):
     canonicalize(studentMeasure, options)
 options.setReference(ot.Uniform(-1.0, 1.0))
 canonicalizer = canonicalize(studentMeasure, options)
@@ -133,16 +133,16 @@ assert canonicalizer.getReferenceDistribution() == ot.Uniform(-1.0, 1.0)
 # USER_DOMAIN requires a domain
 options = otrobopt.CanonicalizationOptions()
 options.setWorstCasePolicy(otrobopt.CanonicalizationOptions.USER_DOMAIN)
-with ott.assert_raises(Exception):
+with ott.assert_raises(TypeError):
     canonicalize(studentMeasure, options)
 
 # Invalid references
 options = otrobopt.CanonicalizationOptions()
 options.setReference(ot.Normal(2))
-with ott.assert_raises(Exception):
+with ott.assert_raises(RuntimeError):
     canonicalize(studentMeasure, options)
 options.setReference(ot.Poisson(2.0))
-with ott.assert_raises(Exception):
+with ott.assert_raises(TypeError):
     canonicalize(studentMeasure, options)
 
 # ------------------------------------------- measure canonicalization
@@ -293,7 +293,7 @@ ott.assert_almost_equal(canonicalizer.getCanonicalProblem().getRobustnessMeasure
 # A parameter start of the wrong dimension is rejected
 options = otrobopt.CanonicalizationOptions()
 options.setParameterStart([1.0])
-with ott.assert_raises(Exception):
+with ott.assert_raises(RuntimeError):
     canonicalize(otrobopt.MeanMeasure(f, normal), options)
 
 # --------------------------------------------------- plain lifting
@@ -388,9 +388,26 @@ canonicalizer = canonicalize(worstMax)
 canonicalWorstMax = canonicalizer.getCanonicalProblem().getRobustnessMeasure()
 ott.assert_almost_equal(canonicalWorstMax([1.0, -1.0, 2.0]), [2.0], 1.0e-3, 1.0e-3)
 
+# A frozen rebuild preserves the worst-case domain stored by the measure
+domainWorst = otrobopt.WorstCaseMeasure(fWorst, uniform, True)
+domainWorst.setOptimizationDomain(ot.Interval([0.2], [0.4]))
+options = otrobopt.CanonicalizationOptions()
+options.setOptimizeParameter(False)
+options.setParameterStart([0.0, 1.0])
+domainCanonicalizer = canonicalize(domainWorst, options)
+domainCanonicalWorst = domainCanonicalizer.getCanonicalProblem().getRobustnessMeasure()
+ott.assert_almost_equal(domainCanonicalWorst([1.0]), [0.2], 1.0e-6, 1.0e-6)
+
+# When the parameter is optimized the worst-case variable becomes the
+# reference realization: a domain stored in the original theta coordinates
+# cannot be transported, and the canonicalizer rejects it instead of silently
+# dropping the restriction.
+with ott.assert_raises(TypeError):
+    canonicalize(domainWorst)
+
 # A generic worst case fails closed without a domain
 studentWorst = otrobopt.WorstCaseMeasure(fWorst, ot.Student(5.0, 0.0, 1.0), True)
-with ott.assert_raises(Exception):
+with ott.assert_raises(TypeError):
     canonicalize(studentWorst)
 
 # A bounded user reference is enough
@@ -423,7 +440,7 @@ ott.assert_almost_equal(canonicalWorst([1.0, 5.0, 0.0, 1.0]), [expected], 1.0e-4
 # NORMAL requires an explicit domain for the generic path
 options = otrobopt.CanonicalizationOptions()
 options.setWorstCasePolicy(otrobopt.CanonicalizationOptions.NORMAL)
-with ott.assert_raises(Exception):
+with ott.assert_raises(TypeError):
     canonicalize(studentWorst, options)
 options.setWorstCaseDomain(ot.Interval([-0.5], [0.5]))
 canonicalizer = canonicalize(studentWorst, options)
@@ -441,13 +458,13 @@ ott.assert_almost_equal(canonicalWorst([1.0, 2.0, 0.3]), [1.85], 1.0e-4, 1.0e-4)
 # A domain of the wrong dimension is rejected
 options = otrobopt.CanonicalizationOptions()
 options.setWorstCaseDomain(ot.Interval([-0.5, -0.5], [0.5, 0.5]))
-with ott.assert_raises(Exception):
+with ott.assert_raises(RuntimeError):
     canonicalize(studentWorst, options)
 
 # ------------------------------------------------ mixed distributions
 otherNormal = ot.Normal([4.0, 5.0], [0.1, 0.2], ot.IdentityMatrix(2))
 otherMean = otrobopt.MeanMeasure(f2, otherNormal)
-with ott.assert_raises(Exception):
+with ott.assert_raises(RuntimeError):
     otrobopt.RobustOptimizationProblem(
         otrobopt.MeanMeasure(f, normal), otrobopt.MeanMeasure(f, otherNormal)
     )
@@ -455,27 +472,27 @@ mixedAggregate = otrobopt.AggregatedMeasure([mean2, otherMean])
 problem = otrobopt.RobustOptimizationProblem(
     ot.SymbolicFunction(["x"], ["x"]), mixedAggregate
 )
-with ott.assert_raises(Exception):
+with ott.assert_raises(TypeError):
     otrobopt.RobustOptimizationProblemCanonicalizer(problem)
 
 # ------------------------------------------------ invalid measures
-with ott.assert_raises(Exception):
+with ott.assert_raises(RuntimeError):
     otrobopt.RobustOptimizationProblem(aggregate, ot.Function())
-with ott.assert_raises(Exception):
+with ott.assert_raises(TypeError):
     problem = otrobopt.RobustOptimizationProblem(f2, ot.Function())
     problem.setObjective(ot.SymbolicFunction(["x"], ["x", "x^2"]))
-with ott.assert_raises(Exception):
+with ott.assert_raises(TypeError):
     problem = otrobopt.RobustOptimizationProblem(ot.Function())
     problem.setRobustnessMeasure(aggregate)
 
 # A problem without any measure is rejected
-with ott.assert_raises(Exception):
+with ott.assert_raises(TypeError):
     otrobopt.RobustOptimizationProblemCanonicalizer(
         otrobopt.RobustOptimizationProblem(ot.Function(), ot.Function())
     )
 
 # A measure with a zero-dimension input is rejected
-with ott.assert_raises(Exception):
+with ott.assert_raises(RuntimeError):
     emptyMeasure = otrobopt.MeanMeasure(ot.Function(), ot.Normal(1))
     otrobopt.RobustOptimizationProblemCanonicalizer(
         otrobopt.RobustOptimizationProblem(emptyMeasure, ot.Function())
