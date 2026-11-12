@@ -47,7 +47,7 @@ namespace
 {
 
 /* Whether a point has only finite coordinates */
-Bool IsFinitePoint(const Point & point)
+Bool HasFiniteCoordinates(const Point & point)
 {
   for (UnsignedInteger i = 0; i < point.getDimension(); ++i)
     if (!std::isfinite(point[i]))
@@ -89,7 +89,7 @@ Scalar ComputeSafeProbability(const Function & limitState,
     Function function(limitState);
     function.setParameter(sample[i]);
     const Point value(function(designPoint));
-    if (!IsFinitePoint(value))
+    if (!HasFiniteCoordinates(value))
       throw InternalException(HERE) << "The limit-state function returned a non-finite value for sample index " << i;
     if (IsSafe(value, greater))
       ++count;
@@ -616,7 +616,7 @@ Point SampleAverageApproximationAlgorithm::buildStartingPoint() const
   try
   {
     const Point canonicalStartingPoint(rbdoProblem_.getCanonicalStartingPoint());
-    if ((canonicalStartingPoint.getDimension() == dimension) && IsFinitePoint(canonicalStartingPoint))
+    if ((canonicalStartingPoint.getDimension() == dimension) && HasFiniteCoordinates(canonicalStartingPoint))
       return canonicalStartingPoint;
   }
   catch (const Exception &)

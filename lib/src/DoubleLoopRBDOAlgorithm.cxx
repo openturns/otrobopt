@@ -51,15 +51,6 @@ static Factory<DoubleLoopRBDOAlgorithm> Factory_DoubleLoopRBDOAlgorithm;
 namespace
 {
 
-const Scalar NaN = std::numeric_limits<Scalar>::quiet_NaN();
-
-/* One solved reliability component */
-struct ReliabilityReport
-{
-  InnerReport inner;
-  UnsignedInteger component = 0;
-};
-
 /* Solve all the reliability components of a joint chance constraint */
 Collection<ReliabilityReport> AnalyzeReliability(const RBDOProblem & problem,
                                                  const DoubleLoopRBDOAlgorithm::Method method,

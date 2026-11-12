@@ -53,16 +53,6 @@ static Factory<SORARobustOptimizationAlgorithm> Factory_SORARobustOptimizationAl
 namespace
 {
 
-const Scalar NaN = std::numeric_limits<Scalar>::quiet_NaN();
-
-/* One solved reliability component */
-struct ReliabilityReport
-{
-  InnerReport inner;
-  UnsignedInteger component = 0;
-  Point physicalDesignPoint;
-};
-
 /* Evaluation of the exact shifted constraint sigma min_j g_j(x; theta*) */
 class ExactShiftedEvaluation
   : public EvaluationImplementation

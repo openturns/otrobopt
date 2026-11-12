@@ -41,6 +41,9 @@ namespace OTROBOPT
 namespace RBDOAlgorithmTools
 {
 
+/** Quiet NaN sentinel */
+OTROBOPT_API extern const OT::Scalar NaN;
+
 /** Result of one inner reliability analysis */
 struct OTROBOPT_API InnerReport
 {
@@ -48,6 +51,14 @@ struct OTROBOPT_API InnerReport
   OT::Scalar beta = 0.0;
   OT::Scalar performance = 0.0;
   OT::Point standardDesignPoint;
+};
+
+/** One solved reliability component, shared by the specialized algorithms */
+struct OTROBOPT_API ReliabilityReport
+{
+  InnerReport inner;
+  OT::UnsignedInteger component = 0;
+  OT::Point physicalDesignPoint;
 };
 
 /** Whether a point has only finite coordinates */

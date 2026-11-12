@@ -40,6 +40,9 @@ namespace OTROBOPT
 namespace RBDOAlgorithmTools
 {
 
+/* Quiet NaN sentinel */
+const Scalar NaN = std::numeric_limits<Scalar>::quiet_NaN();
+
 namespace
 {
 
