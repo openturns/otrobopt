@@ -1,0 +1,110 @@
+name: Clean up documentation previews
+
+on:
+  delete:
+  pull_request:
+    types: [closed]
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: Branch whose documentation preview must be removed
+        required: true
+
+concurrency:
+  group: doc-cleanup
+  cancel-in-progress: false
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      EVENT_REF: ${{ github.event.ref }}
+      PR_BRANCH: ${{ github.event.pull_request.head.ref }}
+      INPUT_BRANCH: ${{ inputs.branch }}
+    steps:
+      - name: Resolve the branch
+        id: branch
+        run: |
+          branch=""
+          if [ -n "${EVENT_REF}" ]; then
+            case "${EVENT_REF}" in
+              refs/heads/*) branch="${EVENT_REF#refs/heads/}" ;;
+              *) echo "Not a branch deletion (${EVENT_REF}): nothing to do"; exit 0 ;;
+            esac
+          fi
+          if [ -n "${PR_BRANCH}" ]; then branch="${PR_BRANCH}"; fi
+          if [ -n "${INPUT_BRANCH}" ]; then branch="${INPUT_BRANCH}"; fi
+          if [ -z "${branch}" ] || [ "${branch}" = "master" ]; then
+            echo "No removable branch: nothing to do"
+            exit 0
+          fi
+          echo "branch=${branch}" >> "$GITHUB_OUTPUT"
+          echo "Preview to remove: ${branch}"
+      - name: Remove the preview
+        if: ${{ steps.branch.outputs.branch != '' }}
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          PAGES_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: ${{ steps.branch.outputs.branch }}
+        run: |
+          owner="${GITHUB_REPOSITORY%%/*}"
+          name="${GITHUB_REPOSITORY#*/}"
+          if [ -n "${GH_TOKEN}" ]; then
+            repo="openturns/openturns.github.io.git"
+            token="${GH_TOKEN}"
+            ref="master"
+            target="otrobopt/${BRANCH}"
+            page="https://openturns.github.io/${target}/"
+          elif [ "${owner}" != "openturns" ]; then
+            repo="${GITHUB_REPOSITORY}.git"
+            token="${PAGES_TOKEN}"
+            ref="gh-pages"
+            target="${BRANCH}"
+            page="https://${owner}.github.io/${name}/${BRANCH}/"
+          else
+            echo "No GH_TOKEN secret available: skipping the documentation cleanup"
+            exit 0
+          fi
+          rm -rf /tmp/io
+          mkdir -p /tmp/io
+          cd /tmp/io
+          git init --quiet
+          git remote add origin "https://x-access-token:${token}@github.com/${repo}"
+          if ! git fetch --depth 1 origin "${ref}"; then
+            echo "${repo} has no ${ref} branch: nothing to do"
+            exit 0
+          fi
+          git checkout --quiet -B "${ref}" FETCH_HEAD
+          if [ ! -d "${target}" ]; then
+            echo "${target} is already absent: nothing to do"
+            exit 0
+          fi
+          git rm -r --quiet "${target}"
+          if [ "${owner}" != "openturns" ]; then
+            # refresh the landing page listing the published branches
+            {
+              echo "<!DOCTYPE html>"
+              echo "<html><head><meta charset=\"utf-8\"><title>otrobopt documentation</title></head><body>"
+              echo "<h1>otrobopt documentation</h1><ul>"
+              for directory in */; do
+                [ -f "${directory}index.html" ] && echo "<li><a href=\"${directory}\">${directory%/}</a></li>"
+              done
+              echo "</ul></body></html>"
+            } > index.html
+          fi
+          git add -A .
+          git config user.email "support@gh.com"
+          git config user.name "GitHub Actions"
+          git commit -m "GitHub Actions cleanup ${GITHUB_REPOSITORY} ${BRANCH}"
+          attempt=0
+          until git push --quiet origin "HEAD:${ref}"; do
+            attempt=$((attempt + 1))
+            if [ "${attempt}" -ge 3 ]; then
+              echo "::error::Could not remove the documentation preview after ${attempt} attempts"
+              exit 1
+            fi
+            git pull --rebase --quiet origin "${ref}"
+          done
+          echo "Removed ${page}" >> "$GITHUB_STEP_SUMMARY"
