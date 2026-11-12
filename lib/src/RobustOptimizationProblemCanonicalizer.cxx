@@ -128,14 +128,14 @@ CanonicalizationOptions::CanonicalizationOptions()
 }
 
 /* Reference distribution accessors */
-void CanonicalizationOptions::setReference(const Distribution & reference)
+void CanonicalizationOptions::setReference(const Distribution & newReference)
 {
-  if (reference.getDimension() == 0)
+  if (newReference.getDimension() == 0)
   {
     clearReference();
     return;
   }
-  this->reference = cloneDistribution(reference);
+  this->reference = cloneDistribution(newReference);
   hasReference_ = true;
 }
 
@@ -201,9 +201,9 @@ Bool CanonicalizationOptions::hasActiveParameter() const
 }
 
 /* Parameter optimization accessors */
-void CanonicalizationOptions::setOptimizeParameter(const Bool optimizeParameter)
+void CanonicalizationOptions::setOptimizeParameter(const Bool newOptimizeParameter)
 {
-  this->optimizeParameter = optimizeParameter;
+  this->optimizeParameter = newOptimizeParameter;
 }
 
 Bool CanonicalizationOptions::getOptimizeParameter() const
