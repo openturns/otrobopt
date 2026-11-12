@@ -54,6 +54,14 @@ Examples
 5.0
 >>> T([1.0])[0]
 12.0
+
+Notes
+-----
+The class caches the parameter-dependent OpenTURNS transformation and rebuilds
+it when the parameter changes.  A function composed with the transformation
+captures the current parameter: update the transformation with
+``setParameter`` and rebuild the composition afterwards, rather than calling
+``setParameter`` on the composed function.
 )RAW"
 
 %feature("docstring") OTROBOPT::ParametricDistributionTransformation::getDistribution

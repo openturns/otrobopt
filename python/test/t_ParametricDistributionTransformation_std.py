@@ -30,6 +30,17 @@ ott.assert_almost_equal(T([0.0]), [5.0])
 ott.assert_almost_equal(T([1.0]), [12.0])
 ott.assert_almost_equal(d.getParameter(), [2.0, 3.0])
 
+# The transformation is directly composable: it exposes its evaluation and
+# gradient delegates, and they follow the current parameter
+Tc = otrobopt.ParametricDistributionTransformation(ot.Normal(2.0, 3.0))
+square = ot.SymbolicFunction(["theta"], ["theta^2"])
+composed = ot.ComposedFunction(square, Tc)
+ott.assert_almost_equal(composed([0.0]), [4.0])
+Tc.setParameter([5.0, 7.0])
+composed = ot.ComposedFunction(square, Tc)
+ott.assert_almost_equal(composed([1.0]), [144.0])
+ott.assert_almost_equal(composed.gradient([1.0]), ot.Matrix([[168.0]]))
+
 # The returned distribution is a copy
 T.getDistribution().setParameter([1.0, 2.0])
 ott.assert_almost_equal(T.getParameter(), [5.0, 7.0])
