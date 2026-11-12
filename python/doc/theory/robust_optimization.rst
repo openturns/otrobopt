@@ -202,16 +202,28 @@ comparison operator only selects the sign of the returned scalar.  With
     \lambda = \Phi^{-1}\bigl(P(x)\bigr) - \Phi^{-1}(\alpha),
 
 so the constraint :math:`\lambda \ge 0` is equivalent to
-:math:`P(x) \ge \alpha`.  With :class:`~openturns.Less` the value is
+:math:`P(x) \ge \alpha` when :math:`\alpha` lies in
+:math:`[\mathrm{pdfThreshold}, 1 - \mathrm{pdfThreshold}]`.  The implementation
+clips :math:`P(x)` to that interval before the probit transform.  With
+:class:`~openturns.GreaterOrEqual` and
+:math:`\alpha > 1 - \mathrm{pdfThreshold}`, the constraint cannot be
+satisfied.  With :class:`~openturns.Less` the value is
 
 .. math::
 
     \lambda = \Phi^{-1}(\alpha) - \Phi^{-1}\bigl(P(x)\bigr),
 
-which represents :math:`P(x) \le \alpha`, equivalently
-:math:`\Prob{G(x, \Theta) < 0} \ge 1 - \alpha`.  The ``Less`` form is therefore
-the complement form, not a different event.  A reliability requirement
-:math:`\Prob{G(x, \Theta) \ge 0} \ge \alpha` uses ``GreaterOrEqual``.
+which represents :math:`P(x) \le \alpha` when :math:`\alpha` lies in
+:math:`[\mathrm{pdfThreshold}, 1 - \mathrm{pdfThreshold}]`, equivalently
+:math:`\Prob{\bigcup_{k=1}^{n_g} \{G_k(x, \Theta) < 0\}} \ge 1 - \alpha`.
+The ``Less`` form is therefore the complement form, not a different event: it
+is satisfied when the probability that at least one component violates its
+constraint is at least :math:`1 - \alpha`.  The same clipping applies: above
+:math:`1 - \mathrm{pdfThreshold}` the clipped probability keeps the constraint
+positive even when :math:`P(x) = 1`, and below :math:`\mathrm{pdfThreshold}` it
+keeps the constraint negative even when :math:`P(x) = 0`.  A reliability
+requirement :math:`\Prob{G(x, \Theta) \ge 0} \ge \alpha` uses
+``GreaterOrEqual``.
 
 The probit transform stretches the probability scale near zero and one, which
 improves the conditioning of the measure for gradient-based optimization.  The
