@@ -16,6 +16,7 @@ h = otrobopt.ParameterAsInputFunction(f)
 ott.assert_almost_equal(h.getInputDimension(), 3)
 ott.assert_almost_equal(h.getOutputDimension(), 1)
 ott.assert_almost_equal(h.getParameterDimension(), 0)
+assert not h.isParallel()
 assert h.getInputDescription() == ["x", "theta0", "theta1"]
 ott.assert_almost_equal(h([2.0, 3.0, 4.0]), [10.0])
 ott.assert_almost_equal(
