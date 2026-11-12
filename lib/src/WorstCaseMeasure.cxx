@@ -98,6 +98,18 @@ Interval WorstCaseMeasure::getOptimizationDomain() const
   return optimizationDomain_;
 }
 
+/* Distribution accessor */
+void WorstCaseMeasure::setDistribution(const Distribution & distribution)
+{
+  if ((optimizationDomain_.getDimension() != 0)
+      && (optimizationDomain_.getDimension() != distribution.getDimension()))
+    throw InvalidDimensionException(HERE) << "The optimization domain dimension ("
+                                          << optimizationDomain_.getDimension()
+                                          << ") must match the distribution dimension ("
+                                          << distribution.getDimension() << ")";
+  MeasureEvaluationImplementation::setDistribution(distribution);
+}
+
 
 class WorstCaseMeasureParametricFunctionWrapper : public FunctionImplementation
 {
@@ -283,15 +295,20 @@ Point WorstCaseMeasure::operator()(const Point & inP) const
     const Point pdfs(distribution_.getProbabilities());
     const Sample parameters(distribution_.getSupport());
     const UnsignedInteger size = pdfs.getSize();
+    const Bool hasDomain = (optimizationDomain_.getDimension() != 0);
     Sample values(0, outputDimension);
     for (UnsignedInteger i = 0; i < size; ++i)
     {
-      if (pdfs[i] > pdfThreshold_)
+      if ((pdfs[i] > pdfThreshold_)
+          && (!hasDomain || optimizationDomain_.contains(parameters[i])))
         {
           function.setParameter(parameters[i]);
           values.add(function(inP));
         }
     } // i
+    if (values.getSize() == 0)
+      throw InvalidArgumentException(HERE) << "No support point with a density above " << pdfThreshold_
+                                           << " lies in the optimization domain";
     outP = (isMinimization_ ? values.getMin() : values.getMax());
   } // discrete
   return outP;
