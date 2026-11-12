@@ -1,33 +1,126 @@
 name: Build
 on:
   push:
-    branches: [ master ]
   pull_request:
 jobs:
   linux:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     env:
       MAKEFLAGS: -j4
     steps:
       - uses: actions/checkout@v6
       - name: Build
         run: ./utils/build_locally.sh linux
-      - name: Upload
-        if: ${{ github.ref == 'refs/heads/master' }}
+      - name: Check documentation
         run: |
-          git clone --depth 1 https://${{ secrets.GH_TOKEN }}@github.com/openturns/openturns.github.io.git /tmp/io
-          mkdir -p /tmp/io/otrobopt/master
-          cp -r html/* /tmp/io/otrobopt/master
+          test -f html/index.html || {
+            echo "::error::The Sphinx documentation was not built: check -DUSE_SPHINX=ON and the doc target"
+            exit 1
+          }
+      - name: Upload documentation
+        id: doc
+        if: ${{ always() && hashFiles('html/index.html') != '' }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: sphinx-doc
+          path: html/
+          if-no-files-found: error
+          retention-days: 30
+      - name: Documentation summary
+        if: ${{ steps.doc.outputs.artifact-url != '' }}
+        run: |
+          {
+            echo "### Sphinx documentation"
+            echo ""
+            echo "Built with \`-W -T\` (warnings are errors)."
+            echo ""
+            echo "Download: ${{ steps.doc.outputs.artifact-url }}"
+            echo ""
+            echo "Unzip the archive and open \`index.html\`. Theory pages:"
+            echo ""
+            echo "| Page | Entry point |"
+            echo "| --- | --- |"
+            echo "| Overview and notation | \`theory/theory.html\` |"
+            echo "| Pushforward and invariance | \`theory/invariance.html\` |"
+            echo "| Measure catalogue | \`theory/robust_optimization.html\` |"
+            echo "| Algorithms | \`theory/algorithms.html\` |"
+            echo "| Benchmarks | \`theory/benchmarks.html\` |"
+            echo "| Bibliography | \`theory/bibliography.html\` |"
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Publish documentation
+        if: ${{ github.event_name == 'push' }}
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          PAGES_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          owner="${GITHUB_REPOSITORY%%/*}"
+          name="${GITHUB_REPOSITORY#*/}"
+          landing=0
+          if [ -n "${GH_TOKEN}" ]; then
+            # shared documentation site, one directory per branch
+            repo="openturns/openturns.github.io.git"
+            token="${GH_TOKEN}"
+            ref="master"
+            target="otrobopt/${GITHUB_REF_NAME}"
+            page="https://openturns.github.io/${target}/"
+          elif [ "${owner}" != "openturns" ]; then
+            # fallback for a fork without the token: own GitHub Pages site
+            repo="${GITHUB_REPOSITORY}.git"
+            token="${PAGES_TOKEN}"
+            ref="gh-pages"
+            target="${GITHUB_REF_NAME}"
+            page="https://${owner}.github.io/${name}/${GITHUB_REF_NAME}/"
+            landing=1
+          else
+            echo "No GH_TOKEN secret available: skipping the documentation upload"
+            exit 0
+          fi
+          rm -rf /tmp/io
+          mkdir -p /tmp/io
           cd /tmp/io
-          touch .nojekyll
+          git init --quiet
+          git remote add origin "https://x-access-token:${token}@github.com/${repo}"
           git config user.email "support@gh.com"
           git config user.name "GitHub Actions"
+          if git fetch --depth 1 origin "${ref}"; then
+            git checkout --quiet -B "${ref}" FETCH_HEAD
+          else
+            git checkout --quiet --orphan "${ref}"
+          fi
+          rm -rf "${target}"
+          mkdir -p "${target}"
+          cp -r "${GITHUB_WORKSPACE}"/html/* "${target}"
+          if [ "${landing}" = "1" ]; then
+            # minimal landing page listing the published branches
+            {
+              echo "<!DOCTYPE html>"
+              echo "<html><head><meta charset=\"utf-8\"><title>otrobopt documentation</title></head><body>"
+              echo "<h1>otrobopt documentation</h1><ul>"
+              for directory in */; do
+                [ -f "${directory}index.html" ] && echo "<li><a href=\"${directory}\">${directory%/}</a></li>"
+              done
+              echo "</ul></body></html>"
+            } > index.html
+          fi
+          touch .nojekyll
           git add -A .
-          git commit -a -m "GitHub Actions build ${GITHUB_REPOSITORY} ${GITHUB_RUN_ID}" || exit 0
-          git push --quiet origin master > /dev/null 2>&1
+          git commit -a -m "GitHub Actions build ${GITHUB_REPOSITORY} ${GITHUB_REF_NAME} ${GITHUB_RUN_ID}" || exit 0
+          attempt=0
+          until git push --quiet origin "HEAD:${ref}"; do
+            attempt=$((attempt + 1))
+            if [ "${attempt}" -ge 3 ]; then
+              echo "::error::Could not publish the documentation after ${attempt} attempts"
+              exit 1
+            fi
+            git pull --rebase --quiet origin "${ref}"
+          done
+          echo "Published to ${page}" >> "$GITHUB_STEP_SUMMARY"
 
   mingw:
     runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'pull_request' || github.ref == 'refs/heads/master' }}
     env:
       MAKEFLAGS: -j4
     steps:
