@@ -10,6 +10,8 @@ OTROBOPT_MeasureEvaluation_getDistribution_doc
 OTROBOPT_MeasureEvaluation_setFunction_doc
 %feature("docstring") OTROBOPT::MeasureEvaluation::getFunction
 OTROBOPT_MeasureEvaluation_getFunction_doc
+%feature("docstring") OTROBOPT::MeasureEvaluation::getOutputDimension
+OTROBOPT_MeasureEvaluation_getOutputDimension_doc
 %feature("docstring") OTROBOPT::MeasureEvaluation::rebuild
 OTROBOPT_MeasureEvaluation_rebuild_doc
 %feature("docstring") OTROBOPT::MeasureEvaluation::requiresOptimizationDomain

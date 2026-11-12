@@ -60,6 +60,9 @@ public:
   void setFunction(const OT::Function & function);
   OT::Function getFunction() const;
 
+  /** Output dimension accessor */
+  OT::UnsignedInteger getOutputDimension() const;
+
   /** Rebuild the measure over a new function and distribution */
   MeasureEvaluation rebuild(const OT::Function & function,
                             const OT::Distribution & distribution) const;

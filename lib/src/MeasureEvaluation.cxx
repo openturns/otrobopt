@@ -94,6 +94,11 @@ Function MeasureEvaluation::getFunction() const
   return getImplementation()->getFunction();
 }
 
+UnsignedInteger MeasureEvaluation::getOutputDimension() const
+{
+  return getImplementation()->getOutputDimension();
+}
+
 /* Rebuild the measure over a new function and distribution */
 MeasureEvaluation MeasureEvaluation::rebuild(const Function & function,
                                              const Distribution & distribution) const

@@ -67,6 +67,21 @@ OTROBOPT_MeasureEvaluation_getFunction_doc
 
 // ---------------------------------------------------------------------
 
+%define OTROBOPT_MeasureEvaluation_getOutputDimension_doc
+"Accessor to the dimension of the measure values.
+
+Returns
+-------
+outputDimension : int
+    Dimension of the values returned by the measure.  It may differ from
+    the output dimension of the underlying function, for example for a
+    joint chance measure over a vector-valued function."
+%enddef
+%feature("docstring") OTROBOPT::MeasureEvaluationImplementation::getOutputDimension
+OTROBOPT_MeasureEvaluation_getOutputDimension_doc
+
+// ---------------------------------------------------------------------
+
 %define OTROBOPT_MeasureEvaluation_rebuild_doc
 "Rebuild the measure over a new function and distribution.
 
