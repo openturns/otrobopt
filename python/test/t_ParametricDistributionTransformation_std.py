@@ -27,6 +27,14 @@ ott.assert_almost_equal(T.gradient([1.0]), ot.Matrix([[3.0]]))
 ott.assert_almost_equal(T.parameterGradient([0.0]), ot.Matrix([[1.0], [0.0]]))
 ott.assert_almost_equal(T.parameterGradient([1.0]), ot.Matrix([[1.0], [1.0]]))
 
+# A large parameter keeps a representable step.  With a fixed absolute step the
+# shifted mean rounds back to the original one and the derivative would be
+# reported as zero.
+Tlarge = otrobopt.ParametricDistributionTransformation(ot.Normal(1.0e10, 1.0))
+ott.assert_almost_equal(
+    Tlarge.parameterGradient([0.0]), ot.Matrix([[1.0], [0.0]]), 1.0e-6, 1.0e-6
+)
+
 # setParameter updates the map but not the original distribution
 T.setParameter([5.0, 7.0])
 ott.assert_almost_equal(T.getParameter(), [5.0, 7.0])
@@ -125,11 +133,21 @@ ott.assert_almost_equal(
     T2.getDistribution().getCorrelation()[0, 1], 0.2, 1.0e-12, 1.0e-12
 )
 
-# A parameter gradient has the active dimension
+# A parameter gradient has the active dimension and the expected values: at
+# xi = 0 the transformation maps the active means to the output.
 T2.setActiveParameter([0, 2])
 gradient = T2.parameterGradient([0.0, 0.0])
-assert gradient.getNbRows() == 2
-assert gradient.getNbColumns() == 2
+ott.assert_almost_equal(gradient, ot.Matrix([[1.0, 0.0], [0.0, 1.0]]))
+
+# A forward step outside the parameter domain falls back to a backward
+# difference: here the lower bound of a narrow uniform would exceed its upper
+# bound after adding the finite-difference step.
+epsilon = ot.ResourceMap.GetAsScalar("Evaluation-ParameterEpsilon")
+narrow = ot.Uniform(0.0, 0.5 * epsilon)
+Tnarrow = otrobopt.ParametricDistributionTransformation(narrow)
+ott.assert_almost_equal(
+    Tnarrow.parameterGradient([0.0]), ot.Matrix([[0.5], [0.5]]), 1.0e-6, 1.0e-6
+)
 
 # Uniform: automatic standard reference pushes a normal sample to the uniform
 uniform = ot.Uniform(1.0, 3.0)
