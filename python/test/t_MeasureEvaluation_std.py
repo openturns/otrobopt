@@ -87,3 +87,33 @@ ott.assert_almost_equal(measures[0](x), [4.0])  # MeanMeasure: x*2.0+2.0 = 4.0
 ott.assert_almost_equal(measures[1](x), [0.02])  # VarianceMeasure
 ott.assert_almost_equal(measures[2](x), [-2.0])  # WorstCase min
 ott.assert_almost_equal(measures[3](x), [8.0])  # WorstCase max
+
+# Third test: the optimization domain filters a discrete support
+thetaDiscrete = ot.Poisson(2.0)
+fDiscrete = ot.ParametricFunction(
+    ot.SymbolicFunction(["x", "theta"], ["x + theta"]), [1], [0.0]
+)
+worstDiscrete = otrobopt.WorstCaseMeasure(fDiscrete, thetaDiscrete, False)
+worstDiscrete.setOptimizationDomain(ot.Interval([0.0], [1.0]))
+# Only the support points 0 and 1 are eligible, so the maximum is x + 1
+ott.assert_almost_equal(worstDiscrete([2.0]), [3.0])
+
+# An empty eligible support is reported instead of returning a silent zero
+emptySupport = otrobopt.WorstCaseMeasure(fDiscrete, thetaDiscrete, False)
+emptySupport.setOptimizationDomain(ot.Interval([10.5], [11.5]))
+with ott.assert_raises(Exception):
+    emptySupport([2.0])
+
+# The domain and the distribution must keep the same dimension
+twoDimensional = ot.JointDistribution([ot.Poisson(2.0)] * 2)
+with ott.assert_raises(Exception):
+    worstDiscrete.setDistribution(twoDimensional)
+worstDiscrete.setOptimizationDomain(ot.Interval())
+worstDiscrete.setDistribution(twoDimensional)
+ott.assert_almost_equal(worstDiscrete.getDistribution().getDimension(), 2)
+
+# The MeasureEvaluation interface exposes the dimension of the measure values
+interfaceMeasure = otrobopt.RobustOptimizationProblem(
+    measures[0], ot.Function()
+).getRobustnessMeasure()
+ott.assert_almost_equal(interfaceMeasure.getOutputDimension(), 1)

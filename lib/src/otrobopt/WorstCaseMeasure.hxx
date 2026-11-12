@@ -66,6 +66,9 @@ public:
   void setOptimizationDomain(const OT::Interval & domain);
   OT::Interval getOptimizationDomain() const;
 
+  /** Distribution accessor */
+  void setDistribution(const OT::Distribution & distribution) override;
+
   /** Optimization solver accessor */
   void setOptimizationAlgorithm(const OT::OptimizationAlgorithm & solver);
   OT::OptimizationAlgorithm getOptimizationAlgorithm() const;
