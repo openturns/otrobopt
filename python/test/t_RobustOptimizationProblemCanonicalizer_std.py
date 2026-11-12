@@ -388,6 +388,16 @@ canonicalizer = canonicalize(worstMax)
 canonicalWorstMax = canonicalizer.getCanonicalProblem().getRobustnessMeasure()
 ott.assert_almost_equal(canonicalWorstMax([1.0, -1.0, 2.0]), [2.0], 1.0e-3, 1.0e-3)
 
+# A frozen rebuild preserves the worst-case domain stored by the measure
+domainWorst = otrobopt.WorstCaseMeasure(fWorst, uniform, True)
+domainWorst.setOptimizationDomain(ot.Interval([0.2], [0.4]))
+options = otrobopt.CanonicalizationOptions()
+options.setOptimizeParameter(False)
+options.setParameterStart([0.0, 1.0])
+domainCanonicalizer = canonicalize(domainWorst, options)
+domainCanonicalWorst = domainCanonicalizer.getCanonicalProblem().getRobustnessMeasure()
+ott.assert_almost_equal(domainCanonicalWorst([1.0]), [0.2], 1.0e-6, 1.0e-6)
+
 # A generic worst case fails closed without a domain
 studentWorst = otrobopt.WorstCaseMeasure(fWorst, ot.Student(5.0, 0.0, 1.0), True)
 with ott.assert_raises(Exception):

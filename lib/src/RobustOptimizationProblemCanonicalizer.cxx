@@ -35,6 +35,7 @@
 #include "otrobopt/AggregatedMeasure.hxx"
 #include "otrobopt/ParameterAsInputFunction.hxx"
 #include "otrobopt/ParametricDistributionTransformation.hxx"
+#include "otrobopt/WorstCaseMeasure.hxx"
 
 using namespace OT;
 
@@ -465,6 +466,17 @@ MeasureEvaluation RobustOptimizationProblemCanonicalizer::canonicalizeMeasure(
                                           << ") must match the distribution dimension ("
                                           << referenceDimension << ")";
 
+  // A frozen parameter keeps the original theta coordinates: preserve the
+  // optimization domain stored by a worst-case measure when no option
+  // overrides it.
+  Interval measureDomain(optimizationDomain);
+  if (!optimizeParameter && (measureDomain.getDimension() == 0))
+  {
+    const WorstCaseMeasure * worstCase = dynamic_cast<const WorstCaseMeasure *>(measure.getImplementation().get());
+    if (worstCase)
+      measureDomain = worstCase->getOptimizationDomain();
+  }
+
   if (optimizeParameter)
   {
     const Function canonicalFunction(buildCanonicalFunction(function,
@@ -472,9 +484,9 @@ MeasureEvaluation RobustOptimizationProblemCanonicalizer::canonicalizeMeasure(
                                                             designDimension,
                                                             parameterDimension,
                                                             referenceDimension));
-    return measure.rebuild(canonicalFunction, distribution, optimizationDomain);
+    return measure.rebuild(canonicalFunction, distribution, measureDomain);
   }
-  return measure.rebuild(function, distribution, optimizationDomain);
+  return measure.rebuild(function, distribution, measureDomain);
 }
 
 /* Build a finite starting point from bounds */
