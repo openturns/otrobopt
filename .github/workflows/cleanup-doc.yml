@@ -48,7 +48,29 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           PAGES_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH: ${{ steps.branch.outputs.branch }}
+          EVENT_NAME: ${{ github.event_name }}
         run: |
+          # Closing a pull request does not imply that its branch is gone: a
+          # superseded pull request must not remove the preview of a branch
+          # that still exists.  git ls-remote exits with 2 when no ref
+          # matches; any other failure leaves the branch state unknown, so
+          # the preview is kept in that case too.  The full ref is queried so
+          # that another branch with the same tail cannot match.
+          if [ "${EVENT_NAME}" = "pull_request" ]; then
+            status=0
+            git ls-remote --exit-code --heads \
+              "https://x-access-token:${PAGES_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
+              "refs/heads/${BRANCH}" >/dev/null 2>&1 || status=$?
+            if [ "${status}" -eq 0 ]; then
+              echo "Branch ${BRANCH} still exists: keeping its preview"
+              exit 0
+            fi
+            if [ "${status}" -ne 2 ]; then
+              echo "Cannot resolve branch ${BRANCH} (git ls-remote status ${status}): keeping its preview"
+              exit 0
+            fi
+          fi
+
           owner="${GITHUB_REPOSITORY%%/*}"
           name="${GITHUB_REPOSITORY#*/}"
           if [ -n "${GH_TOKEN}" ]; then
