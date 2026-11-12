@@ -227,10 +227,25 @@ Matrix ParametricDistributionTransformation::parameterGradient(const Point & xi)
   {
     Point shifted(parameter);
     shifted[i] += epsilon;
-    evaluation.setParameter(shifted);
-    const Point output(evaluation(xi));
+    Scalar step = epsilon;
+    Point output;
+    try
+    {
+      evaluation.setParameter(shifted);
+      output = evaluation(xi);
+    }
+    catch (const Exception &)
+    {
+      // The forward step leaves the parameter domain (for example the upper
+      // bound of a Uniform distribution): use a backward difference instead.
+      step = -epsilon;
+      shifted = parameter;
+      shifted[i] += step;
+      evaluation.setParameter(shifted);
+      output = evaluation(xi);
+    }
     for (UnsignedInteger j = 0; j < outputDimension; ++j)
-      gradient(i, j) = (output[j] - output0[j]) / epsilon;
+      gradient(i, j) = (output[j] - output0[j]) / step;
   }
   return gradient;
 }
