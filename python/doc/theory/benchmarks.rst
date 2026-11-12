@@ -56,7 +56,7 @@ For :math:`J(x;\theta)=x\theta` and
     \min_{\theta \in [-1,2]} x\theta =
     \begin{cases}
       -x, & x \ge 0,\\
-      -2x, & x < 0.
+      2x, & x < 0.
     \end{cases}
 
 At :math:`x=1` the value is :math:`-1`, and at :math:`x=-1` it is :math:`-2`.

@@ -22,9 +22,18 @@ Law-determined measures
 The mean, the variance, the mean-standard-deviation tradeoff, the quantile,
 the joint chance measure and the individual chance measure are law-determined
 by construction: each is an integral, a root of a distribution function, or a
-monotone transform of such a quantity.  The worst-case measure is
-law-determined once the support of the law and the optimization domain are
-fixed, because it is the extremum of a continuous function over that set.
+monotone transform of such a quantity.
+
+The worst-case measure is not law-determined in general.  When the extremum is
+taken over the support of the law, it is a function of the law.  When it is
+taken over a fixed optimization domain, it is not: two variables with the same
+law need not have the same extremum over that domain.  For example, a uniform
+variable on :math:`[-1,1]` and its opposite have the same law, but their
+minima over :math:`[0,1]` are :math:`0` and :math:`-1`.  The optimization
+domain is therefore part of the model.  A canonicalization preserves a
+worst-case extremum only when the domain is transported together with the law,
+for example when it is the image of the reference domain under :math:`T_s`, or
+when it is the support of :math:`\cD_s` itself.
 
 The property is not automatic.  A pathwise maximum over a fixed sample is not
 law-determined: it depends on the sample, not only on the law.  This is the
@@ -145,10 +154,11 @@ Parameter-dependent distributions and canonicalization
 ------------------------------------------------------
 
 The parameter of the family is the *active* distribution parameter
-:math:`s = \cD_s.\texttt{getParameter()}`.  The full parameter vector
-:math:`\cD_s.\texttt{getFullParameter()}` also contains fixed or qualified
+:math:`s = \cD_s.\texttt{getParameter()}`.  The transformation :math:`T_s`
+exposes the full parameter vector
+:math:`T_s.\texttt{getFullParameter()}`, which also contains fixed or qualified
 coordinates, typically the dependence or copula block.  The active indices are
-available through :math:`\cD_s.\texttt{getActiveParameter()}`; the default
+available through :math:`T_s.\texttt{getActiveParameter()}`; the default
 policy keeps every parameter active except the trailing dependence block
 exposed by ``Distribution.getParametersCollection``, because OpenTURNS does
 not provide an analytic parameter derivative for that block.  The user can
@@ -199,13 +209,14 @@ transport.  For a measure function :math:`J`, the composition is
 
     H = J_{\mathrm{in}} \circ
     \operatorname{AggregatedFunction}\bigl[\pi_x,\,
-    T_s \circ \pi_{x,s}\bigr],
+    T_s \circ \pi_{\xi,s}\bigr],
 
-where :math:`\pi_x` selects the design coordinates and :math:`\pi_{x,s}`
-selects the distribution parameter coordinates.  The result is wrapped in a
-:class:`~openturns.ParametricFunction` whose parameter is the reference
-realization :math:`\xi`.  The measure then integrates over the fixed
-:math:`\Xi`, while the optimizer sees :math:`(x,s)`.
+where :math:`\pi_x` selects the design coordinates and :math:`\pi_{\xi,s}`
+selects the reference realization and the distribution parameter coordinates.
+The result is wrapped in a :class:`~openturns.ParametricFunction` whose
+parameter is the reference realization :math:`\xi`.  The measure then
+integrates over the fixed :math:`\Xi`, while the optimizer sees
+:math:`(x,s)`.
 
 The :class:`~otrobopt.AggregatedMeasure` is canonicalized child by child.
 The aggregate function concatenates the child parameter vectors, so
@@ -275,8 +286,8 @@ hypercube sampling or a Sobol sequence.  The discrete measure replaces the
 integral by a finite sum and makes the problem tractable with deterministic
 solvers.
 
-For a sample :math:`\xi_1,\dots,\xi_N` from :math:`\Xi`, the sample-average
-problem is
+For an expectation measure, a sample :math:`\xi_1,\dots,\xi_N` from
+:math:`\Xi` yields the sample-average problem
 
 .. math::
 
@@ -285,7 +296,10 @@ problem is
     =
     \frac{1}{N}\sum_{i=1}^N h(y;\xi_i),
 
-with the obvious extension to chance constraints.  The convergence
+which is the empirical counterpart of
+:math:`\Expect{h(y;\Xi)}`.  Other measures need their own empirical definition:
+for example, the empirical variance also involves the empirical second moment,
+and a chance constraint involves the empirical probability.  The convergence
 assumptions are integrability, compactness of :math:`\mathcal{Y}` and
 continuity of :math:`h`; chance constraints require a separate probabilistic
 guarantee because the empirical probability is a step function.  Common
