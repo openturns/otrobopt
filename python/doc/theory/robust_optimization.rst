@@ -9,8 +9,8 @@ This page is the catalogue of the robustness and reliability measures
 provided by otrobopt.  It states the definition, the output dimension and the
 intended use of each measure, together with the discretization and solver
 interfaces.  The mathematical contract, the invariance theorem and the
-canonical transformation are stated in :doc:`theory`; this page complements it
-with the measure-by-measure reference.
+canonical transformation are stated in :doc:`invariance`; this page
+complements it with the measure-by-measure reference.
 
 General formulation
 -------------------
@@ -132,11 +132,11 @@ the standard normal distribution: the reference support is then unbounded and
 the stored domain has no image in the reference space.  A frozen parameter and
 the standard normal fast path keep the distribution range, so an unbounded
 range alone does not require a domain (the domain policy is described in
-:doc:`theory`).  For continuous distributions the inner problem is solved by a
-nested optimizer (default: TNC).  For discrete distributions the support points
-whose probability exceeds ``MeasureEvaluation.getPDFThreshold()`` are scanned,
-and points at or below the threshold are excluded, so the support is not
-scanned exhaustively.
+:doc:`invariance`).  For continuous distributions the inner problem is solved
+by a nested optimizer (default: TNC).  For discrete distributions the support
+points whose probability exceeds ``MeasureEvaluation.getPDFThreshold()`` are
+scanned, and points at or below the threshold are excluded, so the support is
+not scanned exhaustively.
 
 The domain stored by a worst-case measure is expressed in the coordinates of
 the original uncertain vector :math:`\theta`.  When the distribution parameter
