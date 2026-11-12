@@ -28,6 +28,7 @@
 #include <openturns/ResourceMap.hxx>
 
 #include <algorithm>
+#include <cmath>
 
 using namespace OT;
 
@@ -226,11 +227,30 @@ Matrix ParametricDistributionTransformation::parameterGradient(const Point & xi)
   for (UnsignedInteger i = 0; i < parameterDimension; ++i)
   {
     Point shifted(parameter);
-    shifted[i] += epsilon;
-    evaluation.setParameter(shifted);
-    const Point output(evaluation(xi));
+    // Scale the step with the parameter magnitude: a fixed absolute step is
+    // absorbed by rounding when the parameter is large, so that the shifted
+    // parameter is equal to the original one and the difference reports a
+    // null derivative.
+    Scalar step = epsilon * std::max(1.0, std::abs(parameter[i]));
+    shifted[i] += step;
+    Point output;
+    try
+    {
+      evaluation.setParameter(shifted);
+      output = evaluation(xi);
+    }
+    catch (const Exception &)
+    {
+      // The forward step leaves the parameter domain (for example the upper
+      // bound of a Uniform distribution): use a backward difference instead.
+      step = -step;
+      shifted = parameter;
+      shifted[i] += step;
+      evaluation.setParameter(shifted);
+      output = evaluation(xi);
+    }
     for (UnsignedInteger j = 0; j < outputDimension; ++j)
-      gradient(i, j) = (output[j] - output0[j]) / epsilon;
+      gradient(i, j) = (output[j] - output0[j]) / step;
   }
   return gradient;
 }
