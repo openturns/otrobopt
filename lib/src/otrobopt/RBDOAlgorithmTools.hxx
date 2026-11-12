@@ -42,6 +42,9 @@ namespace OTROBOPT
 namespace RBDOAlgorithmTools
 {
 
+/** Quiet NaN sentinel */
+OTROBOPT_API extern const OT::Scalar NaN;
+
 /** Result of one inner reliability analysis */
 struct OTROBOPT_API InnerReport
 {
@@ -53,6 +56,18 @@ struct OTROBOPT_API InnerReport
   // that a positive performance measure certifies safety.  PMA caps the
   // performance by the value at the origin otherwise.
   OT::Bool safeOrigin = true;
+};
+
+/** One solved reliability component, shared by the specialized algorithms */
+struct OTROBOPT_API ReliabilityReport
+{
+  InnerReport inner;
+  OT::UnsignedInteger component = 0;
+  OT::Point physicalDesignPoint;
+  // Physical image of the origin of the standard space, set when the origin
+  // belongs to the failure domain: the deterministic subproblem of SORA then
+  // keeps the origin-safety condition of PMA.
+  OT::Point originPhysicalPoint;
 };
 
 /** Whether a point has only finite coordinates */

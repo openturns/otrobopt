@@ -52,20 +52,6 @@ static Factory<SORARobustOptimizationAlgorithm> Factory_SORARobustOptimizationAl
 namespace
 {
 
-const Scalar NaN = std::numeric_limits<Scalar>::quiet_NaN();
-
-/* One solved reliability component */
-struct ReliabilityReport
-{
-  InnerReport inner;
-  UnsignedInteger component = 0;
-  Point physicalDesignPoint;
-  // Physical image of the origin of the standard space, set when the origin
-  // belongs to the failure domain: the deterministic subproblem of SORA then
-  // keeps the origin-safety condition of PMA.
-  Point originPhysicalPoint;
-};
-
 /* Evaluation of the exact shifted constraint sigma min_j g_j(x; theta*).
    When the origin of the standard space belongs to the failure domain, the
    performance measure of PMA is capped by its value at the origin.  The
