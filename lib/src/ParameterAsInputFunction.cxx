@@ -175,6 +175,12 @@ public:
     return parameterAsInputOutputDescription(function_);
   }
 
+  Bool isParallel() const override
+  {
+    // Each evaluation updates the parameter of a shared function copy
+    return false;
+  }
+
   void save(Advocate & adv) const override
   {
     EvaluationImplementation::save(adv);
