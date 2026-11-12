@@ -168,6 +168,9 @@ if (SPHINX_FOUND)
   # build html by default
   set_target_properties (sphinx_html PROPERTIES EXCLUDE_FROM_ALL OFF)
 
+  # convenience target: `make doc` builds the HTML documentation
+  add_custom_target (doc DEPENDS sphinx_html)
+
   add_custom_command (OUTPUT ${SPHINX_BINARY_DIR}/latex/OpenTURNS.pdf
                       WORKING_DIRECTORY ${SPHINX_BINARY_DIR}/latex
                       COMMAND make all-pdf
