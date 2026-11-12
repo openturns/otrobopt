@@ -68,29 +68,6 @@ public:
   /** Default constructor */
   CanonicalizationOptions();
 
-  /** Reference distribution, empty for the automatic policy */
-  OT::Distribution reference;
-
-  /** Bounds on the distribution parameter, empty for no bounds */
-  OT::Interval parameterBounds;
-
-  /** Initial distribution parameter, empty for the current parameter */
-  OT::Point parameterStart;
-
-  /** Active distribution parameter indices in the full parameter vector,
-      empty with hasActiveParameter false to use the default policy */
-  OT::Indices activeParameter;
-
-  /** Whether the distribution parameter is part of the decision vector */
-  OT::Bool optimizeParameter = true;
-
-  /** Worst-case policy */
-  WorstCasePolicy worstCasePolicy = AUTO;
-
-  /** Worst-case optimization domain in the reference space, empty for the
-      range of the reference distribution */
-  OT::Interval worstCaseDomain;
-
   /** Reference distribution accessors */
   void setReference(const OT::Distribution & reference);
   OT::Distribution getReference() const;
@@ -127,6 +104,29 @@ public:
   OT::String __repr__() const;
 
 private:
+  /** Reference distribution, empty for the automatic policy */
+  OT::Distribution reference_;
+
+  /** Bounds on the distribution parameter, empty for no bounds */
+  OT::Interval parameterBounds_;
+
+  /** Initial distribution parameter, empty for the current parameter */
+  OT::Point parameterStart_;
+
+  /** Active distribution parameter indices in the full parameter vector,
+      empty with hasActiveParameter false to use the default policy */
+  OT::Indices activeParameter_;
+
+  /** Whether the distribution parameter is part of the decision vector */
+  OT::Bool optimizeParameter_ = true;
+
+  /** Worst-case policy */
+  WorstCasePolicy worstCasePolicy_ = AUTO;
+
+  /** Worst-case optimization domain in the reference space, empty for the
+      range of the reference distribution */
+  OT::Interval worstCaseDomain_;
+
   OT::Bool hasReference_ = false;
   OT::Bool hasActiveParameter_ = false;
 }; /* class CanonicalizationOptions */

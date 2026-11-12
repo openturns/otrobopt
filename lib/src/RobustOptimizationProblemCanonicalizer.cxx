@@ -116,13 +116,13 @@ String policyName(const CanonicalizationOptions::WorstCasePolicy policy)
 
 /* Default constructor */
 CanonicalizationOptions::CanonicalizationOptions()
-  : reference()
-  , parameterBounds()
-  , parameterStart()
-  , activeParameter()
-  , optimizeParameter(true)
-  , worstCasePolicy(AUTO)
-  , worstCaseDomain()
+  : reference_()
+  , parameterBounds_()
+  , parameterStart_()
+  , activeParameter_()
+  , optimizeParameter_(true)
+  , worstCasePolicy_(AUTO)
+  , worstCaseDomain_()
 {
   // Nothing to do
 }
@@ -135,63 +135,63 @@ void CanonicalizationOptions::setReference(const Distribution & newReference)
     clearReference();
     return;
   }
-  this->reference = cloneDistribution(newReference);
+  reference_ = cloneDistribution(newReference);
   hasReference_ = true;
 }
 
 Distribution CanonicalizationOptions::getReference() const
 {
-  return cloneDistribution(reference);
+  return cloneDistribution(reference_);
 }
 
 void CanonicalizationOptions::clearReference()
 {
-  reference = Distribution();
+  reference_ = Distribution();
   hasReference_ = false;
 }
 
 Bool CanonicalizationOptions::hasReference() const
 {
-  return hasReference_ || (reference != Distribution());
+  return hasReference_ || (reference_ != Distribution());
 }
 
 /* Parameter bounds accessors */
 void CanonicalizationOptions::setParameterBounds(const Interval & bounds)
 {
-  parameterBounds = bounds;
+  parameterBounds_ = bounds;
 }
 
 Interval CanonicalizationOptions::getParameterBounds() const
 {
-  return parameterBounds;
+  return parameterBounds_;
 }
 
 /* Parameter start accessors */
 void CanonicalizationOptions::setParameterStart(const Point & start)
 {
-  parameterStart = start;
+  parameterStart_ = start;
 }
 
 Point CanonicalizationOptions::getParameterStart() const
 {
-  return parameterStart;
+  return parameterStart_;
 }
 
 /* Active parameter accessors */
 void CanonicalizationOptions::setActiveParameter(const Indices & active)
 {
-  activeParameter = active;
+  activeParameter_ = active;
   hasActiveParameter_ = true;
 }
 
 Indices CanonicalizationOptions::getActiveParameter() const
 {
-  return activeParameter;
+  return activeParameter_;
 }
 
 void CanonicalizationOptions::clearActiveParameter()
 {
-  activeParameter = Indices();
+  activeParameter_ = Indices();
   hasActiveParameter_ = false;
 }
 
@@ -203,12 +203,12 @@ Bool CanonicalizationOptions::hasActiveParameter() const
 /* Parameter optimization accessors */
 void CanonicalizationOptions::setOptimizeParameter(const Bool newOptimizeParameter)
 {
-  this->optimizeParameter = newOptimizeParameter;
+  optimizeParameter_ = newOptimizeParameter;
 }
 
 Bool CanonicalizationOptions::getOptimizeParameter() const
 {
-  return optimizeParameter;
+  return optimizeParameter_;
 }
 
 /* Worst-case policy accessors */
@@ -216,23 +216,23 @@ void CanonicalizationOptions::setWorstCasePolicy(const WorstCasePolicy policy)
 {
   if ((policy < AUTO) || (policy > USER_DOMAIN))
     throw InvalidArgumentException(HERE) << "Unknown worst-case policy";
-  worstCasePolicy = policy;
+  worstCasePolicy_ = policy;
 }
 
 CanonicalizationOptions::WorstCasePolicy CanonicalizationOptions::getWorstCasePolicy() const
 {
-  return worstCasePolicy;
+  return worstCasePolicy_;
 }
 
 /* Worst-case domain accessors */
 void CanonicalizationOptions::setWorstCaseDomain(const Interval & domain)
 {
-  worstCaseDomain = domain;
+  worstCaseDomain_ = domain;
 }
 
 Interval CanonicalizationOptions::getWorstCaseDomain() const
 {
-  return worstCaseDomain;
+  return worstCaseDomain_;
 }
 
 /* String converter */
@@ -240,13 +240,13 @@ String CanonicalizationOptions::__repr__() const
 {
   OSS oss;
   oss << "class=CanonicalizationOptions"
-      << " reference=" << reference
-      << " parameterBounds=" << parameterBounds
-      << " parameterStart=" << parameterStart
-      << " activeParameter=" << activeParameter
-      << " optimizeParameter=" << optimizeParameter
-      << " worstCasePolicy=" << policyName(worstCasePolicy)
-      << " worstCaseDomain=" << worstCaseDomain;
+      << " reference=" << reference_
+      << " parameterBounds=" << parameterBounds_
+      << " parameterStart=" << parameterStart_
+      << " activeParameter=" << activeParameter_
+      << " optimizeParameter=" << optimizeParameter_
+      << " worstCasePolicy=" << policyName(worstCasePolicy_)
+      << " worstCaseDomain=" << worstCaseDomain_;
   return oss;
 }
 
@@ -280,7 +280,7 @@ Distribution RobustOptimizationProblemCanonicalizer::selectReference(
   const Bool hasReference = options.hasReference();
   const Bool standardUsable = isStandardReference(distribution);
 
-  switch (options.worstCasePolicy)
+  switch (options.getWorstCasePolicy())
   {
     case CanonicalizationOptions::STANDARD:
       if (hasReference)
@@ -644,8 +644,12 @@ void RobustOptimizationProblemCanonicalizer::initialize(
   if (!hasRobustnessMeasure && (problem.getObjective().getInputDimension() == 0))
     throw InvalidArgumentException(HERE) << "The problem has no objective";
 
-  if ((options.worstCasePolicy == CanonicalizationOptions::USER_DOMAIN)
-      && (options.worstCaseDomain.getDimension() == 0))
+  const CanonicalizationOptions::WorstCasePolicy worstCasePolicy = options.getWorstCasePolicy();
+  const Interval optionWorstCaseDomain(options.getWorstCaseDomain());
+  const Point optionParameterStart(options.getParameterStart());
+  const Interval optionParameterBounds(options.getParameterBounds());
+  if ((worstCasePolicy == CanonicalizationOptions::USER_DOMAIN)
+      && (optionWorstCaseDomain.getDimension() == 0))
     throw InvalidArgumentException(HERE) << "The USER_DOMAIN worst-case policy requires a non-empty worst-case domain";
 
   // Distribution of the measures
@@ -673,7 +677,7 @@ void RobustOptimizationProblemCanonicalizer::initialize(
                      : ParametricDistributionTransformation::GetDefaultActiveParameter(distribution);
   checkActiveParameter(activeParameter_, fullParameterDimension);
   const UnsignedInteger parameterDimension = activeParameter_.getSize();
-  optimizeParameter_ = options.optimizeParameter && (parameterDimension > 0);
+  optimizeParameter_ = options.getOptimizeParameter() && (parameterDimension > 0);
   if (designDimension == 0)
     throw InvalidArgumentException(HERE) << "The measure function has input dimension zero";
 
@@ -700,10 +704,10 @@ void RobustOptimizationProblemCanonicalizer::initialize(
 
   if (hasRobustnessMeasure)
   {
-    const Function objectiveFunction(problem.getRobustnessMeasure().getFunction());
-    if (objectiveFunction.getOutputDimension() != 1)
+    const MeasureEvaluation robustnessMeasure(problem.getRobustnessMeasure());
+    if (robustnessMeasure.getOutputDimension() != 1)
       throw InvalidDimensionException(HERE) << "The robust objective must be scalar, got output dimension "
-                                            << objectiveFunction.getOutputDimension();
+                                            << robustnessMeasure.getOutputDimension();
   }
   else
   {
@@ -730,26 +734,26 @@ void RobustOptimizationProblemCanonicalizer::initialize(
   // compatibility fallback.
   Point fullParameterStart(distribution.getParameter());
   Point parameterStart(parameterDimension);
-  if (options.parameterStart.getDimension() != 0)
+  if (optionParameterStart.getDimension() != 0)
   {
-    if (options.parameterStart.getDimension() == parameterDimension)
+    if (optionParameterStart.getDimension() == parameterDimension)
     {
       for (UnsignedInteger i = 0; i < parameterDimension; ++i)
       {
-        parameterStart[i] = options.parameterStart[i];
-        fullParameterStart[activeParameter_[i]] = options.parameterStart[i];
+        parameterStart[i] = optionParameterStart[i];
+        fullParameterStart[activeParameter_[i]] = optionParameterStart[i];
       }
     }
     else if ((parameterDimension != fullParameterDimension)
-             && (options.parameterStart.getDimension() == fullParameterDimension))
+             && (optionParameterStart.getDimension() == fullParameterDimension))
     {
-      fullParameterStart = options.parameterStart;
+      fullParameterStart = optionParameterStart;
       for (UnsignedInteger i = 0; i < parameterDimension; ++i)
         parameterStart[i] = fullParameterStart[activeParameter_[i]];
     }
     else
       throw InvalidDimensionException(HERE) << "The parameter start dimension ("
-                                            << options.parameterStart.getDimension()
+                                            << optionParameterStart.getDimension()
                                             << ") must match the active parameter dimension ("
                                             << parameterDimension << ") or the full parameter dimension ("
                                             << fullParameterDimension << ")";
@@ -763,16 +767,16 @@ void RobustOptimizationProblemCanonicalizer::initialize(
   // Parameter bounds are expressed in active coordinates, with the same
   // full-coordinate fallback as the starting point.
   Interval parameterBounds;
-  if (options.parameterBounds.getDimension() != 0)
+  if (optionParameterBounds.getDimension() != 0)
   {
-    if (options.parameterBounds.getDimension() == parameterDimension)
-      parameterBounds = options.parameterBounds;
+    if (optionParameterBounds.getDimension() == parameterDimension)
+      parameterBounds = optionParameterBounds;
     else if ((parameterDimension != fullParameterDimension)
-             && (options.parameterBounds.getDimension() == fullParameterDimension))
-      parameterBounds = filterInterval(options.parameterBounds, activeParameter_);
+             && (optionParameterBounds.getDimension() == fullParameterDimension))
+      parameterBounds = filterInterval(optionParameterBounds, activeParameter_);
     else
       throw InvalidDimensionException(HERE) << "The parameter bounds dimension ("
-                                            << options.parameterBounds.getDimension()
+                                            << optionParameterBounds.getDimension()
                                             << ") must match the active parameter dimension ("
                                             << parameterDimension << ") or the full parameter dimension ("
                                             << fullParameterDimension << ")";
@@ -780,10 +784,10 @@ void RobustOptimizationProblemCanonicalizer::initialize(
 
   // The worst-case domain is expressed in the reference coordinates
   const UnsignedInteger referenceDimension = distributionDimension;
-  if ((options.worstCaseDomain.getDimension() != 0)
-      && (options.worstCaseDomain.getDimension() != referenceDimension))
+  if ((optionWorstCaseDomain.getDimension() != 0)
+      && (optionWorstCaseDomain.getDimension() != referenceDimension))
     throw InvalidDimensionException(HERE) << "The worst-case domain dimension ("
-                                          << options.worstCaseDomain.getDimension()
+                                          << optionWorstCaseDomain.getDimension()
                                           << ") must match the reference dimension ("
                                           << referenceDimension << ")";
 
@@ -807,8 +811,8 @@ void RobustOptimizationProblemCanonicalizer::initialize(
     usesStandardSpace_ = false;
 
     if (requiresOptimizationDomain
-        && (options.worstCaseDomain.getDimension() != 0))
-      optimizationDomain = options.worstCaseDomain;
+        && (optionWorstCaseDomain.getDimension() != 0))
+      optimizationDomain = optionWorstCaseDomain;
 
     if (hasRobustnessMeasure)
       canonicalRobustness = canonicalizeMeasure(problem.getRobustnessMeasure(),
@@ -843,13 +847,13 @@ void RobustOptimizationProblemCanonicalizer::initialize(
 
     if (requiresOptimizationDomain)
     {
-      if (options.worstCaseDomain.getDimension() != 0)
-        optimizationDomain = options.worstCaseDomain;
+      if (optionWorstCaseDomain.getDimension() != 0)
+        optimizationDomain = optionWorstCaseDomain;
       else if (!usesStandardSpace_ && !isBounded(reference_.getRange()))
         throw InvalidArgumentException(HERE) << "The worst-case measure requires an explicit optimization domain "
                                              << "when the reference distribution is not the standard fast path "
                                              << "and its support is unbounded. Policy: "
-                                             << policyName(options.worstCasePolicy);
+                                             << policyName(worstCasePolicy);
     }
 
     ParametricDistributionTransformation transformation(distribution, reference_);

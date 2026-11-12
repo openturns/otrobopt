@@ -189,6 +189,36 @@ for measure in [
                 tolerance,
             )
 
+# A vector-valued limit state is a valid joint chance measure: the
+# canonicalizer checks the measure output dimension, not the function one.
+vectorFunction = ot.ParametricFunction(
+    ot.SymbolicFunction(["x", "t1", "t2"], ["t1 - x", "t2 - x"]),
+    [1, 2],
+    [2.0, 3.0],
+)
+vectorDistribution = ot.Normal([2.0, 3.0], [0.1, 0.2], ot.IdentityMatrix(2))
+vectorChance = otrobopt.JointChanceMeasure(
+    vectorFunction, vectorDistribution, ot.GreaterOrEqual(), 0.9
+)
+assert vectorChance.getFunction().getOutputDimension() == 2
+assert vectorChance.getOutputDimension() == 1
+canonicalizer = canonicalize(vectorChance)
+canonicalChance = canonicalizer.getCanonicalProblem().getRobustnessMeasure()
+assert canonicalChance.getOutputDimension() == 1
+for a in [1.0, 2.5]:
+    freshChance = otrobopt.JointChanceMeasure(
+        vectorFunction,
+        ot.Normal([2.0, 3.0], [0.1, 0.2], ot.IdentityMatrix(2)),
+        ot.GreaterOrEqual(),
+        0.9,
+    )
+    ott.assert_almost_equal(
+        canonicalChance([a, 2.0, 0.1, 3.0, 0.2]),
+        freshChance([a]),
+        0.02,
+        0.02,
+    )
+
 # The canonicalizer keeps a private copy of the reference
 canonicalizer = canonicalize(otrobopt.MeanMeasure(f, normal))
 canonicalMeasure = canonicalizer.getCanonicalProblem().getRobustnessMeasure()
