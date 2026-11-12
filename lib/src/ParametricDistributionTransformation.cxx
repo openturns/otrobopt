@@ -122,8 +122,8 @@ void ParametricDistributionTransformation::initialize(const Distribution & distr
   distribution_ = cloneDistribution(distribution);
   configureReference(reference, hasReference);
   activeParameter_ = GetDefaultActiveParameter(distribution_);
-  FunctionImplementation::setParameter(getParameter());
   invalidateCache();
+  refreshEvaluationDelegates();
 }
 
 /* Select the reference distribution */
@@ -190,6 +190,14 @@ void ParametricDistributionTransformation::updateTransformation() const
     transformation_ = DistributionTransformation(reference_, distribution);
   cachedParameter_ = getFullParameter();
   cacheValid_ = true;
+}
+
+/* Keep the composition delegates in sync with the current transformation */
+void ParametricDistributionTransformation::refreshEvaluationDelegates()
+{
+  updateTransformation();
+  setEvaluation(transformation_.getEvaluation());
+  setGradient(transformation_.getGradient());
 }
 
 /* Evaluation */
@@ -330,8 +338,8 @@ void ParametricDistributionTransformation::setFullParameter(const Point & parame
   Distribution candidate(cloneDistribution(distribution_));
   candidate.setParameter(parameter);
   distribution_ = candidate;
-  FunctionImplementation::setParameter(getParameter());
   invalidateCache();
+  refreshEvaluationDelegates();
 }
 
 Description ParametricDistributionTransformation::getFullParameterDescription() const
@@ -358,7 +366,6 @@ void ParametricDistributionTransformation::setActiveParameter(const Indices & ac
       throw InvalidArgumentException(HERE) << "Active parameter index " << active[i]
                                            << " is out of range [0, " << fullDimension << ")";
   activeParameter_ = active;
-  FunctionImplementation::setParameter(getParameter());
 }
 
 /* Default active parameter indices for a distribution */
@@ -439,8 +446,8 @@ void ParametricDistributionTransformation::load(Advocate & adv)
       valid = false;
   if (!valid)
     activeParameter_ = GetDefaultActiveParameter(distribution_);
-  FunctionImplementation::setParameter(getParameter());
   invalidateCache();
+  refreshEvaluationDelegates();
 }
 
 } /* namespace OTROBOPT */
