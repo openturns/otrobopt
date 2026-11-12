@@ -187,9 +187,11 @@ so the constraint :math:`\lambda \ge 0` is equivalent to
     \lambda = \Phi^{-1}(\alpha) - \Phi^{-1}\bigl(P(x)\bigr),
 
 which represents :math:`P(x) \le \alpha`, equivalently
-:math:`\Prob{G(x, \Theta) < 0} \ge 1 - \alpha`.  The ``Less`` form is therefore
-the complement form, not a different event.  A reliability requirement
-:math:`\Prob{G(x, \Theta) \ge 0} \ge \alpha` uses ``GreaterOrEqual``.
+:math:`\Prob{\bigcup_{k=1}^{n_g} \{G_k(x, \Theta) < 0\}} \ge 1 - \alpha`.
+The ``Less`` form is therefore the complement form, not a different event: it
+is satisfied when at least one component violates its constraint.  A
+reliability requirement :math:`\Prob{G(x, \Theta) \ge 0} \ge \alpha` uses
+``GreaterOrEqual``.
 
 The probit transform stretches the probability scale near zero and one, which
 improves the conditioning of the measure for gradient-based optimization.  The
