@@ -9,8 +9,8 @@ This page is the catalogue of the robustness and reliability measures
 provided by otrobopt.  It states the definition, the output dimension and the
 intended use of each measure, together with the discretization and solver
 interfaces.  The mathematical contract, the invariance theorem and the
-canonical transformation are stated in :doc:`theory`; this page complements it
-with the measure-by-measure reference.
+canonical transformation are stated in :doc:`invariance`; this page
+complements it with the measure-by-measure reference.
 
 General formulation
 -------------------
@@ -119,7 +119,7 @@ function over the support of the distribution,
 for minimization, and the supremum for maximization.  When the support is
 unbounded or when the user restricts the domain, the extremum is taken over an
 explicit optimization domain instead; the domain policy is described in
-:doc:`theory`.  For continuous distributions the inner problem is solved by a
+:doc:`invariance`.  For continuous distributions the inner problem is solved by a
 nested optimizer (default: TNC); for discrete distributions the support is
 scanned exhaustively.
 
