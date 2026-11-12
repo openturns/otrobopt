@@ -335,6 +335,11 @@ void ParametricDistributionTransformation::setFullParameter(const Point & parame
                                           << parameter.getDimension()
                                           << ") must match the distribution parameter dimension ("
                                           << fullDimension << ")";
+  // Repeating the current parameter must not rebuild the cached
+  // transformation: the measure integration sets the same parameter at every
+  // integration point.
+  if (parameter == distribution_.getParameter())
+    return;
   Distribution candidate(cloneDistribution(distribution_));
   candidate.setParameter(parameter);
   distribution_ = candidate;
