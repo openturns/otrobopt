@@ -35,6 +35,7 @@
 #include "otrobopt/AggregatedMeasure.hxx"
 #include "otrobopt/ParameterAsInputFunction.hxx"
 #include "otrobopt/ParametricDistributionTransformation.hxx"
+#include "otrobopt/WorstCaseMeasure.hxx"
 
 using namespace OT;
 
@@ -465,16 +466,40 @@ MeasureEvaluation RobustOptimizationProblemCanonicalizer::canonicalizeMeasure(
                                           << ") must match the distribution dimension ("
                                           << referenceDimension << ")";
 
+  // A frozen parameter keeps the original theta coordinates: preserve the
+  // optimization domain stored by a worst-case measure when no option
+  // overrides it.
+  Interval measureDomain(optimizationDomain);
+  if (!optimizeParameter && (measureDomain.getDimension() == 0))
+  {
+    const WorstCaseMeasure * worstCase = dynamic_cast<const WorstCaseMeasure *>(measure.getImplementation().get());
+    if (worstCase)
+      measureDomain = worstCase->getOptimizationDomain();
+  }
+
   if (optimizeParameter)
   {
+    // The parameter is optimized, so the worst-case variable becomes the
+    // reference realization.  A domain stored by the measure is expressed in
+    // the original distribution coordinates and has no image by the
+    // canonicalization in general: reject it instead of silently ignoring
+    // the restriction.
+    const WorstCaseMeasure * worstCase = dynamic_cast<const WorstCaseMeasure *>(measure.getImplementation().get());
+    if (worstCase && (measureDomain.getDimension() == 0)
+        && (worstCase->getOptimizationDomain().getDimension() != 0))
+      throw InvalidArgumentException(HERE) << "The worst-case measure stores an optimization domain in the "
+                                           << "original distribution coordinates, which cannot be transported "
+                                           << "when the distribution parameter is optimized. Set "
+                                           << "CanonicalizationOptions.setWorstCaseDomain() in the reference "
+                                           << "space, or freeze the parameter with setOptimizeParameter(False).";
     const Function canonicalFunction(buildCanonicalFunction(function,
                                                             transformation,
                                                             designDimension,
                                                             parameterDimension,
                                                             referenceDimension));
-    return measure.rebuild(canonicalFunction, distribution, optimizationDomain);
+    return measure.rebuild(canonicalFunction, distribution, measureDomain);
   }
-  return measure.rebuild(function, distribution, optimizationDomain);
+  return measure.rebuild(function, distribution, measureDomain);
 }
 
 /* Build a finite starting point from bounds */
