@@ -7,6 +7,7 @@
  * Add ParameterAsInputFunction
  * Add ParametricDistributionTransformation
  * Add full and active distribution parameters to ParametricDistributionTransformation
+ * Add analytic parameter gradients to ParametricDistributionTransformation
  * Add CanonicalizationOptions and RobustOptimizationProblemCanonicalizer
  * Add MeasureEvaluation.rebuild and WorstCaseMeasure optimization domains
  * Add analytic gradients for the mean, variance, standard deviation tradeoff and aggregated measures
