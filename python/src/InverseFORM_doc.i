@@ -10,6 +10,17 @@ failure event equals :math:`\beta_t`.
 In this class, :math:`\ux` denotes the stochastic (random) parameters in
 standard space and :math:`\theta` denotes the parameter to be optimized.
 
+The reliability index :math:`\beta_t` is a distance in the standard space of
+the event distribution.  When that standard space is the standard normal
+space, the index keeps its classical meaning :math:`\beta_t=\Phi^{-1}(p_s)`.
+For an elliptical distribution the standard space is the same-kind spherical
+space of the generalized Nataf transformation, and the FORM probability is
+:math:`F_{\mathrm{std}}(\beta_t)`, where :math:`F_{\mathrm{std}}` is the
+marginal of the standard distribution.  The default target index is derived
+from a :math:`10^{-2}` failure probability in the standard normal space, i.e.
+:math:`\beta_t=\Phi^{-1}(0.99)`; call :meth:`setTargetBeta` to prescribe a
+target consistent with the actual standard space.
+
 Formally, the algorithm seeks a pair :math:`(\ux^*, \theta^*)` such that:
 
 .. math::
