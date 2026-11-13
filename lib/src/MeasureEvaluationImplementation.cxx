@@ -21,6 +21,8 @@
 #include "otrobopt/MeasureEvaluationImplementation.hxx"
 #include "otrobopt/MeasureEvaluation.hxx"
 #include <openturns/Exception.hxx>
+#include <openturns/NoGradient.hxx>
+#include <openturns/ParametricEvaluation.hxx>
 #include <openturns/PersistentObjectFactory.hxx>
 #include <openturns/IteratedQuadrature.hxx>
 
@@ -32,6 +34,27 @@ namespace OTROBOPT
 CLASSNAMEINIT(MeasureEvaluationImplementation)
 
 static Factory<MeasureEvaluationImplementation> Factory_MeasureEvaluationImplementation;
+
+namespace
+{
+
+/* Assemble the full input point of a parametric evaluation from the input
+   point x and the parameter theta. */
+Point buildFullPoint(const Point & x,
+                     const Point & theta,
+                     const Indices & inputPositions,
+                     const Indices & parametersPositions,
+                     const UnsignedInteger fullDimension)
+{
+  Point fullPoint(fullDimension);
+  for (UnsignedInteger i = 0; i < parametersPositions.getSize(); ++i)
+    fullPoint[parametersPositions[i]] = theta[i];
+  for (UnsignedInteger i = 0; i < inputPositions.getSize(); ++i)
+    fullPoint[inputPositions[i]] = x[i];
+  return fullPoint;
+}
+
+}
 
 
 /* Default constructor */
@@ -133,6 +156,81 @@ MeasureEvaluation MeasureEvaluationImplementation::rebuild(const Function & /*fu
 Bool MeasureEvaluationImplementation::requiresOptimizationDomain() const
 {
   return false;
+}
+
+
+/* Build the analytic gradient of the measure, if available */
+Gradient MeasureEvaluationImplementation::buildGradient() const
+{
+  // No analytic gradient by default: MeasureFunction installs a centered
+  // finite difference gradient over the measure evaluation. NoGradient is the
+  // OpenTURNS marker for an undefined gradient.
+  return Gradient(NoGradient());
+}
+
+/* Derivative of the integrand with respect to the measure input */
+Matrix MeasureEvaluationImplementation::integrandGradient(const Point & /*x*/,
+                                                          const Point & /*theta*/,
+                                                          const Point & /*auxiliaryValues*/) const
+{
+  throw NotYetImplementedException(HERE) << "MeasureEvaluationImplementation::integrandGradient is not implemented for "
+                                         << getClassName();
+}
+
+/* Auxiliary values required by integrandGradient */
+Point MeasureEvaluationImplementation::computeAuxiliaryValues(const Point & /*x*/) const
+{
+  return Point();
+}
+
+/* Evaluate the underlying function at x for the parameter theta */
+Point MeasureEvaluationImplementation::functionValue(const Point & x, const Point & theta) const
+{
+  // A parametric evaluation can be evaluated on the full point (x, theta),
+  // which avoids changing the state of the underlying function.
+  const Evaluation evaluation(function_.getEvaluation());
+  const ParametricEvaluation * p_parametricEvaluation = dynamic_cast<const ParametricEvaluation *>(evaluation.getImplementation().get());
+  if (p_parametricEvaluation)
+  {
+    const Function fullFunction(p_parametricEvaluation->getFunction());
+    return fullFunction(buildFullPoint(x, theta,
+                                       p_parametricEvaluation->getInputPositions(),
+                                       p_parametricEvaluation->getParametersPositions(),
+                                       fullFunction.getInputDimension()));
+  }
+  Function function(function_);
+  function.setParameter(theta);
+  return function(x);
+}
+
+/* Gradient of the underlying function at x for the parameter theta */
+Matrix MeasureEvaluationImplementation::functionGradient(const Point & x, const Point & theta) const
+{
+  // Differentiate the full function at the point (x, theta) and keep the rows
+  // associated with the input coordinates. This gives the exact derivative
+  // even for OpenTURNS versions where setParameter is not propagated to the
+  // gradient of a ParametricFunction.
+  const Evaluation evaluation(function_.getEvaluation());
+  const ParametricEvaluation * p_parametricEvaluation = dynamic_cast<const ParametricEvaluation *>(evaluation.getImplementation().get());
+  if (p_parametricEvaluation)
+  {
+    const Function fullFunction(p_parametricEvaluation->getFunction());
+    const Indices inputPositions(p_parametricEvaluation->getInputPositions());
+    const Matrix fullGradient(fullFunction.gradient(buildFullPoint(x, theta,
+        inputPositions,
+        p_parametricEvaluation->getParametersPositions(),
+        fullFunction.getInputDimension())));
+    const UnsignedInteger inputDimension = x.getDimension();
+    const UnsignedInteger outputDimension = fullFunction.getOutputDimension();
+    Matrix outG(inputDimension, outputDimension);
+    for (UnsignedInteger i = 0; i < inputDimension; ++i)
+      for (UnsignedInteger j = 0; j < outputDimension; ++j)
+        outG(i, j) = fullGradient(inputPositions[i], j);
+    return outG;
+  }
+  Function function(function_);
+  function.setParameter(theta);
+  return function.gradient(x);
 }
 
 

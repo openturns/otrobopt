@@ -19,8 +19,10 @@
  *
  */
 #include "otrobopt/AggregatedMeasure.hxx"
+#include "otrobopt/MeasureGradient.hxx"
 #include <openturns/PersistentObjectFactory.hxx>
 #include <openturns/AggregatedFunction.hxx>
+#include <openturns/NoGradient.hxx>
 
 using namespace OT;
 namespace OT
@@ -128,6 +130,19 @@ Point AggregatedMeasure::operator()(const Point & inP) const
     index += outPi.getSize();
   }
   return outP;
+}
+
+
+/* Build the analytic gradient of the measure */
+Gradient AggregatedMeasure::buildGradient() const
+{
+  const UnsignedInteger size = collection_.getSize();
+  // The aggregate gradient concatenates the component blocks, so it exists
+  // only when every component has an analytic gradient.
+  for (UnsignedInteger i = 0; i < size; ++i)
+    if (!collection_[i].getImplementation()->buildGradient().getImplementation()->isActualImplementation())
+      return Gradient(NoGradient());
+  return Gradient(new MeasureGradient(getCollection()));
 }
 
 
