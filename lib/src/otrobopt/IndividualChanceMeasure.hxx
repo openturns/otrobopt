@@ -30,7 +30,13 @@ namespace OTROBOPT
 /**
  * @class IndividualChanceMeasure
  *
- * Individual probability measure
+ * Individual probability measure.
+ *
+ * No analytic gradient with respect to the measure input is implemented: the
+ * probabilities are computed by simulation and the derivative of the
+ * distribution parameters with respect to the design variables is not
+ * available for every distribution.  MeasureFunction therefore keeps the
+ * centered finite-difference gradient installed by the Function constructor.
  */
 class OTROBOPT_API IndividualChanceMeasure
   : public MeasureEvaluationImplementation
