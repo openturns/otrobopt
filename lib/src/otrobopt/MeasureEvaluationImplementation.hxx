@@ -25,6 +25,7 @@
 #include "otrobopt/OTRobOptprivate.hxx"
 
 #include <openturns/Distribution.hxx>
+#include <openturns/Gradient.hxx>
 #include <openturns/IntegrationAlgorithm.hxx>
 #include <openturns/Interval.hxx>
 
@@ -73,6 +74,17 @@ public:
                                     const OT::Distribution & distribution,
                                     const OT::Interval & optimizationDomain) const;
 
+  /** Build the analytic gradient of the measure, if available */
+  virtual OT::Gradient buildGradient() const;
+
+  /** Derivative of the integrand with respect to the measure input */
+  virtual OT::Matrix integrandGradient(const OT::Point & x,
+                                       const OT::Point & theta,
+                                       const OT::Point & auxiliaryValues) const;
+
+  /** Auxiliary values required by integrandGradient, computed once per gradient */
+  virtual OT::Point computeAuxiliaryValues(const OT::Point & x) const;
+
   /** Whether rebuilding the measure requires an explicit optimization domain */
   virtual OT::Bool requiresOptimizationDomain() const;
 
@@ -100,6 +112,12 @@ public:
   void load(OT::Advocate & adv) override;
 
 protected:
+  /** Evaluate the underlying function at x for the parameter theta */
+  OT::Point functionValue(const OT::Point & x, const OT::Point & theta) const;
+
+  /** Gradient of the underlying function at x for the parameter theta */
+  OT::Matrix functionGradient(const OT::Point & x, const OT::Point & theta) const;
+
   /** Underlying parametric function */
   OT::Function function_;
 

@@ -20,6 +20,7 @@
  */
 #include "otrobopt/MeanMeasure.hxx"
 #include "otrobopt/MeasureEvaluation.hxx"
+#include "otrobopt/MeasureGradient.hxx"
 #include <openturns/PersistentObjectFactory.hxx>
 #include <openturns/GaussKronrod.hxx>
 #include <openturns/IteratedQuadrature.hxx>
@@ -181,6 +182,21 @@ Point MeanMeasure::operator()(const Point & inP) const
   return outP;
 }
 
+
+
+/* Build the analytic gradient of the measure */
+Gradient MeanMeasure::buildGradient() const
+{
+  return Gradient(new MeasureGradient(MeasureEvaluation(*this)));
+}
+
+/* Derivative of the integrand with respect to the measure input */
+Matrix MeanMeasure::integrandGradient(const Point & x,
+                                      const Point & theta,
+                                      const Point & /*auxiliaryValues*/) const
+{
+  return functionGradient(x, theta);
+}
 
 
 /* String converter */

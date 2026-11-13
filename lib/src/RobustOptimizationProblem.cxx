@@ -20,6 +20,7 @@
  */
 #include "otrobopt/RobustOptimizationProblem.hxx"
 #include <otrobopt/MeasureEvaluationImplementation.hxx>
+#include <otrobopt/MeasureFunction.hxx>
 #include <openturns/PersistentObjectFactory.hxx>
 #include <openturns/FunctionImplementation.hxx>
 
@@ -114,7 +115,7 @@ void RobustOptimizationProblem::setRobustnessMeasure(const MeasureEvaluation & r
       && (robustnessMeasure.getDistribution() != reliabilityMeasure_.getDistribution()))
     throw InvalidArgumentException(HERE) << "Different measure distributions for objective and constraint";
   robustnessMeasure_ = robustnessMeasure;
-  setObjective(FunctionImplementation(Evaluation(robustnessMeasure.getImplementation())));
+  setObjective(MeasureFunction(robustnessMeasure));
 }
 
 MeasureEvaluation RobustOptimizationProblem::getRobustnessMeasure() const
@@ -135,7 +136,7 @@ void RobustOptimizationProblem::setReliabilityMeasure(const MeasureEvaluation & 
       && (robustnessMeasure_.getDistribution() != reliabilityMeasure.getDistribution()))
     throw InvalidArgumentException(HERE) << "Different measure distributions for objective and constraint";
   reliabilityMeasure_ = reliabilityMeasure;
-  setInequalityConstraint(FunctionImplementation(Evaluation(reliabilityMeasure.getImplementation())));
+  setInequalityConstraint(MeasureFunction(reliabilityMeasure));
 }
 
 MeasureEvaluation RobustOptimizationProblem::getReliabilityMeasure() const

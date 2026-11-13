@@ -56,6 +56,17 @@ public:
   /** Evaluation */
   OT::Point operator()(const OT::Point & inP) const override;
 
+  /** Build the analytic gradient of the measure */
+  OT::Gradient buildGradient() const override;
+
+  /** Derivative of the integrand with respect to the measure input */
+  OT::Matrix integrandGradient(const OT::Point & x,
+                               const OT::Point & theta,
+                               const OT::Point & auxiliaryValues) const override;
+
+  /** Auxiliary values required by integrandGradient */
+  OT::Point computeAuxiliaryValues(const OT::Point & x) const override;
+
   /** String converter */
   OT::String __repr__() const override;
 
