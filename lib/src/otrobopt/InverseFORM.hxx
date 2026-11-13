@@ -95,6 +95,8 @@ public:
 private:
   OT::Scalar meritFunction(const OT::Point & u, const OT::Scalar levelValue) const;
   OT::Function getG(const OT::Scalar p);
+  /** Whether the parameter also drives a conditional distribution */
+  OT::Bool isConditionalParameter() const;
 
   
   OT::RandomVector event_;
