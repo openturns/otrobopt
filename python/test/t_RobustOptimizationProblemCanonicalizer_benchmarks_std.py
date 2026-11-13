@@ -41,10 +41,13 @@ def build_normal_problem():
         [2, 3],
         [0.0, 0.0],
     )
+    # The separation does not depend on the design variables (x1, x2), but
+    # they must be declared so that the measure function input dimension
+    # matches the design dimension expected by the canonicalizer.
     separation = ot.ParametricFunction(
         ot.SymbolicFunction(
             ["x1", "x2", "t1", "t2"],
-            ["(t1 - t2)^2 - 0.6 + 0.0 * x1 + 0.0 * x2"],
+            ["(t1 - t2)^2 - 0.6"],
         ),
         [2, 3],
         [0.0, 0.0],
@@ -142,8 +145,11 @@ def build_uniform_problem():
     loss = ot.ParametricFunction(
         ot.SymbolicFunction(["x", "theta"], ["(theta - x)^2"]), [1], [0.0]
     )
+    # The threshold does not depend on the design variable x, but x must be
+    # declared so that the measure function input dimension matches the
+    # design dimension expected by the canonicalizer.
     threshold = ot.ParametricFunction(
-        ot.SymbolicFunction(["x", "theta"], ["theta - 0.3 + 0.0 * x"]),
+        ot.SymbolicFunction(["x", "theta"], ["theta - 0.3"]),
         [1],
         [0.0],
     )

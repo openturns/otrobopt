@@ -122,10 +122,13 @@ loss = ot.ParametricFunction(
     [2, 3],
     [0.0, 0.0],
 )
+# The separation does not depend on the design variables (x1, x2), but the
+# measure function must still declare them: the canonicalizer requires the
+# measure function input dimension to match the design dimension.
 separation = ot.ParametricFunction(
     ot.SymbolicFunction(
         ["x1", "x2", "t1", "t2"],
-        ["(t1 - t2)^2 - 0.6 + 0.0 * x1 + 0.0 * x2"],
+        ["(t1 - t2)^2 - 0.6"],
     ),
     [2, 3],
     [0.0, 0.0],
