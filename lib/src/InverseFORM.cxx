@@ -40,6 +40,43 @@ CLASSNAMEINIT(InverseFORM);
 
 static Factory< InverseFORM > Factory_InverseFORM;
 
+namespace
+{
+
+/* A conditional distribution parameter is named after its marginal, its
+   parameter and the requested parameter, so it matches when the name ends
+   with the requested parameter name. */
+Bool isParameterName(const String & name, const String & parameterName)
+{
+  const size_t position = name.find(parameterName);
+  return (position != String::npos) && (name.substr(position) == parameterName);
+}
+
+/* Check whether the parameter also drives a conditional distribution, in
+   which case the standard-space map depends on it through the distribution
+   and the parameter gradient of the limit-state function is not enough. */
+Bool hasConditionalParameter(const RandomVector & event,
+                             const String & parameterName)
+{
+  const Distribution distribution(event.getImplementation()->getAntecedent().getDistribution());
+  const JointDistribution * p_joint = dynamic_cast<const JointDistribution *>(distribution.getImplementation().get());
+  if (p_joint == nullptr)
+    return false;
+  const JointDistribution::DistributionCollection collection(p_joint->getDistributionCollection());
+  for (UnsignedInteger i = 0; i < collection.getSize(); ++ i)
+  {
+    if (dynamic_cast<const CompoundDistribution *>(collection[i].getImplementation().get()) == nullptr)
+      continue;
+    const DistributionImplementation::PointWithDescriptionCollection parameters(collection[i].getParametersCollection());
+    for (UnsignedInteger j = 0; j < parameters.getSize(); ++ j)
+      if (isParameterName(parameters[j].getName(), parameterName))
+        return true;
+  }
+  return false;
+}
+
+} /* anonymous namespace */
+
 /* Default constructor for the save/load mechanism */
 InverseFORM::InverseFORM()
 : PersistentObject()
@@ -116,6 +153,12 @@ void InverseFORM::run()
   // sign of target beta
   const Scalar signBetaT = targetBeta_ < 0. ? -1.0: 1.0;
 
+  // The parameter derivative is analytic when the parameter only enters the
+  // limit-state function.  When it also drives a conditional distribution the
+  // standard-space map depends on it, and the current OpenTURNS
+  // transformation classes expose no analytic chain for that case.
+  const Bool conditionalParameter = isConditionalParameter();
+
   Point u = u0;
   Point unew;
   Point du;
@@ -150,16 +193,29 @@ void InverseFORM::run()
     Scalar dgdunorm = dgdu.norm();
 
     // gradient / parameter
-    Scalar rel = fabs(eps * p);
-    Scalar delta = rel > SpecFunc::ScalarEpsilon ? rel : eps;
-
-    G = getG(p + delta);
-    Scalar right = G(u)[0];
-    G = getG(p - delta);
-    Scalar left = G(u)[0];
-
-    G = getG(p);
-    dgdp = (right - left) / (2.0 * delta);
+    if (conditionalParameter)
+    {
+      // The parameter reaches the standard-space map through the conditional
+      // distribution: keep the documented centered finite-difference fallback
+      // over the rebuilt event.
+      const Scalar rel = fabs(eps * p);
+      const Scalar delta = rel > SpecFunc::ScalarEpsilon ? rel : eps;
+      const Scalar right = getG(p + delta)(u)[0];
+      const Scalar left = getG(p - delta)(u)[0];
+      dgdp = (right - left) / (2.0 * delta);
+      // restore the event at the current parameter value
+      G = getG(p);
+    }
+    else
+    {
+      // The parameter only enters the limit-state function: use its parameter
+      // gradient, which is analytic for a ParametricFunction and delegated to
+      // the source function otherwise.  G applies the operator sign and the
+      // threshold shift, hence the gsign factor.
+      const Function toPhysical(event_.getImplementation()->getAntecedent().getDistribution().getInverseIsoProbabilisticTransformation());
+      const Scalar gsign = event_.getOperator()(1.0, 2.0) ? 1.0 : -1.0;
+      dgdp = gsign * event_.getImplementation()->getFunction().parameterGradient(toPhysical(u))(parameterIndex_, 0);
+    }
 
     // direction
     du = -(betaC / dgdunorm) * dgdu - u;
@@ -200,7 +256,7 @@ void InverseFORM::run()
     g = gnew;
 
     beta = signBetaT*u.norm();
-    LOGTRACE(OSS() << "InverseFORM::run i="<<iteration<<" g="<<g<<" du="<<du<<" u="<<u<<" beta="<<betaC<<" dp="<<dp<<" p="<<p<< "m="<<m<<" dgdp="<<dgdp<<" dgdu="<<dgdu<<" dgdunorm="<<dgdunorm<<" rel="<<rel<<" delta="<<delta);
+    LOGTRACE(OSS() << "InverseFORM::run i="<<iteration<<" g="<<g<<" du="<<du<<" u="<<u<<" beta="<<betaC<<" dp="<<dp<<" p="<<p<< "m="<<m<<" dgdp="<<dgdp<<" dgdu="<<dgdu<<" dgdunorm="<<dgdunorm);
 
     ++ iteration;
   }
@@ -239,15 +295,8 @@ Function InverseFORM::getG(const Scalar p)
         DistributionImplementation::PointWithDescriptionCollection parametersCollection(coll[i].getParametersCollection());
         for (UnsignedInteger j = 0; j < parametersCollection.getSize(); ++ j)
         {
-          const String marginalName(parametersCollection[j].getName());
-          const size_t pos = marginalName.find(parameterName_);
-          if (pos != String::npos) {
-            const String endName = marginalName.substr(pos, marginalName.size());
-            if (endName == parameterName_)
-            {
-              parametersCollection[j] = params;
-            }
-          }
+          if (isParameterName(parametersCollection[j].getName(), parameterName_))
+            parametersCollection[j] = params;
         }
         Distribution conditioning(p_conditional->getConditioningDistribution());
         conditioning.setParametersCollection(parametersCollection);
@@ -266,6 +315,13 @@ Function InverseFORM::getG(const Scalar p)
   const LinearFunction handleOp(Point(1), Point(1, -1.0*gsign*threshold), gsign*IdentityMatrix(1));
   const ComposedFunction composed(handleOp, standardEvent.getImplementation()->getFunction());
   return composed;
+}
+
+
+/* Check whether the parameter also drives a conditional distribution */
+Bool InverseFORM::isConditionalParameter() const
+{
+  return hasConditionalParameter(event_, parameterName_);
 }
 
 
