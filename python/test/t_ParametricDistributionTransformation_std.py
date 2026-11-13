@@ -165,6 +165,111 @@ Texplicit = otrobopt.ParametricDistributionTransformation(
 assert Texplicit.usesStandardSpace()
 ott.assert_almost_equal(Texplicit([0.0]), [2.0])
 
+
+# Analytic parameter gradients: compare them with a centered finite difference
+# of the transformation itself, using a second transformation on the same
+# distribution and reference.  The helper avoids cloning a distribution, which
+# differs between the OpenTURNS versions.
+def check_parameter_gradient(
+    transformation, xi, active=None, step=1.0e-6, tolerance=1.0e-6
+):
+    """Check the analytic parameter gradient against a finite difference."""
+    if active is not None:
+        transformation.setActiveParameter(active)
+    parameter = transformation.getParameter()
+    analytic = transformation.parameterGradient(xi)
+    perturbed = otrobopt.ParametricDistributionTransformation(
+        transformation.getDistribution(), transformation.getReferenceDistribution()
+    )
+    perturbed.setActiveParameter(transformation.getActiveParameter())
+    expected = ot.Matrix(
+        parameter.getDimension(), transformation.getOutputDimension()
+    )
+    for i in range(parameter.getDimension()):
+        shifted = list(parameter)
+        shifted[i] += step
+        perturbed.setParameter(shifted)
+        up = perturbed(xi)
+        shifted[i] -= 2.0 * step
+        perturbed.setParameter(shifted)
+        down = perturbed(xi)
+        for j in range(transformation.getOutputDimension()):
+            expected[i, j] = (up[j] - down[j]) / (2.0 * step)
+    ott.assert_almost_equal(analytic, expected, tolerance, tolerance)
+
+
+# One-dimensional families with a standard normal reference: the gradient uses
+# the distribution CDF gradient through the implicit function theorem.
+for distribution in [
+    ot.Normal(2.0, 3.0),
+    ot.Uniform(1.0, 3.0),
+    ot.Exponential(2.0, 1.0),
+    ot.Gumbel(2.0, 1.0),
+    ot.Beta(2.0, 3.0, -1.0, 5.0),
+    ot.TruncatedNormal(0.0, 1.0, -1.0, 2.0),
+    ot.WeibullMin(2.0, 1.5, 0.0),
+    ot.Triangular(0.0, 0.3, 1.0),
+]:
+    check_parameter_gradient(
+        otrobopt.ParametricDistributionTransformation(distribution), [0.5]
+    )
+
+# Correlated normal: the Cholesky fast path covers the means, the scales and
+# the correlation, and any active subset.
+correlation = ot.CorrelationMatrix(2)
+correlation[0, 1] = 0.7
+normal2d = ot.Normal([5.0, 6.0], [7.0, 8.0], correlation)
+T2d = otrobopt.ParametricDistributionTransformation(normal2d)
+check_parameter_gradient(T2d, [0.2, -0.4], [0, 1, 2, 3, 4])
+check_parameter_gradient(T2d, [0.2, -0.4], [0, 2])
+check_parameter_gradient(T2d, [0.2, -0.4], [1, 3, 4])
+
+correlation3 = ot.CorrelationMatrix(3)
+correlation3[1, 0] = 0.2
+correlation3[2, 0] = -0.3
+correlation3[2, 1] = 0.4
+normal3d = ot.Normal([1.0, -2.0, 0.5], [1.5, 2.0, 3.0], correlation3)
+check_parameter_gradient(
+    otrobopt.ParametricDistributionTransformation(normal3d),
+    [0.2, -0.4, 0.7],
+    [0, 1, 2, 3, 4, 5, 6, 7, 8],
+)
+
+# The gradient follows the current parameter
+Tlive = otrobopt.ParametricDistributionTransformation(normal2d)
+Tlive.setActiveParameter([0, 1, 2, 3, 4])
+Tlive.setParameter([1.0, 2.0, 3.0, 4.0, 0.2])
+check_parameter_gradient(Tlive, [0.2, -0.4])
+
+# Non-standard reference: the gradient falls back to finite differences of the
+# transformation.
+check_parameter_gradient(
+    otrobopt.ParametricDistributionTransformation(
+        normal2d, ot.Normal([0.0, 0.0], [2.0, 2.0])
+    ),
+    [0.2, -0.4],
+    [0, 1, 2, 3, 4],
+    tolerance=1.0e-5,
+)
+
+# Student with its default reference takes the generic OpenTURNS path, where
+# the standard distribution depends on nu: the analytic CDF identity is not
+# used and the finite-difference fallback differentiates the transformation as
+# it is built.  With an explicit uniform reference the transformation is the
+# exact quantile map, and the same fallback is checked there.
+check_parameter_gradient(
+    otrobopt.ParametricDistributionTransformation(ot.Student(5.0, 2.0, 3.0)),
+    [0.5],
+    tolerance=1.0e-5,
+)
+check_parameter_gradient(
+    otrobopt.ParametricDistributionTransformation(
+        ot.Student(5.0, 2.0, 3.0), ot.Uniform(0.0, 1.0)
+    ),
+    [0.4],
+    tolerance=1.0e-5,
+)
+
 # Default active policy: the trailing copula block of a joint distribution
 # is inactive, and the static helper exposes the same policy.
 copula = ot.NormalCopula(ot.CorrelationMatrix([[1.0, 0.3], [0.3, 1.0]]))

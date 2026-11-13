@@ -22,12 +22,15 @@
 #include "otrobopt/ParametricDistributionTransformation.hxx"
 
 #include <openturns/DistributionTransformation.hxx>
+#include <openturns/EllipticalDistribution.hxx>
 #include <openturns/Exception.hxx>
 #include <openturns/Normal.hxx>
 #include <openturns/PersistentObjectFactory.hxx>
 #include <openturns/ResourceMap.hxx>
+#include <openturns/TriangularMatrix.hxx>
 
 #include <algorithm>
+#include <cmath>
 
 using namespace OT;
 
@@ -79,6 +82,59 @@ Indices defaultActiveParameter(const Distribution & distribution)
     // its parameter vector.
   }
   return active;
+}
+
+/* Check the documented parameter layout of an OpenTURNS Normal distribution:
+   [mu_0, sigma_0, ..., mu_{d-1}, sigma_{d-1}, R_1_0, R_2_0, R_2_1, ...]. */
+Bool isNormalParameterLayout(const Description & description,
+                             const UnsignedInteger dimension)
+{
+  const UnsignedInteger expectedDimension = 2 * dimension + dimension * (dimension - 1) / 2;
+  if (description.getSize() != expectedDimension)
+    return false;
+  for (UnsignedInteger i = 0; i < dimension; ++i)
+  {
+    OSS ossMean;
+    ossMean << "mu_" << i;
+    OSS ossSigma;
+    ossSigma << "sigma_" << i;
+    if (description[2 * i] != ossMean.str())
+      return false;
+    if (description[2 * i + 1] != ossSigma.str())
+      return false;
+  }
+  UnsignedInteger index = 2 * dimension;
+  for (UnsignedInteger i = 1; i < dimension; ++i)
+    for (UnsignedInteger j = 0; j < i; ++j)
+    {
+      OSS oss;
+      oss << "R_" << i << "_" << j;
+      if (description[index] != oss.str())
+        return false;
+      ++index;
+    }
+  return true;
+}
+
+/* Derivative of a lower triangular Cholesky factor A of C = A A^T with
+   respect to a parameter, given the derivative dC of C:
+   dA = A Phi(A^{-1} dC A^{-T}), Phi keeping the lower triangle and halving
+   the diagonal. */
+Matrix choleskyGradient(const Matrix & cholesky,
+                        const Matrix & covarianceGradient)
+{
+  const UnsignedInteger dimension = cholesky.getNbRows();
+  // P = A^{-1} dC, then M = P A^{-T} = (A^{-1} P^T)^T
+  const Matrix left(cholesky.solveLinearSystem(covarianceGradient));
+  const Matrix middle(cholesky.solveLinearSystem(left.transpose()).transpose());
+  Matrix lower(middle);
+  for (UnsignedInteger i = 0; i < dimension; ++i)
+  {
+    for (UnsignedInteger j = i + 1; j < dimension; ++j)
+      lower(i, j) = 0.0;
+    lower(i, i) *= 0.5;
+  }
+  return cholesky * lower;
 }
 
 } /* anonymous namespace */
@@ -223,23 +279,128 @@ Matrix ParametricDistributionTransformation::gradient(const Point & xi) const
 /* Gradient against the distribution parameter */
 Matrix ParametricDistributionTransformation::parameterGradient(const Point & xi) const
 {
-  const Point parameter(getParameter());
-  const UnsignedInteger parameterDimension = parameter.getDimension();
-  const UnsignedInteger outputDimension = getOutputDimension();
+  updateTransformation();
+  const Point x(transformation_(xi));
+  const UnsignedInteger outputDimension = x.getDimension();
+  const Indices active(getActiveParameter());
+  const UnsignedInteger parameterDimension = active.getSize();
+  const Point fullParameter(getFullParameter());
+  Distribution distribution(cloneDistribution(distribution_));
+  distribution.setParameter(fullParameter);
+
+  // Normal distribution in standard space: T_s(xi) = mu + A xi, where A is
+  // the lower triangular Cholesky factor of the covariance matrix.  The
+  // parameter vector is [mu_i, sigma_i, R_1_0, ...], so every parameter
+  // derivative is either a unit vector (location) or dA xi.
+  if (usesStandardSpace_)
+  {
+    const Normal * p_normal = dynamic_cast<const Normal *>(distribution.getImplementation().get());
+    if ((p_normal != nullptr)
+        && isNormalParameterLayout(p_normal->getParameterDescription(), outputDimension))
+    {
+      const Point sigma(p_normal->getSigma());
+      Bool positiveScale = true;
+      for (UnsignedInteger i = 0; i < outputDimension; ++i)
+        positiveScale = positiveScale && (sigma[i] > 0.0);
+      if (positiveScale)
+      {
+        const TriangularMatrix triangularCholesky(p_normal->getCholesky());
+        Matrix cholesky(outputDimension, outputDimension);
+        for (UnsignedInteger i = 0; i < outputDimension; ++i)
+          for (UnsignedInteger j = 0; j <= i; ++j)
+            cholesky(i, j) = triangularCholesky(i, j);
+        const CorrelationMatrix correlation(p_normal->getR());
+        Matrix gradient(parameterDimension, outputDimension);
+        for (UnsignedInteger i = 0; i < parameterDimension; ++i)
+        {
+          const UnsignedInteger index = active[i];
+          // A location parameter shifts the whole output
+          if ((index < 2 * outputDimension) && (index % 2 == 0))
+          {
+            gradient(i, index / 2) = 1.0;
+            continue;
+          }
+          Matrix covarianceGradient(outputDimension, outputDimension);
+          if (index < 2 * outputDimension)
+          {
+            // A scale parameter: dC_kk = 2 sigma_k and
+            // dC_kj = sigma_j R_kj for j != k
+            const UnsignedInteger k = (index - 1) / 2;
+            covarianceGradient(k, k) = 2.0 * sigma[k];
+            for (UnsignedInteger j = 0; j < outputDimension; ++j)
+              if (j != k)
+                covarianceGradient(k, j) = covarianceGradient(j, k) = sigma[j] * correlation(k, j);
+          }
+          else
+          {
+            // A correlation parameter, in the lower triangular order
+            UnsignedInteger position = 2 * outputDimension;
+            UnsignedInteger row = 1;
+            UnsignedInteger column = 0;
+            while (position != index)
+            {
+              ++column;
+              if (column == row)
+              {
+                ++row;
+                column = 0;
+              }
+              ++position;
+            } // while
+            covarianceGradient(row, column) = covarianceGradient(column, row) = sigma[row] * sigma[column];
+          }
+          const Point derivative(choleskyGradient(cholesky, covarianceGradient) * xi);
+          for (UnsignedInteger j = 0; j < outputDimension; ++j)
+            gradient(i, j) = derivative[j];
+        } // for i
+        return gradient;
+      } // positiveScale
+    } // layout
+  } // standard space
+
+  // One-dimensional distribution with the standard normal reference: the
+  // transformation is the inverse iso-probabilistic transformation, i.e.
+  // T_s(xi) = F_s^{-1}(Phi(xi)), so F_s(T_s(xi)) = Phi(xi) with a reference
+  // that does not depend on s.  The implicit function theorem then gives
+  //   dT/ds_i = -(dF_s/ds_i)(T_s(xi)) / p_s(T_s(xi)).
+  // The CDF gradient of the distribution carries the moving-support term, so
+  // this is exact for location-scale families and for bounded supports alike.
+  // The standard branch is required: for a Student distribution the standard
+  // distribution is Student(nu, 0, 1), which depends on nu, so its inverse
+  // iso-probabilistic transformation is not a quantile map and the identity
+  // above does not hold.  Such families fall back to finite differences.
+  if (usesStandardSpace_ && (outputDimension == 1) && distribution.isContinuous())
+  {
+    const Scalar pdf = distribution.computePDF(x);
+    if (std::isfinite(pdf) && (pdf > 0.0))
+    {
+      const Point cdfGradient(distribution.computeCDFGradient(x));
+      if (cdfGradient.getDimension() == fullParameter.getDimension())
+      {
+        Matrix gradient(parameterDimension, 1);
+        for (UnsignedInteger i = 0; i < parameterDimension; ++i)
+          gradient(i, 0) = -cdfGradient[active[i]] / pdf;
+        return gradient;
+      }
+    }
+  }
+
+  // Other distributions and non-standard references: forward finite
+  // differences over the parameter, with a backward step when the forward
+  // step leaves the parameter domain.
   const Scalar epsilon = ResourceMap::GetAsScalar("Evaluation-ParameterEpsilon");
   Matrix gradient(parameterDimension, outputDimension);
-  updateTransformation();
   const Point output0(transformation_(xi));
   ParametricDistributionTransformation evaluation(*this);
   for (UnsignedInteger i = 0; i < parameterDimension; ++i)
   {
-    Point shifted(parameter);
-    shifted[i] += epsilon;
+    Point shifted(fullParameter);
+    shifted[active[i]] += epsilon;
     Scalar step = epsilon;
     Point output;
     try
     {
-      evaluation.setParameter(shifted);
+      evaluation.setFullParameter(shifted);
       output = evaluation(xi);
     }
     catch (const Exception &)
@@ -247,9 +408,9 @@ Matrix ParametricDistributionTransformation::parameterGradient(const Point & xi)
       // The forward step leaves the parameter domain (for example the upper
       // bound of a Uniform distribution): use a backward difference instead.
       step = -epsilon;
-      shifted = parameter;
-      shifted[i] += step;
-      evaluation.setParameter(shifted);
+      shifted = fullParameter;
+      shifted[active[i]] += step;
+      evaluation.setFullParameter(shifted);
       output = evaluation(xi);
     }
     for (UnsignedInteger j = 0; j < outputDimension; ++j)
