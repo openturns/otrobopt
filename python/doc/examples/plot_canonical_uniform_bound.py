@@ -79,8 +79,11 @@ distribution = ot.Uniform(0.0, 1.0)
 loss = ot.ParametricFunction(
     ot.SymbolicFunction(["x", "theta"], ["(theta - x)^2"]), [1], [0.0]
 )
+# The threshold does not depend on the design variable x, but the measure
+# function must still declare x as an input: the canonicalizer requires the
+# measure function input dimension to match the design dimension.
 threshold = ot.ParametricFunction(
-    ot.SymbolicFunction(["x", "theta"], ["theta - 0.3 + 0.0 * x"]), [1], [0.0]
+    ot.SymbolicFunction(["x", "theta"], ["theta - 0.3"]), [1], [0.0]
 )
 
 objective = otrobopt.MeanMeasure(loss, distribution)
