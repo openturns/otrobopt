@@ -30,7 +30,13 @@ namespace OTROBOPT
 /**
  * @class JointChanceMeasure
  *
- * Joint probability measure
+ * Joint probability measure.
+ *
+ * No analytic gradient with respect to the measure input is implemented: the
+ * probability is computed by simulation and the derivative of the distribution
+ * parameters with respect to the design variables is not available for every
+ * distribution.  MeasureFunction therefore keeps the centered
+ * finite-difference gradient installed by the Function constructor.
  */
 class OTROBOPT_API JointChanceMeasure
   : public MeasureEvaluationImplementation
