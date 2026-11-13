@@ -24,6 +24,7 @@
 #include <openturns/TypedInterfaceObject.hxx>
 #include <openturns/StorageManager.hxx>
 #include <openturns/Distribution.hxx>
+#include <openturns/Gradient.hxx>
 
 #include "otrobopt/OTRobOptprivate.hxx"
 
@@ -69,6 +70,9 @@ public:
   MeasureEvaluation rebuild(const OT::Function & function,
                             const OT::Distribution & distribution,
                             const OT::Interval & optimizationDomain) const;
+
+  /** Build the analytic gradient of the measure, if available */
+  OT::Gradient buildGradient() const;
 
   /** Whether rebuilding the measure requires an explicit optimization domain */
   OT::Bool requiresOptimizationDomain() const;

@@ -129,6 +129,12 @@ Bool MeasureEvaluation::requiresOptimizationDomain() const
   return getImplementation()->requiresOptimizationDomain();
 }
 
+/* Build the analytic gradient of the measure, if available */
+Gradient MeasureEvaluation::buildGradient() const
+{
+  return getImplementation()->buildGradient();
+}
+
 /* String converter */
 String MeasureEvaluation::__repr__() const
 {

@@ -62,6 +62,9 @@ public:
   /** Evaluation */
   OT::Point operator()(const OT::Point & inP) const override;
 
+  /** Build the analytic gradient of the measure */
+  OT::Gradient buildGradient() const override;
+
   /** Collection accessor */
   MeasureEvaluationCollection getCollection() const;
 
