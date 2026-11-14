@@ -26,9 +26,13 @@
 
 #include <openturns/Distribution.hxx>
 #include <openturns/IntegrationAlgorithm.hxx>
+#include <openturns/Interval.hxx>
 
 namespace OTROBOPT
 {
+
+/* forward declaration */
+class MeasureEvaluation;
 
 /**
  * @class MeasureEvaluationImplementation
@@ -61,6 +65,16 @@ public:
   /** Function accessor */
   virtual void setFunction(const OT::Function & function);
   virtual OT::Function getFunction() const;
+
+  /** Rebuild the measure over a new function and distribution */
+  virtual MeasureEvaluation rebuild(const OT::Function & function,
+                                    const OT::Distribution & distribution) const;
+  virtual MeasureEvaluation rebuild(const OT::Function & function,
+                                    const OT::Distribution & distribution,
+                                    const OT::Interval & optimizationDomain) const;
+
+  /** Whether rebuilding the measure requires an explicit optimization domain */
+  virtual OT::Bool requiresOptimizationDomain() const;
 
   /** Dimension accessor */
   OT::UnsignedInteger getInputDimension() const override;

@@ -36,6 +36,17 @@ struct MeasureEvaluation_init
     ResourceMap::AddAsScalar("SequentialMonteCarloRobustAlgorithm-ConvergenceFactor", 1e-2);
     ResourceMap::AddAsUnsignedInteger("SequentialMonteCarloRobustAlgorithm-DefaultInitialSamplingSize", 10);
 
+    ResourceMap::AddAsUnsignedInteger("DoubleLoopRBDOAlgorithm-DefaultInnerMaximumIterationNumber", 1000);
+    ResourceMap::AddAsScalar("DoubleLoopRBDOAlgorithm-DefaultInnerMaximumConstraintError", 1e-8);
+    ResourceMap::AddAsScalar("DoubleLoopRBDOAlgorithm-DefaultInnerMaximumAbsoluteError", 1e-8);
+
+    ResourceMap::AddAsUnsignedInteger("SORARobustOptimizationAlgorithm-DefaultInnerMaximumIterationNumber", 1000);
+    ResourceMap::AddAsScalar("SORARobustOptimizationAlgorithm-DefaultInnerMaximumConstraintError", 1e-8);
+    ResourceMap::AddAsScalar("SORARobustOptimizationAlgorithm-DefaultInnerMaximumAbsoluteError", 1e-8);
+
+    ResourceMap::AddAsUnsignedInteger("SampleAverageApproximationAlgorithm-DefaultSampleSize", 1000);
+    ResourceMap::AddAsUnsignedInteger("SampleAverageApproximationAlgorithm-DefaultValidationSampleSize", 10000);
+
     ResourceMap::AddAsUnsignedInteger("MeanMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
     ResourceMap::AddAsUnsignedInteger("VarianceMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
     ResourceMap::AddAsUnsignedInteger("MeanStandardDeviationTradeoffMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
@@ -92,6 +103,30 @@ void MeasureEvaluation::setFunction(const Function & function)
 Function MeasureEvaluation::getFunction() const
 {
   return getImplementation()->getFunction();
+}
+
+UnsignedInteger MeasureEvaluation::getOutputDimension() const
+{
+  return getImplementation()->getOutputDimension();
+}
+
+/* Rebuild the measure over a new function and distribution */
+MeasureEvaluation MeasureEvaluation::rebuild(const Function & function,
+                                             const Distribution & distribution) const
+{
+  return getImplementation()->rebuild(function, distribution);
+}
+
+MeasureEvaluation MeasureEvaluation::rebuild(const Function & function,
+                                             const Distribution & distribution,
+                                             const Interval & optimizationDomain) const
+{
+  return getImplementation()->rebuild(function, distribution, optimizationDomain);
+}
+
+Bool MeasureEvaluation::requiresOptimizationDomain() const
+{
+  return getImplementation()->requiresOptimizationDomain();
 }
 
 /* String converter */

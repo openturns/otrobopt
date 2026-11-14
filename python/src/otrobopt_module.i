@@ -29,8 +29,15 @@
 %include JointChanceMeasure.i
 %include IndividualChanceMeasure.i
 %include MeasureFunction.i
+%include ParameterAsInputFunction.i
+%include ParametricDistributionTransformation.i
 %include MeasureFactory.i
 %include RobustOptimizationProblem.i
+%include RobustOptimizationProblemCanonicalizer.i
+%include RBDOProblem.i
+%include DoubleLoopRBDOAlgorithm.i
+%include SORARobustOptimizationAlgorithm.i
+%include SampleAverageApproximationAlgorithm.i
 %include RobustOptimizationAlgorithm.i
 %include SequentialMonteCarloRobustAlgorithm.i
 %include SubsetInverseSamplingResult.i
