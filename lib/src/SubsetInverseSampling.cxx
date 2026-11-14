@@ -51,7 +51,7 @@ const Scalar SubsetInverseSampling::DefaultBetaMin = 2.0;
 
 /* Default constructor */
 SubsetInverseSampling::SubsetInverseSampling()
-: EventSimulation()
+: EventSimulationImplementation()
 , proposalRange_(0.)
 , conditionalProbability_(0.)
 , iSubset_(false)
@@ -68,7 +68,7 @@ SubsetInverseSampling::SubsetInverseSampling(const RandomVector & event,
                                const Scalar targetProbability,
                                const Scalar proposalRange,
                                const Scalar conditionalProbability)
-: EventSimulation(event)
+: EventSimulationImplementation(event)
 , proposalRange_(proposalRange)
 , conditionalProbability_(conditionalProbability)
 , iSubset_(false)
@@ -598,9 +598,16 @@ Sample SubsetInverseSampling::getEventOutputSample() const
   return eventOutputSample_;
 }
 
-SubsetInverseSampling::SampleCollection SubsetInverseSampling::getInputSample() const
+SubsetInverseSampling::SampleCollection SubsetInverseSampling::getInputSampleCollection() const
 {
   return allPointSample_;
+}
+
+OT::Sample SubsetInverseSampling::getInputSample() const
+{
+  if (allPointSample_.getSize() == 0)
+    throw OT::InvalidArgumentException(HERE) << "SubsetInverseSampling has not been run";
+  return allPointSample_[allPointSample_.getSize() - 1];
 }
 
 SubsetInverseSampling::SampleCollection SubsetInverseSampling::getOutputSample() const
@@ -621,7 +628,13 @@ void SubsetInverseSampling::setBetaMin(Scalar betaMin)
 
 void SubsetInverseSampling::setResult(const SubsetInverseSamplingResult & result)
 {
+  EventSimulationImplementation::setResult(result);
   result_ = result;
+}
+
+OT::ProbabilitySimulationResult SubsetInverseSampling::getHistoryResult() const
+{
+  return OT::ProbabilitySimulationResult(result_);
 }
 
 SubsetInverseSamplingResult SubsetInverseSampling::getResult() const
@@ -634,7 +647,7 @@ String SubsetInverseSampling::__repr__() const
 {
   OSS oss;
   oss << "class=" << getClassName()
-      << " derived from " << EventSimulation::__repr__()
+      << " derived from " << EventSimulationImplementation::__repr__()
       << " event=" << event_
       << " targetProbability=" << targetProbability_
       << " proposalRange=" << proposalRange_
@@ -647,7 +660,7 @@ String SubsetInverseSampling::__repr__() const
 /* Method save() stores the object through the StorageManager */
 void SubsetInverseSampling::save(Advocate & adv) const
 {
-  EventSimulation::save(adv);
+  EventSimulationImplementation::save(adv);
   adv.saveAttribute("targetProbability", targetProbability_);
   adv.saveAttribute("proposalRange_", proposalRange_);
   adv.saveAttribute("conditionalProbability_", conditionalProbability_);
@@ -667,7 +680,7 @@ void SubsetInverseSampling::save(Advocate & adv) const
 /* Method load() reloads the object from the StorageManager */
 void SubsetInverseSampling::load(Advocate & adv)
 {
-  EventSimulation::load(adv);
+  EventSimulationImplementation::load(adv);
   adv.loadAttribute("targetProbability", targetProbability_);
   adv.loadAttribute("proposalRange_", proposalRange_);
   adv.loadAttribute("conditionalProbability_", conditionalProbability_);

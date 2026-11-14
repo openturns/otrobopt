@@ -37,7 +37,7 @@ static Factory<SubsetInverseSamplingResult> Factory_SubsetInverseSamplingResult;
 
 /* Default constructor */
 SubsetInverseSamplingResult::SubsetInverseSamplingResult()
-: ProbabilitySimulationResult()
+: ProbabilitySimulationResultImplementation()
 {
 }
 
@@ -50,7 +50,7 @@ SubsetInverseSamplingResult::SubsetInverseSamplingResult(const RandomVector & ev
   const UnsignedInteger blockSize,
   const Scalar coefficientOfVariation,
   const Scalar threshold)
-: ProbabilitySimulationResult(event, probabilityEstimate, varianceEstimate, outerSampling, blockSize),
+: ProbabilitySimulationResultImplementation(event, probabilityEstimate, varianceEstimate, outerSampling, blockSize),
   coefficientOfVariation_(coefficientOfVariation),
   threshold_(threshold)
 {
@@ -74,7 +74,7 @@ Scalar SubsetInverseSamplingResult::getCoefficientOfVariation() const
 String SubsetInverseSamplingResult::__repr__() const
 {
   OSS oss;
-  oss << ProbabilitySimulationResult::__repr__();
+  oss << ProbabilitySimulationResultImplementation::__repr__();
   oss << " threshold=" << threshold_;
   return oss;
 }
@@ -83,7 +83,7 @@ String SubsetInverseSamplingResult::__repr__() const
 /* Method save() stores the object through the StorageManager */
 void SubsetInverseSamplingResult::save(Advocate & adv) const
 {
-  ProbabilitySimulationResult::save(adv);
+  ProbabilitySimulationResultImplementation::save(adv);
   adv.saveAttribute("coefficientOfVariation_", coefficientOfVariation_);
   adv.saveAttribute("threshold_", threshold_);
 }
@@ -92,7 +92,7 @@ void SubsetInverseSamplingResult::save(Advocate & adv) const
 /* Method load() reloads the object from the StorageManager */
 void SubsetInverseSamplingResult::load(Advocate & adv)
 {
-  ProbabilitySimulationResult::load(adv);
+  ProbabilitySimulationResultImplementation::load(adv);
   adv.loadAttribute("coefficientOfVariation_", coefficientOfVariation_);
   adv.loadAttribute("threshold_", threshold_);
 }
