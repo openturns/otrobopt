@@ -21,14 +21,14 @@
 #ifndef OTROBOPT_SUBSETINVERSESAMPLINGRESULT_HXX
 #define OTROBOPT_SUBSETINVERSESAMPLINGRESULT_HXX
 
-#include <openturns/ProbabilitySimulationResult.hxx>
+#include <openturns/ProbabilitySimulationResultImplementation.hxx>
 #include "otrobopt/OTRobOptprivate.hxx"
 
 namespace OTROBOPT
 {
 
 class OTROBOPT_API SubsetInverseSamplingResult
-: public OT::ProbabilitySimulationResult
+: public OT::ProbabilitySimulationResultImplementation
 {
   CLASSNAME
 public:
