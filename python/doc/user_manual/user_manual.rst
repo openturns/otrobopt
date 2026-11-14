@@ -62,6 +62,24 @@ Measure function
 
     MeasureFunction
 
+Parameter as input
+------------------
+
+.. autosummary::
+    :toctree: _generated/
+    :template: class.rst_t
+
+    ParameterAsInputFunction
+
+Parameter-dependent transformation
+----------------------------------
+
+.. autosummary::
+    :toctree: _generated/
+    :template: class.rst_t
+
+    ParametricDistributionTransformation
+
 Measure evaluation
 ------------------
 
@@ -98,6 +116,16 @@ Define a robust optimization problem
     :template: class.rst_t
 
     RobustOptimizationProblem
+
+Canonicalize a robust optimization problem
+------------------------------------------
+
+.. autosummary::
+    :toctree: _generated/
+    :template: class.rst_t
+
+    CanonicalizationOptions
+    RobustOptimizationProblemCanonicalizer
 
 Discretize a measure function
 -----------------------------
