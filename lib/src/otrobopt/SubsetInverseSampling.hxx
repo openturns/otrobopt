@@ -21,7 +21,7 @@
 #ifndef OTROBOPT_SUBSETINVERSESAMPLING_HXX
 #define OTROBOPT_SUBSETINVERSESAMPLING_HXX
 
-#include <openturns/EventSimulation.hxx>
+#include <openturns/EventSimulationImplementation.hxx>
 #include <openturns/StandardEvent.hxx>
 #include "otrobopt/SubsetInverseSamplingResult.hxx"
 
@@ -30,7 +30,7 @@ namespace OTROBOPT
 
 
 class OTROBOPT_API SubsetInverseSampling
-: public OT::EventSimulation
+: public OT::EventSimulationImplementation
 {
 CLASSNAME
 public:
@@ -92,7 +92,10 @@ public:
 
   /** All level sample accessor*/
   SampleCollection getOutputSample() const;
-  SampleCollection getInputSample() const;
+  SampleCollection getInputSampleCollection() const;
+
+  /** Last-step input sample, overrides the base accessor */
+  OT::Sample getInputSample() const override;
 
   /** i-subset */
   void setISubset(OT::Bool iSubset);
@@ -109,6 +112,10 @@ public:
 
   /** Method load() reloads the object from the StorageManager */
   void load(OT::Advocate & adv) override;
+
+protected:
+  /** Restricted history bridge, preserves the concrete result type */
+  OT::ProbabilitySimulationResult getHistoryResult() const override;
 
 private:
   /** Result accessor */
