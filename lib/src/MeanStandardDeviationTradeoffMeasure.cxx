@@ -19,10 +19,17 @@
  *
  */
 #include "otrobopt/MeanStandardDeviationTradeoffMeasure.hxx"
+#include "otrobopt/MeanMeasure.hxx"
+#include "otrobopt/VarianceMeasure.hxx"
+#include "otrobopt/MeasureEvaluation.hxx"
+#include "otrobopt/MeasureGradient.hxx"
 #include <openturns/PersistentObjectFactory.hxx>
 #include <openturns/GaussKronrod.hxx>
 #include <openturns/IteratedQuadrature.hxx>
 #include <openturns/FiniteDiscreteDistribution.hxx>
+
+#include <algorithm>
+#include <cmath>
 
 using namespace OT;
 
@@ -61,6 +68,17 @@ MeanStandardDeviationTradeoffMeasure::MeanStandardDeviationTradeoffMeasure (cons
 MeanStandardDeviationTradeoffMeasure * MeanStandardDeviationTradeoffMeasure::clone() const
 {
   return new MeanStandardDeviationTradeoffMeasure(*this);
+}
+
+/* Rebuild the measure over a new function and distribution */
+MeasureEvaluation MeanStandardDeviationTradeoffMeasure::rebuild(const Function & function,
+    const Distribution & distribution,
+    const Interval & /*optimizationDomain*/) const
+{
+  MeanStandardDeviationTradeoffMeasure result(function, distribution, alpha_);
+  result.setIntegrationAlgorithm(getIntegrationAlgorithm());
+  result.setPDFThreshold(getPDFThreshold());
+  return result;
 }
 
 
@@ -211,6 +229,68 @@ Point MeanStandardDeviationTradeoffMeasure::operator()(const Point & inP) const
       outP[j] = (1.0 - alpha_[j]) * mean[j] + alpha_[j] * standardDeviation[j];
   } // discrete
   return outP;
+}
+
+
+/* Build the analytic gradient of the measure */
+Gradient MeanStandardDeviationTradeoffMeasure::buildGradient() const
+{
+  return Gradient(new MeasureGradient(MeasureEvaluation(*this)));
+}
+
+/* Auxiliary values required by integrandGradient */
+Point MeanStandardDeviationTradeoffMeasure::computeAuxiliaryValues(const Point & x) const
+{
+  // The derivative of (1-alpha) E[f_j] + alpha sqrt(Var(f_j)) needs the mean
+  // and the standard deviation of each component.
+  MeanMeasure meanMeasure(getFunction(), getDistribution());
+  meanMeasure.setIntegrationAlgorithm(getIntegrationAlgorithm());
+  meanMeasure.setPDFThreshold(getPDFThreshold());
+  const Point mean(meanMeasure(x));
+  VarianceMeasure varianceMeasure(getFunction(), getDistribution());
+  varianceMeasure.setIntegrationAlgorithm(getIntegrationAlgorithm());
+  varianceMeasure.setPDFThreshold(getPDFThreshold());
+  const Point variance(varianceMeasure(x));
+  const UnsignedInteger outputDimension = mean.getDimension();
+  Point auxiliaryValues(2 * outputDimension);
+  for (UnsignedInteger j = 0; j < outputDimension; ++j)
+  {
+    auxiliaryValues[j] = mean[j];
+    // The empirical variance of a discrete distribution is non-negative, but
+    // numerical round-off can make it slightly negative.
+    auxiliaryValues[outputDimension + j] = std::sqrt(std::max(variance[j], 0.0));
+  }
+  return auxiliaryValues;
+}
+
+/* Derivative of the integrand with respect to the measure input */
+Matrix MeanStandardDeviationTradeoffMeasure::integrandGradient(const Point & x,
+    const Point & theta,
+    const Point & auxiliaryValues) const
+{
+  const Matrix localGradient(functionGradient(x, theta));
+  const Point value(functionValue(x, theta));
+  const UnsignedInteger inputDimension = localGradient.getNbRows();
+  const UnsignedInteger outputDimension = localGradient.getNbColumns();
+  Matrix outG(inputDimension, outputDimension);
+  for (UnsignedInteger i = 0; i < inputDimension; ++i)
+    for (UnsignedInteger j = 0; j < outputDimension; ++j)
+    {
+      const Scalar standardDeviation = auxiliaryValues[outputDimension + j];
+      // The derivative of sqrt(Var(x)) is Var'(x) / (2 sqrt(Var(x))).  It is
+      // not defined at Var(x) == 0, where the standard deviation has a kink in
+      // the decision variable.  Since Var >= 0, an interior zero is a minimum
+      // and Var'(x) == 0, so dropping the standard deviation term gives a
+      // valid subgradient.  At a boundary of the feasible domain the one-sided
+      // derivative may be infinite, but the derivative of the integrand itself
+      // is then infinite as well; returning +inf here would only feed
+      // non-finite values to the optimizer.
+      const Scalar coefficient = standardDeviation > 0.0
+                                 ? (1.0 - alpha_[j]) + alpha_[j] * (value[j] - auxiliaryValues[j]) / standardDeviation
+                                 : 1.0 - alpha_[j];
+      outG(i, j) = coefficient * localGradient(i, j);
+    }
+  return outG;
 }
 
 

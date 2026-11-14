@@ -37,10 +37,10 @@ class OTROBOPT_API AggregatedMeasure
 {
   CLASSNAME
 
+public:
   typedef OT::Collection<MeasureEvaluation>           MeasureEvaluationCollection;
   typedef OT::PersistentCollection<MeasureEvaluation> MeasureEvaluationPersistentCollection;
 
-public:
   /** Default constructor */
   AggregatedMeasure();
 
@@ -50,8 +50,23 @@ public:
   /** Virtual constructor method */
   AggregatedMeasure * clone() const override;
 
+  /** Rebuild the measure over a new function and distribution */
+  using MeasureEvaluationImplementation::rebuild;
+  MeasureEvaluation rebuild(const OT::Function & function,
+                            const OT::Distribution & distribution,
+                            const OT::Interval & optimizationDomain) const override;
+
+  /** Whether rebuilding the measure requires an explicit optimization domain */
+  OT::Bool requiresOptimizationDomain() const override;
+
   /** Evaluation */
   OT::Point operator()(const OT::Point & inP) const override;
+
+  /** Build the analytic gradient of the measure */
+  OT::Gradient buildGradient() const override;
+
+  /** Collection accessor */
+  MeasureEvaluationCollection getCollection() const;
 
   /** Distribution accessor */
   void setDistribution(const OT::Distribution & distribution) override;

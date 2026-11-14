@@ -19,6 +19,9 @@
  *
  */
 #include "otrobopt/VarianceMeasure.hxx"
+#include "otrobopt/MeanMeasure.hxx"
+#include "otrobopt/MeasureEvaluation.hxx"
+#include "otrobopt/MeasureGradient.hxx"
 #include <openturns/PersistentObjectFactory.hxx>
 #include <openturns/GaussKronrod.hxx>
 #include <openturns/IteratedQuadrature.hxx>
@@ -60,6 +63,17 @@ VarianceMeasure::VarianceMeasure (const Function & function,
 VarianceMeasure * VarianceMeasure::clone() const
 {
   return new VarianceMeasure(*this);
+}
+
+/* Rebuild the measure over a new function and distribution */
+MeasureEvaluation VarianceMeasure::rebuild(const Function & function,
+                                          const Distribution & distribution,
+                                          const Interval & /*optimizationDomain*/) const
+{
+  VarianceMeasure result(function, distribution);
+  result.setIntegrationAlgorithm(getIntegrationAlgorithm());
+  result.setPDFThreshold(getPDFThreshold());
+  return result;
 }
 
 
@@ -204,6 +218,40 @@ Point VarianceMeasure::operator()(const Point & inP) const
   } // discrete
   return outP;
 }
+
+/* Build the analytic gradient of the measure */
+Gradient VarianceMeasure::buildGradient() const
+{
+  return Gradient(new MeasureGradient(MeasureEvaluation(*this)));
+}
+
+/* Auxiliary values required by integrandGradient */
+Point VarianceMeasure::computeAuxiliaryValues(const Point & x) const
+{
+  // The derivative of Var(f_j) = E[f_j^2] - E[f_j]^2 is
+  // 2 E[(f_j - E[f_j]) D_x f_j], so the mean of each component is needed.
+  MeanMeasure meanMeasure(getFunction(), getDistribution());
+  meanMeasure.setIntegrationAlgorithm(getIntegrationAlgorithm());
+  meanMeasure.setPDFThreshold(getPDFThreshold());
+  return meanMeasure(x);
+}
+
+/* Derivative of the integrand with respect to the measure input */
+Matrix VarianceMeasure::integrandGradient(const Point & x,
+                                          const Point & theta,
+                                          const Point & auxiliaryValues) const
+{
+  const Matrix localGradient(functionGradient(x, theta));
+  const Point value(functionValue(x, theta));
+  const UnsignedInteger inputDimension = localGradient.getNbRows();
+  const UnsignedInteger outputDimension = localGradient.getNbColumns();
+  Matrix outG(inputDimension, outputDimension);
+  for (UnsignedInteger i = 0; i < inputDimension; ++i)
+    for (UnsignedInteger j = 0; j < outputDimension; ++j)
+      outG(i, j) = 2.0 * (value[j] - auxiliaryValues[j]) * localGradient(i, j);
+  return outG;
+}
+
 
 /* String converter */
 String VarianceMeasure::__repr__() const

@@ -20,6 +20,7 @@
  */
 #include "otrobopt/RobustOptimizationProblem.hxx"
 #include <otrobopt/MeasureEvaluationImplementation.hxx>
+#include <otrobopt/MeasureFunction.hxx>
 #include <openturns/PersistentObjectFactory.hxx>
 #include <openturns/FunctionImplementation.hxx>
 
@@ -73,6 +74,29 @@ RobustOptimizationProblem * RobustOptimizationProblem::clone() const
   return new RobustOptimizationProblem(*this);
 }
 
+/* Objective dimension check */
+void RobustOptimizationProblem::checkObjectiveDimension(const Function & objective) const
+{
+  if ((objective.getInputDimension() > 0) && (objective.getOutputDimension() != 1))
+    throw InvalidDimensionException(HERE) << "The robust objective must be scalar, got output dimension "
+                                          << objective.getOutputDimension();
+}
+
+void RobustOptimizationProblem::checkRobustnessMeasure(const MeasureEvaluation & robustnessMeasure) const
+{
+  if ((robustnessMeasure.getFunction().getInputDimension() > 0)
+      && (robustnessMeasure.getImplementation()->getOutputDimension() != 1))
+    throw InvalidDimensionException(HERE) << "The robust objective must be scalar, got output dimension "
+                                          << robustnessMeasure.getImplementation()->getOutputDimension();
+}
+
+/* Objective function accessor */
+void RobustOptimizationProblem::setObjective(const Function & objective)
+{
+  checkObjectiveDimension(objective);
+  OptimizationProblemImplementation::setObjective(objective);
+}
+
 /* String converter */
 String RobustOptimizationProblem::__repr__() const
 {
@@ -86,8 +110,12 @@ String RobustOptimizationProblem::__repr__() const
 /* Measure accessors */
 void RobustOptimizationProblem::setRobustnessMeasure(const MeasureEvaluation & robustnessMeasure)
 {
+  checkRobustnessMeasure(robustnessMeasure);
+  if (hasReliabilityMeasure()
+      && (robustnessMeasure.getDistribution() != reliabilityMeasure_.getDistribution()))
+    throw InvalidArgumentException(HERE) << "Different measure distributions for objective and constraint";
   robustnessMeasure_ = robustnessMeasure;
-  setObjective(FunctionImplementation(Evaluation(robustnessMeasure.getImplementation())));
+  setObjective(MeasureFunction(robustnessMeasure));
 }
 
 MeasureEvaluation RobustOptimizationProblem::getRobustnessMeasure() const
@@ -103,8 +131,12 @@ Bool RobustOptimizationProblem::hasRobustnessMeasure() const
 
 void RobustOptimizationProblem::setReliabilityMeasure(const MeasureEvaluation & reliabilityMeasure)
 {
+  if (hasRobustnessMeasure()
+      && (reliabilityMeasure.getFunction().getInputDimension() > 0)
+      && (robustnessMeasure_.getDistribution() != reliabilityMeasure.getDistribution()))
+    throw InvalidArgumentException(HERE) << "Different measure distributions for objective and constraint";
   reliabilityMeasure_ = reliabilityMeasure;
-  setInequalityConstraint(FunctionImplementation(Evaluation(reliabilityMeasure.getImplementation())));
+  setInequalityConstraint(MeasureFunction(reliabilityMeasure));
 }
 
 MeasureEvaluation RobustOptimizationProblem::getReliabilityMeasure() const

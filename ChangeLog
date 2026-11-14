@@ -1,3 +1,20 @@
+= 0.19 release (unreleased)
+
+ * Add RBDOProblem
+ * Add DoubleLoopRBDOAlgorithm with RIA, PMA, exact joint event and Bonferroni treatments
+ * Add SORARobustOptimizationAlgorithm with physical shift, PMA and exact/Bonferroni treatments
+ * Add SampleAverageApproximationAlgorithm for any joint chance target probability
+ * Add ParameterAsInputFunction
+ * Add ParametricDistributionTransformation
+ * Add full and active distribution parameters to ParametricDistributionTransformation
+ * Add analytic parameter gradients to ParametricDistributionTransformation
+ * Add CanonicalizationOptions and RobustOptimizationProblemCanonicalizer
+ * Add MeasureEvaluation.rebuild and WorstCaseMeasure optimization domains
+ * Add analytic gradients for the mean, variance, standard deviation tradeoff and aggregated measures
+ * Add analytic parameter gradients to InverseFORM
+ * Enforce scalar robust objectives and homogeneous measure distributions
+ * Add robust optimization theory documentation
+
 = 0.18 release (2026-04-27)
 
  * Maintenance

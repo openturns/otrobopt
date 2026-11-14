@@ -11,6 +11,16 @@ cmake -DCMAKE_INSTALL_PREFIX=${HOME}/.local \
       -B build /io
 cd build
 make install
+
+# expose the HTML documentation before running the tests, so that the CI can
+# upload it for review even when a test fails
+UID_GID=$1
+if test -n "${UID_GID}"
+then
+  sudo chown -R ${UID_GID} ~/.local/share/doc/*/html
+  sudo cp -pr ~/.local/share/doc/*/html /io
+fi
+
 make tests
 ctest --output-on-failure --timeout 100 ${MAKEFLAGS}
 
@@ -19,10 +29,3 @@ gcov `find lib/src/ -name "*.gcno"`
 lcov --capture --directory lib --output-file coverage.info --include "*.cxx" -j 4
 genhtml --output-directory coverage coverage.info
 cp -v coverage.info coverage
-
-UID_GID=$1
-if test -n "${UID_GID}"
-then
-  sudo chown -R ${UID_GID} ~/.local/share/doc/*/html
-  sudo cp -pr ~/.local/share/doc/*/html /io
-fi

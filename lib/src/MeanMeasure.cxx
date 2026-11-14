@@ -19,6 +19,8 @@
  *
  */
 #include "otrobopt/MeanMeasure.hxx"
+#include "otrobopt/MeasureEvaluation.hxx"
+#include "otrobopt/MeasureGradient.hxx"
 #include <openturns/PersistentObjectFactory.hxx>
 #include <openturns/GaussKronrod.hxx>
 #include <openturns/IteratedQuadrature.hxx>
@@ -58,6 +60,17 @@ MeanMeasure::MeanMeasure (const Function & function,
 MeanMeasure * MeanMeasure::clone() const
 {
   return new MeanMeasure(*this);
+}
+
+/* Rebuild the measure over a new function and distribution */
+MeasureEvaluation MeanMeasure::rebuild(const Function & function,
+                                       const Distribution & distribution,
+                                       const Interval & /*optimizationDomain*/) const
+{
+  MeanMeasure result(function, distribution);
+  result.setIntegrationAlgorithm(getIntegrationAlgorithm());
+  result.setPDFThreshold(getPDFThreshold());
+  return result;
 }
 
 
@@ -169,6 +182,21 @@ Point MeanMeasure::operator()(const Point & inP) const
   return outP;
 }
 
+
+
+/* Build the analytic gradient of the measure */
+Gradient MeanMeasure::buildGradient() const
+{
+  return Gradient(new MeasureGradient(MeasureEvaluation(*this)));
+}
+
+/* Derivative of the integrand with respect to the measure input */
+Matrix MeanMeasure::integrandGradient(const Point & x,
+                                      const Point & theta,
+                                      const Point & /*auxiliaryValues*/) const
+{
+  return functionGradient(x, theta);
+}
 
 
 /* String converter */

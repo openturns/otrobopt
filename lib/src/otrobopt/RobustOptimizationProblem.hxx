@@ -55,6 +55,9 @@ public:
   /** Virtual constructor method */
   RobustOptimizationProblem * clone() const override;
 
+  /** Objective function accessor */
+  void setObjective(const OT::Function & objective);
+
   /** Measure accessors */
   void setRobustnessMeasure(const MeasureEvaluation & robustnessMeasure);
   MeasureEvaluation getRobustnessMeasure() const;
@@ -76,6 +79,9 @@ public:
   virtual void load(OT::Advocate & adv) override;
 
 private:
+  void checkObjectiveDimension(const OT::Function & objective) const;
+  void checkRobustnessMeasure(const MeasureEvaluation & robustnessMeasure) const;
+
   MeasureEvaluation robustnessMeasure_;
   MeasureEvaluation reliabilityMeasure_;
 

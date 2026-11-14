@@ -43,6 +43,13 @@ The algorithm is iterative. At each iteration :math:`k`:
    :math:`\theta \leftarrow \theta + \alpha \Delta \theta` where
    :math:`\alpha` is determined by a step-size control strategy.
 
+The parameter derivative :math:`\frac{\partial g}{\partial \theta}` is
+obtained analytically from the parameter gradient of the limit state
+function. When the parameter also drives a conditional distribution used to
+build the physical point, the standard-space map depends on it and the
+derivative is evaluated by centered finite differences of the limit state
+function instead.
+
 The algorithm converges when:
 
 - The parameter variation :math:`|\Delta \theta|` is below :math:`\varepsilon_\theta` (variable convergence)

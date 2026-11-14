@@ -22,6 +22,7 @@
 #define OTROBOPT_WORSTCASEMEASURE_HXX
 
 #include <openturns/OptimizationAlgorithm.hxx>
+#include <openturns/Interval.hxx>
 #include "otrobopt/MeasureEvaluationImplementation.hxx"
 
 namespace OTROBOPT
@@ -49,8 +50,24 @@ public:
   /** Virtual constructor method */
   WorstCaseMeasure * clone() const override;
 
+  /** Rebuild the measure over a new function and distribution */
+  using MeasureEvaluationImplementation::rebuild;
+  MeasureEvaluation rebuild(const OT::Function & function,
+                            const OT::Distribution & distribution,
+                            const OT::Interval & optimizationDomain) const override;
+
+  /** Whether rebuilding the measure requires an explicit optimization domain */
+  OT::Bool requiresOptimizationDomain() const override;
+
   /** Evaluation */
   OT::Point operator()(const OT::Point & inP) const override;
+
+  /** Optimization domain accessor */
+  void setOptimizationDomain(const OT::Interval & domain);
+  OT::Interval getOptimizationDomain() const;
+
+  /** Distribution accessor */
+  void setDistribution(const OT::Distribution & distribution) override;
 
   /** Optimization solver accessor */
   void setOptimizationAlgorithm(const OT::OptimizationAlgorithm & solver);
@@ -72,6 +89,7 @@ public:
 private:
   OT::Bool isMinimization_ = true;
   OT::OptimizationAlgorithm solver_;
+  OT::Interval optimizationDomain_;
 
 }; /* class WorstCaseMeasure */
 

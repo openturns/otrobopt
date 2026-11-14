@@ -19,6 +19,7 @@
  *
  */
 #include "otrobopt/IndividualChanceMeasure.hxx"
+#include "otrobopt/MeasureEvaluation.hxx"
 #include <openturns/PersistentObjectFactory.hxx>
 #include <openturns/GaussKronrod.hxx>
 #include <openturns/IteratedQuadrature.hxx>
@@ -64,6 +65,17 @@ IndividualChanceMeasure::IndividualChanceMeasure (const Function & function,
 IndividualChanceMeasure * IndividualChanceMeasure::clone() const
 {
   return new IndividualChanceMeasure(*this);
+}
+
+/* Rebuild the measure over a new function and distribution */
+MeasureEvaluation IndividualChanceMeasure::rebuild(const Function & function,
+    const Distribution & distribution,
+    const Interval & /*optimizationDomain*/) const
+{
+  IndividualChanceMeasure result(function, distribution, operator_, alpha_);
+  result.setIntegrationAlgorithm(getIntegrationAlgorithm());
+  result.setPDFThreshold(getPDFThreshold());
+  return result;
 }
 
 
@@ -203,6 +215,17 @@ void IndividualChanceMeasure::setAlpha(const Point & alpha)
 Point IndividualChanceMeasure::getAlpha() const
 {
   return alpha_;
+}
+
+/* Comparison operator accessor */
+void IndividualChanceMeasure::setOperator(const ComparisonOperator & op)
+{
+  operator_ = op;
+}
+
+ComparisonOperator IndividualChanceMeasure::getOperator() const
+{
+  return operator_;
 }
 
 /* String converter */

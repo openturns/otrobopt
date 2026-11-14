@@ -30,3 +30,15 @@ algo = otrobopt.InverseFORM(event, "L", x0)
 algo.run()
 result = algo.getResult()
 ott.assert_almost_equal(result.getParameter(), [5.44343], 1e-3, 1e-3)
+
+# The analytic parameter gradient is multiplied by the operator sign, so
+# swapping the sign of the limit-state function and the operator must give the
+# same problem: -g < -0.02 is equivalent to g > 0.02.
+signFlipped = ot.SymbolicFunction(["E", "F", "L", "b", "h"], ["-F*L^3/(48.*E*b*h^3/12.)"])
+signFlippedG = ot.ParametricFunction(signFlipped, [2], [5.0])
+signFlippedOutput = ot.CompositeRandomVector(signFlippedG, vect)
+signFlippedEvent = ot.ThresholdEvent(signFlippedOutput, ot.Less(), -0.02)
+
+algo = otrobopt.InverseFORM(signFlippedEvent, "L", x0)
+algo.run()
+ott.assert_almost_equal(algo.getResult().getParameter(), [5.44343], 1e-3, 1e-3)
