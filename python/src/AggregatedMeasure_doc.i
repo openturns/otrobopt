@@ -24,4 +24,14 @@ Examples
 
 // ---------------------------------------------------------------------
 
+%feature("docstring") OTROBOPT::AggregatedMeasure::getCollection
+"Collection accessor.
+
+Returns
+-------
+collection : sequence of :class:`~otrobopt.MeasureEvaluation`
+    The aggregated measures, in evaluation order."
+
+// ---------------------------------------------------------------------
+
 
