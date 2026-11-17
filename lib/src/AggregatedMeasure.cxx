@@ -64,6 +64,56 @@ AggregatedMeasure * AggregatedMeasure::clone() const
   return new AggregatedMeasure(*this);
 }
 
+/* Collection accessor */
+AggregatedMeasure::MeasureEvaluationCollection AggregatedMeasure::getCollection() const
+{
+  const UnsignedInteger size = collection_.getSize();
+  MeasureEvaluationCollection collection(size);
+  for (UnsignedInteger i = 0; i < size; ++i)
+    collection[i] = collection_[i];
+  return collection;
+}
+
+/* Rebuild the measure over a new function and distribution */
+MeasureEvaluation AggregatedMeasure::rebuild(const Function & function,
+    const Distribution & distribution,
+    const Interval & optimizationDomain) const
+{
+  const UnsignedInteger size = collection_.getSize();
+  if (size == 0)
+    throw InvalidArgumentException(HERE) << "Empty collection";
+  const UnsignedInteger outputDimension = function.getOutputDimension();
+  MeasureEvaluationCollection rebuilt(size);
+  UnsignedInteger outputIndex = 0;
+  for (UnsignedInteger i = 0; i < size; ++i)
+  {
+    const UnsignedInteger childOutputDimension = collection_[i].getFunction().getOutputDimension();
+    if (outputIndex + childOutputDimension > outputDimension)
+      throw InvalidDimensionException(HERE) << "The aggregate function output dimension ("
+                                            << outputDimension << ") is smaller than the sum of the measure output dimensions";
+    Indices indices(childOutputDimension);
+    for (UnsignedInteger j = 0; j < childOutputDimension; ++j)
+      indices[j] = outputIndex + j;
+    rebuilt[i] = collection_[i].rebuild(function.getMarginal(indices), distribution, optimizationDomain);
+    outputIndex += childOutputDimension;
+  }
+  if (outputIndex != outputDimension)
+    throw InvalidDimensionException(HERE) << "The aggregate function output dimension ("
+                                          << outputDimension << ") does not match the sum of the measure output dimensions ("
+                                          << outputIndex << ")";
+  return AggregatedMeasure(rebuilt);
+}
+
+/* Whether rebuilding the measure requires an explicit optimization domain */
+Bool AggregatedMeasure::requiresOptimizationDomain() const
+{
+  const UnsignedInteger size = collection_.getSize();
+  for (UnsignedInteger i = 0; i < size; ++i)
+    if (collection_[i].requiresOptimizationDomain())
+      return true;
+  return false;
+}
+
 /* Evaluation */
 Point AggregatedMeasure::operator()(const Point & inP) const
 {

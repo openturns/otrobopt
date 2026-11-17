@@ -1,3 +1,20 @@
+/* Use a unitless line height so that it scales with the font size.
+   An absolute value computed on the body font size is inherited by the
+   headings, whose wrapped lines then overlap.  The value matches the 125%
+   of the theme for the body text. */
+body {
+    line-height: 1.25;
+}
+
+/* Give the main column its own block formatting context.  The theme makes
+   the sidebar a float, and the Sphinx base style clears the ::after
+   pseudo-element of an admonition on both sides.  Without this context the
+   clear is resolved against the sidebar float, so an admonition that
+   overlaps the sidebar is stretched to its full height. */
+div.body {
+    display: flow-root;
+}
+
 .toggle .header {
     display: block;
     clear: both;
