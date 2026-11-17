@@ -76,3 +76,26 @@ Returns
 -------
 solver : :py:class:`openturns.OptimizationAlgorithm`
     Optimization solver"
+
+// ---------------------------------------------------------------------
+
+%feature("docstring") OTROBOPT::WorstCaseMeasure::setOptimizationDomain
+"Optimization domain accessor.
+
+The domain is expressed in the parameter space of the measure function.
+When it is empty, the range of the measure distribution is used.
+
+Parameters
+----------
+domain : :py:class:`openturns.Interval`
+    Optimization domain."
+
+// ---------------------------------------------------------------------
+
+%feature("docstring") OTROBOPT::WorstCaseMeasure::getOptimizationDomain
+"Optimization domain accessor.
+
+Returns
+-------
+domain : :py:class:`openturns.Interval`
+    Optimization domain, empty when the range of the distribution is used."

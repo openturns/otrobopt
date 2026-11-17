@@ -19,6 +19,8 @@
  *
  */
 #include "otrobopt/MeasureEvaluationImplementation.hxx"
+#include "otrobopt/MeasureEvaluation.hxx"
+#include <openturns/Exception.hxx>
 #include <openturns/PersistentObjectFactory.hxx>
 #include <openturns/IteratedQuadrature.hxx>
 
@@ -110,6 +112,27 @@ void MeasureEvaluationImplementation::setFunction(const Function & function)
 Function MeasureEvaluationImplementation::getFunction() const
 {
   return function_;
+}
+
+
+/* Rebuild the measure over a new function and distribution */
+MeasureEvaluation MeasureEvaluationImplementation::rebuild(const Function & function,
+                                                           const Distribution & distribution) const
+{
+  return rebuild(function, distribution, Interval());
+}
+
+MeasureEvaluation MeasureEvaluationImplementation::rebuild(const Function & /*function*/,
+                                                           const Distribution & /*distribution*/,
+                                                           const Interval & /*optimizationDomain*/) const
+{
+  throw NotYetImplementedException(HERE) << "MeasureEvaluationImplementation::rebuild is not implemented for "
+                                         << getClassName();
+}
+
+Bool MeasureEvaluationImplementation::requiresOptimizationDomain() const
+{
+  return false;
 }
 
 

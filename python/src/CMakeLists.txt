@@ -58,8 +58,11 @@ ot_add_python_module( ${PACKAGE_NAME} ${PACKAGE_NAME}_module.i
                       JointChanceMeasure.i JointChanceMeasure_doc.i
                       IndividualChanceMeasure.i IndividualChanceMeasure_doc.i
                       MeasureFunction.i MeasureFunction_doc.i
+                      ParameterAsInputFunction.i ParameterAsInputFunction_doc.i
+                      ParametricDistributionTransformation.i ParametricDistributionTransformation_doc.i
                       MeasureFactory.i MeasureFactory_doc.i
                       RobustOptimizationProblem.i RobustOptimizationProblem_doc.i
+                      RobustOptimizationProblemCanonicalizer.i RobustOptimizationProblemCanonicalizer_doc.i
                       RobustOptimizationAlgorithm.i RobustOptimizationAlgorithm_doc.i
                       SequentialMonteCarloRobustAlgorithm.i SequentialMonteCarloRobustAlgorithm_doc.i
                       SubsetInverseSampling.i SubsetInverseSampling_doc.i
