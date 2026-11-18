@@ -36,8 +36,14 @@ macro (ot_add_python_module MODULENAME SOURCEFILE)
   set_target_properties (${module_target} PROPERTIES COMPILE_FLAGS "${SWIG_COMPILE_FLAGS}")
   set_target_properties (${module_target} PROPERTIES UNITY_BUILD OFF)
 
-  install (FILES ${CMAKE_CURRENT_BINARY_DIR}/${MODULENAME}.py
-           DESTINATION ${OTROBOPT_PYTHON_MODULE_PATH}/${PACKAGE_NAME})
+  if (CMAKE_VERSION VERSION_GREATER_EQUAL "4.5")
+    install (FILES ${CMAKE_CURRENT_BINARY_DIR}/${MODULENAME}.py
+             DESTINATION ${OTROBOPT_PYTHON_MODULE_PATH}/${PACKAGE_NAME}
+             BUILD_DEPENDS ${module_target})
+  else ()
+    install (FILES ${CMAKE_CURRENT_BINARY_DIR}/${MODULENAME}.py
+             DESTINATION ${OTROBOPT_PYTHON_MODULE_PATH}/${PACKAGE_NAME})
+  endif ()
   install (TARGETS ${module_target}
             LIBRARY DESTINATION ${OTROBOPT_PYTHON_MODULE_PATH}/${PACKAGE_NAME})
 
