@@ -9,13 +9,13 @@ jobs:
     env:
       MAKEFLAGS: -j4
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Build
         run: ./utils/build_locally.sh linux
       - name: Upload
         if: ${{ github.ref == 'refs/heads/master' }}
         run: |
-          git clone --depth 1 https://${{ secrets.GH_TOKEN }}@github.com/openturns/openturns.github.io.git /tmp/io
+          git clone --depth 1 https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/openturns/openturns.github.io.git /tmp/io
           mkdir -p /tmp/io/otrobopt/master
           cp -r html/* /tmp/io/otrobopt/master
           cd /tmp/io
@@ -31,6 +31,6 @@ jobs:
     env:
       MAKEFLAGS: -j4
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Build
         run: ./utils/build_locally.sh mingw
