@@ -126,10 +126,16 @@ function over the support of the distribution,
 for minimization, and the supremum for maximization.  When the user sets an
 optimization domain with ``setOptimizationDomain``, the extremum is taken over
 that domain.  Otherwise a continuous distribution is searched over
-``distribution.getRange()``; an unbounded range therefore requires an explicit
-domain when the measure is canonicalized (the domain policy is described in
+``distribution.getRange()``.  Canonicalization requires an explicit domain when
+the distribution parameter is optimized and the reference distribution is not
+the standard normal distribution: the reference support is then unbounded and
+the stored domain has no image in the reference space.  A frozen parameter and
+the standard normal fast path keep the distribution range, so an unbounded
+range alone does not require a domain (the domain policy is described in
 :doc:`theory`).  For continuous distributions the inner problem is solved by a
-nested optimizer (default: TNC); for discrete distributions the support is
+nested optimizer (default: TNC).  For discrete distributions the support points
+whose probability exceeds ``MeasureEvaluation.getPDFThreshold()`` are scanned,
+and points at or below the threshold are excluded, so the support is not
 scanned exhaustively.
 
 The domain stored by a worst-case measure is expressed in the coordinates of
