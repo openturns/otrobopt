@@ -94,6 +94,30 @@ Function MeasureEvaluation::getFunction() const
   return getImplementation()->getFunction();
 }
 
+UnsignedInteger MeasureEvaluation::getOutputDimension() const
+{
+  return getImplementation()->getOutputDimension();
+}
+
+/* Rebuild the measure over a new function and distribution */
+MeasureEvaluation MeasureEvaluation::rebuild(const Function & function,
+                                             const Distribution & distribution) const
+{
+  return getImplementation()->rebuild(function, distribution);
+}
+
+MeasureEvaluation MeasureEvaluation::rebuild(const Function & function,
+                                             const Distribution & distribution,
+                                             const Interval & optimizationDomain) const
+{
+  return getImplementation()->rebuild(function, distribution, optimizationDomain);
+}
+
+Bool MeasureEvaluation::requiresOptimizationDomain() const
+{
+  return getImplementation()->requiresOptimizationDomain();
+}
+
 /* String converter */
 String MeasureEvaluation::__repr__() const
 {
