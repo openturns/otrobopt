@@ -22,6 +22,10 @@
         measure = otrobopt.JointChanceMeasure(f, thetaDist, ot.GreaterOrEqual(), 0.95)
     elif '{{ objname }}' == 'IndividualChanceMeasure':
         measure = otrobopt.IndividualChanceMeasure(f,thetaDist, ot.GreaterOrEqual(), [0.95])
+    elif '{{ objname }}' == 'SystemChanceMeasure':
+        predicate = ot.SymbolicFunction(['y0'], ['y0'])
+        measure = otrobopt.SystemChanceMeasure(
+            f, predicate, thetaDist, ot.GreaterOrEqual(), 0.95)
     elif '{{ objname }}' == 'MeanStandardDeviationTradeoffMeasure':
         measure =  otrobopt.MeanStandardDeviationTradeoffMeasure(f, thetaDist, [0.8])
     elif '{{ objname }}' == 'QuantileMeasure':

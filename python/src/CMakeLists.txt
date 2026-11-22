@@ -55,6 +55,12 @@ endmacro ()
 ot_add_python_module( ${PACKAGE_NAME} ${PACKAGE_NAME}_module.i 
                       MeasureEvaluation.i MeasureEvaluation_doc.i
                       MeasureEvaluationImplementation.i MeasureEvaluationImplementation_doc.i
+                      ProbabilityEstimatorImplementation.i ProbabilityEstimatorImplementation_doc.i
+                      ProbabilityEstimator.i ProbabilityEstimator_doc.i
+                      QuadratureEstimator.i QuadratureEstimator_doc.i
+                      ExperimentEstimator.i ExperimentEstimator_doc.i
+                      ReliabilityEstimator.i ReliabilityEstimator_doc.i
+                      SystemChanceMeasure.i SystemChanceMeasure_doc.i
                       MeanMeasure.i MeanMeasure_doc.i
                       VarianceMeasure.i VarianceMeasure_doc.i
                       MeanStandardDeviationTradeoffMeasure.i MeanStandardDeviationTradeoffMeasure_doc.i

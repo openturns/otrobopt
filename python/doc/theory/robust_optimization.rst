@@ -235,6 +235,57 @@ The probit transform stretches the probability scale near zero and one, which
 improves the conditioning of the measure for gradient-based optimization.  The
 measure is scalar-valued even when the limit state is vector-valued.
 
+System chance constraint
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+:class:`~otrobopt.SystemChanceMeasure` generalizes the joint measure to an
+arbitrary Boolean combination of the component events.  The event is defined by
+a Boolean predicate :math:`\varphi` of the :math:`n_g` component indicators,
+
+.. math::
+
+    \lambda_{\cD}\bigl[G(x, \cdot)\bigr]
+    = \Phi^{-1}\!\left(
+      \Prob{\varphi\bigl(
+        \mathbf{1}_{\{G_1(x, \Theta) \ge 0\}}, \dots,
+        \mathbf{1}_{\{G_{n_g}(x, \Theta) \ge 0\}}\bigr) = 1}
+      \right) - \Phi^{-1}(\alpha).
+
+The predicate is a :class:`~openturns.Function` with :math:`n_g` inputs, one
+output and no parameter, and it must return 0 or 1.  A series system is the
+product of the indicators, a parallel system their union, and any Boolean
+combination of the components can be written the same way.  The all-leaves
+predicate reduces the measure to :class:`~otrobopt.JointChanceMeasure`, which
+remains the reference implementation for that event.  As for the joint
+measure, the comparison operator only selects the sign of the returned scalar
+and the integrated event is the safe one.
+
+The probability is delegated to a :class:`~otrobopt.ProbabilityEstimator`
+explicitly attached to the measure with
+:meth:`~otrobopt.SystemChanceMeasure.setEstimator`.  The estimator receives
+the predicate, the limit-state function, the distribution and the design
+point at every call, so the measure can be rebuilt over a new function and
+distribution without replacing the estimator.  The estimator is saved with the
+measure and restored by persistence.  Three estimators are available.
+
+- :class:`~otrobopt.QuadratureEstimator` integrates the indicator of the event
+  with :class:`~openturns.IteratedQuadrature`.  The probability is
+  deterministic and exact up to the quadrature error, and no error estimate is
+  reported.  It is the default.
+- :class:`~otrobopt.ExperimentEstimator` averages the indicator over the
+  sample of a :class:`~openturns.WeightedExperiment` and reports the binomial
+  standard error.  The average is taken against the empirical measure, so the
+  integrand is the indicator only; weighting it by the probability density
+  function, as an early implementation did, integrates its square and biases
+  the probit transform.
+- :class:`~otrobopt.ReliabilityEstimator` analyses each limit-state component
+  by FORM or MultiFORM, then combines the linearized component events.  The
+  analytical combination requires a normal standard space and reports the
+  component reliability indexes, the standard-space design points and the
+  probability bounds; outside a normal standard space the system algorithm
+  must be ``SIMULATION``.  This estimator provides the geometry used by the
+  RBDO algorithms.
+
 Individual chance constraint
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -388,6 +439,9 @@ Measure summary
    * - :class:`~otrobopt.IndividualChanceMeasure`
      - vector
      - constraint, componentwise reliability
+   * - :class:`~otrobopt.SystemChanceMeasure`
+     - scalar
+     - constraint, system reliability
    * - :class:`~otrobopt.AggregatedMeasure`
      - concatenation
      - assembly of several measures

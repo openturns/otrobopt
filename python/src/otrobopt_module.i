@@ -20,6 +20,12 @@
 %include otrobopt/OTRobOptprivate.hxx
 %include MeasureEvaluationImplementation.i
 %include MeasureEvaluation.i
+%include ProbabilityEstimatorImplementation.i
+%include ProbabilityEstimator.i
+%include QuadratureEstimator.i
+%include ExperimentEstimator.i
+%include ReliabilityEstimator.i
+%include SystemChanceMeasure.i
 %include MeanMeasure.i
 %include VarianceMeasure.i
 %include MeanStandardDeviationTradeoffMeasure.i

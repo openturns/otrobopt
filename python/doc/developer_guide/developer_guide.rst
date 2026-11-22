@@ -1,5 +1,5 @@
 ===============
-Developer guide 
+Developer guide
 ===============
 
 The goal of this part is to expose the design principles that govern the platform.

@@ -56,6 +56,16 @@ struct MeasureEvaluation_init
 
     ResourceMap::AddAsUnsignedInteger("IndividualChanceMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
     ResourceMap::AddAsUnsignedInteger("JointChanceMeasure-GaussKronrodRule", GaussKronrodRule::G7K15);
+    ResourceMap::AddAsUnsignedInteger("QuadratureEstimator-GaussKronrodRule", GaussKronrodRule::G7K15);
+
+    ResourceMap::AddAsUnsignedInteger("ReliabilityEstimator-DefaultInnerMaximumCallsNumber", 1000);
+    ResourceMap::AddAsScalar("ReliabilityEstimator-DefaultInnerMaximumConstraintError", 1e-8);
+    ResourceMap::AddAsScalar("ReliabilityEstimator-DefaultInnerMaximumAbsoluteError", 1e-8);
+    ResourceMap::AddAsUnsignedInteger("ReliabilityEstimator-DefaultMaximumDesignPointsNumber", 4);
+    ResourceMap::AddAsUnsignedInteger("ReliabilityEstimator-DefaultMaximumCombinationNumber", 1024);
+    ResourceMap::AddAsScalar("ReliabilityEstimator-DefaultBetaTarget", 2.0);
+    ResourceMap::AddAsUnsignedInteger("ReliabilityEstimator-DefaultSampleSize", 10000);
+    ResourceMap::AddAsScalar("ReliabilityEstimator-DesignPointTolerance", 1e-12);
   }
 };
 

@@ -100,6 +100,7 @@ Measure evaluation
     VarianceMeasure
     JointChanceMeasure
     IndividualChanceMeasure
+    SystemChanceMeasure
 
 .. autosummary::
     :toctree: _generated/
@@ -107,6 +108,17 @@ Measure evaluation
 
     AggregatedMeasure
 
+System event estimation
+-----------------------
+
+.. autosummary::
+    :toctree: _generated/
+    :template: class.rst_t
+
+    ProbabilityEstimator
+    QuadratureEstimator
+    ExperimentEstimator
+    ReliabilityEstimator
 
 Define a robust optimization problem
 ------------------------------------
@@ -180,7 +192,7 @@ probability and is not restricted to a positive reliability index.
 .. FIXME: sphinx.errors.SphinxWarning: .../otrobopt.py:docstring of openturns.analytical.AnalyticalResult.getHasoferReliabilityIndexSensitivity:4:undefined label: sensitivity_form
 .. _sensitivity_form:
 .. _importance_form:
-    
+
 Solve an inverse reliability problem
 ------------------------------------
 

@@ -20,6 +20,7 @@
  */
 #include "otrobopt/MeasureEvaluationImplementation.hxx"
 #include "otrobopt/MeasureEvaluation.hxx"
+#include "otrobopt/ProbabilityEstimatorTools.hxx"
 #include <openturns/Exception.hxx>
 #include <openturns/NoGradient.hxx>
 #include <openturns/ParametricEvaluation.hxx>
@@ -34,28 +35,6 @@ namespace OTROBOPT
 CLASSNAMEINIT(MeasureEvaluationImplementation)
 
 static Factory<MeasureEvaluationImplementation> Factory_MeasureEvaluationImplementation;
-
-namespace
-{
-
-/* Assemble the full input point of a parametric evaluation from the input
-   point x and the parameter theta. */
-Point buildFullPoint(const Point & x,
-                     const Point & theta,
-                     const Indices & inputPositions,
-                     const Indices & parametersPositions,
-                     const UnsignedInteger fullDimension)
-{
-  Point fullPoint(fullDimension);
-  for (UnsignedInteger i = 0; i < parametersPositions.getSize(); ++i)
-    fullPoint[parametersPositions[i]] = theta[i];
-  for (UnsignedInteger i = 0; i < inputPositions.getSize(); ++i)
-    fullPoint[inputPositions[i]] = x[i];
-  return fullPoint;
-}
-
-}
-
 
 /* Default constructor */
 MeasureEvaluationImplementation::MeasureEvaluationImplementation()
@@ -193,10 +172,12 @@ Point MeasureEvaluationImplementation::functionValue(const Point & x, const Poin
   if (p_parametricEvaluation)
   {
     const Function fullFunction(p_parametricEvaluation->getFunction());
-    return fullFunction(buildFullPoint(x, theta,
-                                       p_parametricEvaluation->getInputPositions(),
-                                       p_parametricEvaluation->getParametersPositions(),
-                                       fullFunction.getInputDimension()));
+    const Point fullPoint = ProbabilityEstimatorTools::buildFullPoint(
+      x, theta,
+      p_parametricEvaluation->getInputPositions(),
+      p_parametricEvaluation->getParametersPositions(),
+      fullFunction.getInputDimension());
+    return fullFunction(fullPoint);
   }
   Function function(function_);
   function.setParameter(theta);
@@ -216,10 +197,12 @@ Matrix MeasureEvaluationImplementation::functionGradient(const Point & x, const 
   {
     const Function fullFunction(p_parametricEvaluation->getFunction());
     const Indices inputPositions(p_parametricEvaluation->getInputPositions());
-    const Matrix fullGradient(fullFunction.gradient(buildFullPoint(x, theta,
-        inputPositions,
-        p_parametricEvaluation->getParametersPositions(),
-        fullFunction.getInputDimension())));
+    const Point fullPoint = ProbabilityEstimatorTools::buildFullPoint(
+      x, theta,
+      inputPositions,
+      p_parametricEvaluation->getParametersPositions(),
+      fullFunction.getInputDimension());
+    const Matrix fullGradient(fullFunction.gradient(fullPoint));
     const UnsignedInteger inputDimension = x.getDimension();
     const UnsignedInteger outputDimension = fullFunction.getOutputDimension();
     Matrix outG(inputDimension, outputDimension);

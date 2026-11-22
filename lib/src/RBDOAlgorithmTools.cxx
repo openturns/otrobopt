@@ -19,6 +19,7 @@
  *
  */
 #include "otrobopt/RBDOAlgorithmTools.hxx"
+#include "otrobopt/ProbabilityEstimatorTools.hxx"
 
 #include <openturns/Cobyla.hxx>
 #include <openturns/ComposedFunction.hxx>
@@ -49,100 +50,6 @@ const Scalar NaN = std::numeric_limits<Scalar>::quiet_NaN();
 
 namespace
 {
-
-/* Frozen limit-state function: theta -> G(x, theta) */
-class FrozenLimitStateEvaluation
-  : public EvaluationImplementation
-{
-public:
-  FrozenLimitStateEvaluation(const Function & function,
-                             const Point & designPoint)
-    : EvaluationImplementation()
-    , function_(function)
-    , designPoint_(designPoint)
-  {
-    // Nothing to do
-  }
-
-  FrozenLimitStateEvaluation * clone() const override
-  {
-    return new FrozenLimitStateEvaluation(*this);
-  }
-
-  Point operator()(const Point & theta) const override
-  {
-    Function function(function_);
-    function.setParameter(theta);
-    return function(designPoint_);
-  }
-
-  UnsignedInteger getInputDimension() const override
-  {
-    return function_.getParameterDimension();
-  }
-
-  UnsignedInteger getOutputDimension() const override
-  {
-    return function_.getOutputDimension();
-  }
-
-  Description getInputDescription() const override
-  {
-    return function_.getParameterDescription();
-  }
-
-  Description getOutputDescription() const override
-  {
-    return function_.getOutputDescription();
-  }
-
-private:
-  Function function_;
-  Point designPoint_;
-};
-
-/* Gradient of the frozen limit-state function */
-class FrozenLimitStateGradient
-  : public GradientImplementation
-{
-public:
-  FrozenLimitStateGradient(const Function & function,
-                           const Point & designPoint)
-    : GradientImplementation()
-    , function_(function)
-    , designPoint_(designPoint)
-  {
-    // Nothing to do
-  }
-
-  FrozenLimitStateGradient * clone() const override
-  {
-    return new FrozenLimitStateGradient(*this);
-  }
-
-  Matrix gradient(const Point & theta) const override
-  {
-    Function function(function_);
-    function.setParameter(theta);
-    // The parameter gradient already has the OpenTURNS orientation, that is
-    // the input dimension (the parameter) by the output dimension.
-    return function.parameterGradient(designPoint_);
-  }
-
-  UnsignedInteger getInputDimension() const override
-  {
-    return function_.getParameterDimension();
-  }
-
-  UnsignedInteger getOutputDimension() const override
-  {
-    return function_.getOutputDimension();
-  }
-
-private:
-  Function function_;
-  Point designPoint_;
-};
 
 /* Scalarization of a vector limit state in the standard space */
 class ScalarizedLimitStateEvaluation
@@ -480,9 +387,7 @@ Function BuildStandardLimitState(const RBDOProblem & problem,
                                  const Function & inverseTransformation)
 {
   const Function limitState(problem.getLimitStateFunction());
-  const Function frozen(Evaluation(new FrozenLimitStateEvaluation(limitState, designPoint)),
-                        Gradient(new FrozenLimitStateGradient(limitState, designPoint)),
-                        Hessian(new NoHessian()));
+  const Function frozen(ProbabilityEstimatorTools::buildFrozenLimitState(limitState, designPoint));
   return ComposedFunction(frozen, inverseTransformation);
 }
 
