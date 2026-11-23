@@ -19,6 +19,7 @@
  *
  */
 #include "otrobopt/VarianceMeasure.hxx"
+#include "otrobopt/MeasureEvaluation.hxx"
 #include <openturns/PersistentObjectFactory.hxx>
 #include <openturns/GaussKronrod.hxx>
 #include <openturns/IteratedQuadrature.hxx>
@@ -60,6 +61,17 @@ VarianceMeasure::VarianceMeasure (const Function & function,
 VarianceMeasure * VarianceMeasure::clone() const
 {
   return new VarianceMeasure(*this);
+}
+
+/* Rebuild the measure over a new function and distribution */
+MeasureEvaluation VarianceMeasure::rebuild(const Function & function,
+                                          const Distribution & distribution,
+                                          const Interval & /*optimizationDomain*/) const
+{
+  VarianceMeasure result(function, distribution);
+  result.setIntegrationAlgorithm(getIntegrationAlgorithm());
+  result.setPDFThreshold(getPDFThreshold());
+  return result;
 }
 
 
