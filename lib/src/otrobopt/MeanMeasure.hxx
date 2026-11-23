@@ -47,8 +47,22 @@ public:
   /** Virtual constructor method */
   MeanMeasure * clone() const override;
 
+  /** Rebuild the measure over a new function and distribution */
+  using MeasureEvaluationImplementation::rebuild;
+  MeasureEvaluation rebuild(const OT::Function & function,
+                            const OT::Distribution & distribution,
+                            const OT::Interval & optimizationDomain) const override;
+
   /** Evaluation */
   OT::Point operator()(const OT::Point & inP) const override;
+
+  /** Build the analytic gradient of the measure */
+  OT::Gradient buildGradient() const override;
+
+  /** Derivative of the integrand with respect to the measure input */
+  OT::Matrix integrandGradient(const OT::Point & x,
+                               const OT::Point & theta,
+                               const OT::Point & auxiliaryValues) const override;
 
   /** String converter */
   OT::String __repr__() const override;

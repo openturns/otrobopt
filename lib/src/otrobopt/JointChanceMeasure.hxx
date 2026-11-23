@@ -22,6 +22,7 @@
 #define OTROBOPT_JOINTCHANCEMEASURE_HXX
 
 #include "otrobopt/MeasureEvaluationImplementation.hxx"
+#include <openturns/ComparisonOperator.hxx>
 
 namespace OTROBOPT
 {
@@ -29,7 +30,13 @@ namespace OTROBOPT
 /**
  * @class JointChanceMeasure
  *
- * Joint probability measure
+ * Joint probability measure.
+ *
+ * No analytic gradient with respect to the measure input is implemented: the
+ * probability is computed by simulation and the derivative of the distribution
+ * parameters with respect to the design variables is not available for every
+ * distribution.  MeasureFunction therefore keeps the centered
+ * finite-difference gradient installed by the Function constructor.
  */
 class OTROBOPT_API JointChanceMeasure
   : public MeasureEvaluationImplementation
@@ -49,8 +56,18 @@ public:
   /** Virtual constructor method */
   JointChanceMeasure * clone() const override;
 
+  /** Rebuild the measure over a new function and distribution */
+  using MeasureEvaluationImplementation::rebuild;
+  MeasureEvaluation rebuild(const OT::Function & function,
+                            const OT::Distribution & distribution,
+                            const OT::Interval & optimizationDomain) const override;
+
   /** Evaluation */
   OT::Point operator()(const OT::Point & inP) const override;
+
+  /** Comparison operator accessor */
+  void setOperator(const OT::ComparisonOperator & op);
+  OT::ComparisonOperator getOperator() const;
 
   /** Alpha coefficient accessor */
   void setAlpha(const OT::Scalar alpha);

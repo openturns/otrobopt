@@ -62,6 +62,24 @@ Measure function
 
     MeasureFunction
 
+Parameter as input
+------------------
+
+.. autosummary::
+    :toctree: _generated/
+    :template: class.rst_t
+
+    ParameterAsInputFunction
+
+Parameter-dependent transformation
+----------------------------------
+
+.. autosummary::
+    :toctree: _generated/
+    :template: class.rst_t
+
+    ParametricDistributionTransformation
+
 Measure evaluation
 ------------------
 
@@ -82,6 +100,7 @@ Measure evaluation
     VarianceMeasure
     JointChanceMeasure
     IndividualChanceMeasure
+    SystemChanceMeasure
 
 .. autosummary::
     :toctree: _generated/
@@ -89,6 +108,17 @@ Measure evaluation
 
     AggregatedMeasure
 
+System event estimation
+-----------------------
+
+.. autosummary::
+    :toctree: _generated/
+    :template: class.rst_t
+
+    ProbabilityEstimator
+    QuadratureEstimator
+    ExperimentEstimator
+    ReliabilityEstimator
 
 Define a robust optimization problem
 ------------------------------------
@@ -98,6 +128,25 @@ Define a robust optimization problem
     :template: class.rst_t
 
     RobustOptimizationProblem
+
+Define a reliability-based design optimization problem
+------------------------------------------------------
+
+.. autosummary::
+    :toctree: _generated/
+    :template: class.rst_t
+
+    RBDOProblem
+
+Canonicalize a robust optimization problem
+------------------------------------------
+
+.. autosummary::
+    :toctree: _generated/
+    :template: class.rst_t
+
+    CanonicalizationOptions
+    RobustOptimizationProblemCanonicalizer
 
 Discretize a measure function
 -----------------------------
@@ -118,10 +167,32 @@ Solve a robust optimization problem
     RobustOptimizationAlgorithm
     SequentialMonteCarloRobustAlgorithm
 
+Solve a reliability-based design optimization problem
+-----------------------------------------------------
+
+The specialized algorithms accept an :class:`~otrobopt.RBDOProblem` and read the
+target probability and the comparison operator from its joint chance measure.
+
+.. autosummary::
+    :toctree: _generated/
+    :template: class.rst_t
+
+    DoubleLoopRBDOAlgorithm
+    SORARobustOptimizationAlgorithm
+    SampleAverageApproximationAlgorithm
+
+:class:`~otrobopt.DoubleLoopRBDOAlgorithm` supports RIA and PMA and accepts
+problems where the design and random dimensions differ.
+:class:`~otrobopt.SORARobustOptimizationAlgorithm` uses the physical shift
+:math:`d=x-\theta^*` and therefore requires equal design and random
+dimensions; it rejects a mismatched problem with an explicit error.
+:class:`~otrobopt.SampleAverageApproximationAlgorithm` accepts any target
+probability and is not restricted to a positive reliability index.
+
 .. FIXME: sphinx.errors.SphinxWarning: .../otrobopt.py:docstring of openturns.analytical.AnalyticalResult.getHasoferReliabilityIndexSensitivity:4:undefined label: sensitivity_form
 .. _sensitivity_form:
 .. _importance_form:
-    
+
 Solve an inverse reliability problem
 ------------------------------------
 

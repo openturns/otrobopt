@@ -76,3 +76,23 @@ Returns
 -------
 alpha : sequence of float in :math:`(0,1)`
     Probability levels"
+
+// ---------------------------------------------------------------------
+
+%feature("docstring") OTROBOPT::IndividualChanceMeasure::setOperator
+"Comparison operator accessor.
+
+Parameters
+----------
+op : :py:class:`openturns.ComparisonOperator`
+    Comparison operator"
+
+// ---------------------------------------------------------------------
+
+%feature("docstring") OTROBOPT::IndividualChanceMeasure::getOperator
+"Comparison operator accessor.
+
+Returns
+-------
+op : :py:class:`openturns.ComparisonOperator`
+    Comparison operator"

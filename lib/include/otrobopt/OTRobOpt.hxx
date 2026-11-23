@@ -22,7 +22,16 @@
 #ifndef OTROBOPT_OTROBOPT_HXX
 #define OTROBOPT_OTROBOPT_HXX
 
+#include "otrobopt/ProbabilityEstimatorImplementation.hxx"
+#include "otrobopt/ProbabilityEstimator.hxx"
+#include "otrobopt/QuadratureEstimator.hxx"
+#include "otrobopt/ExperimentEstimator.hxx"
+#include "otrobopt/ReliabilityEstimator.hxx"
+#include "otrobopt/SystemChanceMeasure.hxx"
 #include "otrobopt/SequentialMonteCarloRobustAlgorithm.hxx"
+#include "otrobopt/RBDOProblem.hxx"
+#include "otrobopt/DoubleLoopRBDOAlgorithm.hxx"
+#include "otrobopt/SampleAverageApproximationAlgorithm.hxx"
 #include "otrobopt/MeanMeasure.hxx"
 #include "otrobopt/VarianceMeasure.hxx"
 #include "otrobopt/MeanStandardDeviationTradeoffMeasure.hxx"

@@ -12,9 +12,21 @@ User documentation
 .. toctree::
    :maxdepth: 2
 
-   theory/robust_optimization
    user_manual/user_manual
    ../auto_examples/index.rst
+
+Theory
+------
+
+.. toctree::
+   :maxdepth: 2
+
+   theory/theory
+   theory/invariance
+   theory/robust_optimization
+   theory/algorithms
+   theory/benchmarks
+   theory/bibliography
 
 Developer documentation
 -----------------------
@@ -22,7 +34,7 @@ Developer documentation
 .. toctree::
    :maxdepth: 1
 
-   developer_guide/developer_guide 
+   developer_guide/developer_guide
 
 Indices and tables
 ==================

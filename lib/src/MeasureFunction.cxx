@@ -45,7 +45,12 @@ MeasureFunction::MeasureFunction(const MeasureEvaluation & evaluation)
   : FunctionImplementation(Evaluation(evaluation.getImplementation()))
   , evaluation_(evaluation)
 {
-  // Nothing to do
+  // Use the analytic measure gradient when the measure provides one.  The
+  // FunctionImplementation(Evaluation) constructor has already installed a
+  // centered finite difference gradient for the measures that do not.
+  const Gradient gradient(evaluation.getImplementation()->buildGradient());
+  if (gradient.getImplementation()->isActualImplementation())
+    setGradient(gradient);
 }
 
 
