@@ -64,6 +64,57 @@ function : :py:class:`openturns.Function`
 %enddef
 %feature("docstring") OTROBOPT::MeasureEvaluationImplementation::getFunction
 OTROBOPT_MeasureEvaluation_getFunction_doc
+
+// ---------------------------------------------------------------------
+
+%define OTROBOPT_MeasureEvaluation_getOutputDimension_doc
+"Accessor to the dimension of the measure values.
+
+Returns
+-------
+outputDimension : int
+    Dimension of the values returned by the measure.  It may differ from
+    the output dimension of the underlying function, for example for a
+    joint chance measure over a vector-valued function."
+%enddef
+%feature("docstring") OTROBOPT::MeasureEvaluationImplementation::getOutputDimension
+OTROBOPT_MeasureEvaluation_getOutputDimension_doc
+
+// ---------------------------------------------------------------------
+
+%define OTROBOPT_MeasureEvaluation_rebuild_doc
+"Rebuild the measure over a new function and distribution.
+
+Parameters
+----------
+function : :py:class:`openturns.Function`
+    Parametric function of the rebuilt measure.
+distribution : :py:class:`openturns.Distribution`
+    Distribution of the rebuilt measure.
+optimizationDomain : :py:class:`openturns.Interval`
+    Optional optimization domain, used by the worst-case measure.
+
+Returns
+-------
+measure : :class:`~otrobopt.MeasureEvaluation`
+    The rebuilt measure."
+%enddef
+%feature("docstring") OTROBOPT::MeasureEvaluationImplementation::rebuild
+OTROBOPT_MeasureEvaluation_rebuild_doc
+
+// ---------------------------------------------------------------------
+
+%define OTROBOPT_MeasureEvaluation_requiresOptimizationDomain_doc
+"Whether rebuilding the measure requires an explicit optimization domain.
+
+Returns
+-------
+required : bool
+    True when the measure optimizes over its distribution support and
+    therefore needs a domain when its distribution is replaced."
+%enddef
+%feature("docstring") OTROBOPT::MeasureEvaluationImplementation::requiresOptimizationDomain
+OTROBOPT_MeasureEvaluation_requiresOptimizationDomain_doc
 // ---------------------------------------------------------------------
 
 %define OTROBOPT_MeasureEvaluation_setIntegrationAlgorithm_doc

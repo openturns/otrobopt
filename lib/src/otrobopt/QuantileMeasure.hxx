@@ -29,7 +29,14 @@ namespace OTROBOPT
 /**
  * @class QuantileMeasure
  *
- * Measure that evaluates as a quantile
+ * Measure that evaluates as a quantile.
+ *
+ * No analytic gradient with respect to the measure input is implemented: the
+ * quantile is only defined implicitly through the CDF, and OpenTURNS does not
+ * expose the derivative of the distribution parameters with respect to the
+ * design variables for every distribution.  MeasureFunction therefore keeps
+ * the centered finite-difference gradient installed by the Function
+ * constructor.
  */
 class OTROBOPT_API QuantileMeasure
   : public MeasureEvaluationImplementation
@@ -47,6 +54,12 @@ public:
 
   /** Virtual constructor method */
   QuantileMeasure * clone() const override;
+
+  /** Rebuild the measure over a new function and distribution */
+  using MeasureEvaluationImplementation::rebuild;
+  MeasureEvaluation rebuild(const OT::Function & function,
+                            const OT::Distribution & distribution,
+                            const OT::Interval & optimizationDomain) const override;
 
   /** Evaluation */
   OT::Point operator()(const OT::Point & inP) const override;

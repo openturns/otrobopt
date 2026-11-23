@@ -75,3 +75,23 @@ Returns
 -------
 alpha : float in :math:`(0,1)`
     Probability level"
+
+// ---------------------------------------------------------------------
+
+%feature("docstring") OTROBOPT::JointChanceMeasure::setOperator
+"Comparison operator accessor.
+
+Parameters
+----------
+op : :py:class:`openturns.ComparisonOperator`
+    Comparison operator"
+
+// ---------------------------------------------------------------------
+
+%feature("docstring") OTROBOPT::JointChanceMeasure::getOperator
+"Comparison operator accessor.
+
+Returns
+-------
+op : :py:class:`openturns.ComparisonOperator`
+    Comparison operator"
