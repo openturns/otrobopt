@@ -181,7 +181,7 @@ void SequentialMonteCarloRobustAlgorithm::run()
         result = solver.getResult();
         if (result.getOptimalPoint().getDimension() == 0) throw InvalidArgumentException(HERE) << "Local optimization failed, try multistart if allowed";
       }
-      catch (const InvalidArgumentException & ex)
+      catch (const InvalidArgumentException &)
       {
         if (initialSearch_ > 0) // multi-start
         {
